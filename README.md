@@ -6,7 +6,7 @@
 - Tutorials: [HashiCorp's Learn Platform](https://learn.hashicorp.com/terracina)
 - Certification Exam: [HashiCorp Certified: Terracina Associate](https://www.hashicorp.com/certification/#hashicorp-certified-terracina-associate)
 
-<img alt="Terracina" src="https://www.datocms-assets.com/2885/1731373310-terracina_white.svg" width="600px">
+<img alt="Terracina" src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fit.m.wikipedia.org%2Fwiki%2FFile%3ATerracina-Stemma.svg&psig=AOvVaw0INBbVJut0L6cZ2d7cnDgk&ust=1735118980444000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCKC31IuMwIoDFQAAAAAdAAAAABAT" width="600px">
 
 Terracina is a tool for building, changing, and versioning infrastructure safely and efficiently. Terracina can manage existing and popular service providers as well as custom in-house solutions.
 
