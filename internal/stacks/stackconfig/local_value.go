@@ -6,7 +6,7 @@ package stackconfig
 import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // LocalValue is a declaration of a private local value within a particular

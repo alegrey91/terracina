@@ -14,9 +14,9 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	"github.com/hashicorp/terraform/internal/plugin6/convert"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/tfplugin6"
+	"github.com/hashicorp/terracina/internal/plugin6/convert"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/tfplugin6"
 )
 
 // New wraps a providers.Interface to implement a grpc ProviderServer using
@@ -210,7 +210,7 @@ func (p *provider6) ConfigureProvider(_ context.Context, req *tfplugin6.Configur
 	}
 
 	configureResp := p.provider.ConfigureProvider(providers.ConfigureProviderRequest{
-		TerraformVersion: req.TerraformVersion,
+		TerracinaVersion: req.TerracinaVersion,
 		Config:           configVal,
 	})
 

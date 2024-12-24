@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/hashicorp/terraform-svchost/disco"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/modsdir"
-	"github.com/hashicorp/terraform/internal/registry"
+	"github.com/hashicorp/terracina-svchost/disco"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/modsdir"
+	"github.com/hashicorp/terracina/internal/registry"
 	"github.com/spf13/afero"
 )
 
@@ -34,8 +34,8 @@ type Loader struct {
 type Config struct {
 	// ModulesDir is a path to a directory where descendant modules are
 	// (or should be) installed. (This is usually the
-	// .terraform/modules directory, in the common case where this package
-	// is being loaded from the main Terraform CLI package.)
+	// .terracina/modules directory, in the common case where this package
+	// is being loaded from the main Terracina CLI package.)
 	ModulesDir string
 
 	// Services is the service discovery client to use when locating remote
@@ -119,7 +119,7 @@ func (l *Loader) Sources() map[string][]byte {
 }
 
 // IsConfigDir returns true if and only if the given directory contains at
-// least one Terraform configuration file. This is a wrapper around calling
+// least one Terracina configuration file. This is a wrapper around calling
 // the same method name on the loader's parser.
 func (l *Loader) IsConfigDir(path string) bool {
 	return l.parser.IsConfigDir(path)

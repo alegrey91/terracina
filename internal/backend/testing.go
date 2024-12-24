@@ -12,12 +12,12 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hcldec"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs/configtesting"
-	"github.com/hashicorp/terraform/internal/configs/hcl2shim"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/states/statemgr"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs/configtesting"
+	"github.com/hashicorp/terracina/internal/configs/hcl2shim"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/states/statemgr"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // TestBackendConfig validates and configures the backend with the

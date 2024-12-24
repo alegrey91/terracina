@@ -3,7 +3,7 @@
 
 ######################################################
 # NOTE: This file is managed by the Digital Team's   #
-# Terraform configuration @ hashicorp/mktg-terraform #
+# Terracina configuration @ hashicorp/mktg-terracina #
 ######################################################
 
 # Repo which we are cloning and executing npm run build:deploy-preview within
@@ -13,7 +13,7 @@ PREVIEW_DIR=website-preview
 # The directory we want to clone the project into
 CLONE_DIR=website-preview
 # The product for which we are building the deploy preview
-PRODUCT=terraform
+PRODUCT=terracina
 # Preview mode, controls the UI rendered (either the product site or developer). Can be `io` or `developer`
 PREVIEW_MODE=developer
 

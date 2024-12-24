@@ -8,8 +8,8 @@ import (
 	"testing"
 
 	"github.com/hashicorp/hcl/v2"
-	"github.com/hashicorp/terraform/internal/rpcapi/terraform1"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/rpcapi/terracina1"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 
 	"github.com/google/go-cmp/cmp"
 	"google.golang.org/protobuf/testing/protocmp"
@@ -18,7 +18,7 @@ import (
 func TestDiagnosticsToProto(t *testing.T) {
 	tests := map[string]struct {
 		Input tfdiags.Diagnostics
-		Want  []*terraform1.Diagnostic
+		Want  []*terracina1.Diagnostic
 	}{
 		"nil": {
 			Input: nil,
@@ -36,9 +36,9 @@ func TestDiagnosticsToProto(t *testing.T) {
 					"But I'll get over it.",
 				),
 			},
-			Want: []*terraform1.Diagnostic{
+			Want: []*terracina1.Diagnostic{
 				{
-					Severity: terraform1.Diagnostic_ERROR,
+					Severity: terracina1.Diagnostic_ERROR,
 					Summary:  "Something annoying",
 					Detail:   "But I'll get over it.",
 				},
@@ -52,9 +52,9 @@ func TestDiagnosticsToProto(t *testing.T) {
 					"That's no moon; it's a space station.",
 				),
 			},
-			Want: []*terraform1.Diagnostic{
+			Want: []*terracina1.Diagnostic{
 				{
-					Severity: terraform1.Diagnostic_WARNING,
+					Severity: terracina1.Diagnostic_WARNING,
 					Summary:  "I have a very bad feeling about this",
 					Detail:   "That's no moon; it's a space station.",
 				},
@@ -77,19 +77,19 @@ func TestDiagnosticsToProto(t *testing.T) {
 					},
 				},
 			),
-			Want: []*terraform1.Diagnostic{
+			Want: []*terracina1.Diagnostic{
 				{
-					Severity: terraform1.Diagnostic_ERROR,
+					Severity: terracina1.Diagnostic_ERROR,
 					Summary:  "Something annoying",
 					Detail:   "But I'll get over it.",
-					Subject: &terraform1.SourceRange{
+					Subject: &terracina1.SourceRange{
 						SourceAddr: "git::https://example.com/foo.git",
-						Start: &terraform1.SourcePos{
+						Start: &terracina1.SourcePos{
 							Byte:   0,
 							Line:   1,
 							Column: 1,
 						},
-						End: &terraform1.SourcePos{
+						End: &terracina1.SourcePos{
 							Byte:   2,
 							Line:   3,
 							Column: 4,
@@ -124,32 +124,32 @@ func TestDiagnosticsToProto(t *testing.T) {
 					},
 				},
 			),
-			Want: []*terraform1.Diagnostic{
+			Want: []*terracina1.Diagnostic{
 				{
-					Severity: terraform1.Diagnostic_ERROR,
+					Severity: terracina1.Diagnostic_ERROR,
 					Summary:  "Something annoying",
 					Detail:   "But I'll get over it.",
-					Subject: &terraform1.SourceRange{
+					Subject: &terracina1.SourceRange{
 						SourceAddr: "git::https://example.com/foo.git",
-						Start: &terraform1.SourcePos{
+						Start: &terracina1.SourcePos{
 							Byte:   0,
 							Line:   1,
 							Column: 1,
 						},
-						End: &terraform1.SourcePos{
+						End: &terracina1.SourcePos{
 							Byte:   2,
 							Line:   3,
 							Column: 4,
 						},
 					},
-					Context: &terraform1.SourceRange{
+					Context: &terracina1.SourceRange{
 						SourceAddr: "git::https://example.com/foo.git",
-						Start: &terraform1.SourcePos{
+						Start: &terracina1.SourcePos{
 							Byte:   0,
 							Line:   1,
 							Column: 1,
 						},
-						End: &terraform1.SourcePos{
+						End: &terracina1.SourcePos{
 							Byte:   5,
 							Line:   6,
 							Column: 7,
@@ -165,9 +165,9 @@ func TestDiagnosticsToProto(t *testing.T) {
 			Input: tfdiags.Diagnostics{}.Append(
 				fmt.Errorf("oh no bad"),
 			),
-			Want: []*terraform1.Diagnostic{
+			Want: []*terracina1.Diagnostic{
 				{
-					Severity: terraform1.Diagnostic_ERROR,
+					Severity: terracina1.Diagnostic_ERROR,
 					Summary:  "oh no bad",
 				},
 			},

@@ -10,13 +10,13 @@ import (
 	"github.com/go-test/deep"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/checks"
-	"github.com/hashicorp/terraform/internal/collections"
-	"github.com/hashicorp/terraform/internal/lang/globalref"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/states"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/checks"
+	"github.com/hashicorp/terracina/internal/collections"
+	"github.com/hashicorp/terracina/internal/lang/globalref"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/states"
 )
 
 func TestTFPlanRoundTrip(t *testing.T) {

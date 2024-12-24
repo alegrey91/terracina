@@ -1,15 +1,15 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"testing"
 
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/instances"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/instances"
 	"github.com/zclconf/go-cty/cty"
 )
 

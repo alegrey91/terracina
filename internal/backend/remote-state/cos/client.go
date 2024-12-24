@@ -19,12 +19,12 @@ import (
 	tag "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tag/v20180813"
 	"github.com/tencentyun/cos-go-sdk-v5"
 
-	"github.com/hashicorp/terraform/internal/states/remote"
-	"github.com/hashicorp/terraform/internal/states/statemgr"
+	"github.com/hashicorp/terracina/internal/states/remote"
+	"github.com/hashicorp/terracina/internal/states/statemgr"
 )
 
 const (
-	lockTagKey = "tencentcloud-terraform-lock"
+	lockTagKey = "tencentcloud-terracina-lock"
 )
 
 // RemoteClient implements the client of remote state

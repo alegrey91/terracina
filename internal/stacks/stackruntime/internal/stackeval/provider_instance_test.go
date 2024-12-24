@@ -12,13 +12,13 @@ import (
 	"github.com/zclconf/go-cty-debug/ctydebug"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/providers"
-	testing_provider "github.com/hashicorp/terraform/internal/providers/testing"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/tfdiags"
-	"github.com/hashicorp/terraform/version"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/providers"
+	testing_provider "github.com/hashicorp/terracina/internal/providers/testing"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/tfdiags"
+	"github.com/hashicorp/terracina/version"
 )
 
 func TestProviderInstanceCheckProviderArgs(t *testing.T) {
@@ -239,7 +239,7 @@ func TestProviderInstanceCheckProviderArgs(t *testing.T) {
 		if !mockProvider.ValidateProviderConfigCalled {
 			// It would be strange to get here because that would suggest
 			// that we got the diagnostic from the provider without asking
-			// the provider for it. Is terraform.MockProvider broken?
+			// the provider for it. Is terracina.MockProvider broken?
 			t.Error("ValidateProviderConfig was not called, but should have been")
 		} else {
 			got := mockProvider.ValidateProviderConfigRequest
@@ -379,7 +379,7 @@ func TestProviderInstanceCheckClient(t *testing.T) {
 		} else {
 			got := mockProvider.ConfigureProviderRequest
 			want := providers.ConfigureProviderRequest{
-				TerraformVersion: version.SemVer.String(),
+				TerracinaVersion: version.SemVer.String(),
 				Config: cty.ObjectVal(map[string]cty.Value{
 					"test": cty.StringVal("yep"),
 				}),
@@ -422,7 +422,7 @@ func TestProviderInstanceCheckClient(t *testing.T) {
 		} else {
 			got := mockProvider.ConfigureProviderRequest
 			want := providers.ConfigureProviderRequest{
-				TerraformVersion: version.SemVer.String(),
+				TerracinaVersion: version.SemVer.String(),
 				Config: cty.ObjectVal(map[string]cty.Value{
 					"test": cty.StringVal("yep"),
 				}),

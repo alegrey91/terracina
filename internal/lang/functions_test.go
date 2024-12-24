@@ -13,9 +13,9 @@ import (
 
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/experiments"
-	"github.com/hashicorp/terraform/internal/lang/marks"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/experiments"
+	"github.com/hashicorp/terracina/internal/lang/marks"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/zclconf/go-cty/cty"
 	"github.com/zclconf/go-cty/cty/function"
@@ -142,7 +142,7 @@ func TestFunctions(t *testing.T) {
 				// Note: "can" only works with expressions that pass static
 				// validation, because it only gets an opportunity to run in
 				// that case. The following "works" (captures the error) because
-				// Terraform understands it as a reference to an attribute
+				// Terracina understands it as a reference to an attribute
 				// that does not exist during dynamic evaluation.
 				//
 				// "can" doesn't work with references that could never possibly
@@ -556,7 +556,7 @@ func TestFunctions(t *testing.T) {
 				cty.StringVal("{\"hello\":\"world\"}"),
 			},
 			// We are intentionally choosing to escape <, >, and & characters
-			// to preserve backwards compatibility with Terraform 0.11
+			// to preserve backwards compatibility with Terracina 0.11
 			{
 				`jsonencode({"hello"="<cats & kittens>"})`,
 				cty.StringVal("{\"hello\":\"\\u003ccats \\u0026 kittens\\u003e\"}"),
@@ -1117,7 +1117,7 @@ func TestFunctions(t *testing.T) {
 				// Note: "try" only works with expressions that pass static
 				// validation, because it only gets an opportunity to run in
 				// that case. The following "works" (captures the error) because
-				// Terraform understands it as a reference to an attribute
+				// Terracina understands it as a reference to an attribute
 				// that does not exist during dynamic evaluation.
 				//
 				// "try" doesn't work with references that could never possibly
@@ -1125,7 +1125,7 @@ func TestFunctions(t *testing.T) {
 				// as an expression like "foo" alone which would be understood
 				// as an invalid resource reference. That's okay because this
 				// function exists primarily to ease access to dynamically-typed
-				// structures that Terraform can't statically validate by
+				// structures that Terracina can't statically validate by
 				// definition.
 				`try({}.baz, "fallback")`,
 				cty.StringVal("fallback"),
@@ -1246,7 +1246,7 @@ func TestFunctions(t *testing.T) {
 	// We'll also register a few "external functions" so that we can
 	// verify that registering these works. The functions actually
 	// available in a real module will be determined dynamically by
-	// Terraform core based on declarations in that module, so here
+	// Terracina core based on declarations in that module, so here
 	// we're just aiming to test whether dispatching to these works
 	// at all, not to test that any particular functions work.
 	externalFuncs := ExternalFuncs{

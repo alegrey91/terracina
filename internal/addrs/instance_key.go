@@ -160,7 +160,7 @@ const (
 	IntKeyType    InstanceKeyType = 'I'
 	StringKeyType InstanceKeyType = 'S'
 
-	// UnknownKeyType is a placeholder key type for situations where Terraform
+	// UnknownKeyType is a placeholder key type for situations where Terracina
 	// doesn't yet know which key type to use. There are no [InstanceKey]
 	// values of this type.
 	UnknownKeyType InstanceKeyType = '?'

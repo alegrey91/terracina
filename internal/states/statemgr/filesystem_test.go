@@ -17,10 +17,10 @@ import (
 	version "github.com/hashicorp/go-version"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/states/statefile"
-	tfversion "github.com/hashicorp/terraform/version"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/states/statefile"
+	tfversion "github.com/hashicorp/terracina/version"
 )
 
 func TestFilesystem(t *testing.T) {
@@ -208,7 +208,7 @@ func TestFilesystem_backupAndReadPath(t *testing.T) {
 	err = statefile.Write(&statefile.File{
 		Lineage:          "-",
 		Serial:           0,
-		TerraformVersion: version.Must(version.NewVersion("1.2.3")),
+		TerracinaVersion: version.Must(version.NewVersion("1.2.3")),
 		State:            outState,
 	}, outFile)
 	if err != nil {
@@ -230,7 +230,7 @@ func TestFilesystem_backupAndReadPath(t *testing.T) {
 	err = statefile.Write(&statefile.File{
 		Lineage:          "-",
 		Serial:           0,
-		TerraformVersion: version.Must(version.NewVersion("1.2.3")),
+		TerracinaVersion: version.Must(version.NewVersion("1.2.3")),
 		State:            inState,
 	}, inFile)
 	if err != nil {
@@ -354,7 +354,7 @@ func testFilesystem(t *testing.T) *Filesystem {
 	err = statefile.Write(&statefile.File{
 		Lineage:          "test-lineage",
 		Serial:           0,
-		TerraformVersion: version.Must(version.NewVersion("1.2.3")),
+		TerracinaVersion: version.Must(version.NewVersion("1.2.3")),
 		State:            TestFullInitialState(),
 	}, f)
 	if err != nil {
@@ -381,7 +381,7 @@ func TestFilesystem_refreshWhileLocked(t *testing.T) {
 	err = statefile.Write(&statefile.File{
 		Lineage:          "test-lineage",
 		Serial:           0,
-		TerraformVersion: version.Must(version.NewVersion("1.2.3")),
+		TerracinaVersion: version.Must(version.NewVersion("1.2.3")),
 		State:            TestFullInitialState(),
 	}, f)
 	if err != nil {

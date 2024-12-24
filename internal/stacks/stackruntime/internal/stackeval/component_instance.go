@@ -11,21 +11,21 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/collections"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/instances"
-	"github.com/hashicorp/terraform/internal/lang"
-	"github.com/hashicorp/terraform/internal/lang/marks"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/promising"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/stacks/stackplan"
-	"github.com/hashicorp/terraform/internal/stacks/stackstate"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/terraform"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/collections"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/instances"
+	"github.com/hashicorp/terracina/internal/lang"
+	"github.com/hashicorp/terracina/internal/lang/marks"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/promising"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/stacks/stackplan"
+	"github.com/hashicorp/terracina/internal/stacks/stackstate"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/terracina"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 type ComponentInstance struct {
@@ -113,7 +113,7 @@ func (c *ComponentInstance) CheckInputVariableValues(ctx context.Context, phase 
 
 // inputValuesForModulesRuntime adapts the result of
 // [ComponentInstance.InputVariableValues] to the representation that the
-// main Terraform modules runtime expects.
+// main Terracina modules runtime expects.
 //
 // The second argument (expectedValues) is the value that the apply operation
 // expects to see for the input variables, which is typically the input
@@ -121,7 +121,7 @@ func (c *ComponentInstance) CheckInputVariableValues(ctx context.Context, phase 
 //
 // During the planning phase, the expectedValues should be nil, as they will
 // only be checked during the apply phase.
-func (c *ComponentInstance) inputValuesForModulesRuntime(ctx context.Context, phase EvalPhase) terraform.InputValues {
+func (c *ComponentInstance) inputValuesForModulesRuntime(ctx context.Context, phase EvalPhase) terracina.InputValues {
 	valsObj := c.InputVariableValues(ctx, phase)
 	if valsObj == cty.NilVal {
 		return nil
@@ -139,7 +139,7 @@ func (c *ComponentInstance) inputValuesForModulesRuntime(ctx context.Context, ph
 		return nil
 	}
 	wantAttrs := wantTy.AttributeTypes()
-	ret := make(terraform.InputValues, len(wantAttrs))
+	ret := make(terracina.InputValues, len(wantAttrs))
 	for name, aty := range wantAttrs {
 		v := valsObj.GetAttr(name)
 		if !v.IsKnown() {
@@ -147,15 +147,15 @@ func (c *ComponentInstance) inputValuesForModulesRuntime(ctx context.Context, ph
 			// InputVariableValues didn't know what types to use.
 			v = cty.UnknownVal(aty)
 		}
-		ret[name] = &terraform.InputValue{
+		ret[name] = &terracina.InputValue{
 			Value:      v,
-			SourceType: terraform.ValueFromCaller,
+			SourceType: terracina.ValueFromCaller,
 		}
 	}
 	return ret
 }
 
-func (c *ComponentInstance) PlanOpts(ctx context.Context, mode plans.Mode, skipRefresh bool) (*terraform.PlanOpts, tfdiags.Diagnostics) {
+func (c *ComponentInstance) PlanOpts(ctx context.Context, mode plans.Mode, skipRefresh bool) (*terracina.PlanOpts, tfdiags.Diagnostics) {
 	decl := c.call.Declaration(ctx)
 
 	inputValues := c.inputValuesForModulesRuntime(ctx, PlanPhase)
@@ -179,7 +179,7 @@ func (c *ComponentInstance) PlanOpts(ctx context.Context, mode plans.Mode, skipR
 	providerClients := configuredProviderClients(ctx, c.main, known, unknown, PlanPhase)
 
 	plantimestamp := c.main.PlanTimestamp()
-	return &terraform.PlanOpts{
+	return &terracina.PlanOpts{
 		Mode:                       mode,
 		SkipRefresh:                skipRefresh,
 		SetVariables:               inputValues,
@@ -386,7 +386,7 @@ func (c *ComponentInstance) ApplyModuleTreePlan(ctx context.Context, plan *plans
 		return noOpResult, diags
 	}
 	// UGH: the "modules runtime"'s model of planning was designed around
-	// the goal of producing a traditional Terraform CLI-style saved plan
+	// the goal of producing a traditional Terracina CLI-style saved plan
 	// file and so it has the input variable values already encoded as
 	// plans.DynamicValue opaque byte arrays, and so we need to convert
 	// our resolved input values into that format. It would be better
@@ -403,7 +403,7 @@ func (c *ComponentInstance) ApplyModuleTreePlan(ctx context.Context, plan *plans
 				tfdiags.Error,
 				"Failed to encode input variable value",
 				fmt.Sprintf(
-					"Could not encode the value of input variable %q of %s: %s.\n\nThis is a bug in Terraform; please report it!",
+					"Could not encode the value of input variable %q of %s: %s.\n\nThis is a bug in Terracina; please report it!",
 					name, c.Addr(), err,
 				),
 			))
@@ -465,7 +465,7 @@ func (c *ComponentInstance) CheckApplyResult(ctx context.Context) (*ComponentIns
 		diags = diags.Append(tfdiags.Sourceless(
 			tfdiags.Error,
 			"Component instance apply not scheduled",
-			fmt.Sprintf("Terraform needs the result from applying changes to %s, but that apply was apparently not scheduled to run: %s. This is a bug in Terraform.", c.Addr(), err),
+			fmt.Sprintf("Terracina needs the result from applying changes to %s, but that apply was apparently not scheduled to run: %s. This is a bug in Terracina.", c.Addr(), err),
 		))
 	}
 	return applyResult, diags
@@ -659,7 +659,7 @@ func (c *ComponentInstance) DeclRange(ctx context.Context) *hcl.Range {
 }
 
 // PlanChanges implements Plannable by validating that all of the per-instance
-// arguments are suitable, and then asking the main Terraform language runtime
+// arguments are suitable, and then asking the main Terracina language runtime
 // to produce a plan in terms of the component's selected module.
 func (c *ComponentInstance) PlanChanges(ctx context.Context) ([]stackplan.PlannedChange, tfdiags.Diagnostics) {
 	var changes []stackplan.PlannedChange
@@ -747,7 +747,7 @@ func (c *ComponentInstance) ResourceSchema(ctx context.Context, providerTypeAddr
 	// This should not be able to fail with an error because we should
 	// be retrieving the same schema that was already used to encode
 	// the object we're working with. The error handling here is for
-	// robustness but any error here suggests a bug in Terraform.
+	// robustness but any error here suggests a bug in Terracina.
 
 	providerType := c.main.ProviderType(ctx, providerTypeAddr)
 	providerSchema, err := providerType.Schema(ctx)

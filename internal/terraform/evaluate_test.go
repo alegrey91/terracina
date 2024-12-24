@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"fmt"
@@ -10,21 +10,21 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/instances"
-	"github.com/hashicorp/terraform/internal/lang"
-	"github.com/hashicorp/terraform/internal/lang/marks"
-	"github.com/hashicorp/terraform/internal/namedvals"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/plans/deferring"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/instances"
+	"github.com/hashicorp/terracina/internal/lang"
+	"github.com/hashicorp/terracina/internal/lang/marks"
+	"github.com/hashicorp/terracina/internal/namedvals"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/plans/deferring"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
-func TestEvaluatorGetTerraformAttr(t *testing.T) {
+func TestEvaluatorGetTerracinaAttr(t *testing.T) {
 	evaluator := &Evaluator{
 		Meta: &ContextMeta{
 			Env: "foo",
@@ -40,7 +40,7 @@ func TestEvaluatorGetTerraformAttr(t *testing.T) {
 
 	t.Run("workspace", func(t *testing.T) {
 		want := cty.StringVal("foo")
-		got, diags := scope.Data.GetTerraformAttr(addrs.TerraformAttr{
+		got, diags := scope.Data.GetTerracinaAttr(addrs.TerracinaAttr{
 			Name: "workspace",
 		}, tfdiags.SourceRange{})
 		if len(diags) != 0 {
@@ -633,7 +633,7 @@ type fakeEvaluationData struct {
 	pathAttrs      map[addrs.PathAttr]cty.Value
 	resources      map[addrs.Resource]cty.Value
 	runBlocks      map[addrs.Run]cty.Value
-	terraformAttrs map[addrs.TerraformAttr]cty.Value
+	terracinaAttrs map[addrs.TerracinaAttr]cty.Value
 
 	// staticValidateRefs optionally implements [lang.Data.StaticValidateReferences],
 	// but can be left as nil to just skip static validation altogether.
@@ -705,9 +705,9 @@ func (d *fakeEvaluationData) GetRunBlock(addr addrs.Run, rng tfdiags.SourceRange
 	return fakeEvaluationDataLookup(addr, rng, d.runBlocks)
 }
 
-// GetTerraformAttr implements lang.Data.
-func (d *fakeEvaluationData) GetTerraformAttr(addr addrs.TerraformAttr, rng tfdiags.SourceRange) (cty.Value, tfdiags.Diagnostics) {
-	return fakeEvaluationDataLookup(addr, rng, d.terraformAttrs)
+// GetTerracinaAttr implements lang.Data.
+func (d *fakeEvaluationData) GetTerracinaAttr(addr addrs.TerracinaAttr, rng tfdiags.SourceRange) (cty.Value, tfdiags.Diagnostics) {
+	return fakeEvaluationDataLookup(addr, rng, d.terracinaAttrs)
 }
 
 // StaticValidateReferences implements lang.Data.

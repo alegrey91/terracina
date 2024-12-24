@@ -8,15 +8,15 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/lang/marks"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/schemarepo"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/lang/marks"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/schemarepo"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
-// Changes describes various actions that Terraform will attempt to take if
+// Changes describes various actions that Terracina will attempt to take if
 // the corresponding plan is applied.
 type Changes struct {
 	// Resources tracks planned changes to resource instance objects.
@@ -272,7 +272,7 @@ type ResourceInstanceChange struct {
 	RequiredReplace cty.PathSet
 
 	// Private allows a provider to stash any extra data that is opaque to
-	// Terraform that relates to this change. Terraform will save this
+	// Terracina that relates to this change. Terracina will save this
 	// byte-for-byte and return it to the provider in the apply call.
 	Private []byte
 }
@@ -318,7 +318,7 @@ func (rc *ResourceInstanceChange) Moved() bool {
 
 // Simplify will, where possible, produce a change with a simpler action than
 // the receiever given a flag indicating whether the caller is dealing with
-// a normal apply or a destroy. This flag deals with the fact that Terraform
+// a normal apply or a destroy. This flag deals with the fact that Terracina
 // Core uses a specialized graph node type for destroying; only that
 // specialized node should set "destroying" to true.
 //
@@ -619,14 +619,14 @@ func (c *Change) Encode(ty cty.Type) (*ChangeSrc, error) {
 	sensitiveAttrsAfter, unsupportedMarksesAfter := marks.PathsWithMark(marksesAfter, marks.Sensitive)
 	if len(unsupportedMarksesBefore) != 0 {
 		return nil, fmt.Errorf(
-			"prior value %s: can't serialize value marked with %#v (this is a bug in Terraform)",
+			"prior value %s: can't serialize value marked with %#v (this is a bug in Terracina)",
 			tfdiags.FormatCtyPath(unsupportedMarksesBefore[0].Path),
 			unsupportedMarksesBefore[0].Marks,
 		)
 	}
 	if len(unsupportedMarksesAfter) != 0 {
 		return nil, fmt.Errorf(
-			"new value %s: can't serialize value marked with %#v (this is a bug in Terraform)",
+			"new value %s: can't serialize value marked with %#v (this is a bug in Terracina)",
 			tfdiags.FormatCtyPath(unsupportedMarksesAfter[0].Path),
 			unsupportedMarksesAfter[0].Marks,
 		)

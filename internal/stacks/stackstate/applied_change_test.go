@@ -14,13 +14,13 @@ import (
 	"google.golang.org/protobuf/testing/protocmp"
 	"google.golang.org/protobuf/types/known/anypb"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/plans/planproto"
-	"github.com/hashicorp/terraform/internal/rpcapi/terraform1/stacks"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/stacks/tfstackdata1"
-	"github.com/hashicorp/terraform/internal/states"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/plans/planproto"
+	"github.com/hashicorp/terracina/internal/rpcapi/terracina1/stacks"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/stacks/tfstackdata1"
+	"github.com/hashicorp/terracina/internal/states"
 )
 
 func TestAppliedChangeAsProto(t *testing.T) {

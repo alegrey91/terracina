@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"testing"
@@ -9,11 +9,11 @@ import (
 	"github.com/hashicorp/hcl/v2/hcltest"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/instances"
-	"github.com/hashicorp/terraform/internal/resources/ephemeral"
-	"github.com/hashicorp/terraform/internal/states"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/instances"
+	"github.com/hashicorp/terracina/internal/resources/ephemeral"
+	"github.com/hashicorp/terracina/internal/states"
 )
 
 func TestNodeExpandModuleExecute(t *testing.T) {

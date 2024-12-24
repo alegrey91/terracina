@@ -13,19 +13,19 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/collections"
-	"github.com/hashicorp/terraform/internal/depsfile"
-	"github.com/hashicorp/terraform/internal/getproviders/providerreqs"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/stacks/stackplan"
-	stacks_testing_provider "github.com/hashicorp/terraform/internal/stacks/stackruntime/testing"
-	"github.com/hashicorp/terraform/internal/stacks/stackstate"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/tfdiags"
-	"github.com/hashicorp/terraform/version"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/collections"
+	"github.com/hashicorp/terracina/internal/depsfile"
+	"github.com/hashicorp/terracina/internal/getproviders/providerreqs"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/stacks/stackplan"
+	stacks_testing_provider "github.com/hashicorp/terracina/internal/stacks/stackruntime/testing"
+	"github.com/hashicorp/terracina/internal/stacks/stackstate"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/tfdiags"
+	"github.com/hashicorp/terracina/version"
 )
 
 func TestApplyDestroy(t *testing.T) {
@@ -60,7 +60,7 @@ func TestApplyDestroy(t *testing.T) {
 							Applyable: true,
 						},
 						&stackplan.PlannedChangeHeader{
-							TerraformVersion: version.SemVer,
+							TerracinaVersion: version.SemVer,
 						},
 						&stackplan.PlannedChangeOutputValue{
 							Addr:   mustStackOutputValue("value"),
@@ -176,7 +176,7 @@ func TestApplyDestroy(t *testing.T) {
 							ComponentInstanceAddr: mustAbsComponentInstance("component.self"),
 						},
 						// This is a bit of a quirk of the system, this wasn't in the state
-						// file before so we don't need to emit this. But since Terraform
+						// file before so we don't need to emit this. But since Terracina
 						// pushes data sources into the refresh state, it's very difficult to
 						// tell the difference between this kind of change that doesn't need to
 						// be emitted, and the next change that does need to be emitted. It's
@@ -761,7 +761,7 @@ func TestApplyDestroy(t *testing.T) {
 							DeferredReason: "deferred_prereq",
 						},
 						&stackplan.PlannedChangeHeader{
-							TerraformVersion: version.SemVer,
+							TerracinaVersion: version.SemVer,
 						},
 						&stackplan.PlannedChangePlannedTimestamp{
 							PlannedTimestamp: fakePlanTimestamp,
@@ -1140,7 +1140,7 @@ func TestApplyDestroy(t *testing.T) {
 							PlanTimestamp: fakePlanTimestamp,
 						},
 						&stackplan.PlannedChangeHeader{
-							TerraformVersion: version.SemVer,
+							TerracinaVersion: version.SemVer,
 						},
 						&stackplan.PlannedChangeOutputValue{
 							Addr:   mustStackOutputValue("value"),

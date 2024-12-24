@@ -3,7 +3,7 @@
 
 package arguments
 
-import "github.com/hashicorp/terraform/internal/tfdiags"
+import "github.com/hashicorp/terracina/internal/tfdiags"
 
 // Modules represents the command-line arguments for the modules command
 type Modules struct {

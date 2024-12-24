@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"bytes"
@@ -20,20 +20,20 @@ import (
 	"github.com/zclconf/go-cty-debug/ctydebug"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/checks"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/lang/marks"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	testing_provider "github.com/hashicorp/terraform/internal/providers/testing"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/checks"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/lang/marks"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	testing_provider "github.com/hashicorp/terracina/internal/providers/testing"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 func TestContext2Plan_removedDuringRefresh(t *testing.T) {
 	// This tests the situation where an object tracked in the previous run
-	// state has been deleted outside of Terraform, which we should detect
+	// state has been deleted outside of Terracina, which we should detect
 	// during the refresh step and thus ultimately produce a plan to recreate
 	// the object, since it's still present in the configuration.
 	m := testModuleInline(t, map[string]string{
@@ -80,7 +80,7 @@ resource "test_object" "a" {
 		s.SetResourceInstanceCurrent(addr, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{"arg":"previous_run"}`),
 			Status:    states.ObjectTainted,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	ctx := testContext2(t, &ContextOpts{
@@ -205,7 +205,7 @@ data "test_data_source" "foo" {
 				cty.GetAttrPath("foo"),
 			},
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -248,7 +248,7 @@ output "out" {
 		s.SetResourceInstanceCurrent(mustResourceInstanceAddr(`data.test_object.a["old"]`), &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{"test_string":"foo"}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	ctx := testContext2(t, &ContextOpts{
@@ -289,10 +289,10 @@ module "mod" {
 `,
 
 		"mod/main.tf": `
-terraform {
+terracina {
   required_providers {
     test = {
-      source = "registry.terraform.io/hashicorp/test"
+      source = "registry.terracina.io/hashicorp/test"
       configuration_aliases = [ test.x ]
 	}
   }
@@ -371,21 +371,21 @@ resource "test_resource" "b" {
 			&states.ResourceInstanceObjectSrc{
 				AttrsJSON: []byte(`{"id":"a"}`),
 				Status:    states.ObjectReady,
-			}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+			}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 		)
 		s.SetResourceInstanceCurrent(
 			mustResourceInstanceAddr(`module.mod["old"].test_resource.b`),
 			&states.ResourceInstanceObjectSrc{
 				AttrsJSON: []byte(`{"id":"b","value":"d"}`),
 				Status:    states.ObjectReady,
-			}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+			}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 		)
 		s.SetResourceInstanceCurrent(
 			oldDataAddr,
 			&states.ResourceInstanceObjectSrc{
 				AttrsJSON: []byte(`{"id":"d"}`),
 				Status:    states.ObjectReady,
-			}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+			}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 		)
 	})
 
@@ -413,7 +413,7 @@ func TestContext2Plan_resourceChecksInExpandedModule(t *testing.T) {
 	// to do: first expand the module the resource is declared in, and then
 	// expand the resource itself.
 	//
-	// In earlier versions of Terraform we did that expansion as two levels
+	// In earlier versions of Terracina we did that expansion as two levels
 	// of DynamicExpand, which led to a bug where we didn't have any central
 	// location from which to register all of the instances of a checkable
 	// resource.
@@ -657,7 +657,7 @@ data "test_data_source" "a" {
 	//
 	// It could also potentially represent a similar situation where the
 	// previous apply succeeded but there has been a change outside of
-	// Terraform that made it invalid, although technically in that scenario
+	// Terracina that made it invalid, although technically in that scenario
 	// the state data would become invalid only during the planning step. For
 	// our purposes here that's close enough because we don't have a real
 	// remote system in place anyway.
@@ -670,7 +670,7 @@ data "test_data_source" "a" {
 				// configuration change would make this object become valid.
 				AttrsJSON: []byte(`{"id":"boop","valid":false}`),
 				Status:    states.ObjectReady,
-			}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+			}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 		)
 	})
 
@@ -736,7 +736,7 @@ data "test_data_source" "a" {
 func TestContext2Plan_managedResourceChecksOtherManagedResourceChange(t *testing.T) {
 	// This tests the incorrect situation where a managed resource checks
 	// another managed resource indirectly via a data resource.
-	// This doesn't work because Terraform can't tell that the data resource
+	// This doesn't work because Terracina can't tell that the data resource
 	// outcome will be updated by a separate managed resource change and so
 	// we expect it to fail.
 	// This would ideally have worked except that we previously included a
@@ -835,11 +835,11 @@ resource "test_resource" "a" {
 locals {
 	# NOTE: We intentionally read through a local value here because a
 	# direct reference from data.test_data_source.a to test_resource.a would
-	# cause Terraform to defer the data resource to the apply phase due to
+	# cause Terracina to defer the data resource to the apply phase due to
 	# there being a pending change for the managed resource. We're explicitly
 	# testing the failure case where the data resource read happens too
 	# eagerly, which is what results from the reference being only indirect
-	# so Terraform can't "see" that the data resource result might be affected
+	# so Terracina can't "see" that the data resource result might be affected
 	# by changes to the managed resource.
 	object_id = test_resource.a.id
 }
@@ -869,7 +869,7 @@ resource "test_resource" "b" {
 	//
 	// It could also potentially represent a similar situation where the
 	// previous apply succeeded but there has been a change outside of
-	// Terraform that made it invalid, although technically in that scenario
+	// Terracina that made it invalid, although technically in that scenario
 	// the state data would become invalid only during the planning step. For
 	// our purposes here that's close enough because we don't have a real
 	// remote system in place anyway.
@@ -882,14 +882,14 @@ resource "test_resource" "b" {
 				// configuration change would make this object become valid.
 				AttrsJSON: []byte(`{"id":"main","valid":false}`),
 				Status:    states.ObjectReady,
-			}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+			}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 		)
 		s.SetResourceInstanceCurrent(
 			managedAddrB,
 			&states.ResourceInstanceObjectSrc{
 				AttrsJSON: []byte(`{"id":"checker","valid":true}`),
 				Status:    states.ObjectReady,
-			}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+			}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 		)
 	})
 
@@ -983,7 +983,7 @@ resource "test_object" "a" {
 		s.SetResourceInstanceCurrent(addr, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{"arg":"before"}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	ctx := testContext2(t, &ContextOpts{
@@ -1083,7 +1083,7 @@ resource "test_object" "a" {
 		s.SetResourceInstanceCurrent(addr, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{"arg":"before"}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	ctx := testContext2(t, &ContextOpts{
@@ -1223,7 +1223,7 @@ provider "test" {
 		s.SetResourceInstanceCurrent(addr, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{"test_string":"foo"}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	ctx := testContext2(t, &ContextOpts{
@@ -1259,7 +1259,7 @@ func TestContext2Plan_movedResourceBasic(t *testing.T) {
 		s.SetResourceInstanceCurrent(addrA, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	p := simpleMockProvider()
@@ -1324,7 +1324,7 @@ func TestContext2Plan_movedResourceMissingModule(t *testing.T) {
 		s.SetResourceInstanceCurrent(addrA, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	p := simpleMockProvider()
@@ -1388,11 +1388,11 @@ func TestContext2Plan_movedResourceCollision(t *testing.T) {
 		s.SetResourceInstanceCurrent(addrNoKey, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 		s.SetResourceInstanceCurrent(addrZeroKey, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	p := simpleMockProvider()
@@ -1417,10 +1417,10 @@ func TestContext2Plan_movedResourceCollision(t *testing.T) {
 		tfdiags.Sourceless(
 			tfdiags.Warning,
 			"Unresolved resource instance address changes",
-			`Terraform tried to adjust resource instance addresses in the prior state based on change information recorded in the configuration, but some adjustments did not succeed due to existing objects already at the intended addresses:
+			`Terracina tried to adjust resource instance addresses in the prior state based on change information recorded in the configuration, but some adjustments did not succeed due to existing objects already at the intended addresses:
   - test_object.a[0] could not move to test_object.a
 
-Terraform has planned to destroy these objects. If Terraform's proposed changes aren't appropriate, you must first resolve the conflicts using the "terraform state" subcommands and then create a new plan.`,
+Terracina has planned to destroy these objects. If Terracina's proposed changes aren't appropriate, you must first resolve the conflicts using the "terracina state" subcommands and then create a new plan.`,
 		),
 	}.ForRPC()
 	if diff := cmp.Diff(wantDiags, gotDiags); diff != "" {
@@ -1494,11 +1494,11 @@ func TestContext2Plan_movedResourceCollisionDestroy(t *testing.T) {
 		s.SetResourceInstanceCurrent(addrNoKey, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 		s.SetResourceInstanceCurrent(addrZeroKey, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	p := simpleMockProvider()
@@ -1524,16 +1524,16 @@ func TestContext2Plan_movedResourceCollisionDestroy(t *testing.T) {
 			tfdiags.Warning,
 			"Unresolved resource instance address changes",
 			// NOTE: This message is _lightly_ confusing in the destroy case,
-			// because it says "Terraform has planned to destroy these objects"
+			// because it says "Terracina has planned to destroy these objects"
 			// but this is a plan to destroy all objects, anyway. We expect the
 			// conflict situation to be pretty rare though, and even rarer in
-			// a "terraform destroy", so we'll just live with that for now
+			// a "terracina destroy", so we'll just live with that for now
 			// unless we see evidence that lots of folks are being confused by
 			// it in practice.
-			`Terraform tried to adjust resource instance addresses in the prior state based on change information recorded in the configuration, but some adjustments did not succeed due to existing objects already at the intended addresses:
+			`Terracina tried to adjust resource instance addresses in the prior state based on change information recorded in the configuration, but some adjustments did not succeed due to existing objects already at the intended addresses:
   - test_object.a[0] could not move to test_object.a
 
-Terraform has planned to destroy these objects. If Terraform's proposed changes aren't appropriate, you must first resolve the conflicts using the "terraform state" subcommands and then create a new plan.`,
+Terracina has planned to destroy these objects. If Terracina's proposed changes aren't appropriate, you must first resolve the conflicts using the "terracina state" subcommands and then create a new plan.`,
 		),
 	}.ForRPC()
 	if diff := cmp.Diff(wantDiags, gotDiags); diff != "" {
@@ -1606,7 +1606,7 @@ func TestContext2Plan_movedResourceUntargeted(t *testing.T) {
 		s.SetResourceInstanceCurrent(addrA, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	p := simpleMockProvider()
@@ -1638,12 +1638,12 @@ func TestContext2Plan_movedResourceUntargeted(t *testing.T) {
 				"Resource targeting is in effect",
 				`You are creating a plan with the -target option, which means that the result of this plan may not represent all of the changes requested by the current configuration.
 
-The -target option is not for routine use, and is provided only for exceptional situations such as recovering from errors or mistakes, or when Terraform specifically suggests to use it as part of an error message.`,
+The -target option is not for routine use, and is provided only for exceptional situations such as recovering from errors or mistakes, or when Terracina specifically suggests to use it as part of an error message.`,
 			),
 			tfdiags.Sourceless(
 				tfdiags.Error,
 				"Moved resource instances excluded by targeting",
-				`Resource instances in your current state have moved to new addresses in the latest configuration. Terraform must include those resource instances while planning in order to ensure a correct result, but your -target=... options do not fully cover all of those resource instances.
+				`Resource instances in your current state have moved to new addresses in the latest configuration. Terracina must include those resource instances while planning in order to ensure a correct result, but your -target=... options do not fully cover all of those resource instances.
 
 To create a valid plan, either remove your -target=... options altogether or add the following additional target options:
   -target="test_object.a"
@@ -1678,12 +1678,12 @@ Note that adding these options may include further additional resource instances
 				"Resource targeting is in effect",
 				`You are creating a plan with the -target option, which means that the result of this plan may not represent all of the changes requested by the current configuration.
 
-The -target option is not for routine use, and is provided only for exceptional situations such as recovering from errors or mistakes, or when Terraform specifically suggests to use it as part of an error message.`,
+The -target option is not for routine use, and is provided only for exceptional situations such as recovering from errors or mistakes, or when Terracina specifically suggests to use it as part of an error message.`,
 			),
 			tfdiags.Sourceless(
 				tfdiags.Error,
 				"Moved resource instances excluded by targeting",
-				`Resource instances in your current state have moved to new addresses in the latest configuration. Terraform must include those resource instances while planning in order to ensure a correct result, but your -target=... options do not fully cover all of those resource instances.
+				`Resource instances in your current state have moved to new addresses in the latest configuration. Terracina must include those resource instances while planning in order to ensure a correct result, but your -target=... options do not fully cover all of those resource instances.
 
 To create a valid plan, either remove your -target=... options altogether or add the following additional target options:
   -target="test_object.b"
@@ -1718,12 +1718,12 @@ Note that adding these options may include further additional resource instances
 				"Resource targeting is in effect",
 				`You are creating a plan with the -target option, which means that the result of this plan may not represent all of the changes requested by the current configuration.
 
-The -target option is not for routine use, and is provided only for exceptional situations such as recovering from errors or mistakes, or when Terraform specifically suggests to use it as part of an error message.`,
+The -target option is not for routine use, and is provided only for exceptional situations such as recovering from errors or mistakes, or when Terracina specifically suggests to use it as part of an error message.`,
 			),
 			tfdiags.Sourceless(
 				tfdiags.Error,
 				"Moved resource instances excluded by targeting",
-				`Resource instances in your current state have moved to new addresses in the latest configuration. Terraform must include those resource instances while planning in order to ensure a correct result, but your -target=... options do not fully cover all of those resource instances.
+				`Resource instances in your current state have moved to new addresses in the latest configuration. Terracina must include those resource instances while planning in order to ensure a correct result, but your -target=... options do not fully cover all of those resource instances.
 
 To create a valid plan, either remove your -target=... options altogether or add the following additional target options:
   -target="test_object.a"
@@ -1766,7 +1766,7 @@ Note that adding these options may include further additional resource instances
 				"Resource targeting is in effect",
 				`You are creating a plan with the -target option, which means that the result of this plan may not represent all of the changes requested by the current configuration.
 
-The -target option is not for routine use, and is provided only for exceptional situations such as recovering from errors or mistakes, or when Terraform specifically suggests to use it as part of an error message.`,
+The -target option is not for routine use, and is provided only for exceptional situations such as recovering from errors or mistakes, or when Terracina specifically suggests to use it as part of an error message.`,
 			),
 			// ...but now we have no error about test_object.a
 		}.ForRPC()
@@ -1798,7 +1798,7 @@ func TestContext2Plan_crossResourceMoveBasic(t *testing.T) {
 		s.SetResourceInstanceCurrent(addrA, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{"value":"before"}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	p := &testing_provider.MockProvider{}
@@ -1896,7 +1896,7 @@ func TestContext2Plan_crossProviderMove(t *testing.T) {
 		s.SetResourceInstanceCurrent(addrA, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{"value":"before"}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/one"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/one"]`))
 	})
 
 	one := &testing_provider.MockProvider{}
@@ -1998,7 +1998,7 @@ func TestContext2Plan_crossResourceMoveMissingConfig(t *testing.T) {
 		s.SetResourceInstanceCurrent(addrA, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{"value":"before"}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	p := &testing_provider.MockProvider{}
@@ -2090,12 +2090,12 @@ resource "test_object" "b" {
 		s.SetResourceInstanceCurrent(addrA, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 		s.SetResourceInstanceCurrent(addrB, &states.ResourceInstanceObjectSrc{
 			// old_list is no longer in the schema
 			AttrsJSON: []byte(`{"old_list":["used to be","a list here"]}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	p := simpleMockProvider()
@@ -2148,7 +2148,7 @@ func TestContext2Plan_movedResourceRefreshOnly(t *testing.T) {
 		s.SetResourceInstanceCurrent(addrA, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	p := simpleMockProvider()
@@ -2220,7 +2220,7 @@ func TestContext2Plan_refreshOnlyMode(t *testing.T) {
 		s.SetResourceInstanceCurrent(addr, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{"arg":"before"}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	p := simpleMockProvider()
@@ -2357,7 +2357,7 @@ func TestContext2Plan_refreshOnlyMode_deposed(t *testing.T) {
 		s.SetResourceInstanceDeposed(addr, deposedKey, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{"arg":"before"}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	p := simpleMockProvider()
@@ -2494,11 +2494,11 @@ func TestContext2Plan_refreshOnlyMode_orphan(t *testing.T) {
 		s.SetResourceInstanceCurrent(addr.Instance(addrs.IntKey(0)), &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{"arg":"before"}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 		s.SetResourceInstanceCurrent(addr.Instance(addrs.IntKey(1)), &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{"arg":"before"}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	p := simpleMockProvider()
@@ -2707,7 +2707,7 @@ data "test_data_source" "foo" {
 				cty.GetAttrPath("foo"),
 			},
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 	root.SetResourceInstanceCurrent(
 		mustResourceInstanceAddr("test_instance.bar").Resource,
@@ -2718,7 +2718,7 @@ data "test_data_source" "foo" {
 				cty.GetAttrPath("sensitive"),
 			},
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -2762,11 +2762,11 @@ func TestContext2Plan_forceReplace(t *testing.T) {
 		s.SetResourceInstanceCurrent(addrA, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 		s.SetResourceInstanceCurrent(addrB, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	p := simpleMockProvider()
@@ -2830,11 +2830,11 @@ func TestContext2Plan_forceReplaceIncompleteAddr(t *testing.T) {
 		s.SetResourceInstanceCurrent(addr0, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 		s.SetResourceInstanceCurrent(addr1, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	p := simpleMockProvider()
@@ -2949,7 +2949,7 @@ output "output" {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"foo","value":"a"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 	one.SetResourceInstanceCurrent(
 		mustResourceInstanceAddr(`data.test_data_source.d`).Resource,
@@ -2957,7 +2957,7 @@ output "output" {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"data"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 	two.SetResourceInstanceCurrent(
 		mustResourceInstanceAddr(`test_resource.x`).Resource,
@@ -2965,7 +2965,7 @@ output "output" {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"foo","value":"foo"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 	two.SetResourceInstanceCurrent(
 		mustResourceInstanceAddr(`data.test_data_source.d`).Resource,
@@ -2973,7 +2973,7 @@ output "output" {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"data"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -3014,7 +3014,7 @@ func TestContext2Plan_moduleExpandOrphansResourceInstance(t *testing.T) {
 	// registrations in the instance expander that might lead to panics
 	// if we aren't careful.
 	//
-	// (For some history here, see https://github.com/hashicorp/terraform/issues/30110 )
+	// (For some history here, see https://github.com/hashicorp/terracina/issues/30110 )
 
 	addrNoKey := mustResourceInstanceAddr("module.child.test_object.a[0]")
 	addrZeroKey := mustResourceInstanceAddr("module.child[0].test_object.a[0]")
@@ -3041,7 +3041,7 @@ func TestContext2Plan_moduleExpandOrphansResourceInstance(t *testing.T) {
 		s.SetResourceInstanceCurrent(addrNoKey, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	p := simpleMockProvider()
@@ -3216,7 +3216,7 @@ resource "test_resource" "a" {
 			s.SetResourceInstanceCurrent(mustResourceInstanceAddr("test_resource.a"), &states.ResourceInstanceObjectSrc{
 				AttrsJSON: []byte(`{"value":"boop","output":"blorp"}`),
 				Status:    states.ObjectReady,
-			}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+			}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 		})
 		_, diags := ctx.Plan(m, state, &PlanOpts{
 			Mode: plans.RefreshOnlyMode,
@@ -3306,7 +3306,7 @@ resource "test_resource" "a" {
 			s.SetResourceInstanceCurrent(mustResourceInstanceAddr("test_resource.a"), &states.ResourceInstanceObjectSrc{
 				AttrsJSON: []byte(`{"value":"boop","output":"blorp"}`),
 				Status:    states.ObjectReady,
-			}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+			}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 		})
 		p.ReadResourceFn = func(req providers.ReadResourceRequest) (resp providers.ReadResourceResponse) {
 			newVal, err := cty.Transform(req.PriorState, func(path cty.Path, v cty.Value) (cty.Value, error) {
@@ -3359,7 +3359,7 @@ resource "test_resource" "a" {
 			s.SetResourceInstanceCurrent(mustResourceInstanceAddr("test_resource.a"), &states.ResourceInstanceObjectSrc{
 				AttrsJSON: []byte(`{"value":"boop","output":"blorp"}`),
 				Status:    states.ObjectReady,
-			}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+			}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 		})
 		p.ReadResourceFn = func(req providers.ReadResourceRequest) (resp providers.ReadResourceResponse) {
 			newVal, err := cty.Transform(req.PriorState, func(path cty.Path, v cty.Value) (cty.Value, error) {
@@ -3947,7 +3947,7 @@ output "a" {
 				t.Errorf("unexpected detail\ngot: %s\nwant to contain %q", got, want)
 			}
 		} else if desc.Summary == "Error message refers to sensitive values" {
-			if got, want := desc.Detail, "The error expression used to explain this condition refers to sensitive values, so Terraform will not display the resulting message."; !strings.Contains(got, want) {
+			if got, want := desc.Detail, "The error expression used to explain this condition refers to sensitive values, so Terracina will not display the resulting message."; !strings.Contains(got, want) {
 				t.Errorf("unexpected detail\ngot: %s\nwant to contain %q", got, want)
 			}
 		} else {
@@ -3989,7 +3989,7 @@ resource "test_object" "b" {
 				AttrsJSON: []byte(`{"test_string":"old"}`),
 				Status:    states.ObjectReady,
 			},
-			mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+			mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 		)
 		s.SetResourceInstanceCurrent(
 			mustResourceInstanceAddr("test_object.b[0]"),
@@ -3997,7 +3997,7 @@ resource "test_object" "b" {
 				AttrsJSON: []byte(`{}`),
 				Status:    states.ObjectReady,
 			},
-			mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+			mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 		)
 	})
 
@@ -4076,7 +4076,7 @@ data "test_object" "a" {
 		s.SetResourceInstanceCurrent(mustResourceInstanceAddr(`data.test_object.a`), &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{"id":"old","obj":[{"args":["string"]}]}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	ctx := testContext2(t, &ContextOpts{
@@ -4116,7 +4116,7 @@ resource "test_object" "b" {
 			AttrsJSON:    []byte(`{"test_string":"a"}`),
 			Dependencies: []addrs.ConfigResource{mustResourceInstanceAddr("test_object.b").ContainingResource().Config()},
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 	root.SetResourceInstanceCurrent(
 		mustResourceInstanceAddr("test_object.b").Resource,
@@ -4124,7 +4124,7 @@ resource "test_object" "b" {
 			Status:    states.ObjectTainted,
 			AttrsJSON: []byte(`{"test_string":"b"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -4237,7 +4237,7 @@ resource "test_object" "b" {
 			AttrsJSON:    []byte(`{"test_string":"old"}`),
 			Dependencies: []addrs.ConfigResource{},
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 	root.SetResourceInstanceCurrent(
 		mustResourceInstanceAddr("test_object.a[0]").Resource,
@@ -4246,7 +4246,7 @@ resource "test_object" "b" {
 			AttrsJSON:    []byte(`{"test_string":"current"}`),
 			Dependencies: []addrs.ConfigResource{},
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -4416,7 +4416,7 @@ output "out" {
 			AttrsJSON:    []byte(`{"test_string":"current"}`),
 			Dependencies: []addrs.ConfigResource{},
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 	mod.SetResourceInstanceCurrent(
 		mustResourceInstanceAddr("test_object.a[1]").Resource,
@@ -4425,7 +4425,7 @@ output "out" {
 			AttrsJSON:    []byte(`{"test_string":"current"}`),
 			Dependencies: []addrs.ConfigResource{},
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -4559,7 +4559,7 @@ resource "test_object" "a" {
 			AttrsJSON:    []byte(`{"map":{"prior":"value"}}`),
 			Dependencies: []addrs.ConfigResource{},
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 	ctx := testContext2(t, &ContextOpts{
 		Providers: map[addrs.Provider]providers.Factory{
@@ -4581,7 +4581,7 @@ resource "test_object" "a" {
 
 func TestContext2Plan_externalProvidersWithState(t *testing.T) {
 	// In this test we're going to use an external provider for a resource
-	// that is already in the state. Terraform should allow this, even though
+	// that is already in the state. Terracina should allow this, even though
 	// the provider isn't defined in the configuration.
 
 	m := testModuleInline(t, map[string]string{
@@ -4646,10 +4646,10 @@ func TestContext2Plan_externalProviders(t *testing.T) {
 
 	m := testModuleInline(t, map[string]string{
 		"main.tf": `
-			terraform {
+			terracina {
 				required_providers {
 					bar = {
-						source = "terraform.io/builtin/bar"
+						source = "terracina.io/builtin/bar"
 					}
 					baz = {
 						configuration_aliases = [ baz.beep ]
@@ -4710,7 +4710,7 @@ func TestContext2Plan_externalProviders(t *testing.T) {
 		},
 		ConfigureProviderFn: mustNotConfigure,
 	}
-	barAddr := addrs.MustParseProviderSourceString("terraform.io/builtin/bar")
+	barAddr := addrs.MustParseProviderSourceString("terracina.io/builtin/bar")
 	barConfigAddr := addrs.RootProviderConfig{
 		Provider: barAddr,
 	}
@@ -4923,7 +4923,7 @@ removed {
 		s.SetResourceInstanceCurrent(addrA, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{"foo":"bar"}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	p := simpleMockProvider()
@@ -4950,11 +4950,11 @@ removed {
 	wantDiags := tfdiags.Diagnostics{
 		tfdiags.Sourceless(
 			tfdiags.Warning,
-			"Some objects will no longer be managed by Terraform",
-			`If you apply this plan, Terraform will discard its tracking information for the following objects, but it will not delete them:
+			"Some objects will no longer be managed by Terracina",
+			`If you apply this plan, Terracina will discard its tracking information for the following objects, but it will not delete them:
  - test_object.a
 
-After applying this plan, Terraform will no longer manage these objects. You will need to import them into Terraform to manage them again.`,
+After applying this plan, Terracina will no longer manage these objects. You will need to import them into Terracina to manage them again.`,
 		),
 	}.ForRPC()
 	if diff := cmp.Diff(wantDiags, gotDiags); diff != "" {
@@ -5001,7 +5001,7 @@ func TestContext2Plan_removedResourceDestroyBasic(t *testing.T) {
 		s.SetResourceInstanceCurrent(addrA, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{"foo":"bar"}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	p := simpleMockProvider()
@@ -5068,7 +5068,7 @@ removed {
 		s.SetResourceInstanceDeposed(addrA, deposedKey, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{"foo":"bar"}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	p := simpleMockProvider()
@@ -5095,11 +5095,11 @@ removed {
 	wantDiags := tfdiags.Diagnostics{
 		tfdiags.Sourceless(
 			tfdiags.Warning,
-			"Some objects will no longer be managed by Terraform",
-			`If you apply this plan, Terraform will discard its tracking information for the following objects, but it will not delete them:
+			"Some objects will no longer be managed by Terracina",
+			`If you apply this plan, Terracina will discard its tracking information for the following objects, but it will not delete them:
  - test_object.a
 
-After applying this plan, Terraform will no longer manage these objects. You will need to import them into Terraform to manage them again.`,
+After applying this plan, Terracina will no longer manage these objects. You will need to import them into Terracina to manage them again.`,
 		),
 	}.ForRPC()
 	if diff := cmp.Diff(wantDiags, gotDiags); diff != "" {
@@ -5146,7 +5146,7 @@ removed {
 		s.SetResourceInstanceCurrent(addrA, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{"foo":"bar"}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	p := simpleMockProvider()
@@ -5186,17 +5186,17 @@ removed {
 		s.SetResourceInstanceCurrent(mustResourceInstanceAddr("module.child.test_object.a"), &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{"foo":"bar"}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 		s.SetResourceInstanceCurrent(mustResourceInstanceAddr("module.child.module.grandchild.test_object.a"), &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{"foo":"bar"}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 
 		// We'll also check it works for deeply nested deposed objects too.
 		s.SetResourceInstanceDeposed(mustResourceInstanceAddr("module.child.module.grandchild.test_object.a"), "gone", &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{"foo":"bar"}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	p := simpleMockProvider()
@@ -5286,7 +5286,7 @@ resource "test_object" "a" {}
 		s.SetResourceInstanceCurrent(addrA, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{"foo":"bar"}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	p := simpleMockProvider()
@@ -5335,7 +5335,7 @@ resource "test_object" "a" {}
 		s.SetResourceInstanceCurrent(addrA, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{"foo":"bar"}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	p := simpleMockProvider()
@@ -5406,7 +5406,7 @@ resource "test_resource" "a" {
 				cty.GetAttrPath("value"),
 			},
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 
 	// Create a sensitive-marked value for the input variable. This is not
@@ -5534,7 +5534,7 @@ resource "test_object" "obj" {
 				cty.GetAttrPath("set_block"),
 			},
 			Status: states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	ctx := testContext2(t, &ContextOpts{
@@ -5555,10 +5555,10 @@ resource "test_object" "obj" {
 func TestContext2Plan_ephemeralInResource(t *testing.T) {
 	m := testModuleInline(t, map[string]string{
 		"main.tf": `
-			terraform {
+			terracina {
 				required_providers {
 					beep = {
-						source = "terraform.io/builtin/beep"
+						source = "terracina.io/builtin/beep"
 					}
 				}
 			}
@@ -5603,7 +5603,7 @@ func TestContext2Plan_ephemeralInResource(t *testing.T) {
 	wantDiags = wantDiags.Append(&hcl.Diagnostic{
 		Severity: hcl.DiagError,
 		Summary:  "Invalid use of ephemeral value",
-		Detail:   "Ephemeral values are not valid in resource arguments, because resource instances must persist between Terraform phases.",
+		Detail:   "Ephemeral values are not valid in resource arguments, because resource instances must persist between Terracina phases.",
 		Subject: &hcl.Range{
 			Filename: filepath.Join(m.Module.SourceDir, "main.tf"),
 			Start: hcl.Pos{
@@ -5617,7 +5617,7 @@ func TestContext2Plan_ephemeralInResource(t *testing.T) {
 	wantDiags = wantDiags.Append(&hcl.Diagnostic{
 		Severity: hcl.DiagError,
 		Summary:  "Invalid use of ephemeral value",
-		Detail:   "Ephemeral values are not valid in resource arguments, because resource instances must persist between Terraform phases.",
+		Detail:   "Ephemeral values are not valid in resource arguments, because resource instances must persist between Terracina phases.",
 		Subject: &hcl.Range{
 			Filename: filepath.Join(m.Module.SourceDir, "main.tf"),
 			Start: hcl.Pos{
@@ -5638,7 +5638,7 @@ func TestContext2Plan_ephemeralInResource(t *testing.T) {
 		}),
 	)
 	// We'll use the "for RPC" representation just as a convenient shortcut
-	// to not worry about exactly which diagnostic type Terraform Core chose
+	// to not worry about exactly which diagnostic type Terracina Core chose
 	// to return here.
 	gotDiags = gotDiags.ForRPC()
 	gotDiags.Sort()
@@ -5653,10 +5653,10 @@ func TestContext2Plan_ephemeralInResource(t *testing.T) {
 func TestContext2Plan_ephemeralInProviderConfig(t *testing.T) {
 	m := testModuleInline(t, map[string]string{
 		"main.tf": `
-			terraform {
+			terracina {
 				required_providers {
 					beep = {
-						source = "terraform.io/builtin/beep"
+						source = "terracina.io/builtin/beep"
 					}
 				}
 			}
@@ -5715,8 +5715,8 @@ func TestContext2Plan_ephemeralInProviderConfig(t *testing.T) {
 	}
 	got := p.ConfigureProviderRequest.Config
 	want := cty.ObjectVal(map[string]cty.Value{
-		// The value is not marked here, because Terraform Core unmarks it
-		// before calling the provider; ephemerality is Terraform Core's
+		// The value is not marked here, because Terracina Core unmarks it
+		// before calling the provider; ephemerality is Terracina Core's
 		// concern to deal with, not the provider's.
 		"in": cty.StringVal("hello"),
 	})
@@ -5822,7 +5822,7 @@ resource "test_object" "obj" {
 				},
 				Status: states.ObjectReady,
 			},
-			mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+			mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	_, diags := ctx.Plan(m, state, nil)
@@ -5929,7 +5929,7 @@ resource "test_object" "a" {
 				Status:    states.ObjectReady,
 				AttrsJSON: []byte(`{"test_string":"foo"}`),
 			},
-			mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+			mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 		)
 	}), &PlanOpts{
 		Mode: plans.DestroyMode,

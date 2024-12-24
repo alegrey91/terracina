@@ -1,4 +1,4 @@
-terraform {
+terracina {
     required_providers {
         foo = {
             source = "hashicorp/bar"

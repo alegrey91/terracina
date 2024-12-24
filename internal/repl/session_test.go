@@ -12,15 +12,15 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/initwd"
-	"github.com/hashicorp/terraform/internal/providers"
-	testing_provider "github.com/hashicorp/terraform/internal/providers/testing"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/terraform"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/initwd"
+	"github.com/hashicorp/terracina/internal/providers"
+	testing_provider "github.com/hashicorp/terracina/internal/providers/testing"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/terracina"
 
-	_ "github.com/hashicorp/terraform/internal/logging"
+	_ "github.com/hashicorp/terracina/internal/logging"
 )
 
 func TestMain(m *testing.M) {
@@ -282,7 +282,7 @@ func testSession(t *testing.T, test testSessionTest) {
 	}
 
 	// Build the TF context
-	ctx, diags := terraform.NewContext(&terraform.ContextOpts{
+	ctx, diags := terracina.NewContext(&terracina.ContextOpts{
 		Providers: map[addrs.Provider]providers.Factory{
 			addrs.NewDefaultProvider("test"): providers.FactoryFixed(p),
 		},
@@ -295,7 +295,7 @@ func testSession(t *testing.T, test testSessionTest) {
 	if state == nil {
 		state = states.NewState()
 	}
-	scope, diags := ctx.Eval(config, state, addrs.RootModuleInstance, &terraform.EvalOpts{})
+	scope, diags := ctx.Eval(config, state, addrs.RootModuleInstance, &terracina.EvalOpts{})
 	if diags.HasErrors() {
 		t.Fatalf("failed to create scope: %s", diags.Err())
 	}

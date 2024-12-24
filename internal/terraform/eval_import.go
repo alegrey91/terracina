@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"fmt"
@@ -10,10 +10,10 @@ import (
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/instances"
-	"github.com/hashicorp/terraform/internal/lang/marks"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/instances"
+	"github.com/hashicorp/terracina/internal/lang/marks"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 func evaluateImportIdExpression(expr hcl.Expression, ctx EvalContext, keyData instances.RepetitionData, allowUnknown bool) (cty.Value, tfdiags.Diagnostics) {
@@ -47,7 +47,7 @@ func evaluateImportIdExpression(expr hcl.Expression, ctx EvalContext, keyData in
 		return cty.NilVal, diags.Append(&hcl.Diagnostic{
 			Severity: hcl.DiagError,
 			Summary:  "Invalid import id argument",
-			Detail:   `The import block "id" argument depends on resource attributes that cannot be determined until apply, so Terraform cannot plan to import this resource.`, // FIXME and what should I do about that?
+			Detail:   `The import block "id" argument depends on resource attributes that cannot be determined until apply, so Terracina cannot plan to import this resource.`, // FIXME and what should I do about that?
 			Subject:  expr.Range().Ptr(),
 			//	Expression:
 			//	EvalContext:

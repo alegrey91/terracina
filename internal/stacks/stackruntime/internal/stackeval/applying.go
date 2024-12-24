@@ -9,19 +9,19 @@ import (
 
 	"github.com/hashicorp/hcl/v2"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/collections"
-	"github.com/hashicorp/terraform/internal/depsfile"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/stacks/stackruntime/hooks"
-	"github.com/hashicorp/terraform/internal/stacks/stackruntime/internal/stackeval/stubs"
-	"github.com/hashicorp/terraform/internal/stacks/stackstate"
-	"github.com/hashicorp/terraform/internal/stacks/stackstate/statekeys"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/terraform"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/collections"
+	"github.com/hashicorp/terracina/internal/depsfile"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/stacks/stackruntime/hooks"
+	"github.com/hashicorp/terracina/internal/stacks/stackruntime/internal/stackeval/stubs"
+	"github.com/hashicorp/terracina/internal/stacks/stackstate"
+	"github.com/hashicorp/terracina/internal/stacks/stackstate/statekeys"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/terracina"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 type ApplyOpts struct {
@@ -168,14 +168,14 @@ func ApplyComponentPlan(ctx context.Context, main *Main, plan *plans.Plan, requi
 		}
 	}
 
-	tfHook := &componentInstanceTerraformHook{
+	tfHook := &componentInstanceTerracinaHook{
 		ctx:   ctx,
 		seq:   seq,
 		hooks: hooksFromContext(ctx),
 		addr:  inst.Addr(),
 	}
-	tfCtx, err := terraform.NewContext(&terraform.ContextOpts{
-		Hooks: []terraform.Hook{
+	tfCtx, err := terracina.NewContext(&terracina.ContextOpts{
+		Hooks: []terracina.Hook{
 			tfHook,
 		},
 		Providers:                providerFactories,
@@ -187,8 +187,8 @@ func ApplyComponentPlan(ctx context.Context, main *Main, plan *plans.Plan, requi
 		// ContextOpts above.
 		diags = diags.Append(tfdiags.Sourceless(
 			tfdiags.Error,
-			"Failed to instantiate Terraform modules runtime",
-			fmt.Sprintf("Could not load the main Terraform language runtime: %s.\n\nThis is a bug in Terraform; please report it!", err),
+			"Failed to instantiate Terracina modules runtime",
+			fmt.Sprintf("Could not load the main Terracina language runtime: %s.\n\nThis is a bug in Terracina; please report it!", err),
 		))
 		return noOpResult, diags
 	}
@@ -227,7 +227,7 @@ func ApplyComponentPlan(ctx context.Context, main *Main, plan *plans.Plan, requi
 		// works, and so code after this point should not make any further use
 		// of either "modifiedPlan" or "plan" (since they share lots of the same
 		// pointers to mutable objects and so both can get modified together.)
-		newState, moreDiags = tfCtx.Apply(plan, moduleTree, &terraform.ApplyOpts{
+		newState, moreDiags = tfCtx.Apply(plan, moduleTree, &terracina.ApplyOpts{
 			ExternalProviders: providerClients,
 		})
 		diags = diags.Append(moreDiags)
@@ -258,7 +258,7 @@ func ApplyComponentPlan(ctx context.Context, main *Main, plan *plans.Plan, requi
 
 		// We need to report what changes were applied, which is mostly just
 		// re-announcing what was planned but we'll check to see if our
-		// terraform.Hook implementation saw a "successfully applied" event
+		// terracina.Hook implementation saw a "successfully applied" event
 		// for each resource instance object before counting it.
 		applied := tfHook.ResourceInstanceObjectsSuccessfullyApplied()
 		for _, rioAddr := range applied {

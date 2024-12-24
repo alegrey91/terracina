@@ -8,10 +8,10 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/collections"
-	"github.com/hashicorp/terraform/internal/instances"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/collections"
+	"github.com/hashicorp/terracina/internal/instances"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
 )
 
 // DynamicEvaler is implemented by types that participate in dynamic

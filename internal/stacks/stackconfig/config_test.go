@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/go-slug/sourcebundle"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 func TestLoadConfigDirErrors(t *testing.T) {

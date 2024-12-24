@@ -6,8 +6,8 @@ package stubs
 import (
 	"fmt"
 
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // erroredProvider is a stub provider that is used in place of a provider that
@@ -38,7 +38,7 @@ func (p *erroredProvider) ApplyResourceChange(req providers.ApplyResourceChangeR
 
 func (p *erroredProvider) CallFunction(request providers.CallFunctionRequest) providers.CallFunctionResponse {
 	return providers.CallFunctionResponse{
-		Err: fmt.Errorf("CallFunction shouldn't be called on an errored provider; this is a bug in Terraform - please report this error"),
+		Err: fmt.Errorf("CallFunction shouldn't be called on an errored provider; this is a bug in Terracina - please report this error"),
 	}
 }
 
@@ -80,7 +80,7 @@ func (p *erroredProvider) MoveResourceState(req providers.MoveResourceStateReque
 	diags = diags.Append(tfdiags.AttributeValue(
 		tfdiags.Error,
 		"Called MoveResourceState on an errored provider",
-		"Terraform called MoveResourceState on an errored provider. This is a bug in Terraform - please report this error.",
+		"Terracina called MoveResourceState on an errored provider. This is a bug in Terracina - please report this error.",
 		nil, // nil attribute path means the overall configuration block
 	))
 	return providers.MoveResourceStateResponse{

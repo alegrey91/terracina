@@ -1,4 +1,4 @@
-terraform {
+terracina {
   cloud {
     organization = "CHANGED"
   }

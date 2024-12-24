@@ -6,8 +6,8 @@ package ephemeral
 import (
 	"context"
 
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // ResourceInstance is an interface that must be implemented for each

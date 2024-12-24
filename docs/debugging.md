@@ -1,6 +1,6 @@
-# How to Debug Terraform
+# How to Debug Terracina
 
-As Terraform is written in Go you may use [delve](https://github.com/go-delve/delve) to debug it.
+As Terracina is written in Go you may use [delve](https://github.com/go-delve/delve) to debug it.
 
 ## 1. Compile & Start Debug Server
 
@@ -13,7 +13,7 @@ go install -gcflags="all=-N -l"
 This enables you to then execute the compiled binary via delve, pass any arguments as spin up a debug server which you can then connect to:
 
 ```sh
-dlv exec $GOBIN/terraform --headless --listen :2345 --log -- apply
+dlv exec $GOBIN/terracina --headless --listen :2345 --log -- apply
 ```
 
 ## 2a. Connect via CLI

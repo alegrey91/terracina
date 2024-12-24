@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"fmt"
@@ -10,14 +10,14 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/instances"
-	"github.com/hashicorp/terraform/internal/lang/marks"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/plans/objchange"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/instances"
+	"github.com/hashicorp/terracina/internal/lang/marks"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/plans/objchange"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // nodePlannablePartialExpandedResource is a graph node that stands in for
@@ -344,7 +344,7 @@ func (n *nodePlannablePartialExpandedResource) dataResourceExecute(ctx EvalConte
 	// that is relevant on this path. 👍🏼
 
 	// Unlike the managed path, we don't call provider.ValidateResourceConfig;
-	// Terraform handles planning for data sources without hands-on input from
+	// Terracina handles planning for data sources without hands-on input from
 	// the provider. BTW, this is about where we start mirroring planDataSource's
 	// logic for a data source with unknown config, which is sort of what we
 	// are, after all.

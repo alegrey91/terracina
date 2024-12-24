@@ -25,7 +25,7 @@ Before writing your Stack configuration, we recommend assessing your current inf
 
 ### Break down your infrastructure
 
-Each Stack should represent a single system or application with a shared lifecycle. Start by analyzing your current infrastructure and identifying the components HCP Terraform should manage together. Components are typically groups of related resources, such as an application’s backend, frontend, or database layer, deployed and scaled together. 
+Each Stack should represent a single system or application with a shared lifecycle. Start by analyzing your current infrastructure and identifying the components HCP Terracina should manage together. Components are typically groups of related resources, such as an application’s backend, frontend, or database layer, deployed and scaled together. 
 
 ### Sketch out your configuration
 
@@ -37,15 +37,15 @@ Plan to add a component block to your configuration for every top-level module y
 
 ## Plan your deployments
 
-Stack deployments define how to repeat your Stack's defined infrastructure. We recommend considering how HCP Terraform should deploy the infrastructure your Stack defines. Your deployment plan can change depending on whether you need separate deployments for different environments, cloud provider accounts, or regions.
+Stack deployments define how to repeat your Stack's defined infrastructure. We recommend considering how HCP Terracina should deploy the infrastructure your Stack defines. Your deployment plan can change depending on whether you need separate deployments for different environments, cloud provider accounts, or regions.
 
-If your deployment process requires automation, such as auto-approving specific changes in your test deployment, you can also design orchestration rules to help manage your Stack deployments. Learn more about [setting conditions for stack deployment plans](/terraform/language/stacks/deploy/conditions).
+If your deployment process requires automation, such as auto-approving specific changes in your test deployment, you can also design orchestration rules to help manage your Stack deployments. Learn more about [setting conditions for stack deployment plans](/terracina/language/stacks/deploy/conditions).
 
 ### Plan for scalability
 
 When designing your Stack, consider how it should scale as your infrastructure grows. For example, if you anticipate adding more environments or regions, design your Stack to accommodate these changes.
 
-To keep your Stack configuration concise, you can use the [locals block](/terraform/language/values/locals) to share values across your deployments.
+To keep your Stack configuration concise, you can use the [locals block](/terracina/language/values/locals) to share values across your deployments.
 
 ```hcl
 # deployments.tfdeploy.hcl
@@ -61,4 +61,4 @@ Additionally, using meta-arguments like `for_each` in your configuration can hel
 
 ## Next steps
 
-After planning out your Stack, learn how to make your design a reality by [defining a Stack configuration](/terraform/language/stacks/create/config). 
+After planning out your Stack, learn how to make your design a reality by [defining a Stack configuration](/terracina/language/stacks/create/config). 

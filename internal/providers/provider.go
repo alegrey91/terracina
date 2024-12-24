@@ -6,9 +6,9 @@ package providers
 import (
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // Interface represents the set of methods required for a complete resource
@@ -48,7 +48,7 @@ type Interface interface {
 	//
 	// Stop should not block waiting for in-flight actions to complete. It
 	// should take any action it wants and return immediately acknowledging it
-	// has received the stop request. Terraform will not make any further API
+	// has received the stop request. Terracina will not make any further API
 	// calls to the provider after Stop is called.
 	//
 	// The error returned, if non-nil, is assumed to mean that signaling the
@@ -158,7 +158,7 @@ type ServerCapabilities struct {
 	MoveResourceState bool
 }
 
-// ClientCapabilities allows Terraform to publish information regarding
+// ClientCapabilities allows Terracina to publish information regarding
 // supported protocol features. This is used to indicate availability of
 // certain forward-compatible changes which may be optional in a major
 // protocol version, but cannot be tested for directly.
@@ -255,10 +255,10 @@ type UpgradeResourceStateResponse struct {
 }
 
 type ConfigureProviderRequest struct {
-	// Terraform version is the version string from the running instance of
-	// terraform. Providers can use TerraformVersion to verify compatibility,
+	// Terracina version is the version string from the running instance of
+	// terracina. Providers can use TerracinaVersion to verify compatibility,
 	// and to store for informational purposes.
-	TerraformVersion string
+	TerracinaVersion string
 
 	// Config is the complete configuration value for the provider.
 	Config cty.Value
@@ -388,7 +388,7 @@ type PlanResourceChangeResponse struct {
 	// resource replacement.
 	RequiresReplace []cty.Path
 
-	// PlannedPrivate is an opaque blob that is not interpreted by terraform
+	// PlannedPrivate is an opaque blob that is not interpreted by terracina
 	// core. This will be saved and relayed back to the provider during
 	// ApplyResourceChange.
 	PlannedPrivate []byte
@@ -397,7 +397,7 @@ type PlanResourceChangeResponse struct {
 	Diagnostics tfdiags.Diagnostics
 
 	// LegacyTypeSystem is set only if the provider is using the legacy SDK
-	// whose type system cannot be precisely mapped into the Terraform type
+	// whose type system cannot be precisely mapped into the Terracina type
 	// system. We use this to bypass certain consistency checks that would
 	// otherwise fail due to this imprecise mapping. No other provider or SDK
 	// implementation is permitted to set this.
@@ -449,7 +449,7 @@ type ApplyResourceChangeResponse struct {
 	Diagnostics tfdiags.Diagnostics
 
 	// LegacyTypeSystem is set only if the provider is using the legacy SDK
-	// whose type system cannot be precisely mapped into the Terraform type
+	// whose type system cannot be precisely mapped into the Terracina type
 	// system. We use this to bypass certain consistency checks that would
 	// otherwise fail due to this imprecise mapping. No other provider or SDK
 	// implementation is permitted to set this.
@@ -483,7 +483,7 @@ type ImportResourceStateResponse struct {
 	Deferred *Deferred
 }
 
-// ImportedResource represents an object being imported into Terraform with the
+// ImportedResource represents an object being imported into Terracina with the
 // help of a provider. An ImportedObject is a RemoteObject that has been read
 // by the provider's import handler but hasn't yet been committed to state.
 type ImportedResource struct {

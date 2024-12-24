@@ -1,3 +1,3 @@
-terraform {
+terracina {
   experiments = [current]
 }

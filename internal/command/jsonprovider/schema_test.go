@@ -8,7 +8,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/hashicorp/terraform/internal/providers"
+	"github.com/hashicorp/terracina/internal/providers"
 )
 
 func TestMarshalSchemas(t *testing.T) {

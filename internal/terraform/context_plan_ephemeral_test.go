@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"fmt"
@@ -9,13 +9,13 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/hcl/v2"
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	testing_provider "github.com/hashicorp/terraform/internal/providers/testing"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	testing_provider "github.com/hashicorp/terracina/internal/providers/testing"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 	"github.com/zclconf/go-cty/cty"
 )
 
@@ -43,11 +43,11 @@ ephemeral "ephem_resource" "data" {
 			expectCloseEphemeralResourceCalled:          true,
 		},
 
-		"terraform.applying": {
+		"terracina.applying": {
 			module: map[string]string{
 				"child/main.tf": `
 output "value" {
-    value = terraform.applying
+    value = terracina.applying
     # Testing that this errors in the best way to ensure the symbol is ephemeral
     ephemeral = false 
 }
@@ -108,7 +108,7 @@ resource "test_object" "test" {
 				return diags.Append(&hcl.Diagnostic{
 					Severity: hcl.DiagError,
 					Summary:  "Invalid use of ephemeral value",
-					Detail:   "Ephemeral values are not valid in resource arguments, because resource instances must persist between Terraform phases.",
+					Detail:   "Ephemeral values are not valid in resource arguments, because resource instances must persist between Terracina phases.",
 				})
 			},
 		},
@@ -163,7 +163,7 @@ resource "test_object" "test" {
 				return diags.Append(&hcl.Diagnostic{
 					Severity: hcl.DiagError,
 					Summary:  "Invalid for_each argument",
-					Detail:   `The given "for_each" value is derived from an ephemeral value, which means that Terraform cannot persist it between plan/apply rounds. Use only non-ephemeral values to specify a resource's instance keys.`,
+					Detail:   `The given "for_each" value is derived from an ephemeral value, which means that Terracina cannot persist it between plan/apply rounds. Use only non-ephemeral values to specify a resource's instance keys.`,
 				})
 			},
 		},
@@ -183,7 +183,7 @@ resource "test_object" "test" {
 				return diags.Append(&hcl.Diagnostic{
 					Severity: hcl.DiagError,
 					Summary:  "Invalid count argument",
-					Detail:   `The given "count" is derived from an ephemeral value, which means that Terraform cannot persist it between plan/apply rounds. Use only non-ephemeral values to specify the number of resource instances.`,
+					Detail:   `The given "count" is derived from an ephemeral value, which means that Terracina cannot persist it between plan/apply rounds. Use only non-ephemeral values to specify the number of resource instances.`,
 				})
 			},
 		},
@@ -209,7 +209,7 @@ module "child" {
 				return diags.Append(&hcl.Diagnostic{
 					Severity: hcl.DiagError,
 					Summary:  "Invalid for_each argument",
-					Detail:   `The given "for_each" value is derived from an ephemeral value, which means that Terraform cannot persist it between plan/apply rounds. Use only non-ephemeral values to specify a resource's instance keys.`,
+					Detail:   `The given "for_each" value is derived from an ephemeral value, which means that Terracina cannot persist it between plan/apply rounds. Use only non-ephemeral values to specify a resource's instance keys.`,
 				})
 			},
 		},
@@ -233,7 +233,7 @@ module "child" {
 				return diags.Append(&hcl.Diagnostic{
 					Severity: hcl.DiagError,
 					Summary:  "Invalid count argument",
-					Detail:   `The given "count" is derived from an ephemeral value, which means that Terraform cannot persist it between plan/apply rounds. Use only non-ephemeral values to specify the number of resource instances.`,
+					Detail:   `The given "count" is derived from an ephemeral value, which means that Terracina cannot persist it between plan/apply rounds. Use only non-ephemeral values to specify the number of resource instances.`,
 				})
 			},
 		},
@@ -260,7 +260,7 @@ resource "test_object" "test" {
 					&hcl.Diagnostic{
 						Severity: hcl.DiagError,
 						Summary:  "Invalid for_each argument",
-						Detail:   `The given "for_each" value is derived from an ephemeral value, which means that Terraform cannot persist it between plan/apply rounds. Use only non-ephemeral values to specify a resource's instance keys.`,
+						Detail:   `The given "for_each" value is derived from an ephemeral value, which means that Terracina cannot persist it between plan/apply rounds. Use only non-ephemeral values to specify a resource's instance keys.`,
 					},
 				)
 			},
@@ -296,7 +296,7 @@ module "child" {
 			module: map[string]string{
 				"child/main.tf": `
 				
-terraform {
+terracina {
     required_providers {
         ephem = {
             source = "hashicorp/ephem"
@@ -387,7 +387,7 @@ check "check_using_ephemeral_value" {
 				diags = diags.Append(&hcl.Diagnostic{
 					Severity: hcl.DiagWarning,
 					Summary:  "Error message refers to ephemeral values",
-					Detail: "The error expression used to explain this condition refers to ephemeral values, so Terraform will not display the resulting message." +
+					Detail: "The error expression used to explain this condition refers to ephemeral values, so Terracina will not display the resulting message." +
 						"\n\nYou can correct this by removing references to ephemeral values, or by using the ephemeralasnull() function on the references to not reveal ephemeral data.",
 				})
 				return diags
@@ -544,7 +544,7 @@ This was checked by the validation rule at %s.`, m.Module.Variables["ephem"].Val
 				}).Append(&hcl.Diagnostic{
 					Severity: hcl.DiagError,
 					Summary:  "Error message refers to ephemeral values",
-					Detail: `The error expression used to explain this condition refers to ephemeral values. Terraform will not display the resulting message.
+					Detail: `The error expression used to explain this condition refers to ephemeral values. Terracina will not display the resulting message.
 
 You can correct this by removing references to ephemeral values, or by carefully using the ephemeralasnull() function if the expression will not reveal the ephemeral data.`,
 				})

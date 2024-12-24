@@ -8,10 +8,10 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/promising"
-	"github.com/hashicorp/terraform/internal/stacks/stackplan"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/promising"
+	"github.com/hashicorp/terracina/internal/stacks/stackplan"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // RefreshInstance is different kind of node in the graph. Rather than being

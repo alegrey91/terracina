@@ -1,9 +1,9 @@
 ---
-name: build_terraform
+name: build_terracina
 
 # This workflow is intended to be called by the build workflow. The crt make
 # targets that are utilized automatically determine build metadata and
-# handle building and packing Terraform.
+# handle building and packing Terracina.
 
 on:
   workflow_call:
@@ -22,7 +22,7 @@ on:
         type: string
       package-name:
         type: string
-        default: terraform
+        default: terracina
       product-version:
         type: string
         required: true
@@ -36,13 +36,13 @@ on:
 jobs:
   build:
     runs-on: ${{ inputs.runson }}
-    name: Terraform ${{ inputs.goos }} ${{ inputs.goarch }} v${{ inputs.product-version }}
+    name: Terracina ${{ inputs.goos }} ${{ inputs.goarch }} v${{ inputs.product-version }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: actions/setup-go@41dfa10bad2bb2ae585af6ee5bb4d7d973ad74ed # v5.1.0
         with:
           go-version: ${{ inputs.go-version }}
-      - name: Build Terraform
+      - name: Build Terracina
         env:
           GOOS: ${{ inputs.goos }}
           GOARCH: ${{ inputs.goarch }}
@@ -69,14 +69,14 @@ jobs:
       - if: ${{ inputs.goos == 'linux' }}
         uses: hashicorp/actions-packaging-linux@8d55a640bb30b5508f16757ea908b274564792d4 # v1.9
         with:
-          name: "terraform"
-          description: "Terraform enables you to safely and predictably create, change, and improve infrastructure. It is a tool that codifies APIs into declarative configuration files that can be shared amongst team members, treated as code, edited, reviewed, and versioned."
+          name: "terracina"
+          description: "Terracina enables you to safely and predictably create, change, and improve infrastructure. It is a tool that codifies APIs into declarative configuration files that can be shared amongst team members, treated as code, edited, reviewed, and versioned."
           arch: ${{ inputs.goarch }}
           version: ${{ inputs.product-version }}
           maintainer: "HashiCorp"
-          homepage: "https://terraform.io/"
+          homepage: "https://terracina.io/"
           license: "BUSL-1.1"
-          binary: "dist/terraform"
+          binary: "dist/terracina"
           deb_depends: "git"
           rpm_depends: "git"
           config_dir: ".release/linux/package/"

@@ -10,9 +10,9 @@ This topic provides reference information about the `templatestring` function. T
 
 ## Introduction
 
-The primary use case for the `templatestring` function is to render templates fetched as a single string from remote locations. The function enables advanced use cases where a [string template expression](/terraform/language/expressions/strings#string-templates) is insufficient, such as when the template is available from a named object declared in the current module. Refer to [Dynamic template construction](#dynamic-template-construction) for additional information. 
+The primary use case for the `templatestring` function is to render templates fetched as a single string from remote locations. The function enables advanced use cases where a [string template expression](/terracina/language/expressions/strings#string-templates) is insufficient, such as when the template is available from a named object declared in the current module. Refer to [Dynamic template construction](#dynamic-template-construction) for additional information. 
 
-To render a template from a file, use the [`templatefile` function](/terraform/language/functions/templatefile).
+To render a template from a file, use the [`templatefile` function](/terracina/language/functions/templatefile).
 
 ## Syntax
 
@@ -36,7 +36,7 @@ templatestring(data.aws_s3_object.example.body, {
 })
 ```
 
-For information about the syntax you can use for the variables arguments, refer to [Strings and Templates](/terraform/language/expressions/strings).
+For information about the syntax you can use for the variables arguments, refer to [Strings and Templates](/terracina/language/expressions/strings).
 
 ## Example use case
 
@@ -55,14 +55,14 @@ output "example" {
 }
 ```
 
-For more examples of how to use templates, refer to the documentation for [the `templatefile` function](/terraform/language/functions/templatefile#Examples).
+For more examples of how to use templates, refer to the documentation for [the `templatefile` function](/terracina/language/functions/templatefile#Examples).
 
 ## Dynamic template construction
 
-You can write an expression that builds a template dynamically and then assigns it to a [local value](/terraform/language/values/locals). You can then use a reference to that local value as the first argument to the `templatestring` function.
+You can write an expression that builds a template dynamically and then assigns it to a [local value](/terracina/language/values/locals). You can then use a reference to that local value as the first argument to the `templatestring` function.
 
-Note that you should only dynamically construct templates in this way when no other alternative is feasible. This is because the result can be difficult to understand and maintain and is susceptible to unexpected inputs. Built-in Terraform functions may interact with the local filesystem. As a result, the inputs may produce a template that includes data from arbitrary files on the system where Terraform is running.
+Note that you should only dynamically construct templates in this way when no other alternative is feasible. This is because the result can be difficult to understand and maintain and is susceptible to unexpected inputs. Built-in Terracina functions may interact with the local filesystem. As a result, the inputs may produce a template that includes data from arbitrary files on the system where Terracina is running.
 
 ## Related Functions
 
-* [`templatefile`](/terraform/language/functions/templatefile) reads a file from disk and renders its content as a template.
+* [`templatefile`](/terracina/language/functions/templatefile) reads a file from disk and renders its content as a template.

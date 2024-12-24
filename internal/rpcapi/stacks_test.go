@@ -12,7 +12,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/go-slug/sourceaddrs"
 	"github.com/hashicorp/go-slug/sourcebundle"
-	"github.com/hashicorp/terraform-svchost/disco"
+	"github.com/hashicorp/terracina-svchost/disco"
 	"github.com/zclconf/go-cty/cty"
 	ctymsgpack "github.com/zclconf/go-cty/cty/msgpack"
 	"google.golang.org/grpc"
@@ -22,21 +22,21 @@ import (
 	"google.golang.org/protobuf/testing/protocmp"
 	"google.golang.org/protobuf/types/known/anypb"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/depsfile"
-	"github.com/hashicorp/terraform/internal/getproviders/providerreqs"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/rpcapi/terraform1"
-	"github.com/hashicorp/terraform/internal/rpcapi/terraform1/dependencies"
-	"github.com/hashicorp/terraform/internal/rpcapi/terraform1/stacks"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/stacks/stackconfig"
-	"github.com/hashicorp/terraform/internal/stacks/stackplan"
-	stacks_testing_provider "github.com/hashicorp/terraform/internal/stacks/stackruntime/testing"
-	"github.com/hashicorp/terraform/internal/stacks/stackstate"
-	"github.com/hashicorp/terraform/internal/stacks/tfstackdata1"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/version"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/depsfile"
+	"github.com/hashicorp/terracina/internal/getproviders/providerreqs"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/rpcapi/terracina1"
+	"github.com/hashicorp/terracina/internal/rpcapi/terracina1/dependencies"
+	"github.com/hashicorp/terracina/internal/rpcapi/terracina1/stacks"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/stacks/stackconfig"
+	"github.com/hashicorp/terracina/internal/stacks/stackplan"
+	stacks_testing_provider "github.com/hashicorp/terracina/internal/stacks/stackruntime/testing"
+	"github.com/hashicorp/terracina/internal/stacks/stackstate"
+	"github.com/hashicorp/terracina/internal/stacks/tfstackdata1"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/version"
 )
 
 func TestStacksOpenCloseStackConfiguration(t *testing.T) {
@@ -59,7 +59,7 @@ func TestStacksOpenCloseStackConfiguration(t *testing.T) {
 
 	openResp, err := stacksServer.OpenStackConfiguration(ctx, &stacks.OpenStackConfiguration_Request{
 		SourceBundleHandle: sourcesHnd.ForProtobuf(),
-		SourceAddress: &terraform1.SourceAddress{
+		SourceAddress: &terracina1.SourceAddress{
 			Source: "git::https://example.com/foo.git",
 		},
 	})
@@ -142,7 +142,7 @@ func TestStacksFindStackConfigurationComponents(t *testing.T) {
 	t.Run("empty config", func(t *testing.T) {
 		openResp, err := stacksServer.OpenStackConfiguration(ctx, &stacks.OpenStackConfiguration_Request{
 			SourceBundleHandle: sourcesHnd.ForProtobuf(),
-			SourceAddress: &terraform1.SourceAddress{
+			SourceAddress: &terracina1.SourceAddress{
 				Source: "git::https://example.com/foo.git",
 			},
 		})
@@ -175,7 +175,7 @@ func TestStacksFindStackConfigurationComponents(t *testing.T) {
 	t.Run("non-empty config", func(t *testing.T) {
 		openResp, err := stacksServer.OpenStackConfiguration(ctx, &stacks.OpenStackConfiguration_Request{
 			SourceBundleHandle: sourcesHnd.ForProtobuf(),
-			SourceAddress: &terraform1.SourceAddress{
+			SourceAddress: &terracina1.SourceAddress{
 				Source: "git::https://example.com/foo.git//non-empty-stack",
 			},
 		})
@@ -347,7 +347,7 @@ func TestStacksOpenPlan(t *testing.T) {
 		}
 	}
 	send(t, &tfstackdata1.PlanHeader{
-		TerraformVersion: version.SemVer.String(),
+		TerracinaVersion: version.SemVer.String(),
 	})
 	send(t, &tfstackdata1.PlanPriorStateElem{
 		// We don't actually analyze or validate these items while
@@ -429,7 +429,7 @@ func TestStacksPlanStackChanges(t *testing.T) {
 				PlannedChange: &stacks.PlannedChange{
 					Raw: []*anypb.Any{
 						mustMarshalAnyPb(&tfstackdata1.PlanHeader{
-							TerraformVersion: version.SemVer.String(),
+							TerracinaVersion: version.SemVer.String(),
 						}),
 					},
 				},
@@ -490,7 +490,7 @@ func TestStackChangeProgress(t *testing.T) {
 		state       []stackstate.AppliedChange
 		inputs      map[string]cty.Value
 		want        []*stacks.StackChangeProgress
-		diagnostics []*terraform1.Diagnostic
+		diagnostics []*terracina1.Diagnostic
 	}{
 		"deferred_changes": {
 			source: "git::https://example.com/bar.git",
@@ -519,7 +519,7 @@ func TestStackChangeProgress(t *testing.T) {
 									ResourceInstanceAddr:  "testing_deferred_resource.resource",
 								},
 								Actions:      []stacks.ChangeType{stacks.ChangeType_CREATE},
-								ProviderAddr: "registry.terraform.io/hashicorp/testing",
+								ProviderAddr: "registry.terracina.io/hashicorp/testing",
 							},
 						},
 					},
@@ -532,7 +532,7 @@ func TestStackChangeProgress(t *testing.T) {
 								ResourceInstanceAddr:  "testing_deferred_resource.resource",
 							},
 							Status:       stacks.StackChangeProgress_ResourceInstanceStatus_PLANNING,
-							ProviderAddr: "registry.terraform.io/hashicorp/testing",
+							ProviderAddr: "registry.terracina.io/hashicorp/testing",
 						},
 					},
 				},
@@ -544,7 +544,7 @@ func TestStackChangeProgress(t *testing.T) {
 								ResourceInstanceAddr:  "testing_deferred_resource.resource",
 							},
 							Status:       stacks.StackChangeProgress_ResourceInstanceStatus_PLANNED,
-							ProviderAddr: "registry.terraform.io/hashicorp/testing",
+							ProviderAddr: "registry.terracina.io/hashicorp/testing",
 						},
 					},
 				},
@@ -604,7 +604,7 @@ func TestStackChangeProgress(t *testing.T) {
 									ResourceInstanceAddr:  "testing_resource.before",
 								},
 							},
-							ProviderAddr: "registry.terraform.io/hashicorp/testing",
+							ProviderAddr: "registry.terracina.io/hashicorp/testing",
 						},
 					},
 				},
@@ -662,7 +662,7 @@ func TestStackChangeProgress(t *testing.T) {
 								Imported: &stacks.StackChangeProgress_ResourceInstancePlannedChange_Imported{
 									Unknown: true,
 								},
-								ProviderAddr: "registry.terraform.io/hashicorp/testing",
+								ProviderAddr: "registry.terracina.io/hashicorp/testing",
 							},
 						},
 					},
@@ -675,7 +675,7 @@ func TestStackChangeProgress(t *testing.T) {
 								ResourceInstanceAddr:  "testing_resource.resource",
 							},
 							Status:       stacks.StackChangeProgress_ResourceInstanceStatus_PLANNING,
-							ProviderAddr: "registry.terraform.io/hashicorp/testing",
+							ProviderAddr: "registry.terracina.io/hashicorp/testing",
 						},
 					},
 				},
@@ -687,7 +687,7 @@ func TestStackChangeProgress(t *testing.T) {
 								ResourceInstanceAddr:  "testing_resource.resource",
 							},
 							Status:       stacks.StackChangeProgress_ResourceInstanceStatus_PLANNED,
-							ProviderAddr: "registry.terraform.io/hashicorp/testing",
+							ProviderAddr: "registry.terracina.io/hashicorp/testing",
 						},
 					},
 				}, {
@@ -713,7 +713,7 @@ func TestStackChangeProgress(t *testing.T) {
 							Imported: &stacks.StackChangeProgress_ResourceInstancePlannedChange_Imported{
 								ImportId: "self",
 							},
-							ProviderAddr: "registry.terraform.io/hashicorp/testing",
+							ProviderAddr: "registry.terracina.io/hashicorp/testing",
 						},
 					},
 				},
@@ -725,7 +725,7 @@ func TestStackChangeProgress(t *testing.T) {
 								ResourceInstanceAddr:  "testing_resource.resource",
 							},
 							Status:       stacks.StackChangeProgress_ResourceInstanceStatus_PLANNING,
-							ProviderAddr: "registry.terraform.io/hashicorp/testing",
+							ProviderAddr: "registry.terracina.io/hashicorp/testing",
 						},
 					},
 				},
@@ -737,7 +737,7 @@ func TestStackChangeProgress(t *testing.T) {
 								ResourceInstanceAddr:  "testing_resource.resource",
 							},
 							Status:       stacks.StackChangeProgress_ResourceInstanceStatus_PLANNED,
-							ProviderAddr: "registry.terraform.io/hashicorp/testing",
+							ProviderAddr: "registry.terracina.io/hashicorp/testing",
 						},
 					},
 				},
@@ -780,7 +780,7 @@ func TestStackChangeProgress(t *testing.T) {
 							Actions: []stacks.ChangeType{
 								stacks.ChangeType_FORGET,
 							},
-							ProviderAddr: "registry.terraform.io/hashicorp/testing",
+							ProviderAddr: "registry.terracina.io/hashicorp/testing",
 						},
 					},
 				},
@@ -797,11 +797,11 @@ func TestStackChangeProgress(t *testing.T) {
 					},
 				},
 			},
-			diagnostics: []*terraform1.Diagnostic{
+			diagnostics: []*terracina1.Diagnostic{
 				{
-					Severity: terraform1.Diagnostic_WARNING,
-					Summary:  "Some objects will no longer be managed by Terraform",
-					Detail:   "If you apply this plan, Terraform will discard its tracking information for the following objects, but it will not delete them:\n - testing_resource.resource\n\nAfter applying this plan, Terraform will no longer manage these objects. You will need to import them into Terraform to manage them again.",
+					Severity: terracina1.Diagnostic_WARNING,
+					Summary:  "Some objects will no longer be managed by Terracina",
+					Detail:   "If you apply this plan, Terracina will discard its tracking information for the following objects, but it will not delete them:\n - testing_resource.resource\n\nAfter applying this plan, Terracina will no longer manage these objects. You will need to import them into Terracina to manage them again.",
 				},
 			},
 		},
@@ -844,7 +844,7 @@ func TestStackChangeProgress(t *testing.T) {
 
 			open, err := stacksClient.OpenStackConfiguration(ctx, &stacks.OpenStackConfiguration_Request{
 				SourceBundleHandle: hnd.ForProtobuf(),
-				SourceAddress: &terraform1.SourceAddress{
+				SourceAddress: &terracina1.SourceAddress{
 					Source: tc.source,
 				},
 			})
@@ -866,9 +866,9 @@ func TestStackChangeProgress(t *testing.T) {
 							Value: &stacks.DynamicValue{
 								Msgpack: mustMsgpack(t, value, value.Type()),
 							},
-							SourceRange: &terraform1.SourceRange{
-								Start: &terraform1.SourcePos{},
-								End:   &terraform1.SourcePos{},
+							SourceRange: &terracina1.SourceRange{
+								Start: &terracina1.SourcePos{},
+								End:   &terracina1.SourcePos{},
 							},
 						}
 					}
@@ -986,7 +986,7 @@ type stackOperationEventStreams struct {
 	Diagnostics    []*stacks.PlanStackChanges_Event
 
 	// MiscHooks is the "everything else" category where the detailed begin/end
-	// events for individual Terraform Core operations appear.
+	// events for individual Terracina Core operations appear.
 	MiscHooks []*stacks.PlanStackChanges_Event
 }
 

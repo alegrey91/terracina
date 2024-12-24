@@ -10,25 +10,25 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/backend/backendrun"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/terraform"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/backend/backendrun"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/terracina"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 func TestParseCloudRunVariables(t *testing.T) {
 	t.Run("populates variables from allowed sources", func(t *testing.T) {
 		vv := map[string]backendrun.UnparsedVariableValue{
-			"undeclared":                      testUnparsedVariableValue{source: terraform.ValueFromCLIArg, value: cty.StringVal("0")},
-			"declaredFromConfig":              testUnparsedVariableValue{source: terraform.ValueFromConfig, value: cty.StringVal("1")},
-			"declaredFromNamedFileMapString":  testUnparsedVariableValue{source: terraform.ValueFromNamedFile, value: cty.MapVal(map[string]cty.Value{"foo": cty.StringVal("bar")})},
-			"declaredFromNamedFileBool":       testUnparsedVariableValue{source: terraform.ValueFromNamedFile, value: cty.BoolVal(true)},
-			"declaredFromNamedFileNumber":     testUnparsedVariableValue{source: terraform.ValueFromNamedFile, value: cty.NumberIntVal(2)},
-			"declaredFromNamedFileListString": testUnparsedVariableValue{source: terraform.ValueFromNamedFile, value: cty.ListVal([]cty.Value{cty.StringVal("2a"), cty.StringVal("2b")})},
-			"declaredFromNamedFileNull":       testUnparsedVariableValue{source: terraform.ValueFromNamedFile, value: cty.NullVal(cty.String)},
-			"declaredFromNamedMapComplex":     testUnparsedVariableValue{source: terraform.ValueFromNamedFile, value: cty.MapVal(map[string]cty.Value{"foo": cty.ObjectVal(map[string]cty.Value{"qux": cty.ListVal([]cty.Value{cty.BoolVal(true), cty.BoolVal(false)})})})},
-			"declaredFromCLIArg":              testUnparsedVariableValue{source: terraform.ValueFromCLIArg, value: cty.StringVal("3")},
-			"declaredFromEnvVar":              testUnparsedVariableValue{source: terraform.ValueFromEnvVar, value: cty.StringVal("4")},
+			"undeclared":                      testUnparsedVariableValue{source: terracina.ValueFromCLIArg, value: cty.StringVal("0")},
+			"declaredFromConfig":              testUnparsedVariableValue{source: terracina.ValueFromConfig, value: cty.StringVal("1")},
+			"declaredFromNamedFileMapString":  testUnparsedVariableValue{source: terracina.ValueFromNamedFile, value: cty.MapVal(map[string]cty.Value{"foo": cty.StringVal("bar")})},
+			"declaredFromNamedFileBool":       testUnparsedVariableValue{source: terracina.ValueFromNamedFile, value: cty.BoolVal(true)},
+			"declaredFromNamedFileNumber":     testUnparsedVariableValue{source: terracina.ValueFromNamedFile, value: cty.NumberIntVal(2)},
+			"declaredFromNamedFileListString": testUnparsedVariableValue{source: terracina.ValueFromNamedFile, value: cty.ListVal([]cty.Value{cty.StringVal("2a"), cty.StringVal("2b")})},
+			"declaredFromNamedFileNull":       testUnparsedVariableValue{source: terracina.ValueFromNamedFile, value: cty.NullVal(cty.String)},
+			"declaredFromNamedMapComplex":     testUnparsedVariableValue{source: terracina.ValueFromNamedFile, value: cty.MapVal(map[string]cty.Value{"foo": cty.ObjectVal(map[string]cty.Value{"qux": cty.ListVal([]cty.Value{cty.BoolVal(true), cty.BoolVal(false)})})})},
+			"declaredFromCLIArg":              testUnparsedVariableValue{source: terracina.ValueFromCLIArg, value: cty.StringVal("3")},
+			"declaredFromEnvVar":              testUnparsedVariableValue{source: terracina.ValueFromEnvVar, value: cty.StringVal("4")},
 		}
 
 		decls := map[string]*configs.Variable{
@@ -170,12 +170,12 @@ func TestParseCloudRunVariables(t *testing.T) {
 }
 
 type testUnparsedVariableValue struct {
-	source terraform.ValueSourceType
+	source terracina.ValueSourceType
 	value  cty.Value
 }
 
-func (v testUnparsedVariableValue) ParseVariableValue(mode configs.VariableParsingMode) (*terraform.InputValue, tfdiags.Diagnostics) {
-	return &terraform.InputValue{
+func (v testUnparsedVariableValue) ParseVariableValue(mode configs.VariableParsingMode) (*terracina.InputValue, tfdiags.Diagnostics) {
+	return &terracina.InputValue{
 		Value:      v.value,
 		SourceType: v.source,
 		SourceRange: tfdiags.SourceRange{

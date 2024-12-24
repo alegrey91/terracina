@@ -20,23 +20,23 @@ import (
 	"github.com/zclconf/go-cty-debug/ctydebug"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	terraformProvider "github.com/hashicorp/terraform/internal/builtin/providers/terraform"
-	"github.com/hashicorp/terraform/internal/collections"
-	"github.com/hashicorp/terraform/internal/depsfile"
-	"github.com/hashicorp/terraform/internal/getproviders/providerreqs"
-	"github.com/hashicorp/terraform/internal/lang/marks"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/stacks/stackplan"
-	"github.com/hashicorp/terraform/internal/stacks/stackruntime/hooks"
-	"github.com/hashicorp/terraform/internal/stacks/stackruntime/internal/stackeval"
-	stacks_testing_provider "github.com/hashicorp/terraform/internal/stacks/stackruntime/testing"
-	"github.com/hashicorp/terraform/internal/stacks/stackstate"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/tfdiags"
-	"github.com/hashicorp/terraform/version"
+	"github.com/hashicorp/terracina/internal/addrs"
+	terracinaProvider "github.com/hashicorp/terracina/internal/builtin/providers/terracina"
+	"github.com/hashicorp/terracina/internal/collections"
+	"github.com/hashicorp/terracina/internal/depsfile"
+	"github.com/hashicorp/terracina/internal/getproviders/providerreqs"
+	"github.com/hashicorp/terracina/internal/lang/marks"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/stacks/stackplan"
+	"github.com/hashicorp/terracina/internal/stacks/stackruntime/hooks"
+	"github.com/hashicorp/terracina/internal/stacks/stackruntime/internal/stackeval"
+	stacks_testing_provider "github.com/hashicorp/terracina/internal/stacks/stackruntime/testing"
+	"github.com/hashicorp/terracina/internal/stacks/stackstate"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/tfdiags"
+	"github.com/hashicorp/terracina/version"
 )
 
 var changesCmpOpts = cmp.Options{
@@ -79,7 +79,7 @@ func TestApply(t *testing.T) {
 							Applyable: true,
 						},
 						&stackplan.PlannedChangeHeader{
-							TerraformVersion: version.SemVer,
+							TerracinaVersion: version.SemVer,
 						},
 						&stackplan.PlannedChangeOutputValue{
 							Addr:   mustStackOutputValue("value"),
@@ -127,7 +127,7 @@ func TestApply(t *testing.T) {
 							Applyable: true,
 						},
 						&stackplan.PlannedChangeHeader{
-							TerraformVersion: version.SemVer,
+							TerracinaVersion: version.SemVer,
 						},
 						&stackplan.PlannedChangeOutputValue{
 							Addr:   mustStackOutputValue("value"),
@@ -175,7 +175,7 @@ func TestApply(t *testing.T) {
 							Applyable: true,
 						},
 						&stackplan.PlannedChangeHeader{
-							TerraformVersion: version.SemVer,
+							TerracinaVersion: version.SemVer,
 						},
 						&stackplan.PlannedChangeOutputValue{
 							Addr:   mustStackOutputValue("value"),
@@ -222,7 +222,7 @@ func TestApply(t *testing.T) {
 							Applyable: true,
 						},
 						&stackplan.PlannedChangeHeader{
-							TerraformVersion: version.SemVer,
+							TerracinaVersion: version.SemVer,
 						},
 						&stackplan.PlannedChangeOutputValue{
 							Addr:   mustStackOutputValue("removed"),
@@ -427,7 +427,7 @@ func TestApply(t *testing.T) {
 							Schema:             stacks_testing_provider.TestingResourceSchema,
 						},
 						&stackplan.PlannedChangeHeader{
-							TerraformVersion: version.SemVer,
+							TerracinaVersion: version.SemVer,
 						},
 						&stackplan.PlannedChangePlannedTimestamp{
 							PlannedTimestamp: fakePlanTimestamp,
@@ -572,7 +572,7 @@ func TestApply(t *testing.T) {
 							Schema:             stacks_testing_provider.TestingResourceSchema,
 						},
 						&stackplan.PlannedChangeHeader{
-							TerraformVersion: version.SemVer,
+							TerracinaVersion: version.SemVer,
 						},
 						&stackplan.PlannedChangePlannedTimestamp{
 							PlannedTimestamp: fakePlanTimestamp,
@@ -673,7 +673,7 @@ func TestApply(t *testing.T) {
 							Applyable: true,
 						},
 						&stackplan.PlannedChangeHeader{
-							TerraformVersion: version.SemVer,
+							TerracinaVersion: version.SemVer,
 						},
 						&stackplan.PlannedChangePlannedTimestamp{
 							PlannedTimestamp: fakePlanTimestamp,
@@ -821,7 +821,7 @@ func TestApply(t *testing.T) {
 							Schema:             stacks_testing_provider.TestingResourceSchema,
 						},
 						&stackplan.PlannedChangeHeader{
-							TerraformVersion: version.SemVer,
+							TerracinaVersion: version.SemVer,
 						},
 						&stackplan.PlannedChangePlannedTimestamp{
 							PlannedTimestamp: fakePlanTimestamp,
@@ -830,11 +830,11 @@ func TestApply(t *testing.T) {
 					wantPlannedDiags: initDiags(func(diags tfdiags.Diagnostics) tfdiags.Diagnostics {
 						return diags.Append(tfdiags.Sourceless(
 							tfdiags.Warning,
-							"Some objects will no longer be managed by Terraform",
-							`If you apply this plan, Terraform will discard its tracking information for the following objects, but it will not delete them:
+							"Some objects will no longer be managed by Terracina",
+							`If you apply this plan, Terracina will discard its tracking information for the following objects, but it will not delete them:
  - testing_resource.data
 
-After applying this plan, Terraform will no longer manage these objects. You will need to import them into Terraform to manage them again.`,
+After applying this plan, Terracina will no longer manage these objects. You will need to import them into Terracina to manage them again.`,
 						))
 					}),
 					wantAppliedChanges: []stackstate.AppliedChange{
@@ -907,7 +907,7 @@ After applying this plan, Terraform will no longer manage these objects. You wil
 							Schema:             stacks_testing_provider.TestingResourceSchema,
 						},
 						&stackplan.PlannedChangeHeader{
-							TerraformVersion: version.SemVer,
+							TerracinaVersion: version.SemVer,
 						},
 						&stackplan.PlannedChangePlannedTimestamp{
 							PlannedTimestamp: fakePlanTimestamp,
@@ -1015,10 +1015,10 @@ After applying this plan, Terraform will no longer manage these objects. You wil
 				{
 					planMode: plans.NormalMode,
 					wantPlannedDiags: tfdiags.Diagnostics{
-						tfdiags.Sourceless(tfdiags.Warning, "Some objects will no longer be managed by Terraform", `If you apply this plan, Terraform will discard its tracking information for the following objects, but it will not delete them:
+						tfdiags.Sourceless(tfdiags.Warning, "Some objects will no longer be managed by Terracina", `If you apply this plan, Terracina will discard its tracking information for the following objects, but it will not delete them:
  - testing_resource.resource
 
-After applying this plan, Terraform will no longer manage these objects. You will need to import them into Terraform to manage them again.`),
+After applying this plan, Terracina will no longer manage these objects. You will need to import them into Terracina to manage them again.`),
 					},
 					wantAppliedChanges: []stackstate.AppliedChange{
 						&stackstate.AppliedChangeComponentInstance{
@@ -1108,14 +1108,14 @@ After applying this plan, Terraform will no longer manage these objects. You wil
 				{
 					planMode: plans.NormalMode,
 					wantPlannedDiags: tfdiags.Diagnostics{
-						tfdiags.Sourceless(tfdiags.Warning, "Some objects will no longer be managed by Terraform", `If you apply this plan, Terraform will discard its tracking information for the following objects, but it will not delete them:
+						tfdiags.Sourceless(tfdiags.Warning, "Some objects will no longer be managed by Terracina", `If you apply this plan, Terracina will discard its tracking information for the following objects, but it will not delete them:
  - testing_resource.resource
 
-After applying this plan, Terraform will no longer manage these objects. You will need to import them into Terraform to manage them again.`),
-						tfdiags.Sourceless(tfdiags.Warning, "Some objects will no longer be managed by Terraform", `If you apply this plan, Terraform will discard its tracking information for the following objects, but it will not delete them:
+After applying this plan, Terracina will no longer manage these objects. You will need to import them into Terracina to manage them again.`),
+						tfdiags.Sourceless(tfdiags.Warning, "Some objects will no longer be managed by Terracina", `If you apply this plan, Terracina will discard its tracking information for the following objects, but it will not delete them:
  - testing_resource.resource
 
-After applying this plan, Terraform will no longer manage these objects. You will need to import them into Terraform to manage them again.`),
+After applying this plan, Terracina will no longer manage these objects. You will need to import them into Terracina to manage them again.`),
 					},
 					wantAppliedChanges: []stackstate.AppliedChange{
 						&stackstate.AppliedChangeComponentInstanceRemoved{
@@ -1549,8 +1549,8 @@ func TestApplyWithRemovedResource(t *testing.T) {
 	planReq := PlanRequest{
 		Config: cfg,
 		ProviderFactories: map[addrs.Provider]providers.Factory{
-			addrs.NewBuiltInProvider("terraform"): func() (providers.Interface, error) {
-				return terraformProvider.NewProvider(), nil
+			addrs.NewBuiltInProvider("terracina"): func() (providers.Interface, error) {
+				return terracinaProvider.NewProvider(), nil
 			},
 		},
 		DependencyLocks: *lock,
@@ -1578,7 +1578,7 @@ func TestApplyWithRemovedResource(t *testing.T) {
 							Resource: addrs.ResourceInstance{
 								Resource: addrs.Resource{
 									Mode: addrs.ManagedResourceMode,
-									Type: "terraform_data",
+									Type: "terracina_data",
 									Name: "main",
 								},
 								Key: addrs.NoKey,
@@ -1605,7 +1605,7 @@ func TestApplyWithRemovedResource(t *testing.T) {
 				}).
 				SetProviderAddr(addrs.AbsProviderConfig{
 					Module:   addrs.RootModule,
-					Provider: addrs.MustParseProviderSourceString("terraform.io/builtin/terraform"),
+					Provider: addrs.MustParseProviderSourceString("terracina.io/builtin/terracina"),
 				})).
 			Build(),
 	}
@@ -1646,8 +1646,8 @@ func TestApplyWithRemovedResource(t *testing.T) {
 		Config: cfg,
 		Plan:   plan,
 		ProviderFactories: map[addrs.Provider]providers.Factory{
-			addrs.NewBuiltInProvider("terraform"): func() (providers.Interface, error) {
-				return terraformProvider.NewProvider(), nil
+			addrs.NewBuiltInProvider("terracina"): func() (providers.Interface, error) {
+				return terracinaProvider.NewProvider(), nil
 			},
 		},
 	}
@@ -1674,13 +1674,13 @@ func TestApplyWithRemovedResource(t *testing.T) {
 			InputVariables:        make(map[addrs.InputVariable]cty.Value),
 		},
 		&stackstate.AppliedChangeResourceInstanceObject{
-			ResourceInstanceObjectAddr: mustAbsResourceInstanceObject("component.self.terraform_data.main"),
+			ResourceInstanceObjectAddr: mustAbsResourceInstanceObject("component.self.terracina_data.main"),
 			NewStateSrc:                nil, // Deleted, so is nil.
 			ProviderConfigAddr: addrs.AbsProviderConfig{
 				Provider: addrs.Provider{
-					Type:      "terraform",
+					Type:      "terracina",
 					Namespace: "builtin",
-					Hostname:  "terraform.io",
+					Hostname:  "terracina.io",
 				},
 			},
 		},
@@ -2786,7 +2786,7 @@ func TestApplyWithStateManipulation(t *testing.T) {
 					},
 				}),
 			planDiags: []expectedDiagnostic{
-				expectDiagnostic(tfdiags.Warning, "Some objects will no longer be managed by Terraform", "If you apply this plan, Terraform will discard its tracking information for the following objects, but it will not delete them:\n - testing_resource.resource\n\nAfter applying this plan, Terraform will no longer manage these objects. You will need to import them into Terraform to manage them again."),
+				expectDiagnostic(tfdiags.Warning, "Some objects will no longer be managed by Terracina", "If you apply this plan, Terracina will discard its tracking information for the following objects, but it will not delete them:\n - testing_resource.resource\n\nAfter applying this plan, Terracina will no longer manage these objects. You will need to import them into Terracina to manage them again."),
 			},
 		},
 		"removed-failed-dep": {
@@ -2834,7 +2834,7 @@ func TestApplyWithStateManipulation(t *testing.T) {
 					},
 				}),
 			planDiags: []expectedDiagnostic{
-				expectDiagnostic(tfdiags.Warning, "Some objects will no longer be managed by Terraform", "If you apply this plan, Terraform will discard its tracking information for the following objects, but it will not delete them:\n - testing_resource.resource\n\nAfter applying this plan, Terraform will no longer manage these objects. You will need to import them into Terraform to manage them again."),
+				expectDiagnostic(tfdiags.Warning, "Some objects will no longer be managed by Terracina", "If you apply this plan, Terracina will discard its tracking information for the following objects, but it will not delete them:\n - testing_resource.resource\n\nAfter applying this plan, Terracina will no longer manage these objects. You will need to import them into Terracina to manage them again."),
 			},
 			applyDiags: []expectedDiagnostic{
 				// This error comes from the testing_failed_resource
@@ -3178,7 +3178,7 @@ func TestApplyAutomaticInputConversion(t *testing.T) {
 		InputValues: map[stackaddrs.InputVariable]ExternalInputValue{
 			stackaddrs.InputVariable{Name: "input"}: {
 				// The stack expects a map of strings, but we're giving it
-				// an object. Terraform should automatically convert this to
+				// an object. Terracina should automatically convert this to
 				// the expected type.
 				Value: cty.ObjectVal(map[string]cty.Value{
 					"hello": cty.StringVal("hello"),
@@ -3230,7 +3230,7 @@ func TestApplyAutomaticInputConversion(t *testing.T) {
 		InputValues: map[stackaddrs.InputVariable]ExternalInputValue{
 			stackaddrs.InputVariable{Name: "input"}: {
 				// The stack expects a map of strings, but we're giving it
-				// an object. Terraform should automatically convert this to
+				// an object. Terracina should automatically convert this to
 				// the expected type.
 				Value: cty.ObjectVal(map[string]cty.Value{
 					"hello": cty.StringVal("hello"),
@@ -3526,7 +3526,7 @@ func TestApply_WithProviderFunctions(t *testing.T) {
 			},
 		},
 		&stackplan.PlannedChangeHeader{
-			TerraformVersion: version.SemVer,
+			TerracinaVersion: version.SemVer,
 		},
 		&stackplan.PlannedChangeOutputValue{
 			Addr:   stackaddrs.OutputValue{Name: "value"},
@@ -3858,7 +3858,7 @@ func TestApplyManuallyRemovedResource(t *testing.T) {
 
 		// We have in the previous state a resource that is not in our
 		// underlying data store. This simulates the case where someone went
-		// in and manually deleted a resource that Terraform is managing.
+		// in and manually deleted a resource that Terracina is managing.
 		//
 		// Some providers will return an error in this case, but some will
 		// not. We need to ensure that we handle the second case gracefully.

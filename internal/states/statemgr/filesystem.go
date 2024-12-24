@@ -17,9 +17,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/hashicorp/terraform/internal/schemarepo"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/states/statefile"
+	"github.com/hashicorp/terracina/internal/schemarepo"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/states/statefile"
 )
 
 // Filesystem is a full state manager that uses a file in the local filesystem
@@ -397,7 +397,7 @@ func (s *Filesystem) StateSnapshotMeta() SnapshotMeta {
 		Lineage: s.file.Lineage,
 		Serial:  s.file.Serial,
 
-		TerraformVersion: s.file.TerraformVersion,
+		TerracinaVersion: s.file.TerracinaVersion,
 	}
 }
 

@@ -24,33 +24,33 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	svchost "github.com/hashicorp/terraform-svchost"
-	"github.com/hashicorp/terraform-svchost/disco"
+	svchost "github.com/hashicorp/terracina-svchost"
+	"github.com/hashicorp/terracina-svchost/disco"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	backendInit "github.com/hashicorp/terraform/internal/backend/init"
-	backendLocal "github.com/hashicorp/terraform/internal/backend/local"
-	"github.com/hashicorp/terraform/internal/command/views"
-	"github.com/hashicorp/terraform/internal/command/workdir"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/configs/configload"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/copy"
-	"github.com/hashicorp/terraform/internal/depsfile"
-	"github.com/hashicorp/terraform/internal/getproviders"
-	"github.com/hashicorp/terraform/internal/initwd"
-	_ "github.com/hashicorp/terraform/internal/logging"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/plans/planfile"
-	"github.com/hashicorp/terraform/internal/providers"
-	testing_provider "github.com/hashicorp/terraform/internal/providers/testing"
-	"github.com/hashicorp/terraform/internal/registry"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/states/statefile"
-	"github.com/hashicorp/terraform/internal/states/statemgr"
-	"github.com/hashicorp/terraform/internal/terminal"
-	"github.com/hashicorp/terraform/version"
+	"github.com/hashicorp/terracina/internal/addrs"
+	backendInit "github.com/hashicorp/terracina/internal/backend/init"
+	backendLocal "github.com/hashicorp/terracina/internal/backend/local"
+	"github.com/hashicorp/terracina/internal/command/views"
+	"github.com/hashicorp/terracina/internal/command/workdir"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/configs/configload"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/copy"
+	"github.com/hashicorp/terracina/internal/depsfile"
+	"github.com/hashicorp/terracina/internal/getproviders"
+	"github.com/hashicorp/terracina/internal/initwd"
+	_ "github.com/hashicorp/terracina/internal/logging"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/plans/planfile"
+	"github.com/hashicorp/terracina/internal/providers"
+	testing_provider "github.com/hashicorp/terracina/internal/providers/testing"
+	"github.com/hashicorp/terracina/internal/registry"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/states/statefile"
+	"github.com/hashicorp/terracina/internal/states/statemgr"
+	"github.com/hashicorp/terracina/internal/terminal"
+	"github.com/hashicorp/terracina/version"
 )
 
 // These are the directories for our test data and fixtures.
@@ -216,13 +216,13 @@ func testPlanFileMatchState(t *testing.T, configSnap *configload.Snapshot, state
 		Lineage:          stateMeta.Lineage,
 		Serial:           stateMeta.Serial,
 		State:            state,
-		TerraformVersion: version.SemVer,
+		TerracinaVersion: version.SemVer,
 	}
 	prevStateFile := &statefile.File{
 		Lineage:          stateMeta.Lineage,
 		Serial:           stateMeta.Serial,
 		State:            state, // we just assume no changes detected during refresh
-		TerraformVersion: version.SemVer,
+		TerracinaVersion: version.SemVer,
 	}
 
 	path := testTempFile(t)
@@ -742,14 +742,14 @@ func testInputMap(t *testing.T, answers map[string]string) func() {
 // When using this function, the configuration fixture for the test must
 // include an empty configuration block for the HTTP backend, like this:
 //
-//	terraform {
+//	terracina {
 //	  backend "http" {
 //	  }
 //	}
 //
 // If such a block isn't present, or if it isn't empty, then an error will
 // be returned about the backend configuration having changed and that
-// "terraform init" must be run, since the test backend config cache created
+// "terracina init" must be run, since the test backend config cache created
 // by this function contains the hash for an empty configuration.
 func testBackendState(t *testing.T, s *states.State, c int) (*workdir.BackendStateFile, *httptest.Server) {
 	t.Helper()
@@ -994,7 +994,7 @@ func mustResourceAddr(s string) addrs.ConfigResource {
 var legacyProviderNamespaces = map[string]string{
 	"foo": "hashicorp",
 	"bar": "hashicorp",
-	"baz": "terraform-providers",
+	"baz": "terracina-providers",
 	"qux": "hashicorp",
 }
 
@@ -1014,7 +1014,7 @@ func testServices(t *testing.T) (services *disco.Disco, cleanup func()) {
 	server := httptest.NewServer(http.HandlerFunc(fakeRegistryHandler))
 
 	services = disco.New()
-	services.ForceHostServices(svchost.Hostname("registry.terraform.io"), map[string]interface{}{
+	services.ForceHostServices(svchost.Hostname("registry.terracina.io"), map[string]interface{}{
 		"providers.v1": server.URL + "/providers/v1/",
 	})
 
@@ -1096,8 +1096,8 @@ func testView(t *testing.T) (*views.View, func(*testing.T) *terminal.TestOutput)
 // checkGoldenReference compares the given test output with a known "golden" output log
 // located under the specified fixture path.
 //
-// If any of these tests fail, please communicate with HCP Terraform folks before resolving,
-// as changes to UI output may also affect the behavior of HCP Terraform's structured run output.
+// If any of these tests fail, please communicate with HCP Terracina folks before resolving,
+// as changes to UI output may also affect the behavior of HCP Terracina's structured run output.
 func checkGoldenReference(t *testing.T, output *terminal.TestOutput, fixturePathName string) {
 	t.Helper()
 
@@ -1125,8 +1125,8 @@ func checkGoldenReference(t *testing.T, output *terminal.TestOutput, fixturePath
 
 	if len(gotLines) != len(wantLines) {
 		t.Errorf("unexpected number of log lines: got %d, want %d\n"+
-			"NOTE: This failure may indicate a UI change affecting the behavior of structured run output on HCP Terraform.\n"+
-			"Please communicate with HCP Terraform team before resolving", len(gotLines), len(wantLines))
+			"NOTE: This failure may indicate a UI change affecting the behavior of structured run output on HCP Terracina.\n"+
+			"Please communicate with HCP Terracina team before resolving", len(gotLines), len(wantLines))
 	}
 
 	// Verify that the log starts with a version message
@@ -1134,7 +1134,7 @@ func checkGoldenReference(t *testing.T, output *terminal.TestOutput, fixturePath
 		Level     string `json:"@level"`
 		Message   string `json:"@message"`
 		Type      string `json:"type"`
-		Terraform string `json:"terraform"`
+		Terracina string `json:"terracina"`
 		UI        string `json:"ui"`
 	}
 	var gotVersion versionMessage
@@ -1143,7 +1143,7 @@ func checkGoldenReference(t *testing.T, output *terminal.TestOutput, fixturePath
 	}
 	wantVersion := versionMessage{
 		"info",
-		fmt.Sprintf("Terraform %s", version.String()),
+		fmt.Sprintf("Terracina %s", version.String()),
 		"version",
 		version.String(),
 		views.JSON_UI_VERSION,
@@ -1178,6 +1178,6 @@ func checkGoldenReference(t *testing.T, output *terminal.TestOutput, fixturePath
 	if diff := cmp.Diff(wantLineMaps, gotLineMaps); diff != "" {
 		t.Errorf("wrong output lines\n%s\n"+
 			"NOTE: This failure may indicate a UI change affecting the behavior of structured run output on TFC.\n"+
-			"Please communicate with HCP Terraform team before resolving", diff)
+			"Please communicate with HCP Terracina team before resolving", diff)
 	}
 }

@@ -12,7 +12,7 @@ import (
 	"github.com/zclconf/go-cty-debug/ctydebug"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 func TestParseRemovedFrom(t *testing.T) {

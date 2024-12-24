@@ -7,11 +7,11 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform/internal/addrs"
+	"github.com/hashicorp/terracina/internal/addrs"
 	"github.com/zclconf/go-cty/cty"
 
 	// set the correct global logger for tests
-	_ "github.com/hashicorp/terraform/internal/logging"
+	_ "github.com/hashicorp/terracina/internal/logging"
 )
 
 func TestFunctionCache(t *testing.T) {

@@ -1,5 +1,5 @@
 [
-  { "heading": "Terraform Internals" },
+  { "heading": "Terracina Internals" },
   {
     "title": "Overview", 
     "path": ""
@@ -9,7 +9,7 @@
     "path": "credentials-helpers"
   },
   {
-    "title": "Debugging Terraform",
+    "title": "Debugging Terracina",
     "path": "debugging"
   },
   {
@@ -58,7 +58,7 @@
     "hidden": true
   },
   { "divider": true },
-  { "title": "Terraform CLI", "href": "/cli" },
+  { "title": "Terracina CLI", "href": "/cli" },
   { "divider": true },
   { "title": "Configuration Language", "href": "/language" }
 ]

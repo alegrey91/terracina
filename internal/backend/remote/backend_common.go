@@ -16,10 +16,10 @@ import (
 
 	tfe "github.com/hashicorp/go-tfe"
 
-	"github.com/hashicorp/terraform/internal/backend/backendrun"
-	"github.com/hashicorp/terraform/internal/logging"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/terraform"
+	"github.com/hashicorp/terracina/internal/backend/backendrun"
+	"github.com/hashicorp/terracina/internal/logging"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/terracina"
 )
 
 var (
@@ -243,7 +243,7 @@ func (b *Remote) hasExplicitVariableValues(op *backendrun.Operation) bool {
 	// their final values will come from the _remote_ execution context.
 	for _, v := range variables {
 		switch v.SourceType {
-		case terraform.ValueFromCLIArg, terraform.ValueFromNamedFile:
+		case terracina.ValueFromCLIArg, terracina.ValueFromNamedFile:
 			return true
 		}
 	}
@@ -432,7 +432,7 @@ func (b *Remote) checkPolicy(stopCtx, cancelCtx context.Context, op *backendrun.
 					return generalError(fmt.Sprintf("Failed to override policy check.\n%s", runURL), err)
 				}
 			} else {
-				opts := &terraform.InputOpts{
+				opts := &terracina.InputOpts{
 					Id:          "override",
 					Query:       "\nDo you want to override the soft failed policy check?",
 					Description: "Only 'override' will be accepted to override.",
@@ -463,7 +463,7 @@ func (b *Remote) checkPolicy(stopCtx, cancelCtx context.Context, op *backendrun.
 	return nil
 }
 
-func (b *Remote) confirm(stopCtx context.Context, op *backendrun.Operation, opts *terraform.InputOpts, r *tfe.Run, keyword string) error {
+func (b *Remote) confirm(stopCtx context.Context, op *backendrun.Operation, opts *terracina.InputOpts, r *tfe.Run, keyword string) error {
 	doneCtx, cancel := context.WithCancel(stopCtx)
 	result := make(chan error, 2)
 

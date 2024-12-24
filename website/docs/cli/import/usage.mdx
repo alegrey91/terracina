@@ -1,31 +1,31 @@
 ---
 page_title: Import existing resources
-description: Learn now to use the `terraform import` command to import existing infrastructure resources.
+description: Learn now to use the `terracina import` command to import existing infrastructure resources.
 ---
 
 # Import existing resources
 
-This topic describes how to use the `terraform import` command to import existing infrastructure resources so that you can manage them as code.
+This topic describes how to use the `terracina import` command to import existing infrastructure resources so that you can manage them as code.
 
-> **Hands-on:** Try the [Import Terraform Configuration](/terraform/tutorials/state/state-import?utm_source=WEBSITE&utm_medium=WEB_IO&utm_offer=ARTICLE_PAGE&utm_content=DOCS) tutorial.
+> **Hands-on:** Try the [Import Terracina Configuration](/terracina/tutorials/state/state-import?utm_source=WEBSITE&utm_medium=WEB_IO&utm_offer=ARTICLE_PAGE&utm_content=DOCS) tutorial.
 
 ## Overview
 
-Use the `terraform import` command to import existing infrastructure to Terraform state. The `terraform import` command can only import one resource at a time. It cannot simultaneously import an entire collection of resources, such as an AWS VPC.
+Use the `terracina import` command to import existing infrastructure to Terracina state. The `terracina import` command can only import one resource at a time. It cannot simultaneously import an entire collection of resources, such as an AWS VPC.
 
 Complete the following steps to import resources:
 
-1. Add the resource you want to manage with Terraform to your Terraform configuration.
-1. Run the `terraform import` command.
+1. Add the resource you want to manage with Terracina to your Terracina configuration.
+1. Run the `terracina import` command.
 
 
-~> Warning: Terraform expects that each remote object it is managing will be
-bound to only one resource address, which is normally guaranteed by Terraform
-itself having created all objects. If you import existing objects into Terraform,
-be careful to import each remote object to only one Terraform resource address.
-If you import the same object multiple times, Terraform may exhibit unwanted
+~> Warning: Terracina expects that each remote object it is managing will be
+bound to only one resource address, which is normally guaranteed by Terracina
+itself having created all objects. If you import existing objects into Terracina,
+be careful to import each remote object to only one Terracina resource address.
+If you import the same object multiple times, Terracina may exhibit unwanted
 behavior. For more information on this assumption, see
-[the State section](/terraform/language/state).
+[the State section](/terracina/language/state).
 
 ## Add the resource to your configuration
 
@@ -42,24 +42,24 @@ resource "aws_instance" "example" {
 
 You do not have to complete the body of the resource block. Instead, you can finish defining arguments after the instance is imported.
 
-## Run the `terraform import` command
+## Run the `terracina import` command
 
-Run `terraform import` to attach an existing instance to the
+Run `terracina import` to attach an existing instance to the
 resource configuration:
 
 ```shell
-$ terraform import aws_instance.example i-abcd1234
+$ terracina import aws_instance.example i-abcd1234
 ```
 
 This command locates the AWS EC2 instance with ID `i-abcd1234`. Then it attaches
 the existing settings of the instance, as described by the EC2 API, to the
 name `aws_instance.example` of a module. In this example, the module path
 implies that the root module is used. Finally, the mapping is saved in the
-Terraform state.
+Terracina state.
 
 It is also possible to import to resources in child modules, using their paths,
 and to single instances of a resource with `count` or `for_each` set. See
-[_Resource Addressing_](/terraform/cli/state/resource-addressing) for more
+[_Resource Addressing_](/terracina/cli/state/resource-addressing) for more
 details on how to specify a target resource.
 
 The syntax of the given ID is dependent on the resource type being imported.
@@ -68,7 +68,7 @@ AWS Route53 Zones use the domain name itself. Consult the documentation for
 each importable resource for details on what form of ID is required.
 
 As a result of the above command, the resource is recorded in the state file.
-You can now run `terraform plan` to see how the configuration compares to
+You can now run `terracina plan` to see how the configuration compares to
 the imported resource, and make any adjustments to the configuration to
 align with the current (or desired) state of the imported object.
 
@@ -82,7 +82,7 @@ an `aws_network_acl` but also one `aws_network_acl_rule` for each rule.
 In this scenario, the secondary resources will not already exist in
 the configuration, so it is necessary to consult the import output and create
 a `resource` block in the configuration for each secondary resource. If this is
-not done, Terraform will plan to destroy the imported objects on the next run.
+not done, Terracina will plan to destroy the imported objects on the next run.
 
 If you want to rename or otherwise move the imported resources, the
-[state management commands](/terraform/cli/commands/state) can be used.
+[state management commands](/terracina/cli/commands/state) can be used.

@@ -8,14 +8,14 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/command/arguments"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	testing_provider "github.com/hashicorp/terraform/internal/providers/testing"
-	"github.com/hashicorp/terraform/internal/terminal"
-	"github.com/hashicorp/terraform/internal/terraform"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/command/arguments"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	testing_provider "github.com/hashicorp/terracina/internal/providers/testing"
+	"github.com/hashicorp/terracina/internal/terminal"
+	"github.com/hashicorp/terracina/internal/terracina"
 )
 
 // Ensure that the correct view type and in-automation settings propagate to the
@@ -134,9 +134,9 @@ func testPlanWithDatasource(t *testing.T) *plans.Plan {
 	return plan
 }
 
-func testSchemas() *terraform.Schemas {
+func testSchemas() *terracina.Schemas {
 	provider := testProvider()
-	return &terraform.Schemas{
+	return &terracina.Schemas{
 		Providers: map[addrs.Provider]providers.ProviderSchema{
 			addrs.NewDefaultProvider("test"): provider.GetProviderSchema(),
 		},

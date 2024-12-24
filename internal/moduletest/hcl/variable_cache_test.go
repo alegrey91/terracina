@@ -10,10 +10,10 @@ import (
 	"github.com/zclconf/go-cty-debug/ctydebug"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/backend/backendrun"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/terraform"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/backend/backendrun"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/terracina"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 
 	"testing"
 )
@@ -224,12 +224,12 @@ type variable struct {
 	value string
 }
 
-func (v *variable) ParseVariableValue(mode configs.VariableParsingMode) (*terraform.InputValue, tfdiags.Diagnostics) {
+func (v *variable) ParseVariableValue(mode configs.VariableParsingMode) (*terracina.InputValue, tfdiags.Diagnostics) {
 	var diags tfdiags.Diagnostics
 	value, valueDiags := mode.Parse(v.name, v.value)
 	diags = diags.Append(valueDiags)
-	return &terraform.InputValue{
+	return &terracina.InputValue{
 		Value:      value,
-		SourceType: terraform.ValueFromUnknown,
+		SourceType: terracina.ValueFromUnknown,
 	}, diags
 }

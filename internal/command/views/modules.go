@@ -7,9 +7,9 @@ import (
 	encJson "encoding/json"
 	"fmt"
 
-	"github.com/hashicorp/terraform/internal/command/arguments"
-	"github.com/hashicorp/terraform/internal/moduleref"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/command/arguments"
+	"github.com/hashicorp/terracina/internal/moduleref"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 	"github.com/xlab/treeprint"
 )
 

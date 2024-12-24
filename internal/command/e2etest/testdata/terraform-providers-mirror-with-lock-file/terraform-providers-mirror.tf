@@ -1,7 +1,7 @@
-terraform {
+terracina {
   required_providers {
     template  = { source = "hashicorp/template" }
     null      = { source = "hashicorp/null" }
-    terraform = { source = "terraform.io/builtin/terraform" }
+    terracina = { source = "terracina.io/builtin/terracina" }
   }
 }

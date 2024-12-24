@@ -10,8 +10,8 @@ import (
 	"github.com/apparentlymart/go-versions/versions"
 	"github.com/google/go-cmp/cmp"
 
-	svchost "github.com/hashicorp/terraform-svchost"
-	"github.com/hashicorp/terraform/internal/addrs"
+	svchost "github.com/hashicorp/terracina-svchost"
+	"github.com/hashicorp/terracina/internal/addrs"
 )
 
 func TestFilesystemMirrorSourceAllAvailablePackages(t *testing.T) {
@@ -27,29 +27,29 @@ func TestFilesystemMirrorSourceAllAvailablePackages(t *testing.T) {
 				Provider:       nullProvider,
 				Version:        versions.MustParseVersion("2.0.0"),
 				TargetPlatform: Platform{"darwin", "amd64"},
-				Filename:       "terraform-provider-null_2.0.0_darwin_amd64.zip",
-				Location:       PackageLocalDir("testdata/filesystem-mirror/registry.terraform.io/hashicorp/null/2.0.0/darwin_amd64"),
+				Filename:       "terracina-provider-null_2.0.0_darwin_amd64.zip",
+				Location:       PackageLocalDir("testdata/filesystem-mirror/registry.terracina.io/hashicorp/null/2.0.0/darwin_amd64"),
 			},
 			{
 				Provider:       nullProvider,
 				Version:        versions.MustParseVersion("2.0.0"),
 				TargetPlatform: Platform{"linux", "amd64"},
-				Filename:       "terraform-provider-null_2.0.0_linux_amd64.zip",
-				Location:       PackageLocalDir("testdata/filesystem-mirror/registry.terraform.io/hashicorp/null/2.0.0/linux_amd64"),
+				Filename:       "terracina-provider-null_2.0.0_linux_amd64.zip",
+				Location:       PackageLocalDir("testdata/filesystem-mirror/registry.terracina.io/hashicorp/null/2.0.0/linux_amd64"),
 			},
 			{
 				Provider:       nullProvider,
 				Version:        versions.MustParseVersion("2.1.0"),
 				TargetPlatform: Platform{"linux", "amd64"},
-				Filename:       "terraform-provider-null_2.1.0_linux_amd64.zip",
-				Location:       PackageLocalArchive("testdata/filesystem-mirror/registry.terraform.io/hashicorp/null/terraform-provider-null_2.1.0_linux_amd64.zip"),
+				Filename:       "terracina-provider-null_2.1.0_linux_amd64.zip",
+				Location:       PackageLocalArchive("testdata/filesystem-mirror/registry.terracina.io/hashicorp/null/terracina-provider-null_2.1.0_linux_amd64.zip"),
 			},
 			{
 				Provider:       nullProvider,
 				Version:        versions.MustParseVersion("2.0.0"),
 				TargetPlatform: Platform{"windows", "amd64"},
-				Filename:       "terraform-provider-null_2.0.0_windows_amd64.zip",
-				Location:       PackageLocalDir("testdata/filesystem-mirror/registry.terraform.io/hashicorp/null/2.0.0/windows_amd64"),
+				Filename:       "terracina-provider-null_2.0.0_windows_amd64.zip",
+				Location:       PackageLocalDir("testdata/filesystem-mirror/registry.terracina.io/hashicorp/null/2.0.0/windows_amd64"),
 			},
 		},
 		randomBetaProvider: {
@@ -57,8 +57,8 @@ func TestFilesystemMirrorSourceAllAvailablePackages(t *testing.T) {
 				Provider:       randomBetaProvider,
 				Version:        versions.MustParseVersion("1.2.0"),
 				TargetPlatform: Platform{"linux", "amd64"},
-				Filename:       "terraform-provider-random-beta_1.2.0_linux_amd64.zip",
-				Location:       PackageLocalDir("testdata/filesystem-mirror/registry.terraform.io/hashicorp/random-beta/1.2.0/linux_amd64"),
+				Filename:       "terracina-provider-random-beta_1.2.0_linux_amd64.zip",
+				Location:       PackageLocalDir("testdata/filesystem-mirror/registry.terracina.io/hashicorp/random-beta/1.2.0/linux_amd64"),
 			},
 		},
 		randomProvider: {
@@ -66,8 +66,8 @@ func TestFilesystemMirrorSourceAllAvailablePackages(t *testing.T) {
 				Provider:       randomProvider,
 				Version:        versions.MustParseVersion("1.2.0"),
 				TargetPlatform: Platform{"linux", "amd64"},
-				Filename:       "terraform-provider-random_1.2.0_linux_amd64.zip",
-				Location:       PackageLocalDir("testdata/filesystem-mirror/registry.terraform.io/hashicorp/random/1.2.0/linux_amd64"),
+				Filename:       "terracina-provider-random_1.2.0_linux_amd64.zip",
+				Location:       PackageLocalDir("testdata/filesystem-mirror/registry.terracina.io/hashicorp/random/1.2.0/linux_amd64"),
 			},
 		},
 
@@ -76,7 +76,7 @@ func TestFilesystemMirrorSourceAllAvailablePackages(t *testing.T) {
 				Provider:       happycloudProvider,
 				Version:        versions.MustParseVersion("0.1.0-alpha.2"),
 				TargetPlatform: Platform{"darwin", "amd64"},
-				Filename:       "terraform-provider-happycloud_0.1.0-alpha.2_darwin_amd64.zip",
+				Filename:       "terracina-provider-happycloud_0.1.0-alpha.2_darwin_amd64.zip",
 				Location:       PackageLocalDir("testdata/filesystem-mirror/tfe.example.com/AwesomeCorp/happycloud/0.1.0-alpha.2/darwin_amd64"),
 			},
 		},
@@ -85,8 +85,8 @@ func TestFilesystemMirrorSourceAllAvailablePackages(t *testing.T) {
 				Provider:       legacyProvider,
 				Version:        versions.MustParseVersion("1.0.0"),
 				TargetPlatform: Platform{"linux", "amd64"},
-				Filename:       "terraform-provider-legacy_1.0.0_linux_amd64.zip",
-				Location:       PackageLocalDir("testdata/filesystem-mirror/registry.terraform.io/-/legacy/1.0.0/linux_amd64"),
+				Filename:       "terracina-provider-legacy_1.0.0_linux_amd64.zip",
+				Location:       PackageLocalDir("testdata/filesystem-mirror/registry.terracina.io/-/legacy/1.0.0/linux_amd64"),
 			},
 		},
 	}
@@ -140,8 +140,8 @@ func TestFilesystemMirrorSourcePackageMeta(t *testing.T) {
 			Provider:       nullProvider,
 			Version:        versions.MustParseVersion("2.0.0"),
 			TargetPlatform: Platform{"linux", "amd64"},
-			Filename:       "terraform-provider-null_2.0.0_linux_amd64.zip",
-			Location:       PackageLocalDir("testdata/filesystem-mirror/registry.terraform.io/hashicorp/null/2.0.0/linux_amd64"),
+			Filename:       "terracina-provider-null_2.0.0_linux_amd64.zip",
+			Location:       PackageLocalDir("testdata/filesystem-mirror/registry.terracina.io/hashicorp/null/2.0.0/linux_amd64"),
 		}
 
 		if diff := cmp.Diff(want, got); diff != "" {
@@ -183,17 +183,17 @@ func TestFilesystemMirrorSourcePackageMeta(t *testing.T) {
 }
 
 var nullProvider = addrs.Provider{
-	Hostname:  svchost.Hostname("registry.terraform.io"),
+	Hostname:  svchost.Hostname("registry.terracina.io"),
 	Namespace: "hashicorp",
 	Type:      "null",
 }
 var randomProvider = addrs.Provider{
-	Hostname:  svchost.Hostname("registry.terraform.io"),
+	Hostname:  svchost.Hostname("registry.terracina.io"),
 	Namespace: "hashicorp",
 	Type:      "random",
 }
 var randomBetaProvider = addrs.Provider{
-	Hostname:  svchost.Hostname("registry.terraform.io"),
+	Hostname:  svchost.Hostname("registry.terracina.io"),
 	Namespace: "hashicorp",
 	Type:      "random-beta",
 }

@@ -33,13 +33,13 @@ import (
 	"github.com/hashicorp/hcl/v2/hcldec"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/backend"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/configs/hcl2shim"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/states/remote"
-	"github.com/hashicorp/terraform/internal/states/statemgr"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/backend"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/configs/hcl2shim"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/states/remote"
+	"github.com/hashicorp/terracina/internal/states/statemgr"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 var (
@@ -1958,7 +1958,7 @@ func TestBackendBasic(t *testing.T) {
 
 	ctx := context.TODO()
 
-	bucketName := fmt.Sprintf("terraform-remote-s3-test-%x", time.Now().Unix())
+	bucketName := fmt.Sprintf("terracina-remote-s3-test-%x", time.Now().Unix())
 	keyName := "testState"
 
 	b := backend.TestBackendConfig(t, New(), backend.TestWrapConfig(map[string]interface{}{
@@ -1979,7 +1979,7 @@ func TestBackendLocked(t *testing.T) {
 
 	ctx := context.TODO()
 
-	bucketName := fmt.Sprintf("terraform-remote-s3-test-%x", time.Now().Unix())
+	bucketName := fmt.Sprintf("terracina-remote-s3-test-%x", time.Now().Unix())
 	keyName := "test/state"
 
 	b1 := backend.TestBackendConfig(t, New(), backend.TestWrapConfig(map[string]interface{}{
@@ -2012,7 +2012,7 @@ func TestBackendLockedWithFile(t *testing.T) {
 
 	ctx := context.TODO()
 
-	bucketName := fmt.Sprintf("terraform-remote-s3-test-%x", time.Now().Unix())
+	bucketName := fmt.Sprintf("terracina-remote-s3-test-%x", time.Now().Unix())
 	keyName := "test/state"
 
 	b1 := backend.TestBackendConfig(t, New(), backend.TestWrapConfig(map[string]interface{}{
@@ -2044,7 +2044,7 @@ func TestBackendLockedWithFile_ObjectLock_Compliance(t *testing.T) {
 
 	ctx := context.TODO()
 
-	bucketName := fmt.Sprintf("terraform-remote-s3-test-%x", time.Now().Unix())
+	bucketName := fmt.Sprintf("terracina-remote-s3-test-%x", time.Now().Unix())
 	keyName := "test/state"
 
 	b1 := backend.TestBackendConfig(t, New(), backend.TestWrapConfig(map[string]interface{}{
@@ -2079,7 +2079,7 @@ func TestBackendLockedWithFile_ObjectLock_Governance(t *testing.T) {
 
 	ctx := context.TODO()
 
-	bucketName := fmt.Sprintf("terraform-remote-s3-test-%x", time.Now().Unix())
+	bucketName := fmt.Sprintf("terracina-remote-s3-test-%x", time.Now().Unix())
 	keyName := "test/state"
 
 	b1 := backend.TestBackendConfig(t, New(), backend.TestWrapConfig(map[string]interface{}{
@@ -2113,7 +2113,7 @@ func TestBackendLockedWithFileAndDynamoDB(t *testing.T) {
 
 	ctx := context.TODO()
 
-	bucketName := fmt.Sprintf("terraform-remote-s3-test-%x", time.Now().Unix())
+	bucketName := fmt.Sprintf("terracina-remote-s3-test-%x", time.Now().Unix())
 	keyName := "test/state"
 
 	b1 := backend.TestBackendConfig(t, New(), backend.TestWrapConfig(map[string]interface{}{
@@ -2148,7 +2148,7 @@ func TestBackendLockedMixedFileAndDynamoDB(t *testing.T) {
 
 	ctx := context.TODO()
 
-	bucketName := fmt.Sprintf("terraform-remote-s3-test-%x", time.Now().Unix())
+	bucketName := fmt.Sprintf("terracina-remote-s3-test-%x", time.Now().Unix())
 	keyName := "test/state"
 
 	b1 := backend.TestBackendConfig(t, New(), backend.TestWrapConfig(map[string]interface{}{
@@ -2182,7 +2182,7 @@ func TestBackend_LockFileCleanupOnDynamoDBLock(t *testing.T) {
 
 	ctx := context.TODO()
 
-	bucketName := fmt.Sprintf("terraform-remote-s3-test-%x", time.Now().Unix())
+	bucketName := fmt.Sprintf("terracina-remote-s3-test-%x", time.Now().Unix())
 	keyName := "test/state"
 
 	b1 := backend.TestBackendConfig(t, New(), backend.TestWrapConfig(map[string]interface{}{
@@ -2234,7 +2234,7 @@ func TestBackend_LockFileCleanupOnDynamoDBLock_ObjectLock_Compliance(t *testing.
 
 	ctx := context.TODO()
 
-	bucketName := fmt.Sprintf("terraform-remote-s3-test-%x", time.Now().Unix())
+	bucketName := fmt.Sprintf("terracina-remote-s3-test-%x", time.Now().Unix())
 	keyName := "test/state"
 
 	b1 := backend.TestBackendConfig(t, New(), backend.TestWrapConfig(map[string]interface{}{
@@ -2289,7 +2289,7 @@ func TestBackend_LockFileCleanupOnDynamoDBLock_ObjectLock_Governance(t *testing.
 
 	ctx := context.TODO()
 
-	bucketName := fmt.Sprintf("terraform-remote-s3-test-%x", time.Now().Unix())
+	bucketName := fmt.Sprintf("terracina-remote-s3-test-%x", time.Now().Unix())
 	keyName := "test/state"
 
 	b1 := backend.TestBackendConfig(t, New(), backend.TestWrapConfig(map[string]interface{}{
@@ -2343,7 +2343,7 @@ func TestBackend_LockDeletedOutOfBand(t *testing.T) {
 
 	ctx := context.TODO()
 
-	bucketName := fmt.Sprintf("terraform-remote-s3-test-%x", time.Now().Unix())
+	bucketName := fmt.Sprintf("terracina-remote-s3-test-%x", time.Now().Unix())
 	keyName := "test/state"
 
 	b1 := backend.TestBackendConfig(t, New(), backend.TestWrapConfig(map[string]interface{}{
@@ -2372,7 +2372,7 @@ func TestBackend_KmsKeyId(t *testing.T) {
 
 	ctx := context.TODO()
 
-	bucketName := fmt.Sprintf("terraform-remote-s3-test-%x", time.Now().Unix())
+	bucketName := fmt.Sprintf("terracina-remote-s3-test-%x", time.Now().Unix())
 	keyName := "test/state"
 
 	b1 := backend.TestBackendConfig(t, New(), backend.TestWrapConfig(map[string]interface{}{
@@ -2405,7 +2405,7 @@ func TestBackend_ACL(t *testing.T) {
 
 	ctx := context.TODO()
 
-	bucketName := fmt.Sprintf("terraform-remote-s3-test-%x", time.Now().Unix())
+	bucketName := fmt.Sprintf("terracina-remote-s3-test-%x", time.Now().Unix())
 	keyName := "test/state"
 
 	b1 := backend.TestBackendConfig(t, New(), backend.TestWrapConfig(map[string]interface{}{
@@ -2464,7 +2464,7 @@ func TestBackendConfigKmsKeyId(t *testing.T) {
 
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
-			bucketName := fmt.Sprintf("terraform-remote-s3-test-%x", time.Now().Unix())
+			bucketName := fmt.Sprintf("terracina-remote-s3-test-%x", time.Now().Unix())
 			config := map[string]any{
 				"bucket":  bucketName,
 				"encrypt": true,
@@ -2588,7 +2588,7 @@ func TestBackendSSECustomerKey(t *testing.T) {
 
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
-			bucketName := fmt.Sprintf("terraform-remote-s3-test-%x", time.Now().Unix())
+			bucketName := fmt.Sprintf("terracina-remote-s3-test-%x", time.Now().Unix())
 			config := map[string]any{
 				"bucket":  bucketName,
 				"encrypt": true,
@@ -2639,7 +2639,7 @@ func TestBackendExtraPaths(t *testing.T) {
 
 	ctx := context.TODO()
 
-	bucketName := fmt.Sprintf("terraform-remote-s3-test-%x", time.Now().Unix())
+	bucketName := fmt.Sprintf("terracina-remote-s3-test-%x", time.Now().Unix())
 	keyName := "test/state/tfstate"
 
 	b := backend.TestBackendConfig(t, New(), backend.TestWrapConfig(map[string]interface{}{
@@ -2781,7 +2781,7 @@ func TestBackendPrefixInWorkspace(t *testing.T) {
 
 	ctx := context.TODO()
 
-	bucketName := fmt.Sprintf("terraform-remote-s3-test-%x", time.Now().Unix())
+	bucketName := fmt.Sprintf("terracina-remote-s3-test-%x", time.Now().Unix())
 
 	b := backend.TestBackendConfig(t, New(), backend.TestWrapConfig(map[string]interface{}{
 		"bucket":               bucketName,
@@ -2813,7 +2813,7 @@ func TestBackendLockFileWithPrefix(t *testing.T) {
 
 	ctx := context.TODO()
 
-	bucketName := fmt.Sprintf("terraform-remote-s3-test-%x", time.Now().Unix())
+	bucketName := fmt.Sprintf("terracina-remote-s3-test-%x", time.Now().Unix())
 
 	workspacePrefix := "prefix"
 	key := "test/test-env.tfstate"
@@ -2866,7 +2866,7 @@ func TestBackendRestrictedRoot_Default(t *testing.T) {
 
 	ctx := context.TODO()
 
-	bucketName := fmt.Sprintf("terraform-remote-s3-test-%x", time.Now().Unix())
+	bucketName := fmt.Sprintf("terracina-remote-s3-test-%x", time.Now().Unix())
 	workspacePrefix := defaultWorkspaceKeyPrefix
 
 	b := backend.TestBackendConfig(t, New(), backend.TestWrapConfig(map[string]interface{}{
@@ -2911,7 +2911,7 @@ func TestBackendRestrictedRoot_NamedPrefix(t *testing.T) {
 
 	ctx := context.TODO()
 
-	bucketName := fmt.Sprintf("terraform-remote-s3-test-%x", time.Now().Unix())
+	bucketName := fmt.Sprintf("terracina-remote-s3-test-%x", time.Now().Unix())
 	workspacePrefix := "prefix"
 
 	b := backend.TestBackendConfig(t, New(), backend.TestWrapConfig(map[string]interface{}{
@@ -2953,7 +2953,7 @@ func TestBackendWrongRegion(t *testing.T) {
 
 	ctx := context.TODO()
 
-	bucketName := fmt.Sprintf("terraform-remote-s3-test-%x", time.Now().Unix())
+	bucketName := fmt.Sprintf("terracina-remote-s3-test-%x", time.Now().Unix())
 	keyName := "testState"
 
 	bucketRegion := "us-west-1"
@@ -2994,7 +2994,7 @@ func TestBackendS3ObjectLock(t *testing.T) {
 
 	ctx := context.TODO()
 
-	bucketName := fmt.Sprintf("terraform-remote-s3-test-%x", time.Now().Unix())
+	bucketName := fmt.Sprintf("terracina-remote-s3-test-%x", time.Now().Unix())
 	keyName := "testState"
 
 	b := backend.TestBackendConfig(t, New(), backend.TestWrapConfig(map[string]interface{}{
@@ -3020,7 +3020,7 @@ func TestKeyEnv(t *testing.T) {
 
 	keyName := "some/paths/tfstate"
 
-	bucket0Name := fmt.Sprintf("terraform-remote-s3-test-%x-0", time.Now().Unix())
+	bucket0Name := fmt.Sprintf("terracina-remote-s3-test-%x-0", time.Now().Unix())
 	b0 := backend.TestBackendConfig(t, New(), backend.TestWrapConfig(map[string]interface{}{
 		"bucket":               bucket0Name,
 		"key":                  keyName,
@@ -3031,7 +3031,7 @@ func TestKeyEnv(t *testing.T) {
 	createS3Bucket(ctx, t, b0.s3Client, bucket0Name, b0.awsConfig.Region)
 	defer deleteS3Bucket(ctx, t, b0.s3Client, bucket0Name, b0.awsConfig.Region)
 
-	bucket1Name := fmt.Sprintf("terraform-remote-s3-test-%x-1", time.Now().Unix())
+	bucket1Name := fmt.Sprintf("terracina-remote-s3-test-%x-1", time.Now().Unix())
 	b1 := backend.TestBackendConfig(t, New(), backend.TestWrapConfig(map[string]interface{}{
 		"bucket":               bucket1Name,
 		"key":                  keyName,
@@ -3042,7 +3042,7 @@ func TestKeyEnv(t *testing.T) {
 	createS3Bucket(ctx, t, b1.s3Client, bucket1Name, b1.awsConfig.Region)
 	defer deleteS3Bucket(ctx, t, b1.s3Client, bucket1Name, b1.awsConfig.Region)
 
-	bucket2Name := fmt.Sprintf("terraform-remote-s3-test-%x-2", time.Now().Unix())
+	bucket2Name := fmt.Sprintf("terracina-remote-s3-test-%x-2", time.Now().Unix())
 	b2 := backend.TestBackendConfig(t, New(), backend.TestWrapConfig(map[string]interface{}{
 		"bucket":  bucket2Name,
 		"key":     keyName,
@@ -3277,7 +3277,7 @@ func TestAssumeRole_PrepareConfigValidation(t *testing.T) {
 // TestBackend_CoerceValue verifies a cty.Object can be coerced into
 // an s3 backend Block
 //
-// This serves as a smoke test for use of the terraform_remote_state
+// This serves as a smoke test for use of the terracina_remote_state
 // data source with the s3 backend, replicating the process that
 // data source uses. The returned value is ignored as the object is
 // large (representing the entire s3 backend schema) and the focus of

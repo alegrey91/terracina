@@ -20,7 +20,7 @@ website/node_modules
 
 go.work*
 
-/terraform
+/terracina
 
 website/vendor
 vendor/

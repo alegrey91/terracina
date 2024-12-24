@@ -1,17 +1,17 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"fmt"
 	"log"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/lang/ephemeral"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/lang/ephemeral"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 type graphNodeImportState struct {
@@ -183,8 +183,8 @@ func (n *graphNodeImportState) DynamicExpand(ctx EvalContext) (*Graph, tfdiags.D
 		if existing != nil {
 			diags = diags.Append(tfdiags.Sourceless(
 				tfdiags.Error,
-				"Resource already managed by Terraform",
-				fmt.Sprintf("Terraform is already managing a remote object for %s. To import to this address you must first remove the existing object from the state.", addr),
+				"Resource already managed by Terracina",
+				fmt.Sprintf("Terracina is already managing a remote object for %s. To import to this address you must first remove the existing object from the state.", addr),
 			))
 			continue
 		}
@@ -268,7 +268,7 @@ func (n *graphNodeImportStateSub) Execute(ctx EvalContext, op walkOperation) (di
 					"This is a bug in the provider since deferrals are not supported when importing through the CLI, please file an issue."+
 					"Please either use an import block for importing this resource "+
 					"or remove the to be imported resource from your configuration, "+
-					"apply the configuration using \"terraform apply\", "+
+					"apply the configuration using \"terracina apply\", "+
 					"add the to be imported resource again, and retry the import operation.",
 				n.TargetAddr,
 			),
@@ -285,7 +285,7 @@ func (n *graphNodeImportStateSub) Execute(ctx EvalContext, op walkOperation) (di
 						"the provider detected that no object exists with the given id. "+
 						"Only pre-existing objects can be imported; check that the id "+
 						"is correct and that it is associated with the provider's "+
-						"configured region or endpoint, or use \"terraform apply\" to "+
+						"configured region or endpoint, or use \"terracina apply\" to "+
 						"create a new remote object for this resource.",
 					n.TargetAddr,
 				),

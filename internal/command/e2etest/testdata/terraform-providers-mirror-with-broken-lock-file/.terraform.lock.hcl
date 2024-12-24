@@ -1,7 +1,7 @@
-# This file is maintained automatically by "terraform init".
+# This file is maintained automatically by "terracina init".
 # Manual edits may be lost in future updates.
 
-provider "registry.terraform.io/hashicorp/template" {
+provider "registry.terracina.io/hashicorp/template" {
   version     = "2.1.1"
   constraints = "2.1.1"
   hashes = [
@@ -22,7 +22,7 @@ provider "registry.terraform.io/hashicorp/template" {
   ]
 }
 
-provider "registry.terraform.io/hashicorp/broken" {
+provider "registry.terracina.io/hashicorp/broken" {
   version     = "2.1.1"
   constraints = "2.1.1"
   hashes = [

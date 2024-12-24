@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"context"
@@ -9,23 +9,23 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/checks"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/experiments"
-	"github.com/hashicorp/terraform/internal/instances"
-	"github.com/hashicorp/terraform/internal/lang"
-	"github.com/hashicorp/terraform/internal/moduletest/mocking"
-	"github.com/hashicorp/terraform/internal/namedvals"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/plans/deferring"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/provisioners"
-	"github.com/hashicorp/terraform/internal/refactoring"
-	"github.com/hashicorp/terraform/internal/resources/ephemeral"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/checks"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/experiments"
+	"github.com/hashicorp/terracina/internal/instances"
+	"github.com/hashicorp/terracina/internal/lang"
+	"github.com/hashicorp/terracina/internal/moduletest/mocking"
+	"github.com/hashicorp/terracina/internal/namedvals"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/plans/deferring"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/provisioners"
+	"github.com/hashicorp/terracina/internal/refactoring"
+	"github.com/hashicorp/terracina/internal/resources/ephemeral"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 type hookFunc func(func(Hook) (HookAction, error)) error
@@ -33,7 +33,7 @@ type hookFunc func(func(Hook) (HookAction, error)) error
 // EvalContext is the interface that is given to eval nodes to execute.
 type EvalContext interface {
 	// Stopped returns a context that is canceled when evaluation is stopped via
-	// Terraform.Context.Stop()
+	// Terracina.Context.Stop()
 	StopCtx() context.Context
 
 	// Path is the current module path.
@@ -187,7 +187,7 @@ type EvalContext interface {
 	InstanceExpander() *instances.Expander
 
 	// Deferrals returns a helper object for tracking deferred actions, which
-	// means that Terraform either cannot plan an action at all or cannot
+	// means that Terracina either cannot plan an action at all or cannot
 	// perform a planned action due to an upstream dependency being deferred.
 	Deferrals() *deferring.Deferred
 

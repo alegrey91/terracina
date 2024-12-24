@@ -12,11 +12,11 @@ import (
 	"github.com/hashicorp/cli"
 	"github.com/hashicorp/go-tfe"
 
-	"github.com/hashicorp/terraform/internal/backend/backendrun"
+	"github.com/hashicorp/terracina/internal/backend/backendrun"
 )
 
 // IntegrationOutputWriter is an interface used to to write output tailored for
-// HCP Terraform integrations
+// HCP Terracina integrations
 type IntegrationOutputWriter interface {
 	End()
 	OutputElapsed(message string, maxMessage int)
@@ -24,7 +24,7 @@ type IntegrationOutputWriter interface {
 	SubOutput(str string)
 }
 
-// IntegrationContext is a set of data that is useful when performing HCP Terraform integration operations
+// IntegrationContext is a set of data that is useful when performing HCP Terracina integration operations
 type IntegrationContext struct {
 	B             *Cloud
 	StopContext   context.Context

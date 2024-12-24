@@ -1,6 +1,6 @@
 ---
 page_title: 'Backend Type: s3'
-description: Terraform can store state remotely in S3 and lock that state with DynamoDB.
+description: Terracina can store state remotely in S3 and lock that state with DynamoDB.
 ---
 
 # S3
@@ -8,7 +8,7 @@ description: Terraform can store state remotely in S3 and lock that state with D
 Stores the state as a given key in a given bucket on [Amazon S3](https://aws.amazon.com/s3/).
 This backend also supports state locking and consistency checking via [Dynamo DB](https://aws.amazon.com/dynamodb/), which can be enabled by setting the `dynamodb_table` field to an existing DynamoDB table name.
 A single DynamoDB table can be used to lock multiple remote state files.
-Terraform generates key names that include the values of the `bucket` and `key` variables.
+Terracina generates key names that include the values of the `bucket` and `key` variables.
 
 ~> **Warning!** It is highly recommended that you enable
 [Bucket Versioning](https://docs.aws.amazon.com/AmazonS3/latest/userguide/manage-versioning-examples.html)
@@ -17,7 +17,7 @@ on the S3 bucket to allow for state recovery in the case of accidental deletions
 ## Example Configuration
 
 ```hcl
-terraform {
+terracina {
   backend "s3" {
     bucket = "mybucket"
     key    = "path/to/my/key"
@@ -26,16 +26,16 @@ terraform {
 }
 ```
 
-This assumes we have a bucket created called `mybucket`. The Terraform state is written to the key `path/to/my/key`.
+This assumes we have a bucket created called `mybucket`. The Terracina state is written to the key `path/to/my/key`.
 
-Note that for the access credentials we recommend using a [partial configuration](/terraform/language/backend#partial-configuration).
+Note that for the access credentials we recommend using a [partial configuration](/terracina/language/backend#partial-configuration).
 
 ## State Storage
 
 The S3 backend stores state data in an S3 object at the path set by the `key` parameter in the S3 bucket indicated by the `bucket` parameter.
 Using the example shown above, the state would be stored at the path `path/to/my/key` in the bucket `mybucket`.
 
-When using [workspaces](/terraform/language/state/workspaces), the state for the `default` workspace is stored at the location described above.
+When using [workspaces](/terracina/language/state/workspaces), the state for the `default` workspace is stored at the location described above.
 Other workspaces are stored using the path `<workspace_key_prefix>/<workspace_name>/<key>`.
 The default workspace key prefix is `env:` and it can be configured using the parameter `workspace_key_prefix`.
 Using the example above, the state for the workspace `development` would be stored at the path `env:/development/path/to/my/key`.
@@ -44,13 +44,13 @@ Using the example above, the state for the workspace `development` would be stor
 
 ### S3 Bucket Permissions
 
-When not using [workspaces](/terraform/language/state/workspaces)(or when only using the `default` workspace), Terraform will need the following AWS IAM permissions on the target backend bucket:
+When not using [workspaces](/terracina/language/state/workspaces)(or when only using the `default` workspace), Terracina will need the following AWS IAM permissions on the target backend bucket:
 
 * `s3:ListBucket` on `arn:aws:s3:::mybucket`. At a minimum, this must be able to list the path where the state is stored.
 * `s3:GetObject` on `arn:aws:s3:::mybucket/path/to/my/key` and `arn:aws:s3:::mybucket/path/to/my/key.tflock`
 * `s3:PutObject` on `arn:aws:s3:::mybucket/path/to/my/key` and `arn:aws:s3:::mybucket/path/to/my/key.tflock`
 
-Note: `s3:DeleteObject` is not needed, as Terraform will not delete the state storage.
+Note: `s3:DeleteObject` is not needed, as Terracina will not delete the state storage.
 
 This is seen in the following AWS IAM Statement:
 
@@ -75,7 +75,7 @@ This is seen in the following AWS IAM Statement:
 }
 ```
 
-When using [workspaces](/terraform/language/state/workspaces), Terraform will also need permissions to create, list, read, update, and delete the workspace state storage:
+When using [workspaces](/terracina/language/state/workspaces), Terracina will also need permissions to create, list, read, update, and delete the workspace state storage:
 
 * `s3:ListBucket` on `arn:aws:s3:::mybucket`. At a minumum, this must be able to list the path where the `default` workspace is stored as well as the other workspaces.
 * `s3:GetObject` on `arn:aws:s3:::mybucket/path/to/my/key`, `arn:aws:s3:::mybucket/<workspace_key_prefix>/*/path/to/my/key` and `arn:aws:s3:::mybucket/<workspace_key_prefix>/*/path/to/my/key.tflock`
@@ -91,7 +91,7 @@ documentation about
 
 ### DynamoDB Table Permissions
 
-If you are using state locking, Terraform will need the following AWS IAM
+If you are using state locking, Terracina will need the following AWS IAM
 permissions on the DynamoDB table (`arn:aws:dynamodb:::table/mytable`):
 
 * `dynamodb:DescribeTable`
@@ -122,34 +122,34 @@ This is seen in the following AWS IAM Statement:
 ## Data Source Configuration
 
 To make use of the S3 remote state in another configuration,
-use the [`terraform_remote_state` data source](/terraform/language/state/remote-state-data).
+use the [`terracina_remote_state` data source](/terracina/language/state/remote-state-data).
 
 ```hcl
-data "terraform_remote_state" "network" {
+data "terracina_remote_state" "network" {
   backend = "s3"
   config = {
-    bucket = "terraform-state-prod"
-    key    = "network/terraform.tfstate"
+    bucket = "terracina-state-prod"
+    key    = "network/terracina.tfstate"
     region = "us-east-1"
   }
 }
 ```
 
-The `terraform_remote_state` data source will return all of the root module
+The `terracina_remote_state` data source will return all of the root module
 outputs defined in the referenced remote state (but not any outputs from
 nested modules unless they are explicitly output again in the root). An
 example output might look like:
 
 ```
-data.terraform_remote_state.network:
+data.terracina_remote_state.network:
   id = 2016-10-29 01:57:59.780010914 +0000 UTC
   addresses.# = 2
   addresses.0 = 52.207.220.222
   addresses.1 = 54.196.78.166
   backend = s3
   config.% = 3
-  config.bucket = terraform-state-prod
-  config.key = network/terraform.tfstate
+  config.bucket = terracina-state-prod
+  config.key = network/terracina.tfstate
   config.region = us-east-1
   elb_address = web-elb-790251200.us-east-1.elb.amazonaws.com
   public_subnet_id = subnet-1e05dd33
@@ -161,7 +161,7 @@ This backend requires the configuration of the AWS Region and S3 state storage. 
 
 ### Credentials and Shared Configuration
 
-!> **Warning:**  We recommend using environment variables to supply credentials and other sensitive data. If you use `-backend-config` or hardcode these values directly in your configuration, Terraform will include these values in both the `.terraform` subdirectory and in plan files. Refer to [Credentials and Sensitive Data](/terraform/language/backend#credentials-and-sensitive-data) for details.
+!> **Warning:**  We recommend using environment variables to supply credentials and other sensitive data. If you use `-backend-config` or hardcode these values directly in your configuration, Terracina will include these values in both the `.terracina` subdirectory and in plan files. Refer to [Credentials and Sensitive Data](/terracina/language/backend#credentials-and-sensitive-data) for details.
 
 The following configuration is required:
 
@@ -258,14 +258,14 @@ The argument `assume_role` contains the following arguments:
 
 Multiple `assume_role` values can be specified, and the roles will be assumed in order.
 
-```terraform
-terraform {
+```terracina
+terracina {
   backend "s3" {
     bucket = "example-bucket"
     key    = "path/to/state"
     region = "us-east-1"
     assume_role = {
-      role_arn = "arn:aws:iam::PRODUCTION-ACCOUNT-ID:role/Terraform"
+      role_arn = "arn:aws:iam::PRODUCTION-ACCOUNT-ID:role/Terracina"
     }
   }
 }
@@ -292,14 +292,14 @@ The following `assume_role_with_web_identity` configuration block is optional:
   One of `web_identity_token_file` or `web_identity_token` is required.
   Can also be set with the `AWS_WEB_IDENTITY_TOKEN_FILE` environment variable.
 
-```terraform
-terraform {
+```terracina
+terracina {
   backend "s3" {
     bucket = "example-bucket"
     key    = "path/to/state"
     region = "us-east-1"
     assume_role_with_web_identity = {
-      role_arn           = "arn:aws:iam::PRODUCTION-ACCOUNT-ID:role/Terraform"
+      role_arn           = "arn:aws:iam::PRODUCTION-ACCOUNT-ID:role/Terracina"
       web_identity_token = "<token value>"
     }
   }
@@ -311,7 +311,7 @@ terraform {
 The following configuration is required:
 
 * `bucket` - (Required) Name of the S3 Bucket.
-* `key` - (Required) Path to the state file inside the S3 Bucket. When using a non-default [workspace](/terraform/language/state/workspaces), the state path will be `<workspace_key_prefix>/<workspace_name>/<key>` (see also the `workspace_key_prefix` configuration).
+* `key` - (Required) Path to the state file inside the S3 Bucket. When using a non-default [workspace](/terracina/language/state/workspaces), the state path will be `<workspace_key_prefix>/<workspace_name>/<key>` (see also the `workspace_key_prefix` configuration).
 
 The following configuration is optional:
 
@@ -320,8 +320,8 @@ The following configuration is optional:
 * `endpoint` - (Optional, **Deprecated**) Custom endpoint URL for the AWS S3 API.
   Use `endpoints.s3` instead.
 * `force_path_style` - (Optional, **Deprecated**) Enable path-style S3 URLs (`https://<HOST>/<BUCKET>` instead of `https://<BUCKET>.<HOST>`).
-* `kms_key_id` - (Optional) Amazon Resource Name (ARN) of a Key Management Service (KMS) Key to use for encrypting the state and lock files. Note that if this value is specified, Terraform will need `kms:Encrypt`, `kms:Decrypt` and `kms:GenerateDataKey` permissions on this KMS key.
-* `sse_customer_key` - (Optional) The key to use for encrypting state and lock files with [Server-Side Encryption with Customer-Provided Keys (SSE-C)](https://docs.aws.amazon.com/AmazonS3/latest/userguide/ServerSideEncryptionCustomerKeys.html). This is the base64-encoded value of the key, which must decode to 256 bits. This can also be sourced from the `AWS_SSE_CUSTOMER_KEY` environment variable, which is recommended due to the sensitivity of the value. Setting it inside a terraform file will cause it to be persisted to disk in `terraform.tfstate`.
+* `kms_key_id` - (Optional) Amazon Resource Name (ARN) of a Key Management Service (KMS) Key to use for encrypting the state and lock files. Note that if this value is specified, Terracina will need `kms:Encrypt`, `kms:Decrypt` and `kms:GenerateDataKey` permissions on this KMS key.
+* `sse_customer_key` - (Optional) The key to use for encrypting state and lock files with [Server-Side Encryption with Customer-Provided Keys (SSE-C)](https://docs.aws.amazon.com/AmazonS3/latest/userguide/ServerSideEncryptionCustomerKeys.html). This is the base64-encoded value of the key, which must decode to 256 bits. This can also be sourced from the `AWS_SSE_CUSTOMER_KEY` environment variable, which is recommended due to the sensitivity of the value. Setting it inside a terracina file will cause it to be persisted to disk in `terracina.tfstate`.
 * `use_path_style` - (Optional) Enable path-style S3 URLs (`https://<HOST>/<BUCKET>` instead of `https://<BUCKET>.<HOST>`).
 * `workspace_key_prefix` - (Optional) Prefix applied to the state path inside the bucket. This is only relevant when using a non-default workspace. Defaults to `env:`.
 
@@ -329,8 +329,8 @@ The following configuration is optional:
 
 State locking is an opt-in feature of the S3 backend.
 
-Locking can be enabled via an S3 "lockfile" (introduced as **experimental** in Terraform 1.10) or DynamoDB.
-To support migration from older versions of Terraform which only support DynamoDB-based locking, the S3 and DynamoDB arguments below can be configured simultaneously.
+Locking can be enabled via an S3 "lockfile" (introduced as **experimental** in Terracina 1.10) or DynamoDB.
+To support migration from older versions of Terracina which only support DynamoDB-based locking, the S3 and DynamoDB arguments below can be configured simultaneously.
 In a future minor version the DynamoDB locking mechanism will be removed.
 
 To enable S3 state locking, use the following optional argument:
@@ -356,7 +356,7 @@ The S3 backend can be used in a number of different ways that make different
 tradeoffs between convenience, security, and isolation in such an organization.
 This section describes one such approach that aims to find a good compromise
 between these tradeoffs, allowing use of
-[Terraform's workspaces feature](/terraform/language/state/workspaces) to switch
+[Terracina's workspaces feature](/terracina/language/state/workspaces) to switch
 conveniently between multiple isolated deployments of the same configuration.
 
 Use this section as a starting-point for your approach, but note that
@@ -366,9 +366,9 @@ adjustments to this approach to account for _existing_ practices within your
 organization, if for example other tools have previously been used to manage
 infrastructure.
 
-Terraform is an administrative tool that manages your infrastructure, and so
-ideally the infrastructure that is used by Terraform should exist outside of
-the infrastructure that Terraform manages. This can be achieved by creating a
+Terracina is an administrative tool that manages your infrastructure, and so
+ideally the infrastructure that is used by Terracina should exist outside of
+the infrastructure that Terracina manages. This can be achieved by creating a
 separate _administrative_ AWS account which contains the user accounts used by
 human operators and any infrastructure and tools used to manage the other
 accounts. Isolating shared administrative tools from your main environments
@@ -388,12 +388,12 @@ Your administrative AWS account will contain at least the following items:
   to differentiate between different groups of users that have different
   levels of access to the other AWS accounts.
 * An [S3 bucket](https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingBucket.html)
-  that will contain the Terraform state files for each workspace.
+  that will contain the Terracina state files for each workspace.
 * A [DynamoDB table](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html#HowItWorks.CoreComponents.TablesItemsAttributes)
   that will be used for locking to prevent concurrent operations on a single
   workspace.
 
-Provide the S3 bucket name and DynamoDB table name to Terraform within the
+Provide the S3 bucket name and DynamoDB table name to Terracina within the
 S3 backend configuration using the `bucket` and `dynamodb_table` arguments
 respectively, and configure a suitable `workspace_key_prefix` to contain
 the states of the various workspaces that will subsequently be created for
@@ -402,18 +402,18 @@ this configuration.
 ### Environment Account Setup
 
 For the sake of this section, the term "environment account" refers to one
-of the accounts whose contents are managed by Terraform, separate from the
+of the accounts whose contents are managed by Terracina, separate from the
 administrative account described above.
 
 Your environment accounts will eventually contain your own product-specific
 infrastructure. Along with this it must contain one or more
 [IAM roles](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html)
-that grant sufficient access for Terraform to perform the desired management
+that grant sufficient access for Terracina to perform the desired management
 tasks.
 
 ### Delegating Access
 
-Each Administrator will run Terraform using credentials for their IAM user
+Each Administrator will run Terracina using credentials for their IAM user
 in the administrative account.
 [IAM Role Delegation](https://docs.aws.amazon.com/IAM/latest/UserGuide/tutorial_cross-account-with-roles.html)
 is used to grant these users access to the roles created in each environment
@@ -432,14 +432,14 @@ above. The most important details are:
 Since the purpose of the administrative account is only to host tools for
 managing other accounts, it is useful to give the administrative accounts
 restricted access only to the specific operations needed to assume the
-environment account role and access the Terraform state. By blocking all
+environment account role and access the Terracina state. By blocking all
 other access, you remove the risk that user error will lead to staging or
 production resources being created in the administrative account by mistake.
 
-When configuring Terraform, use either environment variables or the standard
+When configuring Terracina, use either environment variables or the standard
 credentials file `~/.aws/credentials` to provide the administrator user's
 IAM credentials within the administrative account to both the S3 backend _and_
-to Terraform's AWS provider.
+to Terracina's AWS provider.
 
 Use conditional configuration to pass a different `assume_role` value to
 the AWS provider depending on the selected workspace. For example:
@@ -447,8 +447,8 @@ the AWS provider depending on the selected workspace. For example:
 ```hcl
 variable "workspace_iam_roles" {
   default = {
-    staging    = "arn:aws:iam::STAGING-ACCOUNT-ID:role/Terraform"
-    production = "arn:aws:iam::PRODUCTION-ACCOUNT-ID:role/Terraform"
+    staging    = "arn:aws:iam::STAGING-ACCOUNT-ID:role/Terracina"
+    production = "arn:aws:iam::PRODUCTION-ACCOUNT-ID:role/Terracina"
   }
 }
 
@@ -457,34 +457,34 @@ provider "aws" {
   # environment or the global credentials file.
 
   assume_role = {
-    role_arn = var.workspace_iam_roles[terraform.workspace]
+    role_arn = var.workspace_iam_roles[terracina.workspace]
   }
 }
 ```
 
 If workspace IAM roles are centrally managed and shared across many separate
-Terraform configurations, the role ARNs could also be obtained via a data
-source such as [`terraform_remote_state`](/terraform/language/state/remote-state-data)
+Terracina configurations, the role ARNs could also be obtained via a data
+source such as [`terracina_remote_state`](/terracina/language/state/remote-state-data)
 to avoid repeating these values.
 
 ### Creating and Selecting Workspaces
 
 With the necessary objects created and the backend configured, run
-`terraform init` to initialize the backend and establish an initial workspace
+`terracina init` to initialize the backend and establish an initial workspace
 called "default". This workspace will not be used, but is created automatically
-by Terraform as a convenience for users who are not using the workspaces
+by Terracina as a convenience for users who are not using the workspaces
 feature.
 
 Create a workspace corresponding to each key given in the `workspace_iam_roles`
 variable value above:
 
 ```
-$ terraform workspace new staging
+$ terracina workspace new staging
 Created and switched to workspace "staging"!
 
 ...
 
-$ terraform workspace new production
+$ terracina workspace new production
 Created and switched to workspace "production"!
 
 ...
@@ -497,25 +497,25 @@ as reading and writing the state from S3, will be performed directly as the
 administrator's own user within the administrative account.
 
 ```
-$ terraform workspace select staging
-$ terraform apply
+$ terracina workspace select staging
+$ terracina apply
 ...
 ```
 
-### Running Terraform in Amazon EC2
+### Running Terracina in Amazon EC2
 
-Teams that make extensive use of Terraform for infrastructure management
-often [run Terraform in automation](/terraform/tutorials/automation/automate-terraform?utm_source=WEBSITE&utm_medium=WEB_IO&utm_offer=ARTICLE_PAGE&utm_content=DOCS)
+Teams that make extensive use of Terracina for infrastructure management
+often [run Terracina in automation](/terracina/tutorials/automation/automate-terracina?utm_source=WEBSITE&utm_medium=WEB_IO&utm_offer=ARTICLE_PAGE&utm_content=DOCS)
 to ensure a consistent operating environment and to limit access to the
-various secrets and other sensitive information that Terraform configurations
+various secrets and other sensitive information that Terracina configurations
 tend to require.
 
-When running Terraform in an automation tool running on an Amazon EC2 instance,
+When running Terracina in an automation tool running on an Amazon EC2 instance,
 consider running this instance in the administrative account and using an
 [instance profile](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2_instance-profiles.html)
 in place of the various administrator IAM users suggested above. An IAM
 instance profile can also be granted cross-account delegation access via
-an IAM policy, giving this instance the access it needs to run Terraform.
+an IAM policy, giving this instance the access it needs to run Terracina.
 
 To isolate access to different environment accounts, use a separate EC2
 instance for each target account so that its access can be limited only to
@@ -529,7 +529,7 @@ services, such as ECS.
 In a simple implementation of the pattern described in the prior sections,
 all users have access to read and write states for all workspaces. In many
 cases it is desirable to apply more precise access constraints to the
-Terraform state objects in S3, so that for example only trusted administrators
+Terracina state objects in S3, so that for example only trusted administrators
 are allowed to modify the production state, or to control _reading_ of a state
 that contains sensitive information.
 
@@ -564,7 +564,7 @@ to only a single state object within an S3 bucket is shown below:
 The example backend configuration below documents the corresponding `bucket` and `key` arguments:
 
 ```hcl
-terraform {
+terracina {
   backend "s3" {
     bucket = "example-bucket"
     key    = "path/to/state"
@@ -608,7 +608,7 @@ Note that DynamoDB ARNs are regional and account-specific, unlike S3 bucket ARNs
 The example backend configuration below documents the corresponding arguments:
 
 ```hcl
-terraform {
+terracina {
   backend "s3" {
     bucket         = "example-bucket"
     key            = "path/to/state"
@@ -622,9 +622,9 @@ Refer to the [AWS documentation on DynamoDB fine-grained locking](https://docs.a
 
 ### Configuring Custom User-Agent Information
 
-Note this feature is optional and only available in Terraform v0.13.1+.
+Note this feature is optional and only available in Terracina v0.13.1+.
 
-By default, the underlying AWS client used by the Terraform AWS Provider creates requests with User-Agent headers including information about Terraform and AWS Go SDK versions. To provide additional information in the User-Agent headers, the `TF_APPEND_USER_AGENT` environment variable can be set and its value will be directly added to HTTP requests. e.g.
+By default, the underlying AWS client used by the Terracina AWS Provider creates requests with User-Agent headers including information about Terracina and AWS Go SDK versions. To provide additional information in the User-Agent headers, the `TF_APPEND_USER_AGENT` environment variable can be set and its value will be directly added to HTTP requests. e.g.
 
 ```sh
 $ export TF_APPEND_USER_AGENT="JenkinsAgent/i-12345678 BuildID/1234 (Optional Extra Information)"

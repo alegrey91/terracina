@@ -11,8 +11,8 @@ import (
 	ctyjson "github.com/zclconf/go-cty/cty/json"
 	"github.com/zclconf/go-cty/cty/msgpack"
 
-	"github.com/hashicorp/terraform/internal/configs/hcl2shim"
-	"github.com/hashicorp/terraform/internal/providers"
+	"github.com/hashicorp/terracina/internal/configs/hcl2shim"
+	"github.com/hashicorp/terracina/internal/providers"
 )
 
 var _ providers.Interface = (*MockProvider)(nil)
@@ -20,9 +20,9 @@ var _ providers.Interface = (*MockProvider)(nil)
 // MockProvider implements providers.Interface but mocks out all the
 // calls for testing purposes.
 //
-// This is distinct from providers.Mock which is actually available to Terraform
+// This is distinct from providers.Mock which is actually available to Terracina
 // configuration and test authors. This type is only for use in internal testing
-// of Terraform itself.
+// of Terracina itself.
 type MockProvider struct {
 	sync.Mutex
 

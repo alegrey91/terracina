@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"errors"
@@ -14,13 +14,13 @@ import (
 	"github.com/zclconf/go-cty/cty"
 
 	"github.com/hashicorp/hcl/v2"
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/providers"
-	testing_provider "github.com/hashicorp/terraform/internal/providers/testing"
-	"github.com/hashicorp/terraform/internal/provisioners"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/providers"
+	testing_provider "github.com/hashicorp/terracina/internal/providers/testing"
+	"github.com/hashicorp/terracina/internal/provisioners"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 func TestContext2Validate_badCount(t *testing.T) {
@@ -102,9 +102,9 @@ func TestContext2Validate_varNoDefaultExplicitType(t *testing.T) {
 		t.Fatalf("unexpected NewContext errors: %s", diags.Err())
 	}
 
-	// NOTE: This test has grown idiosyncratic because originally Terraform
+	// NOTE: This test has grown idiosyncratic because originally Terracina
 	// would (optionally) check variables during validation, and then in
-	// Terraform v0.12 we switched to checking variables during NewContext,
+	// Terracina v0.12 we switched to checking variables during NewContext,
 	// and now most recently we've switched to checking variables only during
 	// planning because root variables are a plan option. Therefore this has
 	// grown into a plan test rather than a validate test, but it lives on
@@ -870,9 +870,9 @@ func TestContext2Validate_requiredVar(t *testing.T) {
 	})
 	assertNoDiagnostics(t, diags)
 
-	// NOTE: This test has grown idiosyncratic because originally Terraform
+	// NOTE: This test has grown idiosyncratic because originally Terracina
 	// would (optionally) check variables during validation, and then in
-	// Terraform v0.12 we switched to checking variables during NewContext,
+	// Terracina v0.12 we switched to checking variables during NewContext,
 	// and now most recently we've switched to checking variables only during
 	// planning because root variables are a plan option. Therefore this has
 	// grown into a plan test rather than a validate test, but it lives on
@@ -998,8 +998,8 @@ func TestContext2Validate_targetedDestroy(t *testing.T) {
 
 	state := states.NewState()
 	root := state.EnsureModule(addrs.RootModuleInstance)
-	testSetResourceInstanceCurrent(root, "aws_instance.foo", `{"id":"i-bcd345"}`, `provider["registry.terraform.io/hashicorp/aws"]`)
-	testSetResourceInstanceCurrent(root, "aws_instance.bar", `{"id":"i-abc123"}`, `provider["registry.terraform.io/hashicorp/aws"]`)
+	testSetResourceInstanceCurrent(root, "aws_instance.foo", `{"id":"i-bcd345"}`, `provider["registry.terracina.io/hashicorp/aws"]`)
+	testSetResourceInstanceCurrent(root, "aws_instance.bar", `{"id":"i-abc123"}`, `provider["registry.terracina.io/hashicorp/aws"]`)
 
 	ctx := testContext2(t, &ContextOpts{
 		Providers: map[addrs.Provider]providers.Factory{
@@ -1053,7 +1053,7 @@ func TestContext2Validate_varRefUnknown(t *testing.T) {
 }
 
 // Module variables weren't being interpolated during Validate phase.
-// related to https://github.com/hashicorp/terraform/issues/5322
+// related to https://github.com/hashicorp/terracina/issues/5322
 func TestContext2Validate_interpolateVar(t *testing.T) {
 	input := new(MockUIInput)
 
@@ -1310,7 +1310,7 @@ output "out" {
 		t.Fatal("succeeded; want errors")
 	}
 	// Should get this error:
-	// Invalid resource count attribute: The special "count" attribute is no longer supported after Terraform v0.12. Instead, use length(aws_instance.test) to count resource instances.
+	// Invalid resource count attribute: The special "count" attribute is no longer supported after Terracina v0.12. Instead, use length(aws_instance.test) to count resource instances.
 	if got, want := diags.Err().Error(), "Invalid resource count attribute:"; !strings.Contains(got, want) {
 		t.Fatalf("wrong error:\ngot:  %s\nwant: message containing %q", got, want)
 	}
@@ -1949,7 +1949,7 @@ resource "test_instance" "c" {
 func TestContext2Validate_passInheritedProvider(t *testing.T) {
 	m := testModuleInline(t, map[string]string{
 		"main.tf": `
-terraform {
+terracina {
   required_providers {
 	test = {
 	  source = "hashicorp/test"
@@ -1969,7 +1969,7 @@ module "first" {
 		// should be able to pass whatever the implied config is to a child
 		// module.
 		"first/main.tf": `
-terraform {
+terracina {
   required_providers {
     test = {
 	  source = "hashicorp/test"
@@ -1985,7 +1985,7 @@ module "second" {
 }`,
 
 		"first/second/main.tf": `
-terraform {
+terracina {
   required_providers {
     test = {
 	  source = "hashicorp/test"
@@ -2569,7 +2569,7 @@ func TestContext2Validate_providerContributedFunctions(t *testing.T) {
 	t.Run("valid", func(t *testing.T) {
 		m := testModuleInline(t, map[string]string{
 			"main.tf": `
-terraform {
+terracina {
 	required_providers {
 		test = {
 			source = "hashicorp/test"
@@ -2608,7 +2608,7 @@ output "result" {
 	t.Run("wrong name", func(t *testing.T) {
 		m := testModuleInline(t, map[string]string{
 			"main.tf": `
-terraform {
+terracina {
 	required_providers {
 		test = {
 			source = "hashicorp/test"
@@ -2643,7 +2643,7 @@ output "result" {
 	t.Run("wrong namespace", func(t *testing.T) {
 		m := testModuleInline(t, map[string]string{
 			"main.tf": `
-terraform {
+terracina {
 	required_providers {
 		test = {
 			source = "hashicorp/test"
@@ -2677,7 +2677,7 @@ output "result" {
 	t.Run("wrong argument type", func(t *testing.T) {
 		m := testModuleInline(t, map[string]string{
 			"main.tf": `
-terraform {
+terracina {
 	required_providers {
 		test = {
 			source = "hashicorp/test"
@@ -2711,7 +2711,7 @@ output "result" {
 	t.Run("insufficient arguments", func(t *testing.T) {
 		m := testModuleInline(t, map[string]string{
 			"main.tf": `
-terraform {
+terracina {
 	required_providers {
 		test = {
 			source = "hashicorp/test"
@@ -2745,7 +2745,7 @@ output "result" {
 	t.Run("too many arguments", func(t *testing.T) {
 		m := testModuleInline(t, map[string]string{
 			"main.tf": `
-terraform {
+terracina {
 	required_providers {
 		test = {
 			source = "hashicorp/test"
@@ -2779,7 +2779,7 @@ output "result" {
 	t.Run("unexpected null argument", func(t *testing.T) {
 		m := testModuleInline(t, map[string]string{
 			"main.tf": `
-terraform {
+terracina {
 	required_providers {
 		test = {
 			source = "hashicorp/test"
@@ -2813,7 +2813,7 @@ output "result" {
 	t.Run("unhandled unknown argument", func(t *testing.T) {
 		m := testModuleInline(t, map[string]string{
 			"main.tf": `
-terraform {
+terracina {
 	required_providers {
 		test = {
 			source = "hashicorp/test"
@@ -2847,7 +2847,7 @@ output "result" {
 	t.Run("provider not declared", func(t *testing.T) {
 		m := testModuleInline(t, map[string]string{
 			"main.tf": `
-terraform {
+terracina {
 	required_providers {
 		# Intentionally no declaration of local name "test" here
 	}
@@ -2884,7 +2884,7 @@ func TestContextValidate_externalProviders(t *testing.T) {
 
 	m := testModuleInline(t, map[string]string{
 		"main.tf": `
-terraform {
+terracina {
   required_providers {
     bar = {
       source = "hashicorp/bar"
@@ -2988,7 +2988,7 @@ func TestContext2Validate_providerSchemaError(t *testing.T) {
 	// validate module and output depends_on
 	m := testModuleInline(t, map[string]string{
 		"main.tf": `
-terraform {
+terracina {
   required_providers {
     test = {
       source = "hashicorp/test"

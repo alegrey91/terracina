@@ -8,15 +8,15 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/moduletest/mocking"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/moduletest/mocking"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 var _ providers.Interface = (*unknownProvider)(nil)
 
 // unknownProvider is a stub provider that represents a provider that is
-// unknown to the current Terraform configuration. This is used when a reference
+// unknown to the current Terracina configuration. This is used when a reference
 // to a provider is unknown, or the provider itself has unknown instances.
 //
 // An unknownProvider is only returned in the context of a provider that should
@@ -72,7 +72,7 @@ func (u *unknownProvider) UpgradeResourceState(request providers.UpgradeResource
 
 func (u *unknownProvider) ConfigureProvider(request providers.ConfigureProviderRequest) providers.ConfigureProviderResponse {
 	// This shouldn't be called, we don't configure an unknown provider within
-	// stacks and Terraform Core shouldn't call this method.
+	// stacks and Terracina Core shouldn't call this method.
 	panic("attempted to configure an unknown provider")
 }
 
@@ -161,7 +161,7 @@ func (u *unknownProvider) ImportResourceState(request providers.ImportResourceSt
 		// we don't know enough to work out which value the ID corresponds to.
 		//
 		// We'll just return an unknown value that corresponds to the correct
-		// type. Terraform should know how to handle this when it arrives
+		// type. Terracina should know how to handle this when it arrives
 		// alongside the deferred metadata.
 
 		schema := u.GetProviderSchema().ResourceTypes[request.TypeName]
@@ -194,7 +194,7 @@ func (u *unknownProvider) MoveResourceState(request providers.MoveResourceStateR
 	diags = diags.Append(tfdiags.AttributeValue(
 		tfdiags.Error,
 		"Called MoveResourceState on an unknown provider",
-		"Terraform called MoveResourceState on an unknown provider. This is a bug in Terraform - please report this error.",
+		"Terracina called MoveResourceState on an unknown provider. This is a bug in Terracina - please report this error.",
 		nil, // nil attribute path means the overall configuration block
 	))
 	return providers.MoveResourceStateResponse{
@@ -276,7 +276,7 @@ func (u *unknownProvider) CloseEphemeralResource(providers.CloseEphemeralResourc
 
 func (u *unknownProvider) CallFunction(request providers.CallFunctionRequest) providers.CallFunctionResponse {
 	return providers.CallFunctionResponse{
-		Err: fmt.Errorf("CallFunction shouldn't be called on an unknown provider; this is a bug in Terraform - please report this error"),
+		Err: fmt.Errorf("CallFunction shouldn't be called on an unknown provider; this is a bug in Terracina - please report this error"),
 	}
 }
 

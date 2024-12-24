@@ -4,8 +4,8 @@
 package stackutils
 
 import (
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/rpcapi/terraform1/stacks"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/rpcapi/terracina1/stacks"
 )
 
 func ResourceModeForProto(mode addrs.ResourceMode) stacks.ResourceMode {

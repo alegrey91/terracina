@@ -11,15 +11,15 @@ import (
 	"github.com/zclconf/go-cty/cty"
 	"github.com/zclconf/go-cty/cty/convert"
 
-	"github.com/hashicorp/terraform/internal/lang/marks"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/plans/objchange"
-	"github.com/hashicorp/terraform/internal/promising"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/stacks/stackconfig"
-	"github.com/hashicorp/terraform/internal/stacks/stackplan"
-	"github.com/hashicorp/terraform/internal/stacks/stackstate"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/lang/marks"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/plans/objchange"
+	"github.com/hashicorp/terracina/internal/promising"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/stacks/stackconfig"
+	"github.com/hashicorp/terracina/internal/stacks/stackplan"
+	"github.com/hashicorp/terracina/internal/stacks/stackstate"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // InputVariable represents an input variable belonging to a [Stack].
@@ -179,7 +179,7 @@ func (v *InputVariable) CheckValue(ctx context.Context, phase EvalPhase) (cty.Va
 						})
 						// Return a solidly invalid value to prevent further
 						// processing of this variable. This is a rare case and
-						// a bug in Terraform so it's okay that might cause
+						// a bug in Terracina so it's okay that might cause
 						// additional errors to be raised later. We just want
 						// to make sure we don't continue when something has
 						// gone wrong elsewhere.

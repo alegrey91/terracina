@@ -6,8 +6,8 @@ package stackeval
 import (
 	"context"
 
-	"github.com/hashicorp/terraform/internal/depsfile"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/depsfile"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 type ValidateOpts struct {

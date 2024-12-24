@@ -17,21 +17,21 @@ import (
 	tfe "github.com/hashicorp/go-tfe"
 	version "github.com/hashicorp/go-version"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/backend"
-	"github.com/hashicorp/terraform/internal/backend/backendrun"
-	"github.com/hashicorp/terraform/internal/cloud"
-	"github.com/hashicorp/terraform/internal/command/arguments"
-	"github.com/hashicorp/terraform/internal/command/clistate"
-	"github.com/hashicorp/terraform/internal/command/views"
-	"github.com/hashicorp/terraform/internal/depsfile"
-	"github.com/hashicorp/terraform/internal/initwd"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/plans/planfile"
-	"github.com/hashicorp/terraform/internal/states/statemgr"
-	"github.com/hashicorp/terraform/internal/terminal"
-	"github.com/hashicorp/terraform/internal/terraform"
-	tfversion "github.com/hashicorp/terraform/version"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/backend"
+	"github.com/hashicorp/terracina/internal/backend/backendrun"
+	"github.com/hashicorp/terracina/internal/cloud"
+	"github.com/hashicorp/terracina/internal/command/arguments"
+	"github.com/hashicorp/terracina/internal/command/clistate"
+	"github.com/hashicorp/terracina/internal/command/views"
+	"github.com/hashicorp/terracina/internal/depsfile"
+	"github.com/hashicorp/terracina/internal/initwd"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/plans/planfile"
+	"github.com/hashicorp/terracina/internal/states/statemgr"
+	"github.com/hashicorp/terracina/internal/terminal"
+	"github.com/hashicorp/terracina/internal/terracina"
+	tfversion "github.com/hashicorp/terracina/version"
 )
 
 func testOperationApply(t *testing.T, configDir string) (*backendrun.Operation, func(), func(*testing.T) *terminal.TestOutput) {
@@ -53,7 +53,7 @@ func testOperationApplyWithTimeout(t *testing.T, configDir string, timeout time.
 	// Many of our tests use an overridden "null" provider that's just in-memory
 	// inside the test process, not a separate plugin on disk.
 	depLocks := depsfile.NewLocks()
-	depLocks.SetProviderOverridden(addrs.MustParseProviderSourceString("registry.terraform.io/hashicorp/null"))
+	depLocks.SetProviderOverridden(addrs.MustParseProviderSourceString("registry.terracina.io/hashicorp/null"))
 
 	return &backendrun.Operation{
 		ConfigDir:       configDir,
@@ -236,7 +236,7 @@ func TestRemote_applyWithParallelism(t *testing.T) {
 	defer configCleanup()
 
 	if b.ContextOpts == nil {
-		b.ContextOpts = &terraform.ContextOpts{}
+		b.ContextOpts = &terracina.ContextOpts{}
 	}
 	b.ContextOpts.Parallelism = 3
 	op.Workspace = backend.DefaultStateName
@@ -581,7 +581,7 @@ func TestRemote_applyWithVariables(t *testing.T) {
 	op, configCleanup, done := testOperationApply(t, "./testdata/apply-variables")
 	defer configCleanup()
 
-	op.Variables = testVariables(terraform.ValueFromNamedFile, "foo", "bar")
+	op.Variables = testVariables(terracina.ValueFromNamedFile, "foo", "bar")
 	op.Workspace = backend.DefaultStateName
 
 	run, err := b.Operation(context.Background(), op)
@@ -1589,7 +1589,7 @@ func TestRemote_applyVersionCheck(t *testing.T) {
 
 			ctx := context.Background()
 
-			// SETUP: set the operations and Terraform Version fields on the
+			// SETUP: set the operations and Terracina Version fields on the
 			// remote workspace
 			_, err := b.client.Workspaces.Update(
 				ctx,
@@ -1597,7 +1597,7 @@ func TestRemote_applyVersionCheck(t *testing.T) {
 				b.workspace,
 				tfe.WorkspaceUpdateOptions{
 					ExecutionMode:    tfe.String(tc.executionMode),
-					TerraformVersion: tfe.String(tc.remoteVersion),
+					TerracinaVersion: tfe.String(tc.remoteVersion),
 				},
 			)
 			if err != nil {

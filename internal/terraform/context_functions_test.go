@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"bytes"
@@ -12,21 +12,21 @@ import (
 	"github.com/zclconf/go-cty/cty"
 	"github.com/zclconf/go-cty/cty/msgpack"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	testing_provider "github.com/hashicorp/terraform/internal/providers/testing"
-	"github.com/hashicorp/terraform/internal/states"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	testing_provider "github.com/hashicorp/terracina/internal/providers/testing"
+	"github.com/hashicorp/terracina/internal/states"
 )
 
 func TestContext2Plan_providerFunctionBasic(t *testing.T) {
 	m := testModuleInline(t, map[string]string{
 		"main.tf": `
-terraform {
+terracina {
   required_providers {
     test = {
-      source = "registry.terraform.io/hashicorp/test"
+      source = "registry.terracina.io/hashicorp/test"
 	}
   }
 }
@@ -94,10 +94,10 @@ output "noop_equals" {
 func TestContext2Plan_providerFunctionImpurePlan(t *testing.T) {
 	m := testModuleInline(t, map[string]string{
 		"main.tf": `
-terraform {
+terracina {
   required_providers {
     test = {
-      source = "registry.terraform.io/hashicorp/test"
+      source = "registry.terracina.io/hashicorp/test"
 	}
   }
 }
@@ -273,10 +273,10 @@ func TestContext2Validate_providerFunctionDiagnostics(t *testing.T) {
 			"missing namespace",
 			testModuleInline(t, map[string]string{
 				"main.tf": `
-			terraform {
+			terracina {
 				required_providers {
 					test = {
-						source = "registry.terraform.io/hashicorp/test"
+						source = "registry.terracina.io/hashicorp/test"
 					}
 				}
 			}
@@ -289,10 +289,10 @@ func TestContext2Validate_providerFunctionDiagnostics(t *testing.T) {
 			"no function from provider",
 			testModuleInline(t, map[string]string{
 				"main.tf": `
-			terraform {
+			terracina {
 				required_providers {
 					test = {
-						source = "registry.terraform.io/hashicorp/test"
+						source = "registry.terracina.io/hashicorp/test"
 					}
 				}
 			}

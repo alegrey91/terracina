@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 
 syntax = "proto3";
-package terraform1;
+package terracina1;
 
 
 // Represents a selected or available version of a provider, from either a
@@ -22,8 +22,8 @@ message ProviderPackage {
     // parse the source address syntax.
     string version = 2;
 
-    // The hash strings that Terraform knows about for this provider package,
-    // using the same "scheme:hash" syntax used in Terraform's dependency
+    // The hash strings that Terracina knows about for this provider package,
+    // using the same "scheme:hash" syntax used in Terracina's dependency
     // lock file format.
     //
     // For a message representing a "selected" provider package this enumerates
@@ -36,11 +36,11 @@ message ProviderPackage {
     // describes only the actual package on disk, and so will typically
     // include only the subset of the checksums from the corresponding
     // "selected" package that are relevant to the current platform where
-    // Terraform Core is running.
+    // Terracina Core is running.
     repeated string hashes = 3;
 }
 
-// A source address in the same form as it would appear in a Terraform
+// A source address in the same form as it would appear in a Terracina
 // configuration: a source string combined with an optional version constraint
 // string, where the latter is valid only for registry module addresses.
 //

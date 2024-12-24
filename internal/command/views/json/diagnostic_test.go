@@ -15,8 +15,8 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hcltest"
-	"github.com/hashicorp/terraform/internal/lang/marks"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/lang/marks"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 	"github.com/zclconf/go-cty/cty"
 )
 

@@ -16,9 +16,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/hashicorp/terraform/internal/backend"
-	"github.com/hashicorp/terraform/internal/states/remote"
-	"github.com/hashicorp/terraform/internal/states/statemgr"
+	"github.com/hashicorp/terracina/internal/backend"
+	"github.com/hashicorp/terracina/internal/states/remote"
+	"github.com/hashicorp/terracina/internal/states/statemgr"
 )
 
 func TestRemoteClient_impl(t *testing.T) {
@@ -318,7 +318,7 @@ func TestConsul_destroyLock(t *testing.T) {
 			testLock(clientA, lockPath)
 
 			// The release the lock from a second client to test the
-			// `terraform force-unlock <lock_id>` functionnality
+			// `terracina force-unlock <lock_id>` functionnality
 			s, err = b.StateMgr(backend.DefaultStateName)
 			if err != nil {
 				t.Fatalf("err: %s", err)

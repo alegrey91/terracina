@@ -13,8 +13,8 @@ import (
 
 	"cloud.google.com/go/storage"
 
-	"github.com/hashicorp/terraform/internal/states/remote"
-	"github.com/hashicorp/terraform/internal/states/statemgr"
+	"github.com/hashicorp/terracina/internal/states/remote"
+	"github.com/hashicorp/terracina/internal/states/statemgr"
 )
 
 // remoteClient is used by "state/remote".State to read and write

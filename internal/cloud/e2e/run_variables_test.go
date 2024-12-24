@@ -8,12 +8,12 @@ import (
 	"testing"
 
 	tfe "github.com/hashicorp/go-tfe"
-	tfversion "github.com/hashicorp/terraform/version"
+	tfversion "github.com/hashicorp/terracina/version"
 )
 
-func terraformConfigRequiredVariable(org, name string) string {
+func terracinaConfigRequiredVariable(org, name string) string {
 	return fmt.Sprintf(`
-terraform {
+terracina {
   cloud {
     hostname = "%s"
     organization = "%s"
@@ -46,7 +46,7 @@ output "test_env" {
 func Test_cloud_run_variables(t *testing.T) {
 	t.Parallel()
 	skipIfMissingEnvVar(t)
-	skipWithoutRemoteTerraformVersion(t)
+	skipWithoutRemoteTerracinaVersion(t)
 
 	cases := testCases{
 		"run variables from CLI arg": {
@@ -56,15 +56,15 @@ func Test_cloud_run_variables(t *testing.T) {
 						wsName := "new-workspace"
 						_ = createWorkspace(t, orgName, tfe.WorkspaceCreateOptions{
 							Name:             tfe.String(wsName),
-							TerraformVersion: tfe.String(tfversion.String()),
+							TerracinaVersion: tfe.String(tfversion.String()),
 						})
-						tfBlock := terraformConfigRequiredVariable(orgName, wsName)
+						tfBlock := terracinaConfigRequiredVariable(orgName, wsName)
 						writeMainTF(t, tfBlock, dir)
 					},
 					commands: []tfCommand{
 						{
 							command:           []string{"init"},
-							expectedCmdOutput: `HCP Terraform has been successfully initialized!`,
+							expectedCmdOutput: `HCP Terracina has been successfully initialized!`,
 						},
 						{
 							command:           []string{"plan", "-var", "foo=bar"},

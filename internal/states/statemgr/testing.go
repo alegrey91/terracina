@@ -10,9 +10,9 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/states/statefile"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/states/statefile"
 )
 
 // TestFull is a helper for testing full state manager implementations. It
@@ -124,8 +124,8 @@ func TestFull(t *testing.T, s Full) {
 			t.Fatalf("serial incorrect after persisting with changes: got %d, want > %d", newMeta.Serial, serial)
 		}
 
-		if newMeta.TerraformVersion != oldMeta.TerraformVersion {
-			t.Fatalf("TFVersion changed from %s to %s", oldMeta.TerraformVersion, newMeta.TerraformVersion)
+		if newMeta.TerracinaVersion != oldMeta.TerracinaVersion {
+			t.Fatalf("TFVersion changed from %s to %s", oldMeta.TerracinaVersion, newMeta.TerracinaVersion)
 		}
 
 		// verify that Lineage doesn't change along with Serial, or during copying.

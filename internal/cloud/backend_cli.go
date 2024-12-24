@@ -4,8 +4,8 @@
 package cloud
 
 import (
-	"github.com/hashicorp/terraform/internal/backend/backendrun"
-	"github.com/hashicorp/terraform/internal/command/jsonformat"
+	"github.com/hashicorp/terracina/internal/backend/backendrun"
+	"github.com/hashicorp/terracina/internal/command/jsonformat"
 )
 
 // CLIInit implements backendrun.CLI

@@ -19,23 +19,23 @@ import (
 	"google.golang.org/protobuf/reflect/protoreflect"
 	"google.golang.org/protobuf/types/known/anypb"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/collections"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/depsfile"
-	"github.com/hashicorp/terraform/internal/getproviders/providerreqs"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/promising"
-	"github.com/hashicorp/terraform/internal/providers"
-	providerTesting "github.com/hashicorp/terraform/internal/providers/testing"
-	"github.com/hashicorp/terraform/internal/rpcapi/terraform1/stacks"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/stacks/stackplan"
-	stacks_testing_provider "github.com/hashicorp/terraform/internal/stacks/stackruntime/testing"
-	"github.com/hashicorp/terraform/internal/stacks/stackstate"
-	"github.com/hashicorp/terraform/internal/stacks/stackstate/statekeys"
-	"github.com/hashicorp/terraform/internal/stacks/tfstackdata1"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/collections"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/depsfile"
+	"github.com/hashicorp/terracina/internal/getproviders/providerreqs"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/promising"
+	"github.com/hashicorp/terracina/internal/providers"
+	providerTesting "github.com/hashicorp/terracina/internal/providers/testing"
+	"github.com/hashicorp/terracina/internal/rpcapi/terracina1/stacks"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/stacks/stackplan"
+	stacks_testing_provider "github.com/hashicorp/terracina/internal/stacks/stackruntime/testing"
+	"github.com/hashicorp/terracina/internal/stacks/stackstate"
+	"github.com/hashicorp/terracina/internal/stacks/stackstate/statekeys"
+	"github.com/hashicorp/terracina/internal/stacks/tfstackdata1"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 func TestPlanning_DestroyMode(t *testing.T) {
@@ -882,7 +882,7 @@ func TestPlanning_PathValues(t *testing.T) {
 }
 
 func TestPlanning_NoWorkspaceNameRef(t *testing.T) {
-	// This test verifies that a reference to terraform.workspace is treated
+	// This test verifies that a reference to terracina.workspace is treated
 	// as invalid for modules used in a stacks context, because there's
 	// no comparable single string to use in stacks context and we expect
 	// modules used in stack components to vary declarations based only
@@ -901,23 +901,23 @@ func TestPlanning_NoWorkspaceNameRef(t *testing.T) {
 	inPromisingTask(t, func(ctx context.Context, t *testing.T) {
 		_, diags := testPlan(t, main)
 		if !diags.HasErrors() {
-			t.Fatal("success; want error about invalid terraform.workspace reference")
+			t.Fatal("success; want error about invalid terracina.workspace reference")
 		}
 
-		// At least one of the diagnostics must mention the terraform.workspace
+		// At least one of the diagnostics must mention the terracina.workspace
 		// attribute in its detail.
 		seenRelevantDiag := false
 		for _, diag := range diags {
 			if diag.Severity() != tfdiags.Error {
 				continue
 			}
-			if strings.Contains(diag.Description().Detail, "terraform.workspace") {
+			if strings.Contains(diag.Description().Detail, "terracina.workspace") {
 				seenRelevantDiag = true
 				break
 			}
 		}
 		if !seenRelevantDiag {
-			t.Fatalf("none of the error diagnostics mentions terraform.workspace\n%s", spew.Sdump(diags.ForRPC()))
+			t.Fatalf("none of the error diagnostics mentions terracina.workspace\n%s", spew.Sdump(diags.ForRPC()))
 		}
 	})
 }
@@ -1058,5 +1058,5 @@ func mustPlanDynamicValue(t *testing.T, v cty.Value) *tfstackdata1.DynamicValue 
 	if err != nil {
 		t.Fatal(err)
 	}
-	return tfstackdata1.Terraform1ToStackDataDynamicValue(ret)
+	return tfstackdata1.Terracina1ToStackDataDynamicValue(ret)
 }

@@ -14,7 +14,7 @@ import (
 	"github.com/zclconf/go-cty/cty"
 	"github.com/zclconf/go-cty/cty/function"
 
-	"github.com/hashicorp/terraform/internal/collections"
+	"github.com/hashicorp/terracina/internal/collections"
 )
 
 func TestReplace(t *testing.T) {
@@ -434,7 +434,7 @@ func TestTemplateString(t *testing.T) {
 			map[string]cty.Value{},
 			cty.ObjectVal(map[string]cty.Value{}),
 			cty.NilVal,
-			`invalid template expression: must be a direct reference to a single string from elsewhere, containing valid Terraform template syntax`,
+			`invalid template expression: must be a direct reference to a single string from elsewhere, containing valid Terracina template syntax`,
 		},
 		{
 			`not_a_string`,

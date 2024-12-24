@@ -6,7 +6,7 @@ package arguments
 import (
 	"time"
 
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // Init represents the command-line arguments for the init command.
@@ -25,10 +25,10 @@ type Init struct {
 	// ViewType specifies which init format to use: human or JSON.
 	ViewType ViewType
 
-	// Backend specifies whether to disable backend or HCP Terraform initialization.
+	// Backend specifies whether to disable backend or HCP Terracina initialization.
 	Backend bool
 
-	// Cloud specifies whether to disable backend or HCP Terraform initialization.
+	// Cloud specifies whether to disable backend or HCP Terracina initialization.
 	Cloud bool
 
 	// Get specifies whether to disable downloading modules for this configuration
@@ -55,7 +55,7 @@ type Init struct {
 	// Json specifies whether to output in JSON format
 	Json bool
 
-	// IgnoreRemoteVersion specifies whether to ignore remote and local Terraform versions compatibility
+	// IgnoreRemoteVersion specifies whether to ignore remote and local Terracina versions compatibility
 	IgnoreRemoteVersion bool
 
 	BackendConfig FlagNameValueSlice
@@ -101,7 +101,7 @@ func ParseInit(args []string) (*Init, tfdiags.Diagnostics) {
 	cmdFlags.BoolVar(&init.MigrateState, "migrate-state", false, "migrate state")
 	cmdFlags.BoolVar(&init.Upgrade, "upgrade", false, "")
 	cmdFlags.StringVar(&init.Lockfile, "lockfile", "", "Set a dependency lockfile mode")
-	cmdFlags.BoolVar(&init.IgnoreRemoteVersion, "ignore-remote-version", false, "continue even if remote and local Terraform versions are incompatible")
+	cmdFlags.BoolVar(&init.IgnoreRemoteVersion, "ignore-remote-version", false, "continue even if remote and local Terracina versions are incompatible")
 	cmdFlags.StringVar(&init.TestsDirectory, "test-directory", "tests", "test-directory")
 	cmdFlags.BoolVar(&init.Json, "json", false, "json")
 	cmdFlags.Var(&init.BackendConfig, "backend-config", "")
@@ -119,7 +119,7 @@ func ParseInit(args []string) (*Init, tfdiags.Diagnostics) {
 		diags = diags.Append(tfdiags.Sourceless(
 			tfdiags.Error,
 			"The -migrate-state and -json options are mutually-exclusive",
-			"Terraform cannot ask for interactive approval when -json is set. To use the -migrate-state option, disable the -json option.",
+			"Terracina cannot ask for interactive approval when -json is set. To use the -migrate-state option, disable the -json option.",
 		))
 	}
 

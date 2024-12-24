@@ -16,9 +16,9 @@ import (
 	"time"
 
 	"github.com/hashicorp/go-retryablehttp"
-	"github.com/hashicorp/terraform/internal/httpclient"
-	"github.com/hashicorp/terraform/internal/logging"
-	"github.com/hashicorp/terraform/internal/releaseauth"
+	"github.com/hashicorp/terracina/internal/httpclient"
+	"github.com/hashicorp/terracina/internal/logging"
+	"github.com/hashicorp/terracina/internal/releaseauth"
 )
 
 var (
@@ -36,7 +36,7 @@ type BuildArtifact struct {
 	Arch string `json:"arch"`
 
 	// The Operating System corresponding to the build artifact
-	// Enum: [archlinux centos darwin debian dragonfly freebsd linux netbsd openbsd plan9 python solaris terraform web windows]
+	// Enum: [archlinux centos darwin debian dragonfly freebsd linux netbsd openbsd plan9 python solaris terracina web windows]
 	Os string `json:"os"`
 
 	// This build is unsupported and provided for convenience only.
@@ -164,7 +164,7 @@ func decodeManifest(data io.Reader) (*Release, error) {
 }
 
 // NewCloudPluginClient creates a new client for downloading and verifying
-// terraform-cloudplugin archives
+// terracina-cloudplugin archives
 func NewCloudPluginClient(ctx context.Context, serviceURL *url.URL) (*CloudPluginClient, error) {
 	httpClient := httpclient.New()
 	httpClient.Timeout = defaultRequestTimeout
@@ -182,7 +182,7 @@ func NewCloudPluginClient(ctx context.Context, serviceURL *url.URL) (*CloudPlugi
 	}, nil
 }
 
-// FetchManifest retrieves the cloudplugin manifest from HCP Terraform,
+// FetchManifest retrieves the cloudplugin manifest from HCP Terracina,
 // but returns a nil manifest if a 304 response is received, depending
 // on the lastModified time.
 func (c CloudPluginClient) FetchManifest(lastModified time.Time) (*Release, error) {
@@ -295,7 +295,7 @@ func (m Release) Select(goos, arch string) (*BuildArtifact, error) {
 }
 
 // PrimarySHASumsSignatureURL returns the URL among the URLSHASumsSignatures that matches
-// the public key known by this version of terraform. It falls back to the first URL with no
+// the public key known by this version of terracina. It falls back to the first URL with no
 // ID in the URL.
 func (m Release) PrimarySHASumsSignatureURL() (string, error) {
 	if len(m.URLSHASumsSignatures) == 0 {

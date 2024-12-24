@@ -12,18 +12,18 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/go-slug/sourceaddrs"
 	"github.com/hashicorp/go-slug/sourcebundle"
-	"github.com/hashicorp/terraform-svchost/disco"
+	"github.com/hashicorp/terracina-svchost/disco"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/depsfile"
-	"github.com/hashicorp/terraform/internal/getproviders"
-	"github.com/hashicorp/terraform/internal/rpcapi/terraform1"
-	"github.com/hashicorp/terraform/internal/rpcapi/terraform1/dependencies"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/depsfile"
+	"github.com/hashicorp/terracina/internal/getproviders"
+	"github.com/hashicorp/terracina/internal/rpcapi/terracina1"
+	"github.com/hashicorp/terracina/internal/rpcapi/terracina1/dependencies"
 
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/testing/protocmp"
 
-	_ "github.com/hashicorp/terraform/internal/logging"
+	_ "github.com/hashicorp/terracina/internal/logging"
 )
 
 func TestDependenciesOpenCloseSourceBundle(t *testing.T) {
@@ -89,8 +89,8 @@ func TestDependencyLocks(t *testing.T) {
 
 	openLocksResp, err := depsServer.OpenDependencyLockFile(ctx, &dependencies.OpenDependencyLockFile_Request{
 		SourceBundleHandle: openSourcesResp.SourceBundleHandle,
-		SourceAddress: &terraform1.SourceAddress{
-			Source: "git::https://example.com/foo.git//.terraform.lock.hcl",
+		SourceAddress: &terracina1.SourceAddress{
+			Source: "git::https://example.com/foo.git//.terracina.lock.hcl",
 		},
 	})
 	if err != nil {
@@ -134,7 +134,7 @@ func TestDependencyLocks(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	wantProviderLocks := []*terraform1.ProviderPackage{
+	wantProviderLocks := []*terracina1.ProviderPackage{
 		{
 			SourceAddr: "example.com/foo/bar",
 			Version:    "1.2.3",
@@ -207,8 +207,8 @@ func TestDependenciesProviderCache(t *testing.T) {
 
 	openLocksResp, err := depsClient.OpenDependencyLockFile(ctx, &dependencies.OpenDependencyLockFile_Request{
 		SourceBundleHandle: openSourcesResp.SourceBundleHandle,
-		SourceAddress: &terraform1.SourceAddress{
-			Source: "git::https://example.com/foo.git//.terraform.lock.hcl",
+		SourceAddress: &terracina1.SourceAddress{
+			Source: "git::https://example.com/foo.git//.terracina.lock.hcl",
 		},
 	})
 	if err != nil {
@@ -301,7 +301,7 @@ func TestDependenciesProviderCache(t *testing.T) {
 	}
 
 	got := pkgsResp.AvailableProviders
-	want := []*terraform1.ProviderPackage{
+	want := []*terracina1.ProviderPackage{
 		{
 			SourceAddr: "example.com/foo/bar",
 			Version:    "1.2.3",
@@ -329,9 +329,9 @@ func TestDependenciesProviderSchema(t *testing.T) {
 	}
 	{
 		got := providersResp.AvailableProviders
-		want := []*terraform1.ProviderPackage{
+		want := []*terracina1.ProviderPackage{
 			{
-				SourceAddr: "terraform.io/builtin/terraform",
+				SourceAddr: "terracina.io/builtin/terracina",
 			},
 		}
 		if diff := cmp.Diff(want, got, protocmp.Transform()); diff != "" {
@@ -340,7 +340,7 @@ func TestDependenciesProviderSchema(t *testing.T) {
 	}
 
 	schemaResp, err := depsServer.GetProviderSchema(ctx, &dependencies.GetProviderSchema_Request{
-		ProviderAddr: "terraform.io/builtin/terraform",
+		ProviderAddr: "terracina.io/builtin/terracina",
 	})
 	if err != nil {
 		t.Fatal(err)
@@ -354,7 +354,7 @@ func TestDependenciesProviderSchema(t *testing.T) {
 				},
 			},
 			DataResourceTypes: map[string]*dependencies.Schema{
-				"terraform_remote_state": &dependencies.Schema{
+				"terracina_remote_state": &dependencies.Schema{
 					Block: &dependencies.Schema_Block{
 						Attributes: []*dependencies.Schema_Attribute{
 							{
@@ -371,7 +371,7 @@ func TestDependenciesProviderSchema(t *testing.T) {
 								Type:     []byte(`"dynamic"`),
 								Optional: true,
 								Description: &dependencies.Schema_DocString{
-									Description: "The configuration of the remote backend. Although this is optional, most backends require some configuration.\n\nThe object can use any arguments that would be valid in the equivalent `terraform { backend \"<TYPE>\" { ... } }` block.",
+									Description: "The configuration of the remote backend. Although this is optional, most backends require some configuration.\n\nThe object can use any arguments that would be valid in the equivalent `terracina { backend \"<TYPE>\" { ... } }` block.",
 									Format:      dependencies.Schema_DocString_MARKDOWN,
 								},
 							},
@@ -398,7 +398,7 @@ func TestDependenciesProviderSchema(t *testing.T) {
 								Type:     []byte(`"string"`),
 								Optional: true,
 								Description: &dependencies.Schema_DocString{
-									Description: "The Terraform workspace to use, if the backend supports workspaces.",
+									Description: "The Terracina workspace to use, if the backend supports workspaces.",
 									Format:      dependencies.Schema_DocString_MARKDOWN,
 								},
 							},
@@ -407,7 +407,7 @@ func TestDependenciesProviderSchema(t *testing.T) {
 				},
 			},
 			ManagedResourceTypes: map[string]*dependencies.Schema{
-				"terraform_data": &dependencies.Schema{
+				"terracina_data": &dependencies.Schema{
 					Block: &dependencies.Schema_Block{
 						Attributes: []*dependencies.Schema_Attribute{
 							{
@@ -446,7 +446,7 @@ func TestDependenciesProviderSchema(t *testing.T) {
 			// consider some way to include a mock provider, but that would
 			// add another possible kind of provider into the mix and we'd
 			// rather avoid that complexity if possible.
-			t.Errorf("unexpected schema for the built-in 'terraform' provider\n%s", diff)
+			t.Errorf("unexpected schema for the built-in 'terracina' provider\n%s", diff)
 		}
 	}
 

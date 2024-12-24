@@ -7,18 +7,18 @@ import (
 	"testing"
 
 	"github.com/hashicorp/go-plugin"
-	"github.com/hashicorp/terraform/internal/terraform"
+	"github.com/hashicorp/terracina/internal/terracina"
 )
 
 func TestUIOutput_impl(t *testing.T) {
-	var _ terraform.UIOutput = new(UIOutput)
+	var _ terracina.UIOutput = new(UIOutput)
 }
 
 func TestUIOutput_input(t *testing.T) {
 	client, server := plugin.TestRPCConn(t)
 	defer client.Close()
 
-	o := new(terraform.MockUIOutput)
+	o := new(terracina.MockUIOutput)
 
 	err := server.RegisterName("Plugin", &UIOutputServer{
 		UIOutput: o,

@@ -6,8 +6,8 @@ package mocking
 import (
 	"testing"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs"
 )
 
 func TestPackageOverrides(t *testing.T) {

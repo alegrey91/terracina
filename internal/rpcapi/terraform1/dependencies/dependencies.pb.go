@@ -11,7 +11,7 @@ package dependencies
 
 import (
 	context "context"
-	terraform1 "github.com/hashicorp/terraform/internal/rpcapi/terraform1"
+	terracina1 "github.com/hashicorp/terracina/internal/rpcapi/terracina1"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -997,7 +997,7 @@ type OpenDependencyLockFile_Request struct {
 	unknownFields protoimpl.UnknownFields
 
 	SourceBundleHandle int64                     `protobuf:"varint,1,opt,name=source_bundle_handle,json=sourceBundleHandle,proto3" json:"source_bundle_handle,omitempty"`
-	SourceAddress      *terraform1.SourceAddress `protobuf:"bytes,2,opt,name=source_address,json=sourceAddress,proto3" json:"source_address,omitempty"`
+	SourceAddress      *terracina1.SourceAddress `protobuf:"bytes,2,opt,name=source_address,json=sourceAddress,proto3" json:"source_address,omitempty"`
 }
 
 func (x *OpenDependencyLockFile_Request) Reset() {
@@ -1039,7 +1039,7 @@ func (x *OpenDependencyLockFile_Request) GetSourceBundleHandle() int64 {
 	return 0
 }
 
-func (x *OpenDependencyLockFile_Request) GetSourceAddress() *terraform1.SourceAddress {
+func (x *OpenDependencyLockFile_Request) GetSourceAddress() *terracina1.SourceAddress {
 	if x != nil {
 		return x.SourceAddress
 	}
@@ -1052,7 +1052,7 @@ type OpenDependencyLockFile_Response struct {
 	unknownFields protoimpl.UnknownFields
 
 	DependencyLocksHandle int64                    `protobuf:"varint,1,opt,name=dependency_locks_handle,json=dependencyLocksHandle,proto3" json:"dependency_locks_handle,omitempty"`
-	Diagnostics           []*terraform1.Diagnostic `protobuf:"bytes,2,rep,name=diagnostics,proto3" json:"diagnostics,omitempty"`
+	Diagnostics           []*terracina1.Diagnostic `protobuf:"bytes,2,rep,name=diagnostics,proto3" json:"diagnostics,omitempty"`
 }
 
 func (x *OpenDependencyLockFile_Response) Reset() {
@@ -1094,7 +1094,7 @@ func (x *OpenDependencyLockFile_Response) GetDependencyLocksHandle() int64 {
 	return 0
 }
 
-func (x *OpenDependencyLockFile_Response) GetDiagnostics() []*terraform1.Diagnostic {
+func (x *OpenDependencyLockFile_Response) GetDiagnostics() []*terracina1.Diagnostic {
 	if x != nil {
 		return x.Diagnostics
 	}
@@ -1111,8 +1111,8 @@ type CreateDependencyLocks_Request struct {
 	// A typical value would be the result of an earlier call to
 	// GetLockedProviderDependencies on some other locks object,
 	// e.g. if a caller needs to propagate a set of locks from one
-	// Terraform Core RPC server to another.
-	ProviderSelections []*terraform1.ProviderPackage `protobuf:"bytes,1,rep,name=provider_selections,json=providerSelections,proto3" json:"provider_selections,omitempty"`
+	// Terracina Core RPC server to another.
+	ProviderSelections []*terracina1.ProviderPackage `protobuf:"bytes,1,rep,name=provider_selections,json=providerSelections,proto3" json:"provider_selections,omitempty"`
 }
 
 func (x *CreateDependencyLocks_Request) Reset() {
@@ -1147,7 +1147,7 @@ func (*CreateDependencyLocks_Request) Descriptor() ([]byte, []int) {
 	return file_dependencies_proto_rawDescGZIP(), []int{3, 0}
 }
 
-func (x *CreateDependencyLocks_Request) GetProviderSelections() []*terraform1.ProviderPackage {
+func (x *CreateDependencyLocks_Request) GetProviderSelections() []*terracina1.ProviderPackage {
 	if x != nil {
 		return x.ProviderSelections
 	}
@@ -1338,7 +1338,7 @@ type GetLockedProviderDependencies_Response struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	SelectedProviders []*terraform1.ProviderPackage `protobuf:"bytes,1,rep,name=selected_providers,json=selectedProviders,proto3" json:"selected_providers,omitempty"`
+	SelectedProviders []*terracina1.ProviderPackage `protobuf:"bytes,1,rep,name=selected_providers,json=selectedProviders,proto3" json:"selected_providers,omitempty"`
 }
 
 func (x *GetLockedProviderDependencies_Response) Reset() {
@@ -1373,7 +1373,7 @@ func (*GetLockedProviderDependencies_Response) Descriptor() ([]byte, []int) {
 	return file_dependencies_proto_rawDescGZIP(), []int{5, 1}
 }
 
-func (x *GetLockedProviderDependencies_Response) GetSelectedProviders() []*terraform1.ProviderPackage {
+func (x *GetLockedProviderDependencies_Response) GetSelectedProviders() []*terracina1.ProviderPackage {
 	if x != nil {
 		return x.SelectedProviders
 	}
@@ -1389,11 +1389,11 @@ type BuildProviderPluginCache_Request struct {
 	DependencyLocksHandle int64                                             `protobuf:"varint,2,opt,name=dependency_locks_handle,json=dependencyLocksHandle,proto3" json:"dependency_locks_handle,omitempty"`
 	InstallationMethods   []*BuildProviderPluginCache_Request_InstallMethod `protobuf:"bytes,3,rep,name=installation_methods,json=installationMethods,proto3" json:"installation_methods,omitempty"`
 	// If set, this populates the cache with plugins for a different
-	// platform than the one the Terraform Core RPC server is running on.
+	// platform than the one the Terracina Core RPC server is running on.
 	// If unset (empty) then the cache will be populated with packages
-	// for the same platform as Terraform Core was built for, if available.
+	// for the same platform as Terracina Core was built for, if available.
 	//
-	// If this is set to a different platform than the Terraform Core RPC
+	// If this is set to a different platform than the Terracina Core RPC
 	// server's then the generated cache directory will appear empty to
 	// other operations on this server.
 	OverridePlatform string `protobuf:"bytes,4,opt,name=override_platform,json=overridePlatform,proto3" json:"override_platform,omitempty"`
@@ -1573,7 +1573,7 @@ func (x *BuildProviderPluginCache_Event) GetFetchComplete() *BuildProviderPlugin
 	return nil
 }
 
-func (x *BuildProviderPluginCache_Event) GetDiagnostic() *terraform1.Diagnostic {
+func (x *BuildProviderPluginCache_Event) GetDiagnostic() *terracina1.Diagnostic {
 	if x, ok := x.GetEvent().(*BuildProviderPluginCache_Event_Diagnostic); ok {
 		return x.Diagnostic
 	}
@@ -1617,7 +1617,7 @@ type BuildProviderPluginCache_Event_FetchComplete_ struct {
 }
 
 type BuildProviderPluginCache_Event_Diagnostic struct {
-	Diagnostic *terraform1.Diagnostic `protobuf:"bytes,9,opt,name=diagnostic,proto3,oneof"`
+	Diagnostic *terracina1.Diagnostic `protobuf:"bytes,9,opt,name=diagnostic,proto3,oneof"`
 }
 
 func (*BuildProviderPluginCache_Event_Pending_) isBuildProviderPluginCache_Event_Event() {}
@@ -2025,7 +2025,7 @@ type BuildProviderPluginCache_Event_FetchComplete struct {
 	unknownFields protoimpl.UnknownFields
 
 	ProviderVersion *BuildProviderPluginCache_Event_ProviderVersion         `protobuf:"bytes,1,opt,name=provider_version,json=providerVersion,proto3" json:"provider_version,omitempty"`
-	AuthResult      BuildProviderPluginCache_Event_FetchComplete_AuthResult `protobuf:"varint,2,opt,name=auth_result,json=authResult,proto3,enum=terraform1.dependencies.BuildProviderPluginCache_Event_FetchComplete_AuthResult" json:"auth_result,omitempty"`
+	AuthResult      BuildProviderPluginCache_Event_FetchComplete_AuthResult `protobuf:"varint,2,opt,name=auth_result,json=authResult,proto3,enum=terracina1.dependencies.BuildProviderPluginCache_Event_FetchComplete_AuthResult" json:"auth_result,omitempty"`
 	// If auth_result is one of the "_SIGNED" variants then this
 	// might contain a UI-oriented identifier for the key that
 	// signed the package. The exact format of this string is not
@@ -2334,7 +2334,7 @@ type GetCachedProviders_Response struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	AvailableProviders []*terraform1.ProviderPackage `protobuf:"bytes,1,rep,name=available_providers,json=availableProviders,proto3" json:"available_providers,omitempty"`
+	AvailableProviders []*terracina1.ProviderPackage `protobuf:"bytes,1,rep,name=available_providers,json=availableProviders,proto3" json:"available_providers,omitempty"`
 }
 
 func (x *GetCachedProviders_Response) Reset() {
@@ -2369,7 +2369,7 @@ func (*GetCachedProviders_Response) Descriptor() ([]byte, []int) {
 	return file_dependencies_proto_rawDescGZIP(), []int{9, 1}
 }
 
-func (x *GetCachedProviders_Response) GetAvailableProviders() []*terraform1.ProviderPackage {
+func (x *GetCachedProviders_Response) GetAvailableProviders() []*terracina1.ProviderPackage {
 	if x != nil {
 		return x.AvailableProviders
 	}
@@ -2419,14 +2419,14 @@ type GetBuiltInProviders_Response struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// The built-in providers that are compiled in to this Terraform Core
+	// The built-in providers that are compiled in to this Terracina Core
 	// server.
 	//
-	// This uses terraform1.ProviderPackage messages for consistency with the other
+	// This uses terracina1.ProviderPackage messages for consistency with the other
 	// operations which list providers, but built-in providers do not
 	// have version numbers nor hashes so those fields will always be
 	// unset in the result.
-	AvailableProviders []*terraform1.ProviderPackage `protobuf:"bytes,1,rep,name=available_providers,json=availableProviders,proto3" json:"available_providers,omitempty"`
+	AvailableProviders []*terracina1.ProviderPackage `protobuf:"bytes,1,rep,name=available_providers,json=availableProviders,proto3" json:"available_providers,omitempty"`
 }
 
 func (x *GetBuiltInProviders_Response) Reset() {
@@ -2461,7 +2461,7 @@ func (*GetBuiltInProviders_Response) Descriptor() ([]byte, []int) {
 	return file_dependencies_proto_rawDescGZIP(), []int{10, 1}
 }
 
-func (x *GetBuiltInProviders_Response) GetAvailableProviders() []*terraform1.ProviderPackage {
+func (x *GetBuiltInProviders_Response) GetAvailableProviders() []*terracina1.ProviderPackage {
 	if x != nil {
 		return x.AvailableProviders
 	}
@@ -2476,17 +2476,17 @@ type GetProviderSchema_Request struct {
 	// The address of the provider to retrieve schema for, using the
 	// typical provider source address syntax.
 	//
-	// When requesting schema based on a terraform1.ProviderPackage message, populate
+	// When requesting schema based on a terracina1.ProviderPackage message, populate
 	// this with its "source_addr" field.
 	ProviderAddr string `protobuf:"bytes,1,opt,name=provider_addr,json=providerAddr,proto3" json:"provider_addr,omitempty"`
 	// The version number of the given provider to retrieve the schema
 	// of, which must have already been populated into the cache directory.
 	//
 	// Not supported for built-in providers because we can only access the
-	// single "version" of the provider that's compiled into this Terraform
+	// single "version" of the provider that's compiled into this Terracina
 	// Core server, and so must be left unset or empty for those.
 	//
-	// When requesting schema based on a terraform1.ProviderPackage message, populate
+	// When requesting schema based on a terracina1.ProviderPackage message, populate
 	// this with its "version" field.
 	ProviderVersion string `protobuf:"bytes,2,opt,name=provider_version,json=providerVersion,proto3" json:"provider_version,omitempty"`
 	// The handle for the previously-opened provider plugin cache to
@@ -2788,7 +2788,7 @@ type Schema_NestedBlock struct {
 
 	TypeName string                         `protobuf:"bytes,1,opt,name=type_name,json=typeName,proto3" json:"type_name,omitempty"`
 	Block    *Schema_Block                  `protobuf:"bytes,2,opt,name=block,proto3" json:"block,omitempty"`
-	Nesting  Schema_NestedBlock_NestingMode `protobuf:"varint,3,opt,name=nesting,proto3,enum=terraform1.dependencies.Schema_NestedBlock_NestingMode" json:"nesting,omitempty"`
+	Nesting  Schema_NestedBlock_NestingMode `protobuf:"varint,3,opt,name=nesting,proto3,enum=terracina1.dependencies.Schema_NestedBlock_NestingMode" json:"nesting,omitempty"`
 }
 
 func (x *Schema_NestedBlock) Reset() {
@@ -2850,7 +2850,7 @@ type Schema_Object struct {
 	unknownFields protoimpl.UnknownFields
 
 	Attributes []*Schema_Attribute       `protobuf:"bytes,1,rep,name=attributes,proto3" json:"attributes,omitempty"`
-	Nesting    Schema_Object_NestingMode `protobuf:"varint,3,opt,name=nesting,proto3,enum=terraform1.dependencies.Schema_Object_NestingMode" json:"nesting,omitempty"`
+	Nesting    Schema_Object_NestingMode `protobuf:"varint,3,opt,name=nesting,proto3,enum=terracina1.dependencies.Schema_Object_NestingMode" json:"nesting,omitempty"`
 }
 
 func (x *Schema_Object) Reset() {
@@ -2905,7 +2905,7 @@ type Schema_DocString struct {
 	unknownFields protoimpl.UnknownFields
 
 	Description string                  `protobuf:"bytes,1,opt,name=description,proto3" json:"description,omitempty"`
-	Format      Schema_DocString_Format `protobuf:"varint,2,opt,name=format,proto3,enum=terraform1.dependencies.Schema_DocString_Format" json:"format,omitempty"`
+	Format      Schema_DocString_Format `protobuf:"varint,2,opt,name=format,proto3,enum=terracina1.dependencies.Schema_DocString_Format" json:"format,omitempty"`
 }
 
 func (x *Schema_DocString) Reset() {
@@ -3461,128 +3461,128 @@ func file_dependencies_proto_rawDescGZIP() []byte {
 var file_dependencies_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
 var file_dependencies_proto_msgTypes = make([]protoimpl.MessageInfo, 52)
 var file_dependencies_proto_goTypes = []any{
-	(BuildProviderPluginCache_Event_FetchComplete_AuthResult)(0), // 0: terraform1.dependencies.BuildProviderPluginCache.Event.FetchComplete.AuthResult
-	(Schema_NestedBlock_NestingMode)(0),                          // 1: terraform1.dependencies.Schema.NestedBlock.NestingMode
-	(Schema_Object_NestingMode)(0),                               // 2: terraform1.dependencies.Schema.Object.NestingMode
-	(Schema_DocString_Format)(0),                                 // 3: terraform1.dependencies.Schema.DocString.Format
-	(*OpenSourceBundle)(nil),                                     // 4: terraform1.dependencies.OpenSourceBundle
-	(*CloseSourceBundle)(nil),                                    // 5: terraform1.dependencies.CloseSourceBundle
-	(*OpenDependencyLockFile)(nil),                               // 6: terraform1.dependencies.OpenDependencyLockFile
-	(*CreateDependencyLocks)(nil),                                // 7: terraform1.dependencies.CreateDependencyLocks
-	(*CloseDependencyLocks)(nil),                                 // 8: terraform1.dependencies.CloseDependencyLocks
-	(*GetLockedProviderDependencies)(nil),                        // 9: terraform1.dependencies.GetLockedProviderDependencies
-	(*BuildProviderPluginCache)(nil),                             // 10: terraform1.dependencies.BuildProviderPluginCache
-	(*OpenProviderPluginCache)(nil),                              // 11: terraform1.dependencies.OpenProviderPluginCache
-	(*CloseProviderPluginCache)(nil),                             // 12: terraform1.dependencies.CloseProviderPluginCache
-	(*GetCachedProviders)(nil),                                   // 13: terraform1.dependencies.GetCachedProviders
-	(*GetBuiltInProviders)(nil),                                  // 14: terraform1.dependencies.GetBuiltInProviders
-	(*GetProviderSchema)(nil),                                    // 15: terraform1.dependencies.GetProviderSchema
-	(*ProviderSchema)(nil),                                       // 16: terraform1.dependencies.ProviderSchema
-	(*Schema)(nil),                                               // 17: terraform1.dependencies.Schema
-	(*OpenSourceBundle_Request)(nil),                             // 18: terraform1.dependencies.OpenSourceBundle.Request
-	(*OpenSourceBundle_Response)(nil),                            // 19: terraform1.dependencies.OpenSourceBundle.Response
-	(*CloseSourceBundle_Request)(nil),                            // 20: terraform1.dependencies.CloseSourceBundle.Request
-	(*CloseSourceBundle_Response)(nil),                           // 21: terraform1.dependencies.CloseSourceBundle.Response
-	(*OpenDependencyLockFile_Request)(nil),                       // 22: terraform1.dependencies.OpenDependencyLockFile.Request
-	(*OpenDependencyLockFile_Response)(nil),                      // 23: terraform1.dependencies.OpenDependencyLockFile.Response
-	(*CreateDependencyLocks_Request)(nil),                        // 24: terraform1.dependencies.CreateDependencyLocks.Request
-	(*CreateDependencyLocks_Response)(nil),                       // 25: terraform1.dependencies.CreateDependencyLocks.Response
-	(*CloseDependencyLocks_Request)(nil),                         // 26: terraform1.dependencies.CloseDependencyLocks.Request
-	(*CloseDependencyLocks_Response)(nil),                        // 27: terraform1.dependencies.CloseDependencyLocks.Response
-	(*GetLockedProviderDependencies_Request)(nil),                // 28: terraform1.dependencies.GetLockedProviderDependencies.Request
-	(*GetLockedProviderDependencies_Response)(nil),               // 29: terraform1.dependencies.GetLockedProviderDependencies.Response
-	(*BuildProviderPluginCache_Request)(nil),                     // 30: terraform1.dependencies.BuildProviderPluginCache.Request
-	(*BuildProviderPluginCache_Event)(nil),                       // 31: terraform1.dependencies.BuildProviderPluginCache.Event
-	(*BuildProviderPluginCache_Request_InstallMethod)(nil),       // 32: terraform1.dependencies.BuildProviderPluginCache.Request.InstallMethod
-	(*BuildProviderPluginCache_Event_Pending)(nil),               // 33: terraform1.dependencies.BuildProviderPluginCache.Event.Pending
-	(*BuildProviderPluginCache_Event_ProviderConstraints)(nil),   // 34: terraform1.dependencies.BuildProviderPluginCache.Event.ProviderConstraints
-	(*BuildProviderPluginCache_Event_ProviderVersion)(nil),       // 35: terraform1.dependencies.BuildProviderPluginCache.Event.ProviderVersion
-	(*BuildProviderPluginCache_Event_ProviderWarnings)(nil),      // 36: terraform1.dependencies.BuildProviderPluginCache.Event.ProviderWarnings
-	(*BuildProviderPluginCache_Event_FetchBegin)(nil),            // 37: terraform1.dependencies.BuildProviderPluginCache.Event.FetchBegin
-	(*BuildProviderPluginCache_Event_FetchComplete)(nil),         // 38: terraform1.dependencies.BuildProviderPluginCache.Event.FetchComplete
-	(*OpenProviderPluginCache_Request)(nil),                      // 39: terraform1.dependencies.OpenProviderPluginCache.Request
-	(*OpenProviderPluginCache_Response)(nil),                     // 40: terraform1.dependencies.OpenProviderPluginCache.Response
-	(*CloseProviderPluginCache_Request)(nil),                     // 41: terraform1.dependencies.CloseProviderPluginCache.Request
-	(*CloseProviderPluginCache_Response)(nil),                    // 42: terraform1.dependencies.CloseProviderPluginCache.Response
-	(*GetCachedProviders_Request)(nil),                           // 43: terraform1.dependencies.GetCachedProviders.Request
-	(*GetCachedProviders_Response)(nil),                          // 44: terraform1.dependencies.GetCachedProviders.Response
-	(*GetBuiltInProviders_Request)(nil),                          // 45: terraform1.dependencies.GetBuiltInProviders.Request
-	(*GetBuiltInProviders_Response)(nil),                         // 46: terraform1.dependencies.GetBuiltInProviders.Response
-	(*GetProviderSchema_Request)(nil),                            // 47: terraform1.dependencies.GetProviderSchema.Request
-	(*GetProviderSchema_Response)(nil),                           // 48: terraform1.dependencies.GetProviderSchema.Response
-	nil,                                                          // 49: terraform1.dependencies.ProviderSchema.ManagedResourceTypesEntry
-	nil,                                                          // 50: terraform1.dependencies.ProviderSchema.DataResourceTypesEntry
-	(*Schema_Block)(nil),                                         // 51: terraform1.dependencies.Schema.Block
-	(*Schema_Attribute)(nil),                                     // 52: terraform1.dependencies.Schema.Attribute
-	(*Schema_NestedBlock)(nil),                                   // 53: terraform1.dependencies.Schema.NestedBlock
-	(*Schema_Object)(nil),                                        // 54: terraform1.dependencies.Schema.Object
-	(*Schema_DocString)(nil),                                     // 55: terraform1.dependencies.Schema.DocString
-	(*terraform1.SourceAddress)(nil),                             // 56: terraform1.SourceAddress
-	(*terraform1.Diagnostic)(nil),                                // 57: terraform1.Diagnostic
-	(*terraform1.ProviderPackage)(nil),                           // 58: terraform1.ProviderPackage
+	(BuildProviderPluginCache_Event_FetchComplete_AuthResult)(0), // 0: terracina1.dependencies.BuildProviderPluginCache.Event.FetchComplete.AuthResult
+	(Schema_NestedBlock_NestingMode)(0),                          // 1: terracina1.dependencies.Schema.NestedBlock.NestingMode
+	(Schema_Object_NestingMode)(0),                               // 2: terracina1.dependencies.Schema.Object.NestingMode
+	(Schema_DocString_Format)(0),                                 // 3: terracina1.dependencies.Schema.DocString.Format
+	(*OpenSourceBundle)(nil),                                     // 4: terracina1.dependencies.OpenSourceBundle
+	(*CloseSourceBundle)(nil),                                    // 5: terracina1.dependencies.CloseSourceBundle
+	(*OpenDependencyLockFile)(nil),                               // 6: terracina1.dependencies.OpenDependencyLockFile
+	(*CreateDependencyLocks)(nil),                                // 7: terracina1.dependencies.CreateDependencyLocks
+	(*CloseDependencyLocks)(nil),                                 // 8: terracina1.dependencies.CloseDependencyLocks
+	(*GetLockedProviderDependencies)(nil),                        // 9: terracina1.dependencies.GetLockedProviderDependencies
+	(*BuildProviderPluginCache)(nil),                             // 10: terracina1.dependencies.BuildProviderPluginCache
+	(*OpenProviderPluginCache)(nil),                              // 11: terracina1.dependencies.OpenProviderPluginCache
+	(*CloseProviderPluginCache)(nil),                             // 12: terracina1.dependencies.CloseProviderPluginCache
+	(*GetCachedProviders)(nil),                                   // 13: terracina1.dependencies.GetCachedProviders
+	(*GetBuiltInProviders)(nil),                                  // 14: terracina1.dependencies.GetBuiltInProviders
+	(*GetProviderSchema)(nil),                                    // 15: terracina1.dependencies.GetProviderSchema
+	(*ProviderSchema)(nil),                                       // 16: terracina1.dependencies.ProviderSchema
+	(*Schema)(nil),                                               // 17: terracina1.dependencies.Schema
+	(*OpenSourceBundle_Request)(nil),                             // 18: terracina1.dependencies.OpenSourceBundle.Request
+	(*OpenSourceBundle_Response)(nil),                            // 19: terracina1.dependencies.OpenSourceBundle.Response
+	(*CloseSourceBundle_Request)(nil),                            // 20: terracina1.dependencies.CloseSourceBundle.Request
+	(*CloseSourceBundle_Response)(nil),                           // 21: terracina1.dependencies.CloseSourceBundle.Response
+	(*OpenDependencyLockFile_Request)(nil),                       // 22: terracina1.dependencies.OpenDependencyLockFile.Request
+	(*OpenDependencyLockFile_Response)(nil),                      // 23: terracina1.dependencies.OpenDependencyLockFile.Response
+	(*CreateDependencyLocks_Request)(nil),                        // 24: terracina1.dependencies.CreateDependencyLocks.Request
+	(*CreateDependencyLocks_Response)(nil),                       // 25: terracina1.dependencies.CreateDependencyLocks.Response
+	(*CloseDependencyLocks_Request)(nil),                         // 26: terracina1.dependencies.CloseDependencyLocks.Request
+	(*CloseDependencyLocks_Response)(nil),                        // 27: terracina1.dependencies.CloseDependencyLocks.Response
+	(*GetLockedProviderDependencies_Request)(nil),                // 28: terracina1.dependencies.GetLockedProviderDependencies.Request
+	(*GetLockedProviderDependencies_Response)(nil),               // 29: terracina1.dependencies.GetLockedProviderDependencies.Response
+	(*BuildProviderPluginCache_Request)(nil),                     // 30: terracina1.dependencies.BuildProviderPluginCache.Request
+	(*BuildProviderPluginCache_Event)(nil),                       // 31: terracina1.dependencies.BuildProviderPluginCache.Event
+	(*BuildProviderPluginCache_Request_InstallMethod)(nil),       // 32: terracina1.dependencies.BuildProviderPluginCache.Request.InstallMethod
+	(*BuildProviderPluginCache_Event_Pending)(nil),               // 33: terracina1.dependencies.BuildProviderPluginCache.Event.Pending
+	(*BuildProviderPluginCache_Event_ProviderConstraints)(nil),   // 34: terracina1.dependencies.BuildProviderPluginCache.Event.ProviderConstraints
+	(*BuildProviderPluginCache_Event_ProviderVersion)(nil),       // 35: terracina1.dependencies.BuildProviderPluginCache.Event.ProviderVersion
+	(*BuildProviderPluginCache_Event_ProviderWarnings)(nil),      // 36: terracina1.dependencies.BuildProviderPluginCache.Event.ProviderWarnings
+	(*BuildProviderPluginCache_Event_FetchBegin)(nil),            // 37: terracina1.dependencies.BuildProviderPluginCache.Event.FetchBegin
+	(*BuildProviderPluginCache_Event_FetchComplete)(nil),         // 38: terracina1.dependencies.BuildProviderPluginCache.Event.FetchComplete
+	(*OpenProviderPluginCache_Request)(nil),                      // 39: terracina1.dependencies.OpenProviderPluginCache.Request
+	(*OpenProviderPluginCache_Response)(nil),                     // 40: terracina1.dependencies.OpenProviderPluginCache.Response
+	(*CloseProviderPluginCache_Request)(nil),                     // 41: terracina1.dependencies.CloseProviderPluginCache.Request
+	(*CloseProviderPluginCache_Response)(nil),                    // 42: terracina1.dependencies.CloseProviderPluginCache.Response
+	(*GetCachedProviders_Request)(nil),                           // 43: terracina1.dependencies.GetCachedProviders.Request
+	(*GetCachedProviders_Response)(nil),                          // 44: terracina1.dependencies.GetCachedProviders.Response
+	(*GetBuiltInProviders_Request)(nil),                          // 45: terracina1.dependencies.GetBuiltInProviders.Request
+	(*GetBuiltInProviders_Response)(nil),                         // 46: terracina1.dependencies.GetBuiltInProviders.Response
+	(*GetProviderSchema_Request)(nil),                            // 47: terracina1.dependencies.GetProviderSchema.Request
+	(*GetProviderSchema_Response)(nil),                           // 48: terracina1.dependencies.GetProviderSchema.Response
+	nil,                                                          // 49: terracina1.dependencies.ProviderSchema.ManagedResourceTypesEntry
+	nil,                                                          // 50: terracina1.dependencies.ProviderSchema.DataResourceTypesEntry
+	(*Schema_Block)(nil),                                         // 51: terracina1.dependencies.Schema.Block
+	(*Schema_Attribute)(nil),                                     // 52: terracina1.dependencies.Schema.Attribute
+	(*Schema_NestedBlock)(nil),                                   // 53: terracina1.dependencies.Schema.NestedBlock
+	(*Schema_Object)(nil),                                        // 54: terracina1.dependencies.Schema.Object
+	(*Schema_DocString)(nil),                                     // 55: terracina1.dependencies.Schema.DocString
+	(*terracina1.SourceAddress)(nil),                             // 56: terracina1.SourceAddress
+	(*terracina1.Diagnostic)(nil),                                // 57: terracina1.Diagnostic
+	(*terracina1.ProviderPackage)(nil),                           // 58: terracina1.ProviderPackage
 }
 var file_dependencies_proto_depIdxs = []int32{
-	17, // 0: terraform1.dependencies.ProviderSchema.provider_config:type_name -> terraform1.dependencies.Schema
-	49, // 1: terraform1.dependencies.ProviderSchema.managed_resource_types:type_name -> terraform1.dependencies.ProviderSchema.ManagedResourceTypesEntry
-	50, // 2: terraform1.dependencies.ProviderSchema.data_resource_types:type_name -> terraform1.dependencies.ProviderSchema.DataResourceTypesEntry
-	51, // 3: terraform1.dependencies.Schema.block:type_name -> terraform1.dependencies.Schema.Block
-	56, // 4: terraform1.dependencies.OpenDependencyLockFile.Request.source_address:type_name -> terraform1.SourceAddress
-	57, // 5: terraform1.dependencies.OpenDependencyLockFile.Response.diagnostics:type_name -> terraform1.Diagnostic
-	58, // 6: terraform1.dependencies.CreateDependencyLocks.Request.provider_selections:type_name -> terraform1.ProviderPackage
-	58, // 7: terraform1.dependencies.GetLockedProviderDependencies.Response.selected_providers:type_name -> terraform1.ProviderPackage
-	32, // 8: terraform1.dependencies.BuildProviderPluginCache.Request.installation_methods:type_name -> terraform1.dependencies.BuildProviderPluginCache.Request.InstallMethod
-	33, // 9: terraform1.dependencies.BuildProviderPluginCache.Event.pending:type_name -> terraform1.dependencies.BuildProviderPluginCache.Event.Pending
-	35, // 10: terraform1.dependencies.BuildProviderPluginCache.Event.already_installed:type_name -> terraform1.dependencies.BuildProviderPluginCache.Event.ProviderVersion
-	35, // 11: terraform1.dependencies.BuildProviderPluginCache.Event.built_in:type_name -> terraform1.dependencies.BuildProviderPluginCache.Event.ProviderVersion
-	34, // 12: terraform1.dependencies.BuildProviderPluginCache.Event.query_begin:type_name -> terraform1.dependencies.BuildProviderPluginCache.Event.ProviderConstraints
-	35, // 13: terraform1.dependencies.BuildProviderPluginCache.Event.query_success:type_name -> terraform1.dependencies.BuildProviderPluginCache.Event.ProviderVersion
-	36, // 14: terraform1.dependencies.BuildProviderPluginCache.Event.query_warnings:type_name -> terraform1.dependencies.BuildProviderPluginCache.Event.ProviderWarnings
-	37, // 15: terraform1.dependencies.BuildProviderPluginCache.Event.fetch_begin:type_name -> terraform1.dependencies.BuildProviderPluginCache.Event.FetchBegin
-	38, // 16: terraform1.dependencies.BuildProviderPluginCache.Event.fetch_complete:type_name -> terraform1.dependencies.BuildProviderPluginCache.Event.FetchComplete
-	57, // 17: terraform1.dependencies.BuildProviderPluginCache.Event.diagnostic:type_name -> terraform1.Diagnostic
-	34, // 18: terraform1.dependencies.BuildProviderPluginCache.Event.Pending.expected:type_name -> terraform1.dependencies.BuildProviderPluginCache.Event.ProviderConstraints
-	35, // 19: terraform1.dependencies.BuildProviderPluginCache.Event.FetchBegin.provider_version:type_name -> terraform1.dependencies.BuildProviderPluginCache.Event.ProviderVersion
-	35, // 20: terraform1.dependencies.BuildProviderPluginCache.Event.FetchComplete.provider_version:type_name -> terraform1.dependencies.BuildProviderPluginCache.Event.ProviderVersion
-	0,  // 21: terraform1.dependencies.BuildProviderPluginCache.Event.FetchComplete.auth_result:type_name -> terraform1.dependencies.BuildProviderPluginCache.Event.FetchComplete.AuthResult
-	58, // 22: terraform1.dependencies.GetCachedProviders.Response.available_providers:type_name -> terraform1.ProviderPackage
-	58, // 23: terraform1.dependencies.GetBuiltInProviders.Response.available_providers:type_name -> terraform1.ProviderPackage
-	16, // 24: terraform1.dependencies.GetProviderSchema.Response.schema:type_name -> terraform1.dependencies.ProviderSchema
-	17, // 25: terraform1.dependencies.ProviderSchema.ManagedResourceTypesEntry.value:type_name -> terraform1.dependencies.Schema
-	17, // 26: terraform1.dependencies.ProviderSchema.DataResourceTypesEntry.value:type_name -> terraform1.dependencies.Schema
-	52, // 27: terraform1.dependencies.Schema.Block.attributes:type_name -> terraform1.dependencies.Schema.Attribute
-	53, // 28: terraform1.dependencies.Schema.Block.block_types:type_name -> terraform1.dependencies.Schema.NestedBlock
-	55, // 29: terraform1.dependencies.Schema.Block.description:type_name -> terraform1.dependencies.Schema.DocString
-	54, // 30: terraform1.dependencies.Schema.Attribute.nested_type:type_name -> terraform1.dependencies.Schema.Object
-	55, // 31: terraform1.dependencies.Schema.Attribute.description:type_name -> terraform1.dependencies.Schema.DocString
-	51, // 32: terraform1.dependencies.Schema.NestedBlock.block:type_name -> terraform1.dependencies.Schema.Block
-	1,  // 33: terraform1.dependencies.Schema.NestedBlock.nesting:type_name -> terraform1.dependencies.Schema.NestedBlock.NestingMode
-	52, // 34: terraform1.dependencies.Schema.Object.attributes:type_name -> terraform1.dependencies.Schema.Attribute
-	2,  // 35: terraform1.dependencies.Schema.Object.nesting:type_name -> terraform1.dependencies.Schema.Object.NestingMode
-	3,  // 36: terraform1.dependencies.Schema.DocString.format:type_name -> terraform1.dependencies.Schema.DocString.Format
-	18, // 37: terraform1.dependencies.Dependencies.OpenSourceBundle:input_type -> terraform1.dependencies.OpenSourceBundle.Request
-	20, // 38: terraform1.dependencies.Dependencies.CloseSourceBundle:input_type -> terraform1.dependencies.CloseSourceBundle.Request
-	22, // 39: terraform1.dependencies.Dependencies.OpenDependencyLockFile:input_type -> terraform1.dependencies.OpenDependencyLockFile.Request
-	24, // 40: terraform1.dependencies.Dependencies.CreateDependencyLocks:input_type -> terraform1.dependencies.CreateDependencyLocks.Request
-	26, // 41: terraform1.dependencies.Dependencies.CloseDependencyLocks:input_type -> terraform1.dependencies.CloseDependencyLocks.Request
-	28, // 42: terraform1.dependencies.Dependencies.GetLockedProviderDependencies:input_type -> terraform1.dependencies.GetLockedProviderDependencies.Request
-	30, // 43: terraform1.dependencies.Dependencies.BuildProviderPluginCache:input_type -> terraform1.dependencies.BuildProviderPluginCache.Request
-	39, // 44: terraform1.dependencies.Dependencies.OpenProviderPluginCache:input_type -> terraform1.dependencies.OpenProviderPluginCache.Request
-	41, // 45: terraform1.dependencies.Dependencies.CloseProviderPluginCache:input_type -> terraform1.dependencies.CloseProviderPluginCache.Request
-	43, // 46: terraform1.dependencies.Dependencies.GetCachedProviders:input_type -> terraform1.dependencies.GetCachedProviders.Request
-	45, // 47: terraform1.dependencies.Dependencies.GetBuiltInProviders:input_type -> terraform1.dependencies.GetBuiltInProviders.Request
-	47, // 48: terraform1.dependencies.Dependencies.GetProviderSchema:input_type -> terraform1.dependencies.GetProviderSchema.Request
-	19, // 49: terraform1.dependencies.Dependencies.OpenSourceBundle:output_type -> terraform1.dependencies.OpenSourceBundle.Response
-	21, // 50: terraform1.dependencies.Dependencies.CloseSourceBundle:output_type -> terraform1.dependencies.CloseSourceBundle.Response
-	23, // 51: terraform1.dependencies.Dependencies.OpenDependencyLockFile:output_type -> terraform1.dependencies.OpenDependencyLockFile.Response
-	25, // 52: terraform1.dependencies.Dependencies.CreateDependencyLocks:output_type -> terraform1.dependencies.CreateDependencyLocks.Response
-	27, // 53: terraform1.dependencies.Dependencies.CloseDependencyLocks:output_type -> terraform1.dependencies.CloseDependencyLocks.Response
-	29, // 54: terraform1.dependencies.Dependencies.GetLockedProviderDependencies:output_type -> terraform1.dependencies.GetLockedProviderDependencies.Response
-	31, // 55: terraform1.dependencies.Dependencies.BuildProviderPluginCache:output_type -> terraform1.dependencies.BuildProviderPluginCache.Event
-	40, // 56: terraform1.dependencies.Dependencies.OpenProviderPluginCache:output_type -> terraform1.dependencies.OpenProviderPluginCache.Response
-	42, // 57: terraform1.dependencies.Dependencies.CloseProviderPluginCache:output_type -> terraform1.dependencies.CloseProviderPluginCache.Response
-	44, // 58: terraform1.dependencies.Dependencies.GetCachedProviders:output_type -> terraform1.dependencies.GetCachedProviders.Response
-	46, // 59: terraform1.dependencies.Dependencies.GetBuiltInProviders:output_type -> terraform1.dependencies.GetBuiltInProviders.Response
-	48, // 60: terraform1.dependencies.Dependencies.GetProviderSchema:output_type -> terraform1.dependencies.GetProviderSchema.Response
+	17, // 0: terracina1.dependencies.ProviderSchema.provider_config:type_name -> terracina1.dependencies.Schema
+	49, // 1: terracina1.dependencies.ProviderSchema.managed_resource_types:type_name -> terracina1.dependencies.ProviderSchema.ManagedResourceTypesEntry
+	50, // 2: terracina1.dependencies.ProviderSchema.data_resource_types:type_name -> terracina1.dependencies.ProviderSchema.DataResourceTypesEntry
+	51, // 3: terracina1.dependencies.Schema.block:type_name -> terracina1.dependencies.Schema.Block
+	56, // 4: terracina1.dependencies.OpenDependencyLockFile.Request.source_address:type_name -> terracina1.SourceAddress
+	57, // 5: terracina1.dependencies.OpenDependencyLockFile.Response.diagnostics:type_name -> terracina1.Diagnostic
+	58, // 6: terracina1.dependencies.CreateDependencyLocks.Request.provider_selections:type_name -> terracina1.ProviderPackage
+	58, // 7: terracina1.dependencies.GetLockedProviderDependencies.Response.selected_providers:type_name -> terracina1.ProviderPackage
+	32, // 8: terracina1.dependencies.BuildProviderPluginCache.Request.installation_methods:type_name -> terracina1.dependencies.BuildProviderPluginCache.Request.InstallMethod
+	33, // 9: terracina1.dependencies.BuildProviderPluginCache.Event.pending:type_name -> terracina1.dependencies.BuildProviderPluginCache.Event.Pending
+	35, // 10: terracina1.dependencies.BuildProviderPluginCache.Event.already_installed:type_name -> terracina1.dependencies.BuildProviderPluginCache.Event.ProviderVersion
+	35, // 11: terracina1.dependencies.BuildProviderPluginCache.Event.built_in:type_name -> terracina1.dependencies.BuildProviderPluginCache.Event.ProviderVersion
+	34, // 12: terracina1.dependencies.BuildProviderPluginCache.Event.query_begin:type_name -> terracina1.dependencies.BuildProviderPluginCache.Event.ProviderConstraints
+	35, // 13: terracina1.dependencies.BuildProviderPluginCache.Event.query_success:type_name -> terracina1.dependencies.BuildProviderPluginCache.Event.ProviderVersion
+	36, // 14: terracina1.dependencies.BuildProviderPluginCache.Event.query_warnings:type_name -> terracina1.dependencies.BuildProviderPluginCache.Event.ProviderWarnings
+	37, // 15: terracina1.dependencies.BuildProviderPluginCache.Event.fetch_begin:type_name -> terracina1.dependencies.BuildProviderPluginCache.Event.FetchBegin
+	38, // 16: terracina1.dependencies.BuildProviderPluginCache.Event.fetch_complete:type_name -> terracina1.dependencies.BuildProviderPluginCache.Event.FetchComplete
+	57, // 17: terracina1.dependencies.BuildProviderPluginCache.Event.diagnostic:type_name -> terracina1.Diagnostic
+	34, // 18: terracina1.dependencies.BuildProviderPluginCache.Event.Pending.expected:type_name -> terracina1.dependencies.BuildProviderPluginCache.Event.ProviderConstraints
+	35, // 19: terracina1.dependencies.BuildProviderPluginCache.Event.FetchBegin.provider_version:type_name -> terracina1.dependencies.BuildProviderPluginCache.Event.ProviderVersion
+	35, // 20: terracina1.dependencies.BuildProviderPluginCache.Event.FetchComplete.provider_version:type_name -> terracina1.dependencies.BuildProviderPluginCache.Event.ProviderVersion
+	0,  // 21: terracina1.dependencies.BuildProviderPluginCache.Event.FetchComplete.auth_result:type_name -> terracina1.dependencies.BuildProviderPluginCache.Event.FetchComplete.AuthResult
+	58, // 22: terracina1.dependencies.GetCachedProviders.Response.available_providers:type_name -> terracina1.ProviderPackage
+	58, // 23: terracina1.dependencies.GetBuiltInProviders.Response.available_providers:type_name -> terracina1.ProviderPackage
+	16, // 24: terracina1.dependencies.GetProviderSchema.Response.schema:type_name -> terracina1.dependencies.ProviderSchema
+	17, // 25: terracina1.dependencies.ProviderSchema.ManagedResourceTypesEntry.value:type_name -> terracina1.dependencies.Schema
+	17, // 26: terracina1.dependencies.ProviderSchema.DataResourceTypesEntry.value:type_name -> terracina1.dependencies.Schema
+	52, // 27: terracina1.dependencies.Schema.Block.attributes:type_name -> terracina1.dependencies.Schema.Attribute
+	53, // 28: terracina1.dependencies.Schema.Block.block_types:type_name -> terracina1.dependencies.Schema.NestedBlock
+	55, // 29: terracina1.dependencies.Schema.Block.description:type_name -> terracina1.dependencies.Schema.DocString
+	54, // 30: terracina1.dependencies.Schema.Attribute.nested_type:type_name -> terracina1.dependencies.Schema.Object
+	55, // 31: terracina1.dependencies.Schema.Attribute.description:type_name -> terracina1.dependencies.Schema.DocString
+	51, // 32: terracina1.dependencies.Schema.NestedBlock.block:type_name -> terracina1.dependencies.Schema.Block
+	1,  // 33: terracina1.dependencies.Schema.NestedBlock.nesting:type_name -> terracina1.dependencies.Schema.NestedBlock.NestingMode
+	52, // 34: terracina1.dependencies.Schema.Object.attributes:type_name -> terracina1.dependencies.Schema.Attribute
+	2,  // 35: terracina1.dependencies.Schema.Object.nesting:type_name -> terracina1.dependencies.Schema.Object.NestingMode
+	3,  // 36: terracina1.dependencies.Schema.DocString.format:type_name -> terracina1.dependencies.Schema.DocString.Format
+	18, // 37: terracina1.dependencies.Dependencies.OpenSourceBundle:input_type -> terracina1.dependencies.OpenSourceBundle.Request
+	20, // 38: terracina1.dependencies.Dependencies.CloseSourceBundle:input_type -> terracina1.dependencies.CloseSourceBundle.Request
+	22, // 39: terracina1.dependencies.Dependencies.OpenDependencyLockFile:input_type -> terracina1.dependencies.OpenDependencyLockFile.Request
+	24, // 40: terracina1.dependencies.Dependencies.CreateDependencyLocks:input_type -> terracina1.dependencies.CreateDependencyLocks.Request
+	26, // 41: terracina1.dependencies.Dependencies.CloseDependencyLocks:input_type -> terracina1.dependencies.CloseDependencyLocks.Request
+	28, // 42: terracina1.dependencies.Dependencies.GetLockedProviderDependencies:input_type -> terracina1.dependencies.GetLockedProviderDependencies.Request
+	30, // 43: terracina1.dependencies.Dependencies.BuildProviderPluginCache:input_type -> terracina1.dependencies.BuildProviderPluginCache.Request
+	39, // 44: terracina1.dependencies.Dependencies.OpenProviderPluginCache:input_type -> terracina1.dependencies.OpenProviderPluginCache.Request
+	41, // 45: terracina1.dependencies.Dependencies.CloseProviderPluginCache:input_type -> terracina1.dependencies.CloseProviderPluginCache.Request
+	43, // 46: terracina1.dependencies.Dependencies.GetCachedProviders:input_type -> terracina1.dependencies.GetCachedProviders.Request
+	45, // 47: terracina1.dependencies.Dependencies.GetBuiltInProviders:input_type -> terracina1.dependencies.GetBuiltInProviders.Request
+	47, // 48: terracina1.dependencies.Dependencies.GetProviderSchema:input_type -> terracina1.dependencies.GetProviderSchema.Request
+	19, // 49: terracina1.dependencies.Dependencies.OpenSourceBundle:output_type -> terracina1.dependencies.OpenSourceBundle.Response
+	21, // 50: terracina1.dependencies.Dependencies.CloseSourceBundle:output_type -> terracina1.dependencies.CloseSourceBundle.Response
+	23, // 51: terracina1.dependencies.Dependencies.OpenDependencyLockFile:output_type -> terracina1.dependencies.OpenDependencyLockFile.Response
+	25, // 52: terracina1.dependencies.Dependencies.CreateDependencyLocks:output_type -> terracina1.dependencies.CreateDependencyLocks.Response
+	27, // 53: terracina1.dependencies.Dependencies.CloseDependencyLocks:output_type -> terracina1.dependencies.CloseDependencyLocks.Response
+	29, // 54: terracina1.dependencies.Dependencies.GetLockedProviderDependencies:output_type -> terracina1.dependencies.GetLockedProviderDependencies.Response
+	31, // 55: terracina1.dependencies.Dependencies.BuildProviderPluginCache:output_type -> terracina1.dependencies.BuildProviderPluginCache.Event
+	40, // 56: terracina1.dependencies.Dependencies.OpenProviderPluginCache:output_type -> terracina1.dependencies.OpenProviderPluginCache.Response
+	42, // 57: terracina1.dependencies.Dependencies.CloseProviderPluginCache:output_type -> terracina1.dependencies.CloseProviderPluginCache.Response
+	44, // 58: terracina1.dependencies.Dependencies.GetCachedProviders:output_type -> terracina1.dependencies.GetCachedProviders.Response
+	46, // 59: terracina1.dependencies.Dependencies.GetBuiltInProviders:output_type -> terracina1.dependencies.GetBuiltInProviders.Response
+	48, // 60: terracina1.dependencies.Dependencies.GetProviderSchema:output_type -> terracina1.dependencies.GetProviderSchema.Response
 	49, // [49:61] is the sub-list for method output_type
 	37, // [37:49] is the sub-list for method input_type
 	37, // [37:37] is the sub-list for extension type_name
@@ -4279,7 +4279,7 @@ type DependenciesClient interface {
 	// This particular RPC can only install already-selected provider packages
 	// recorded in a dependency locks object; it does not support "upgrading"
 	// provider selections to newer versions as a CLI user would do with
-	// "terraform init -upgrade", because there would be no way to then
+	// "terracina init -upgrade", because there would be no way to then
 	// commit the updated locks to disk as a lock file.
 	BuildProviderPluginCache(ctx context.Context, in *BuildProviderPluginCache_Request, opts ...grpc.CallOption) (Dependencies_BuildProviderPluginCacheClient, error)
 	// Opens an existing local filesystem directory as a provider plugin cache
@@ -4291,15 +4291,15 @@ type DependenciesClient interface {
 	// available in the given provider plugin cache.
 	GetCachedProviders(ctx context.Context, in *GetCachedProviders_Request, opts ...grpc.CallOption) (*GetCachedProviders_Response, error)
 	// Returns information about the built-in providers that are compiled in
-	// to this Terraform Core server.
+	// to this Terracina Core server.
 	GetBuiltInProviders(ctx context.Context, in *GetBuiltInProviders_Request, opts ...grpc.CallOption) (*GetBuiltInProviders_Response, error)
 	// Returns a description of the schema for a particular provider in a
 	// given provider plugin cache, or of a particular built-in provider
-	// known to this version of Terraform Core.
+	// known to this version of Terracina Core.
 	//
 	// WARNING: This operation requires executing the selected provider plugin,
 	// which therefore allows it to run arbitrary code as a child process of
-	// this Terraform Core server, with access to all of the same resources.
+	// this Terracina Core server, with access to all of the same resources.
 	// This should typically be used only with providers explicitly selected
 	// in a dependency lock file, so users can control what external code
 	// has the potential to run in a context that probably has access to
@@ -4317,7 +4317,7 @@ func NewDependenciesClient(cc grpc.ClientConnInterface) DependenciesClient {
 
 func (c *dependenciesClient) OpenSourceBundle(ctx context.Context, in *OpenSourceBundle_Request, opts ...grpc.CallOption) (*OpenSourceBundle_Response, error) {
 	out := new(OpenSourceBundle_Response)
-	err := c.cc.Invoke(ctx, "/terraform1.dependencies.Dependencies/OpenSourceBundle", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/terracina1.dependencies.Dependencies/OpenSourceBundle", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -4326,7 +4326,7 @@ func (c *dependenciesClient) OpenSourceBundle(ctx context.Context, in *OpenSourc
 
 func (c *dependenciesClient) CloseSourceBundle(ctx context.Context, in *CloseSourceBundle_Request, opts ...grpc.CallOption) (*CloseSourceBundle_Response, error) {
 	out := new(CloseSourceBundle_Response)
-	err := c.cc.Invoke(ctx, "/terraform1.dependencies.Dependencies/CloseSourceBundle", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/terracina1.dependencies.Dependencies/CloseSourceBundle", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -4335,7 +4335,7 @@ func (c *dependenciesClient) CloseSourceBundle(ctx context.Context, in *CloseSou
 
 func (c *dependenciesClient) OpenDependencyLockFile(ctx context.Context, in *OpenDependencyLockFile_Request, opts ...grpc.CallOption) (*OpenDependencyLockFile_Response, error) {
 	out := new(OpenDependencyLockFile_Response)
-	err := c.cc.Invoke(ctx, "/terraform1.dependencies.Dependencies/OpenDependencyLockFile", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/terracina1.dependencies.Dependencies/OpenDependencyLockFile", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -4344,7 +4344,7 @@ func (c *dependenciesClient) OpenDependencyLockFile(ctx context.Context, in *Ope
 
 func (c *dependenciesClient) CreateDependencyLocks(ctx context.Context, in *CreateDependencyLocks_Request, opts ...grpc.CallOption) (*CreateDependencyLocks_Response, error) {
 	out := new(CreateDependencyLocks_Response)
-	err := c.cc.Invoke(ctx, "/terraform1.dependencies.Dependencies/CreateDependencyLocks", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/terracina1.dependencies.Dependencies/CreateDependencyLocks", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -4353,7 +4353,7 @@ func (c *dependenciesClient) CreateDependencyLocks(ctx context.Context, in *Crea
 
 func (c *dependenciesClient) CloseDependencyLocks(ctx context.Context, in *CloseDependencyLocks_Request, opts ...grpc.CallOption) (*CloseDependencyLocks_Response, error) {
 	out := new(CloseDependencyLocks_Response)
-	err := c.cc.Invoke(ctx, "/terraform1.dependencies.Dependencies/CloseDependencyLocks", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/terracina1.dependencies.Dependencies/CloseDependencyLocks", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -4362,7 +4362,7 @@ func (c *dependenciesClient) CloseDependencyLocks(ctx context.Context, in *Close
 
 func (c *dependenciesClient) GetLockedProviderDependencies(ctx context.Context, in *GetLockedProviderDependencies_Request, opts ...grpc.CallOption) (*GetLockedProviderDependencies_Response, error) {
 	out := new(GetLockedProviderDependencies_Response)
-	err := c.cc.Invoke(ctx, "/terraform1.dependencies.Dependencies/GetLockedProviderDependencies", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/terracina1.dependencies.Dependencies/GetLockedProviderDependencies", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -4370,7 +4370,7 @@ func (c *dependenciesClient) GetLockedProviderDependencies(ctx context.Context, 
 }
 
 func (c *dependenciesClient) BuildProviderPluginCache(ctx context.Context, in *BuildProviderPluginCache_Request, opts ...grpc.CallOption) (Dependencies_BuildProviderPluginCacheClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Dependencies_serviceDesc.Streams[0], "/terraform1.dependencies.Dependencies/BuildProviderPluginCache", opts...)
+	stream, err := c.cc.NewStream(ctx, &_Dependencies_serviceDesc.Streams[0], "/terracina1.dependencies.Dependencies/BuildProviderPluginCache", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -4403,7 +4403,7 @@ func (x *dependenciesBuildProviderPluginCacheClient) Recv() (*BuildProviderPlugi
 
 func (c *dependenciesClient) OpenProviderPluginCache(ctx context.Context, in *OpenProviderPluginCache_Request, opts ...grpc.CallOption) (*OpenProviderPluginCache_Response, error) {
 	out := new(OpenProviderPluginCache_Response)
-	err := c.cc.Invoke(ctx, "/terraform1.dependencies.Dependencies/OpenProviderPluginCache", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/terracina1.dependencies.Dependencies/OpenProviderPluginCache", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -4412,7 +4412,7 @@ func (c *dependenciesClient) OpenProviderPluginCache(ctx context.Context, in *Op
 
 func (c *dependenciesClient) CloseProviderPluginCache(ctx context.Context, in *CloseProviderPluginCache_Request, opts ...grpc.CallOption) (*CloseProviderPluginCache_Response, error) {
 	out := new(CloseProviderPluginCache_Response)
-	err := c.cc.Invoke(ctx, "/terraform1.dependencies.Dependencies/CloseProviderPluginCache", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/terracina1.dependencies.Dependencies/CloseProviderPluginCache", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -4421,7 +4421,7 @@ func (c *dependenciesClient) CloseProviderPluginCache(ctx context.Context, in *C
 
 func (c *dependenciesClient) GetCachedProviders(ctx context.Context, in *GetCachedProviders_Request, opts ...grpc.CallOption) (*GetCachedProviders_Response, error) {
 	out := new(GetCachedProviders_Response)
-	err := c.cc.Invoke(ctx, "/terraform1.dependencies.Dependencies/GetCachedProviders", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/terracina1.dependencies.Dependencies/GetCachedProviders", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -4430,7 +4430,7 @@ func (c *dependenciesClient) GetCachedProviders(ctx context.Context, in *GetCach
 
 func (c *dependenciesClient) GetBuiltInProviders(ctx context.Context, in *GetBuiltInProviders_Request, opts ...grpc.CallOption) (*GetBuiltInProviders_Response, error) {
 	out := new(GetBuiltInProviders_Response)
-	err := c.cc.Invoke(ctx, "/terraform1.dependencies.Dependencies/GetBuiltInProviders", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/terracina1.dependencies.Dependencies/GetBuiltInProviders", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -4439,7 +4439,7 @@ func (c *dependenciesClient) GetBuiltInProviders(ctx context.Context, in *GetBui
 
 func (c *dependenciesClient) GetProviderSchema(ctx context.Context, in *GetProviderSchema_Request, opts ...grpc.CallOption) (*GetProviderSchema_Response, error) {
 	out := new(GetProviderSchema_Response)
-	err := c.cc.Invoke(ctx, "/terraform1.dependencies.Dependencies/GetProviderSchema", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/terracina1.dependencies.Dependencies/GetProviderSchema", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -4481,7 +4481,7 @@ type DependenciesServer interface {
 	// This particular RPC can only install already-selected provider packages
 	// recorded in a dependency locks object; it does not support "upgrading"
 	// provider selections to newer versions as a CLI user would do with
-	// "terraform init -upgrade", because there would be no way to then
+	// "terracina init -upgrade", because there would be no way to then
 	// commit the updated locks to disk as a lock file.
 	BuildProviderPluginCache(*BuildProviderPluginCache_Request, Dependencies_BuildProviderPluginCacheServer) error
 	// Opens an existing local filesystem directory as a provider plugin cache
@@ -4493,15 +4493,15 @@ type DependenciesServer interface {
 	// available in the given provider plugin cache.
 	GetCachedProviders(context.Context, *GetCachedProviders_Request) (*GetCachedProviders_Response, error)
 	// Returns information about the built-in providers that are compiled in
-	// to this Terraform Core server.
+	// to this Terracina Core server.
 	GetBuiltInProviders(context.Context, *GetBuiltInProviders_Request) (*GetBuiltInProviders_Response, error)
 	// Returns a description of the schema for a particular provider in a
 	// given provider plugin cache, or of a particular built-in provider
-	// known to this version of Terraform Core.
+	// known to this version of Terracina Core.
 	//
 	// WARNING: This operation requires executing the selected provider plugin,
 	// which therefore allows it to run arbitrary code as a child process of
-	// this Terraform Core server, with access to all of the same resources.
+	// this Terracina Core server, with access to all of the same resources.
 	// This should typically be used only with providers explicitly selected
 	// in a dependency lock file, so users can control what external code
 	// has the potential to run in a context that probably has access to
@@ -4564,7 +4564,7 @@ func _Dependencies_OpenSourceBundle_Handler(srv interface{}, ctx context.Context
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/terraform1.dependencies.Dependencies/OpenSourceBundle",
+		FullMethod: "/terracina1.dependencies.Dependencies/OpenSourceBundle",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DependenciesServer).OpenSourceBundle(ctx, req.(*OpenSourceBundle_Request))
@@ -4582,7 +4582,7 @@ func _Dependencies_CloseSourceBundle_Handler(srv interface{}, ctx context.Contex
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/terraform1.dependencies.Dependencies/CloseSourceBundle",
+		FullMethod: "/terracina1.dependencies.Dependencies/CloseSourceBundle",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DependenciesServer).CloseSourceBundle(ctx, req.(*CloseSourceBundle_Request))
@@ -4600,7 +4600,7 @@ func _Dependencies_OpenDependencyLockFile_Handler(srv interface{}, ctx context.C
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/terraform1.dependencies.Dependencies/OpenDependencyLockFile",
+		FullMethod: "/terracina1.dependencies.Dependencies/OpenDependencyLockFile",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DependenciesServer).OpenDependencyLockFile(ctx, req.(*OpenDependencyLockFile_Request))
@@ -4618,7 +4618,7 @@ func _Dependencies_CreateDependencyLocks_Handler(srv interface{}, ctx context.Co
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/terraform1.dependencies.Dependencies/CreateDependencyLocks",
+		FullMethod: "/terracina1.dependencies.Dependencies/CreateDependencyLocks",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DependenciesServer).CreateDependencyLocks(ctx, req.(*CreateDependencyLocks_Request))
@@ -4636,7 +4636,7 @@ func _Dependencies_CloseDependencyLocks_Handler(srv interface{}, ctx context.Con
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/terraform1.dependencies.Dependencies/CloseDependencyLocks",
+		FullMethod: "/terracina1.dependencies.Dependencies/CloseDependencyLocks",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DependenciesServer).CloseDependencyLocks(ctx, req.(*CloseDependencyLocks_Request))
@@ -4654,7 +4654,7 @@ func _Dependencies_GetLockedProviderDependencies_Handler(srv interface{}, ctx co
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/terraform1.dependencies.Dependencies/GetLockedProviderDependencies",
+		FullMethod: "/terracina1.dependencies.Dependencies/GetLockedProviderDependencies",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DependenciesServer).GetLockedProviderDependencies(ctx, req.(*GetLockedProviderDependencies_Request))
@@ -4693,7 +4693,7 @@ func _Dependencies_OpenProviderPluginCache_Handler(srv interface{}, ctx context.
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/terraform1.dependencies.Dependencies/OpenProviderPluginCache",
+		FullMethod: "/terracina1.dependencies.Dependencies/OpenProviderPluginCache",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DependenciesServer).OpenProviderPluginCache(ctx, req.(*OpenProviderPluginCache_Request))
@@ -4711,7 +4711,7 @@ func _Dependencies_CloseProviderPluginCache_Handler(srv interface{}, ctx context
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/terraform1.dependencies.Dependencies/CloseProviderPluginCache",
+		FullMethod: "/terracina1.dependencies.Dependencies/CloseProviderPluginCache",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DependenciesServer).CloseProviderPluginCache(ctx, req.(*CloseProviderPluginCache_Request))
@@ -4729,7 +4729,7 @@ func _Dependencies_GetCachedProviders_Handler(srv interface{}, ctx context.Conte
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/terraform1.dependencies.Dependencies/GetCachedProviders",
+		FullMethod: "/terracina1.dependencies.Dependencies/GetCachedProviders",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DependenciesServer).GetCachedProviders(ctx, req.(*GetCachedProviders_Request))
@@ -4747,7 +4747,7 @@ func _Dependencies_GetBuiltInProviders_Handler(srv interface{}, ctx context.Cont
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/terraform1.dependencies.Dependencies/GetBuiltInProviders",
+		FullMethod: "/terracina1.dependencies.Dependencies/GetBuiltInProviders",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DependenciesServer).GetBuiltInProviders(ctx, req.(*GetBuiltInProviders_Request))
@@ -4765,7 +4765,7 @@ func _Dependencies_GetProviderSchema_Handler(srv interface{}, ctx context.Contex
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/terraform1.dependencies.Dependencies/GetProviderSchema",
+		FullMethod: "/terracina1.dependencies.Dependencies/GetProviderSchema",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DependenciesServer).GetProviderSchema(ctx, req.(*GetProviderSchema_Request))
@@ -4774,7 +4774,7 @@ func _Dependencies_GetProviderSchema_Handler(srv interface{}, ctx context.Contex
 }
 
 var _Dependencies_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "terraform1.dependencies.Dependencies",
+	ServiceName: "terracina1.dependencies.Dependencies",
 	HandlerType: (*DependenciesServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

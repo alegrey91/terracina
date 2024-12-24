@@ -13,15 +13,15 @@ import (
 	"github.com/hashicorp/cli"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs/configload"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/initwd"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/registry"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/terminal"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs/configload"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/initwd"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/registry"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/terminal"
 )
 
 func TestGraph_planPhase(t *testing.T) {
@@ -45,7 +45,7 @@ func TestGraph_planPhase(t *testing.T) {
 	}
 
 	output := closeStreams(t)
-	if !strings.Contains(output.Stdout(), `provider[\"registry.terraform.io/hashicorp/test\"]`) {
+	if !strings.Contains(output.Stdout(), `provider[\"registry.terracina.io/hashicorp/test\"]`) {
 		t.Fatalf("doesn't look like digraph:\n%s\n\nstderr:\n%s", output.Stdout(), output.Stderr())
 	}
 }
@@ -78,18 +78,18 @@ func TestGraph_cyclic(t *testing.T) {
 	compound = "true"
 	newrank = "true"
 	subgraph "root" {
-		"[root] provider[\"registry.terraform.io/hashicorp/test\"]" [label = "provider[\"registry.terraform.io/hashicorp/test\"]", shape = "diamond"]
+		"[root] provider[\"registry.terracina.io/hashicorp/test\"]" [label = "provider[\"registry.terracina.io/hashicorp/test\"]", shape = "diamond"]
 		"[root] test_instance.bar (expand)" [label = "test_instance.bar", shape = "box"]
 		"[root] test_instance.foo (expand)" [label = "test_instance.foo", shape = "box"]
 		"[root] local.test1 (expand)" -> "[root] local.test2 (expand)"
 		"[root] local.test2 (expand)" -> "[root] local.test1 (expand)"
-		"[root] provider[\"registry.terraform.io/hashicorp/test\"] (close)" -> "[root] provider[\"registry.terraform.io/hashicorp/test\"]"
-		"[root] provider[\"registry.terraform.io/hashicorp/test\"] (close)" -> "[root] test_instance.bar (expand)"
-		"[root] provider[\"registry.terraform.io/hashicorp/test\"] (close)" -> "[root] test_instance.foo (expand)"
-		"[root] root" -> "[root] provider[\"registry.terraform.io/hashicorp/test\"] (close)"
-		"[root] test_instance.bar (expand)" -> "[root] provider[\"registry.terraform.io/hashicorp/test\"]"
+		"[root] provider[\"registry.terracina.io/hashicorp/test\"] (close)" -> "[root] provider[\"registry.terracina.io/hashicorp/test\"]"
+		"[root] provider[\"registry.terracina.io/hashicorp/test\"] (close)" -> "[root] test_instance.bar (expand)"
+		"[root] provider[\"registry.terracina.io/hashicorp/test\"] (close)" -> "[root] test_instance.foo (expand)"
+		"[root] root" -> "[root] provider[\"registry.terracina.io/hashicorp/test\"] (close)"
+		"[root] test_instance.bar (expand)" -> "[root] provider[\"registry.terracina.io/hashicorp/test\"]"
 		"[root] test_instance.bar (expand)" -> "[root] test_instance.foo (expand)" [color = "red", penwidth = "2.0"]
-		"[root] test_instance.foo (expand)" -> "[root] provider[\"registry.terraform.io/hashicorp/test\"]"
+		"[root] test_instance.foo (expand)" -> "[root] provider[\"registry.terracina.io/hashicorp/test\"]"
 		"[root] test_instance.foo (expand)" -> "[root] test_instance.bar (expand)" [color = "red", penwidth = "2.0"]
 	}
 }`,
@@ -110,18 +110,18 @@ func TestGraph_cyclic(t *testing.T) {
 	compound = "true"
 	newrank = "true"
 	subgraph "root" {
-		"[root] provider[\"registry.terraform.io/hashicorp/test\"]" [label = "provider[\"registry.terraform.io/hashicorp/test\"]", shape = "diamond"]
+		"[root] provider[\"registry.terracina.io/hashicorp/test\"]" [label = "provider[\"registry.terracina.io/hashicorp/test\"]", shape = "diamond"]
 		"[root] test_instance.bar (expand)" [label = "test_instance.bar", shape = "box"]
 		"[root] test_instance.foo (expand)" [label = "test_instance.foo", shape = "box"]
 		"[root] local.test1 (expand)" -> "[root] local.test2 (expand)"
 		"[root] local.test2 (expand)" -> "[root] local.test1 (expand)"
-		"[root] provider[\"registry.terraform.io/hashicorp/test\"] (close)" -> "[root] provider[\"registry.terraform.io/hashicorp/test\"]"
-		"[root] provider[\"registry.terraform.io/hashicorp/test\"] (close)" -> "[root] test_instance.bar (expand)"
-		"[root] provider[\"registry.terraform.io/hashicorp/test\"] (close)" -> "[root] test_instance.foo (expand)"
-		"[root] root" -> "[root] provider[\"registry.terraform.io/hashicorp/test\"] (close)"
-		"[root] test_instance.bar (expand)" -> "[root] provider[\"registry.terraform.io/hashicorp/test\"]"
+		"[root] provider[\"registry.terracina.io/hashicorp/test\"] (close)" -> "[root] provider[\"registry.terracina.io/hashicorp/test\"]"
+		"[root] provider[\"registry.terracina.io/hashicorp/test\"] (close)" -> "[root] test_instance.bar (expand)"
+		"[root] provider[\"registry.terracina.io/hashicorp/test\"] (close)" -> "[root] test_instance.foo (expand)"
+		"[root] root" -> "[root] provider[\"registry.terracina.io/hashicorp/test\"] (close)"
+		"[root] test_instance.bar (expand)" -> "[root] provider[\"registry.terracina.io/hashicorp/test\"]"
 		"[root] test_instance.bar (expand)" -> "[root] test_instance.foo (expand)" [color = "red", penwidth = "2.0"]
-		"[root] test_instance.foo (expand)" -> "[root] provider[\"registry.terraform.io/hashicorp/test\"]"
+		"[root] test_instance.foo (expand)" -> "[root] provider[\"registry.terracina.io/hashicorp/test\"]"
 		"[root] test_instance.foo (expand)" -> "[root] test_instance.bar (expand)" [color = "red", penwidth = "2.0"]
 	}
 }`,
@@ -216,15 +216,15 @@ func TestGraph_resourcesOnly(t *testing.T) {
 
 	// The graph-interesting fixture has a child module, so we'll need to
 	// run the module installer just to get the working directory set up
-	// properly, as if the user has run "terraform init". This is really
+	// properly, as if the user has run "terracina init". This is really
 	// just building the working directory's index of module directories.
 	loader, cleanupLoader := configload.NewLoaderForTests(t)
 	t.Cleanup(cleanupLoader)
-	err := os.MkdirAll(".terraform/modules", 0700)
+	err := os.MkdirAll(".terracina/modules", 0700)
 	if err != nil {
 		t.Fatal(err)
 	}
-	inst := initwd.NewModuleInstaller(".terraform/modules", loader, registry.NewClient(nil, nil))
+	inst := initwd.NewModuleInstaller(".terracina/modules", loader, registry.NewClient(nil, nil))
 	_, instDiags := inst.InstallModules(context.Background(), ".", "tests", true, false, initwd.ModuleInstallHooksImpl{})
 	if instDiags.HasErrors() {
 		t.Fatal(instDiags.Err())
@@ -353,7 +353,7 @@ func TestGraph_applyPhaseSavedPlan(t *testing.T) {
 	}
 
 	output := closeStreams(t)
-	if !strings.Contains(output.Stdout(), `provider[\"registry.terraform.io/hashicorp/test\"]`) {
+	if !strings.Contains(output.Stdout(), `provider[\"registry.terracina.io/hashicorp/test\"]`) {
 		t.Fatalf("doesn't look like digraph:\n%s\n\nstderr:\n%s", output.Stdout(), output.Stderr())
 	}
 }

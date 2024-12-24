@@ -9,15 +9,15 @@ import (
 	"github.com/zclconf/go-cty/cty"
 	ctyjson "github.com/zclconf/go-cty/cty/json"
 
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/configs/hcl2shim"
-	"github.com/hashicorp/terraform/internal/moduletest/mocking"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/configs/hcl2shim"
+	"github.com/hashicorp/terracina/internal/moduletest/mocking"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 var _ Interface = (*Mock)(nil)
 
-// Mock is a mock provider that can be used by Terraform authors during test
+// Mock is a mock provider that can be used by Terracina authors during test
 // executions.
 //
 // The mock provider wraps an instance of an actual provider so it can return
@@ -32,7 +32,7 @@ var _ Interface = (*Mock)(nil)
 // preset data is not available.
 //
 // This is distinct from the testing.MockProvider, which is a mock provider
-// that is used by the Terraform core itself to test it's own behavior.
+// that is used by the Terracina core itself to test it's own behavior.
 type Mock struct {
 	Provider Interface
 	Data     *configs.MockData
@@ -163,7 +163,7 @@ func (m *Mock) PlanResourceChange(request PlanResourceChangeRequest) PlanResourc
 
 	if request.PriorState.IsNull() {
 		// Then we are creating this resource - we need to populate the computed
-		// null fields with unknowns so Terraform will render them properly.
+		// null fields with unknowns so Terracina will render them properly.
 
 		var response PlanResourceChangeResponse
 

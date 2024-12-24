@@ -12,7 +12,7 @@ The `base64gzip` function compresses an HCL string using gzip and then encodes t
 ## Introduction
 
 You can use the `base64gzip` function to compress an HCL string and then encode it in the Base64 format.
-Terraform uses the standard Base64 alphabet that is defined in [RFC 4648](https://datatracker.ietf.org/doc/html/rfc4648#section-4).
+Terracina uses the standard Base64 alphabet that is defined in [RFC 4648](https://datatracker.ietf.org/doc/html/rfc4648#section-4).
 
 While HashiCorp does not recommend manipulating large, raw binary data in HCL, Base64 encoding can be an effective way to represent small binary objects in memory when you need to pass them as values, rather than referring to files on disk.
 For example, you could use the `base64gzip` function to compress a large JSON string so that you can upload it to S3.
@@ -52,5 +52,5 @@ resource "aws_s3_object" "example" {
 
 ## Related functions
 
-* [`base64encode`](/terraform/language/functions/base64encode) applies Base64 encoding to an HCL string without using gzip compression.
-* [`filebase64`](/terraform/language/functions/filebase64) reads a file from the local filesystem and encodes its raw bits using the Base64 format.
+* [`base64encode`](/terracina/language/functions/base64encode) applies Base64 encoding to an HCL string without using gzip compression.
+* [`filebase64`](/terracina/language/functions/filebase64) reads a file from the local filesystem and encodes its raw bits using the Base64 format.

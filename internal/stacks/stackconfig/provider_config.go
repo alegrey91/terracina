@@ -8,8 +8,8 @@ import (
 
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // ProviderConfig is a provider configuration declared within a [Stack].
@@ -46,7 +46,7 @@ func decodeProviderConfigBlock(block *hcl.Block) (*ProviderConfig, tfdiags.Diagn
 
 			// we call this "name" in the stacks configuration language,
 			// but it's "Alias" here because we're reusing an address type
-			// made for the Terraform module language.
+			// made for the Terracina module language.
 			Alias: block.Labels[1],
 		},
 		ProviderNameRange: tfdiags.SourceRangeFromHCL(block.LabelRanges[0]),

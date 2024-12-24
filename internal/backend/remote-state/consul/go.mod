@@ -1,11 +1,11 @@
-module github.com/hashicorp/terraform/internal/backend/remote-state/consul
+module github.com/hashicorp/terracina/internal/backend/remote-state/consul
 
 go 1.23.3
 
 require (
 	github.com/hashicorp/consul/api v1.13.0
 	github.com/hashicorp/consul/sdk v0.8.0
-	github.com/hashicorp/terraform v0.0.0-00010101000000-000000000000
+	github.com/hashicorp/terracina v0.0.0-00010101000000-000000000000
 	github.com/zclconf/go-cty v1.15.1
 )
 
@@ -30,8 +30,8 @@ require (
 	github.com/hashicorp/golang-lru v0.5.1 // indirect
 	github.com/hashicorp/hcl/v2 v2.23.0 // indirect
 	github.com/hashicorp/serf v0.9.6 // indirect
-	github.com/hashicorp/terraform-registry-address v0.2.3 // indirect
-	github.com/hashicorp/terraform-svchost v0.1.1 // indirect
+	github.com/hashicorp/terracina-registry-address v0.2.3 // indirect
+	github.com/hashicorp/terracina-svchost v0.1.1 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
@@ -50,22 +50,22 @@ require (
 	golang.org/x/tools v0.25.0 // indirect
 )
 
-replace github.com/hashicorp/terraform/internal/backend/remote-state/azure => ../azure
+replace github.com/hashicorp/terracina/internal/backend/remote-state/azure => ../azure
 
-replace github.com/hashicorp/terraform/internal/backend/remote-state/consul => ../consul
+replace github.com/hashicorp/terracina/internal/backend/remote-state/consul => ../consul
 
-replace github.com/hashicorp/terraform/internal/backend/remote-state/cos => ../cos
+replace github.com/hashicorp/terracina/internal/backend/remote-state/cos => ../cos
 
-replace github.com/hashicorp/terraform/internal/backend/remote-state/gcs => ../gcs
+replace github.com/hashicorp/terracina/internal/backend/remote-state/gcs => ../gcs
 
-replace github.com/hashicorp/terraform/internal/backend/remote-state/kubernetes => ../kubernetes
+replace github.com/hashicorp/terracina/internal/backend/remote-state/kubernetes => ../kubernetes
 
-replace github.com/hashicorp/terraform/internal/backend/remote-state/oss => ../oss
+replace github.com/hashicorp/terracina/internal/backend/remote-state/oss => ../oss
 
-replace github.com/hashicorp/terraform/internal/backend/remote-state/pg => ../pg
+replace github.com/hashicorp/terracina/internal/backend/remote-state/pg => ../pg
 
-replace github.com/hashicorp/terraform/internal/backend/remote-state/s3 => ../s3
+replace github.com/hashicorp/terracina/internal/backend/remote-state/s3 => ../s3
 
-replace github.com/hashicorp/terraform/internal/legacy => ../../../legacy
+replace github.com/hashicorp/terracina/internal/legacy => ../../../legacy
 
-replace github.com/hashicorp/terraform => ../../../..
+replace github.com/hashicorp/terracina => ../../../..

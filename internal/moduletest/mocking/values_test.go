@@ -10,7 +10,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
 )
 
 var (
@@ -809,7 +809,7 @@ func TestComputedValuesForDataSource(t *testing.T) {
 				}),
 			}),
 			expectedFailures: []string{
-				"Terraform expected an object type for attribute \"nested_object\" defined within the mocked data at :0,0-0, but found string.",
+				"Terracina expected an object type for attribute \"nested_object\" defined within the mocked data at :0,0-0, but found string.",
 			},
 		},
 		"invalid_replacement_path_nested_block": {
@@ -846,7 +846,7 @@ func TestComputedValuesForDataSource(t *testing.T) {
 				}),
 			}),
 			expectedFailures: []string{
-				"Terraform expected an object type for attribute \"nested_object\" defined within the mocked data at :0,0-0, but found string.",
+				"Terracina expected an object type for attribute \"nested_object\" defined within the mocked data at :0,0-0, but found string.",
 			},
 		},
 		"invalid_replacement_type": {
@@ -863,7 +863,7 @@ func TestComputedValuesForDataSource(t *testing.T) {
 				"value": cty.StringVal("Hello, world!"),
 			}),
 			expectedFailures: []string{
-				"Terraform could not compute a value for the target type string with the mocked data defined at :0,0-0 with the attribute \"id\": string required.",
+				"Terracina could not compute a value for the target type string with the mocked data defined at :0,0-0 with the attribute \"id\": string required.",
 			},
 		},
 		"invalid_replacement_type_nested": {
@@ -899,7 +899,7 @@ func TestComputedValuesForDataSource(t *testing.T) {
 				}),
 			}),
 			expectedFailures: []string{
-				"Terraform could not compute a value for the target type string with the mocked data defined at :0,0-0 with the attribute \"nested.id\": string required.",
+				"Terracina could not compute a value for the target type string with the mocked data defined at :0,0-0 with the attribute \"nested.id\": string required.",
 			},
 		},
 		"invalid_replacement_type_nested_block": {
@@ -933,7 +933,7 @@ func TestComputedValuesForDataSource(t *testing.T) {
 				}),
 			}),
 			expectedFailures: []string{
-				"Terraform could not compute a value for the target type string with the mocked data defined at :0,0-0 with the attribute \"block.id\": string required.",
+				"Terracina could not compute a value for the target type string with the mocked data defined at :0,0-0 with the attribute \"block.id\": string required.",
 			},
 		},
 		"dynamic_attribute_unset": {

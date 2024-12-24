@@ -1,6 +1,6 @@
 ---
 page_title: moved block configuration reference
-description: Learn about the `moved` block that you can specify in Terraform configurations. The `moved` block programmatically changes the location of a resource.
+description: Learn about the `moved` block that you can specify in Terracina configurations. The `moved` block programmatically changes the location of a resource.
 ---
 
 # Moved block configuration reference
@@ -9,7 +9,7 @@ This topic provides reference information for the `moved` block.
 
 ## Introduction
 
-The `moved` block programmatically changes the address of a resource. Refer to [Refactoring](/terraform/language/modules/develop/refactoring) for details about how to use the `moved` block in your Terraform configurations.
+The `moved` block programmatically changes the address of a resource. Refer to [Refactoring](/terracina/language/modules/develop/refactoring) for details about how to use the `moved` block in your Terracina configurations.
 
 ## Configuration model
 
@@ -40,10 +40,10 @@ Map that specifies addresses for the resource. The following table describes the
 
 | Field | Description | Type | Required |
 | ---   | ---         | ---  | ---      |
-| `from` | Specifies a resource's previous address. The syntax allows Terraform to select modules, resources, and resources inside child modules. | string | required |
-| `to` | Specifies the new address to relocate the resource to. The syntax allows Terraform to select modules, resources, and resources inside child modules. | string | required |
+| `from` | Specifies a resource's previous address. The syntax allows Terracina to select modules, resources, and resources inside child modules. | string | required |
+| `to` | Specifies the new address to relocate the resource to. The syntax allows Terracina to select modules, resources, and resources inside child modules. | string | required |
 
-Before creating a new plan for the resource specified in the `to` field, Terraform checks the state for an existing object at the address specified in the `from` field. Terraform renames existing objects to the string specified in the `to` field and then creates a plan. The plan directs Terraform to provision the resource specified in the `from` field as the resource specified in the `to` field. As a result, Terraform does not destroy the resource during the Terraform run.
+Before creating a new plan for the resource specified in the `to` field, Terracina checks the state for an existing object at the address specified in the `from` field. Terracina renames existing objects to the string specified in the `to` field and then creates a plan. The plan directs Terracina to provision the resource specified in the `from` field as the resource specified in the `to` field. As a result, Terracina does not destroy the resource during the Terracina run.
 
 ## Example
 

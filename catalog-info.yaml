@@ -5,13 +5,13 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: terraform
-  description: HashiCorp Terraform
+  name: terracina
+  description: HashiCorp Terracina
   annotations:
-    github.com/project-slug: hashicorp/terraform
+    github.com/project-slug: hashicorp/terracina
     jira/project-key: TF
-    jira/label: terraform
+    jira/label: terracina
 spec:
   type: library
-  owner: terraform-core
+  owner: terracina-core
   lifecycle: production

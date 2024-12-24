@@ -25,7 +25,7 @@ import {
   to       = local_file.bar
 }
 
-terraform {
+terracina {
   required_providers {
     test = {
       source = "hashicorp/test"

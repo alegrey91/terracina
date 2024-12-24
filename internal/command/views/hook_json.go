@@ -12,11 +12,11 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/command/format"
-	"github.com/hashicorp/terraform/internal/command/views/json"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/terraform"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/command/format"
+	"github.com/hashicorp/terracina/internal/command/views/json"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/terracina"
 )
 
 func newJSONHook(view *JSONView) *jsonHook {
@@ -30,7 +30,7 @@ func newJSONHook(view *JSONView) *jsonHook {
 }
 
 type jsonHook struct {
-	terraform.NilHook
+	terracina.NilHook
 
 	view *JSONView
 
@@ -46,7 +46,7 @@ type jsonHook struct {
 	periodicUiTimer time.Duration
 }
 
-var _ terraform.Hook = (*jsonHook)(nil)
+var _ terracina.Hook = (*jsonHook)(nil)
 
 type resourceProgress struct {
 	addr   addrs.AbsResourceInstance
@@ -61,7 +61,7 @@ type resourceProgress struct {
 	heartbeatDone chan struct{}
 }
 
-func (h *jsonHook) PreApply(id terraform.HookResourceIdentity, dk addrs.DeposedKey, action plans.Action, priorState, plannedNewState cty.Value) (terraform.HookAction, error) {
+func (h *jsonHook) PreApply(id terracina.HookResourceIdentity, dk addrs.DeposedKey, action plans.Action, priorState, plannedNewState cty.Value) (terracina.HookAction, error) {
 	if action != plans.NoOp {
 		idKey, idValue := format.ObjectValueIDOrName(priorState)
 		h.view.Hook(json.NewApplyStart(id.Addr, action, idKey, idValue))
@@ -81,7 +81,7 @@ func (h *jsonHook) PreApply(id terraform.HookResourceIdentity, dk addrs.DeposedK
 	if action != plans.NoOp {
 		go h.applyingHeartbeat(progress)
 	}
-	return terraform.HookActionContinue, nil
+	return terracina.HookActionContinue, nil
 }
 
 func (h *jsonHook) applyingHeartbeat(progress resourceProgress) {
@@ -98,7 +98,7 @@ func (h *jsonHook) applyingHeartbeat(progress resourceProgress) {
 	}
 }
 
-func (h *jsonHook) PostApply(id terraform.HookResourceIdentity, dk addrs.DeposedKey, newState cty.Value, err error) (terraform.HookAction, error) {
+func (h *jsonHook) PostApply(id terracina.HookResourceIdentity, dk addrs.DeposedKey, newState cty.Value, err error) (terracina.HookAction, error) {
 	key := id.Addr.String()
 	h.resourceProgressMu.Lock()
 	progress := h.resourceProgress[key]
@@ -109,7 +109,7 @@ func (h *jsonHook) PostApply(id terraform.HookResourceIdentity, dk addrs.Deposed
 	h.resourceProgressMu.Unlock()
 
 	if progress.action == plans.NoOp {
-		return terraform.HookActionContinue, nil
+		return terracina.HookActionContinue, nil
 	}
 
 	elapsed := h.timeNow().Round(time.Second).Sub(progress.start)
@@ -123,15 +123,15 @@ func (h *jsonHook) PostApply(id terraform.HookResourceIdentity, dk addrs.Deposed
 		idKey, idValue := format.ObjectValueID(newState)
 		h.view.Hook(json.NewApplyComplete(id.Addr, progress.action, idKey, idValue, elapsed))
 	}
-	return terraform.HookActionContinue, nil
+	return terracina.HookActionContinue, nil
 }
 
-func (h *jsonHook) PreProvisionInstanceStep(id terraform.HookResourceIdentity, typeName string) (terraform.HookAction, error) {
+func (h *jsonHook) PreProvisionInstanceStep(id terracina.HookResourceIdentity, typeName string) (terracina.HookAction, error) {
 	h.view.Hook(json.NewProvisionStart(id.Addr, typeName))
-	return terraform.HookActionContinue, nil
+	return terracina.HookActionContinue, nil
 }
 
-func (h *jsonHook) PostProvisionInstanceStep(id terraform.HookResourceIdentity, typeName string, err error) (terraform.HookAction, error) {
+func (h *jsonHook) PostProvisionInstanceStep(id terracina.HookResourceIdentity, typeName string, err error) (terracina.HookAction, error) {
 	if err != nil {
 		// Errors are collected and displayed post-apply, so no need to
 		// re-render them here. Instead just signal that this provisioner step
@@ -140,10 +140,10 @@ func (h *jsonHook) PostProvisionInstanceStep(id terraform.HookResourceIdentity, 
 	} else {
 		h.view.Hook(json.NewProvisionComplete(id.Addr, typeName))
 	}
-	return terraform.HookActionContinue, nil
+	return terracina.HookActionContinue, nil
 }
 
-func (h *jsonHook) ProvisionOutput(id terraform.HookResourceIdentity, typeName string, msg string) {
+func (h *jsonHook) ProvisionOutput(id terracina.HookResourceIdentity, typeName string, msg string) {
 	s := bufio.NewScanner(strings.NewReader(msg))
 	s.Split(scanLines)
 	for s.Scan() {
@@ -154,24 +154,24 @@ func (h *jsonHook) ProvisionOutput(id terraform.HookResourceIdentity, typeName s
 	}
 }
 
-func (h *jsonHook) PreRefresh(id terraform.HookResourceIdentity, dk addrs.DeposedKey, priorState cty.Value) (terraform.HookAction, error) {
+func (h *jsonHook) PreRefresh(id terracina.HookResourceIdentity, dk addrs.DeposedKey, priorState cty.Value) (terracina.HookAction, error) {
 	idKey, idValue := format.ObjectValueID(priorState)
 	h.view.Hook(json.NewRefreshStart(id.Addr, idKey, idValue))
-	return terraform.HookActionContinue, nil
+	return terracina.HookActionContinue, nil
 }
 
-func (h *jsonHook) PostRefresh(id terraform.HookResourceIdentity, dk addrs.DeposedKey, priorState cty.Value, newState cty.Value) (terraform.HookAction, error) {
+func (h *jsonHook) PostRefresh(id terracina.HookResourceIdentity, dk addrs.DeposedKey, priorState cty.Value, newState cty.Value) (terracina.HookAction, error) {
 	idKey, idValue := format.ObjectValueID(newState)
 	h.view.Hook(json.NewRefreshComplete(id.Addr, idKey, idValue))
-	return terraform.HookActionContinue, nil
+	return terracina.HookActionContinue, nil
 }
 
-func (h *jsonHook) PreEphemeralOp(id terraform.HookResourceIdentity, action plans.Action) (terraform.HookAction, error) {
+func (h *jsonHook) PreEphemeralOp(id terracina.HookResourceIdentity, action plans.Action) (terracina.HookAction, error) {
 	// this uses the same plans.Read action as a data source to indicate that
 	// the ephemeral resource can't be processed until apply, so there is no
 	// progress hook
 	if action == plans.Read {
-		return terraform.HookActionContinue, nil
+		return terracina.HookActionContinue, nil
 	}
 
 	h.view.Hook(json.NewEphemeralOpStart(id.Addr, action))
@@ -188,7 +188,7 @@ func (h *jsonHook) PreEphemeralOp(id terraform.HookResourceIdentity, action plan
 
 	go h.ephemeralOpHeartbeat(progress)
 
-	return terraform.HookActionContinue, nil
+	return terracina.HookActionContinue, nil
 }
 
 func (h *jsonHook) ephemeralOpHeartbeat(progress resourceProgress) {
@@ -205,7 +205,7 @@ func (h *jsonHook) ephemeralOpHeartbeat(progress resourceProgress) {
 	}
 }
 
-func (h *jsonHook) PostEphemeralOp(id terraform.HookResourceIdentity, action plans.Action, opErr error) (terraform.HookAction, error) {
+func (h *jsonHook) PostEphemeralOp(id terracina.HookResourceIdentity, action plans.Action, opErr error) (terracina.HookAction, error) {
 	key := id.Addr.String()
 	h.resourceProgressMu.Lock()
 	progress := h.resourceProgress[key]
@@ -216,7 +216,7 @@ func (h *jsonHook) PostEphemeralOp(id terraform.HookResourceIdentity, action pla
 	h.resourceProgressMu.Unlock()
 
 	if progress.action == plans.NoOp {
-		return terraform.HookActionContinue, nil
+		return terracina.HookActionContinue, nil
 	}
 
 	elapsed := h.timeNow().Round(time.Second).Sub(progress.start)
@@ -229,5 +229,5 @@ func (h *jsonHook) PostEphemeralOp(id terraform.HookResourceIdentity, action pla
 		h.view.Hook(json.NewEphemeralOpComplete(id.Addr, progress.action, elapsed))
 	}
 
-	return terraform.HookActionContinue, nil
+	return terracina.HookActionContinue, nil
 }

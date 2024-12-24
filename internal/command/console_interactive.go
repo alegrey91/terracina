@@ -18,7 +18,7 @@ import (
 	"github.com/chzyer/readline"
 	"github.com/hashicorp/cli"
 
-	"github.com/hashicorp/terraform/internal/repl"
+	"github.com/hashicorp/terracina/internal/repl"
 )
 
 func (c *ConsoleCommand) modeInteractive(session *repl.Session, ui cli.Ui) int {

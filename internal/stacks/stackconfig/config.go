@@ -14,10 +14,10 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/stacks/stackconfig/stackconfigtypes"
-	"github.com/hashicorp/terraform/internal/stacks/stackconfig/typeexpr"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/stacks/stackconfig/stackconfigtypes"
+	"github.com/hashicorp/terracina/internal/stacks/stackconfig/typeexpr"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // maxEmbeddedStackNesting is an arbitrary, hopefully-reasonable limit on
@@ -35,7 +35,7 @@ type Config struct {
 
 	// Sources is the source bundle that the configuration was loaded from.
 	//
-	// This is also the source bundle that any Terraform modules used by
+	// This is also the source bundle that any Terracina modules used by
 	// components should be loaded from.
 	Sources *sourcebundle.Bundle
 
@@ -154,7 +154,7 @@ func loadConfigDir(sourceAddr sourceaddrs.FinalSource, sources *sourcebundle.Bun
 				Severity: hcl.DiagError,
 				Summary:  "Too much embedded stack nesting",
 				Detail: fmt.Sprintf(
-					"This embedded stack call is nested %d levels deep, which is greater than Terraform's nesting safety limit.\n\nWe recommend keeping stack configuration trees relatively flat, ideally using composition of a flat set of nested calls at the root.\n\nEmbedded stacks leading to this point:%s",
+					"This embedded stack call is nested %d levels deep, which is greater than Terracina's nesting safety limit.\n\nWe recommend keeping stack configuration trees relatively flat, ideally using composition of a flat set of nested calls at the root.\n\nEmbedded stacks leading to this point:%s",
 					len(callers), callersBuf.String(),
 				),
 				Subject: call.DeclRange.ToHCL().Ptr(),
@@ -265,7 +265,7 @@ func resolveFinalSourceAddr(base sourceaddrs.FinalSource, rel sourceaddrs.Source
 	default:
 		// Should not get here because the above cases should be exhaustive
 		// for all implementations of sourceaddrs.Source.
-		return nil, fmt.Errorf("cannot resolve final source address for %T (this is a bug in Terraform)", rel)
+		return nil, fmt.Errorf("cannot resolve final source address for %T (this is a bug in Terracina)", rel)
 	}
 }
 

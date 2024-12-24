@@ -10,14 +10,14 @@ import (
 
 	"github.com/hashicorp/cli"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/backend/backendrun"
-	"github.com/hashicorp/terraform/internal/command/arguments"
-	"github.com/hashicorp/terraform/internal/command/jsonformat"
-	"github.com/hashicorp/terraform/internal/command/jsonprovider"
-	"github.com/hashicorp/terraform/internal/command/jsonstate"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/states/statefile"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/backend/backendrun"
+	"github.com/hashicorp/terracina/internal/command/arguments"
+	"github.com/hashicorp/terracina/internal/command/jsonformat"
+	"github.com/hashicorp/terracina/internal/command/jsonprovider"
+	"github.com/hashicorp/terracina/internal/command/jsonstate"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/states/statefile"
 )
 
 // StateShowCommand is a Command implementation that shows a single resource.
@@ -170,19 +170,19 @@ func (c *StateShowCommand) Run(args []string) int {
 
 func (c *StateShowCommand) Help() string {
 	helpText := `
-Usage: terraform [global options] state show [options] ADDRESS
+Usage: terracina [global options] state show [options] ADDRESS
 
-  Shows the attributes of a resource in the Terraform state.
+  Shows the attributes of a resource in the Terracina state.
 
-  This command shows the attributes of a single resource in the Terraform
+  This command shows the attributes of a single resource in the Terracina
   state. The address argument must be used to specify a single resource.
-  You can view the list of available resources with "terraform state list".
+  You can view the list of available resources with "terracina state list".
 
 Options:
 
-  -state=statefile    Path to a Terraform state file to use to look
-                      up Terraform-managed resources. By default it will
-                      use the state "terraform.tfstate" if it exists.
+  -state=statefile    Path to a Terracina state file to use to look
+                      up Terracina-managed resources. By default it will
+                      use the state "terracina.tfstate" if it exists.
 
 `
 	return strings.TrimSpace(helpText)
@@ -195,11 +195,11 @@ func (c *StateShowCommand) Synopsis() string {
 const errNoInstanceFound = `No instance found for the given address!
 
 This command requires that the address references one specific instance.
-To view the available instances, use "terraform state list". Please modify 
+To view the available instances, use "terracina state list". Please modify 
 the address to reference a specific instance.`
 
 const errParsingAddress = `Error parsing instance address: %s
 
 This command requires that the address references one specific instance.
-To view the available instances, use "terraform state list". Please modify 
+To view the available instances, use "terracina state list". Please modify 
 the address to reference a specific instance.`

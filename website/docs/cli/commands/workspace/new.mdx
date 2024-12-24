@@ -1,15 +1,15 @@
 ---
-page_title: terraform workspace new command reference
-description: The terraform workspace new command creates a new workspace with the specified name.
+page_title: terracina workspace new command reference
+description: The terracina workspace new command creates a new workspace with the specified name.
 ---
 
-# `terraform workspace new` command
+# `terracina workspace new` command
 
-The `terraform workspace new` command is used to create a new workspace.
+The `terracina workspace new` command is used to create a new workspace.
 
 ## Usage
 
-Usage: `terraform workspace new [OPTIONS] NAME [DIR]`
+Usage: `terracina workspace new [OPTIONS] NAME [DIR]`
 
 This command will create a new workspace with the given name. A workspace with
 this name must not already exist.
@@ -28,11 +28,11 @@ The command-line flags are all optional. The supported flags are:
 ## Example: Create
 
 ```
-$ terraform workspace new example
+$ terracina workspace new example
 Created and switched to workspace "example"!
 
 You're now on a new, empty workspace. Workspaces isolate their state,
-so if you run "terraform plan" Terraform will not see any existing state
+so if you run "terracina plan" Terracina will not see any existing state
 for this configuration.
 ```
 
@@ -41,10 +41,10 @@ for this configuration.
 To create a new workspace from a pre-existing local state file:
 
 ```
-$ terraform workspace new -state=old.terraform.tfstate example
+$ terracina workspace new -state=old.terracina.tfstate example
 Created and switched to workspace "example".
 
 You're now on a new, empty workspace. Workspaces isolate their state,
-so if you run "terraform plan" Terraform will not see any existing state
+so if you run "terracina plan" Terracina will not see any existing state
 for this configuration.
 ```

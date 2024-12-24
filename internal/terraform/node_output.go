@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"fmt"
@@ -10,17 +10,17 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/dag"
-	"github.com/hashicorp/terraform/internal/lang/langrefs"
-	"github.com/hashicorp/terraform/internal/lang/marks"
-	"github.com/hashicorp/terraform/internal/moduletest/mocking"
-	"github.com/hashicorp/terraform/internal/namedvals"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/plans/deferring"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/dag"
+	"github.com/hashicorp/terracina/internal/lang/langrefs"
+	"github.com/hashicorp/terracina/internal/lang/marks"
+	"github.com/hashicorp/terracina/internal/moduletest/mocking"
+	"github.com/hashicorp/terracina/internal/namedvals"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/plans/deferring"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // nodeExpandOutput is the placeholder for a non-root module output that has
@@ -225,7 +225,7 @@ func (n *nodeExpandOutput) References() []*addrs.Reference {
 
 func (n *nodeExpandOutput) getOverrideValue(inst addrs.ModuleInstance) cty.Value {
 	// First check if we have any overrides at all, this is a shorthand for
-	// "are we running terraform test".
+	// "are we running terracina test".
 	if n.Overrides.Empty() {
 		// cty.NilVal means no override
 		return cty.NilVal
@@ -453,7 +453,7 @@ func (n *NodeApplyableOutput) Execute(ctx EvalContext, op walkOperation) (diags 
 					diags = diags.Append(&hcl.Diagnostic{
 						Severity: hcl.DiagError,
 						Summary:  "Output refers to sensitive values",
-						Detail: `To reduce the risk of accidentally exporting sensitive data that was intended to be only internal, Terraform requires that any root module output containing sensitive data be explicitly marked as sensitive, to confirm your intent.
+						Detail: `To reduce the risk of accidentally exporting sensitive data that was intended to be only internal, Terracina requires that any root module output containing sensitive data be explicitly marked as sensitive, to confirm your intent.
 
 If you do intend to export this data, annotate the output value as sensitive by adding the following argument:
     sensitive = true`,

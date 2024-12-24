@@ -15,12 +15,12 @@ import (
 	"github.com/zclconf/go-cty/cty"
 	"github.com/zclconf/go-cty/cty/convert"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/instances"
-	"github.com/hashicorp/terraform/internal/lang/blocktoattr"
-	"github.com/hashicorp/terraform/internal/lang/langrefs"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/instances"
+	"github.com/hashicorp/terracina/internal/lang/blocktoattr"
+	"github.com/hashicorp/terracina/internal/lang/langrefs"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // ExpandBlock expands any "dynamic" blocks present in the given body. The
@@ -65,7 +65,7 @@ func (s *Scope) EvalBlock(body hcl.Body, schema *configschema.Block) (cty.Value,
 	}
 
 	// HACK: In order to remain compatible with some assumptions made in
-	// Terraform v0.11 and earlier about the approximate equivalence of
+	// Terracina v0.11 and earlier about the approximate equivalence of
 	// attribute vs. block syntax, we do a just-in-time fixup here to allow
 	// any attribute in the schema that has a list-of-objects or set-of-objects
 	// kind to potentially be populated instead by one or more nested blocks
@@ -81,7 +81,7 @@ func (s *Scope) EvalBlock(body hcl.Body, schema *configschema.Block) (cty.Value,
 // EvalSelfBlock evaluates the given body only within the scope of the provided
 // object and instance key data. References to the object must use self, and the
 // key data will only contain count.index or each.key. The static values for
-// terraform and path will also be available in this context.
+// terracina and path will also be available in this context.
 func (s *Scope) EvalSelfBlock(body hcl.Body, self cty.Value, schema *configschema.Block, keyData instances.RepetitionData) (cty.Value, tfdiags.Diagnostics) {
 	var diags tfdiags.Diagnostics
 
@@ -104,10 +104,10 @@ func (s *Scope) EvalSelfBlock(body hcl.Body, self cty.Value, schema *configschem
 	refs, refDiags := langrefs.References(s.ParseRef, hcldec.Variables(body, spec))
 	diags = diags.Append(refDiags)
 
-	terraformAttrs := map[string]cty.Value{}
+	terracinaAttrs := map[string]cty.Value{}
 	pathAttrs := map[string]cty.Value{}
 
-	// We could always load the static values for Path and Terraform values,
+	// We could always load the static values for Path and Terracina values,
 	// but we want to parse the references so that we can get source ranges for
 	// user diagnostics.
 	for _, ref := range refs {
@@ -122,10 +122,10 @@ func (s *Scope) EvalSelfBlock(body hcl.Body, self cty.Value, schema *configschem
 			diags = diags.Append(valDiags)
 			pathAttrs[subj.Name] = val
 
-		case addrs.TerraformAttr:
-			val, valDiags := normalizeRefValue(s.Data.GetTerraformAttr(subj, ref.SourceRange))
+		case addrs.TerracinaAttr:
+			val, valDiags := normalizeRefValue(s.Data.GetTerracinaAttr(subj, ref.SourceRange))
 			diags = diags.Append(valDiags)
-			terraformAttrs[subj.Name] = val
+			terracinaAttrs[subj.Name] = val
 
 		case addrs.CountAttr, addrs.ForEachAttr:
 			// each and count have already been handled.
@@ -143,7 +143,7 @@ func (s *Scope) EvalSelfBlock(body hcl.Body, self cty.Value, schema *configschem
 	}
 
 	vals["path"] = cty.ObjectVal(pathAttrs)
-	vals["terraform"] = cty.ObjectVal(terraformAttrs)
+	vals["terracina"] = cty.ObjectVal(terracinaAttrs)
 
 	ctx := &hcl.EvalContext{
 		Variables: vals,
@@ -289,7 +289,7 @@ func (s *Scope) evalContext(refs []*addrs.Reference, selfAddr addrs.Referenceabl
 	localValues := map[string]cty.Value{}
 	outputValues := map[string]cty.Value{}
 	pathAttrs := map[string]cty.Value{}
-	terraformAttrs := map[string]cty.Value{}
+	terracinaAttrs := map[string]cty.Value{}
 	countAttrs := map[string]cty.Value{}
 	forEachAttrs := map[string]cty.Value{}
 	checkBlocks := map[string]cty.Value{}
@@ -401,10 +401,10 @@ func (s *Scope) evalContext(refs []*addrs.Reference, selfAddr addrs.Referenceabl
 			diags = diags.Append(valDiags)
 			pathAttrs[subj.Name] = val
 
-		case addrs.TerraformAttr:
-			val, valDiags := normalizeRefValue(s.Data.GetTerraformAttr(subj, rng))
+		case addrs.TerracinaAttr:
+			val, valDiags := normalizeRefValue(s.Data.GetTerracinaAttr(subj, rng))
 			diags = diags.Append(valDiags)
-			terraformAttrs[subj.Name] = val
+			terracinaAttrs[subj.Name] = val
 
 		case addrs.CountAttr:
 			val, valDiags := normalizeRefValue(s.Data.GetCountAttr(subj, rng))
@@ -452,7 +452,7 @@ func (s *Scope) evalContext(refs []*addrs.Reference, selfAddr addrs.Referenceabl
 	vals["var"] = cty.ObjectVal(inputVariables)
 	vals["local"] = cty.ObjectVal(localValues)
 	vals["path"] = cty.ObjectVal(pathAttrs)
-	vals["terraform"] = cty.ObjectVal(terraformAttrs)
+	vals["terracina"] = cty.ObjectVal(terracinaAttrs)
 	vals["count"] = cty.ObjectVal(countAttrs)
 	vals["each"] = cty.ObjectVal(forEachAttrs)
 
@@ -498,12 +498,12 @@ func normalizeRefValue(val cty.Value, diags tfdiags.Diagnostics) (cty.Value, tfd
 }
 
 // checkForUnknownFunctionDiags inspects the diagnostics for errors from unknown
-// function calls, and tailors the messages to better suit Terraform. We now
+// function calls, and tailors the messages to better suit Terracina. We now
 // have multiple namespaces where functions may be declared, and it's up to the
 // user to have properly configured the module to populate the provider
 // namespace. The generic unknown function diagnostic from hcl does not direct
-// the user on how to remedy the situation in Terraform, and we can give more
-// useful information in a few Terraform specific cases here.
+// the user on how to remedy the situation in Terracina, and we can give more
+// useful information in a few Terracina specific cases here.
 func checkForUnknownFunctionDiags(diags hcl.Diagnostics) hcl.Diagnostics {
 	for _, d := range diags {
 		extra, ok := hcl.DiagnosticExtra[hclsyntax.FunctionCallUnknownDiagExtra](d)

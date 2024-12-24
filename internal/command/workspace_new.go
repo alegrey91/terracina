@@ -10,11 +10,11 @@ import (
 	"time"
 
 	"github.com/hashicorp/cli"
-	"github.com/hashicorp/terraform/internal/command/arguments"
-	"github.com/hashicorp/terraform/internal/command/clistate"
-	"github.com/hashicorp/terraform/internal/command/views"
-	"github.com/hashicorp/terraform/internal/states/statefile"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/command/arguments"
+	"github.com/hashicorp/terracina/internal/command/clistate"
+	"github.com/hashicorp/terracina/internal/command/views"
+	"github.com/hashicorp/terracina/internal/states/statefile"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 	"github.com/posener/complete"
 )
 
@@ -33,7 +33,7 @@ func (c *WorkspaceNewCommand) Run(args []string) int {
 	cmdFlags := c.Meta.defaultFlagSet("workspace new")
 	cmdFlags.BoolVar(&stateLock, "lock", true, "lock state")
 	cmdFlags.DurationVar(&stateLockTimeout, "lock-timeout", 0, "lock timeout")
-	cmdFlags.StringVar(&statePath, "state", "", "terraform state file")
+	cmdFlags.StringVar(&statePath, "state", "", "terracina state file")
 	cmdFlags.Usage = func() { c.Ui.Error(c.Help()) }
 	if err := cmdFlags.Parse(args); err != nil {
 		c.Ui.Error(fmt.Sprintf("Error parsing command-line flags: %s\n", err.Error()))
@@ -183,9 +183,9 @@ func (c *WorkspaceNewCommand) AutocompleteFlags() complete.Flags {
 
 func (c *WorkspaceNewCommand) Help() string {
 	helpText := `
-Usage: terraform [global options] workspace new [OPTIONS] NAME
+Usage: terracina [global options] workspace new [OPTIONS] NAME
 
-  Create a new Terraform workspace.
+  Create a new Terracina workspace.
 
 Options:
 

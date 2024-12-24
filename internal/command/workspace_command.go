@@ -29,9 +29,9 @@ func (c *WorkspaceCommand) Run(args []string) int {
 
 func (c *WorkspaceCommand) Help() string {
 	helpText := `
-Usage: terraform [global options] workspace
+Usage: terracina [global options] workspace
 
-  new, list, show, select and delete Terraform workspaces.
+  new, list, show, select and delete Terracina workspaces.
 
 `
 	return strings.TrimSpace(helpText)
@@ -53,14 +53,14 @@ func envCommandShowWarning(ui cli.Ui, show bool) {
 		return
 	}
 
-	ui.Warn(`Warning: the "terraform env" family of commands is deprecated.
+	ui.Warn(`Warning: the "terracina env" family of commands is deprecated.
 
-"Workspace" is now the preferred term for what earlier Terraform versions
+"Workspace" is now the preferred term for what earlier Terracina versions
 called "environment", to reduce ambiguity caused by the latter term colliding
 with other concepts.
 
-The "terraform workspace" commands should be used instead. "terraform env"
-will be removed in a future Terraform version.
+The "terracina workspace" commands should be used instead. "terracina env"
+will be removed in a future Terracina version.
 `)
 }
 
@@ -79,7 +79,7 @@ or include the "-or-create" flag with the "select" subcommand.`
 [reset][green][bold]Created and switched to workspace %q![reset][green]
 
 You're now on a new, empty workspace. Workspaces isolate their state,
-so if you run "terraform plan" Terraform will not see any existing state
+so if you run "terracina plan" Terracina will not see any existing state
 for this configuration.
 `
 
@@ -87,7 +87,7 @@ for this configuration.
 
 	envWarnNotEmpty = `[reset][yellow]WARNING: %q was non-empty.
 The resources managed by the deleted workspace may still exist,
-but are no longer manageable by Terraform since the state has
+but are no longer manageable by Terracina since the state has
 been deleted.
 `
 

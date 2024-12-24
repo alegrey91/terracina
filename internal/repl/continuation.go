@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 )
 
-// ExpressionEntryCouldContinue is a helper for terraform console's interactive
+// ExpressionEntryCouldContinue is a helper for terracina console's interactive
 // mode which serves as a heuristic for whether it seems like the author might
 // be trying to split an expression over multiple lines of input.
 //
@@ -19,14 +19,14 @@ import (
 // properly balanced.
 //
 // This function also always returns false if the last line entered is empty,
-// because that seems likely to represent a user trying to force Terraform to
+// because that seems likely to represent a user trying to force Terracina to
 // accept something that didn't pass the heuristic for some reason, at which
-// point Terraform can try to evaluate the expression and return an error if
+// point Terracina can try to evaluate the expression and return an error if
 // it's invalid syntax.
 func ExpressionEntryCouldContinue(linesSoFar []string) bool {
 	if len(linesSoFar) == 0 || strings.TrimSpace(linesSoFar[len(linesSoFar)-1]) == "" {
 		// If there's no input at all or if the last line is empty other than
-		// spaces, we assume the user is trying to force Terraform to evaluate
+		// spaces, we assume the user is trying to force Terracina to evaluate
 		// what they entered so far without any further continuation.
 		return false
 	}

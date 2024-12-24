@@ -1,4 +1,4 @@
-terraform {
+terracina {
   required_providers {
     simple = {
       source = "hashicorp/test"

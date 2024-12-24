@@ -1,8 +1,8 @@
 
-terraform {
+terracina {
   required_providers {
     test = {
-        source = "terraform.io/builtin/test"
+        source = "terracina.io/builtin/test"
     }
   }
 }

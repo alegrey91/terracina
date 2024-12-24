@@ -1,34 +1,34 @@
 ---
 page_title: Remote service discovery protocol reference
 description: |-
-  The remote service discovery protocol presents Terraform-native services at a human-readable hostname. Learn about the remote service discovery protocol.
+  The remote service discovery protocol presents Terracina-native services at a human-readable hostname. Learn about the remote service discovery protocol.
 ---
 
 # Remote Service Discovery Protocol Reference
 
-This topic provides reference information about the remote service discovery protocol in Terraform.
+This topic provides reference information about the remote service discovery protocol in Terracina.
 
 ## Introduction
 
-Terraform implements much of its functionality as remote services.
-Some of these are native services that Terraform
+Terracina implements much of its functionality as remote services.
+Some of these are native services that Terracina
 interacts with through the remote service discovery protocol.
 
 ## User-facing Hostname
 
-Terraform provides native services at a
+Terracina provides native services at a
 human-readable hostname. The hostname is the key for configuration and
 for any authentication credentials required.
 
 The discovery protocol's purpose is to map from a user-provided hostname to
 the base URL of a particular service. Each host can provide different
 combinations of services -- or no services at all! -- and so the discovery
-protocol has a secondary purpose of allowing Terraform to identify _which_
+protocol has a secondary purpose of allowing Terracina to identify _which_
 services are valid for a given hostname.
 
 For example, module source strings can include a module registry hostname
 as their first segment, like `example.com/namespace/name/provider`, and
-Terraform uses service discovery to determine whether `example.com` _has_
+Terracina uses service discovery to determine whether `example.com` _has_
 a module registry, and if so where its API is available.
 
 A user-facing hostname is a fully-specified
@@ -47,22 +47,22 @@ steps.
 
 Given a hostname, discovery begins by forming an initial discovery URL
 using that hostname with the `https:` scheme and the fixed path
-`/.well-known/terraform.json`.
+`/.well-known/terracina.json`.
 
 For example, given the hostname `example.com` the initial discovery URL
-would be `https://example.com/.well-known/terraform.json`.
+would be `https://example.com/.well-known/terracina.json`.
 
-Terraform then sends a `GET` request to this discovery URL and expects a
+Terracina then sends a `GET` request to this discovery URL and expects a
 JSON response. If the response does not have status 200, does not have a media
 type of `application/json` or, if the body cannot be parsed as a JSON object,
-then discovery fails and Terraform considers the host to not support _any_
-Terraform-native services.
+then discovery fails and Terracina considers the host to not support _any_
+Terracina-native services.
 
-If the response is an HTTP redirect then Terraform repeats this step with the
-new location as its discovery URL. Terraform is guaranteed to follow at least
+If the response is an HTTP redirect then Terracina repeats this step with the
+new location as its discovery URL. Terracina is guaranteed to follow at least
 one redirect, but nested redirects are not guaranteed nor recommended.
 
-If the response is a valid JSON object then its keys are Terraform native
+If the response is a valid JSON object then its keys are Terracina native
 service identifiers, consisting of a service type name and a version string
 separated by a period. For example, the service identifier for version 1 of
 the module registry protocol is `modules.v1`.
@@ -84,14 +84,14 @@ version 1 of the module registry protocol:
 
 At present, the following service identifiers are in use:
 
-* `login.v1`: [login protocol version 1](/terraform/cli/commands/login)
-* `modules.v1`: [module registry API version 1](/terraform/internals/module-registry-protocol)
-* `providers.v1`: [provider registry API version 1](/terraform/internals/provider-registry-protocol)
+* `login.v1`: [login protocol version 1](/terracina/cli/commands/login)
+* `modules.v1`: [module registry API version 1](/terracina/internals/module-registry-protocol)
+* `providers.v1`: [provider registry API version 1](/terracina/internals/provider-registry-protocol)
 
 ## Authentication
 
 If credentials for the given hostname are available in
-[the CLI config](/terraform/cli/config/config-file#Credentials) through a `credentials_helper` or a host-specific environment variable, then they will be included in the request for the discovery document.
+[the CLI config](/terracina/cli/config/config-file#Credentials) through a `credentials_helper` or a host-specific environment variable, then they will be included in the request for the discovery document.
 
 The credentials may also be provided to endpoints declared in the discovery
 document, depending on the requirements of the service in question.
@@ -100,7 +100,7 @@ document, depending on the requirements of the service in question.
 
 It is strongly recommended to provide the discovery document for a hostname
 on the standard HTTPS port 443. However, in development environments this is
-not always possible or convenient, so Terraform allows a hostname to end
+not always possible or convenient, so Terracina allows a hostname to end
 with a port specification consisting of a colon followed by one or more
 decimal digits.
 

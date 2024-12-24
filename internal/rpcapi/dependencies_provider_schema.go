@@ -11,15 +11,15 @@ import (
 	"github.com/apparentlymart/go-versions/versions"
 	"github.com/hashicorp/go-plugin"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/getproviders"
-	"github.com/hashicorp/terraform/internal/logging"
-	tfplugin "github.com/hashicorp/terraform/internal/plugin"
-	tfplugin6 "github.com/hashicorp/terraform/internal/plugin6"
-	"github.com/hashicorp/terraform/internal/providercache"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/rpcapi/terraform1/dependencies"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/getproviders"
+	"github.com/hashicorp/terracina/internal/logging"
+	tfplugin "github.com/hashicorp/terracina/internal/plugin"
+	tfplugin6 "github.com/hashicorp/terracina/internal/plugin6"
+	"github.com/hashicorp/terracina/internal/providercache"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/rpcapi/terracina1/dependencies"
 )
 
 // This file contains helper functions and supporting logic for
@@ -116,16 +116,16 @@ func unconfiguredBuiltinProviderInstance(addr addrs.Provider) (providers.Interfa
 	}
 	factory, ok := builtinProviders[addr.Type]
 	if !ok {
-		return nil, fmt.Errorf("this version of Terraform does not support provider %s", addr)
+		return nil, fmt.Errorf("this version of Terracina does not support provider %s", addr)
 	}
 	return factory(), nil
 }
 
 func providerSchemaToProto(schemaResp providers.GetProviderSchemaResponse) *dependencies.ProviderSchema {
 	// Due to some historical poor design planning, the provider protocol uses
-	// different terminology than the user-facing terminology for Terraform
-	// Core and the Terraform language, and so part of our job here is to
-	// map between the two so that rpcapi uses Terraform Core's words
+	// different terminology than the user-facing terminology for Terracina
+	// Core and the Terracina language, and so part of our job here is to
+	// map between the two so that rpcapi uses Terracina Core's words
 	// rather than the provider protocol's words.
 	//
 	// This result currently includes only the subset of the schema information
@@ -134,7 +134,7 @@ func providerSchemaToProto(schemaResp providers.GetProviderSchemaResponse) *depe
 	// protocol schema model here would tightly couple the rpcapi to the
 	// provider protocol, forcing them to always change together, which is
 	// undesirable since each one has a different target audience and therefore
-	// will probably follow different evolutionary paths. For example, Terraform
+	// will probably follow different evolutionary paths. For example, Terracina
 	// can support multiple provider protocol versions concurrently but will
 	// probably not want to make a new rpcapi protocol major version each time
 	// a new provider protocol version is added or removed.

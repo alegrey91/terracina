@@ -8,11 +8,11 @@ import (
 	"sync"
 
 	"github.com/hashicorp/go-slug/sourcebundle"
-	"github.com/hashicorp/terraform/internal/depsfile"
-	"github.com/hashicorp/terraform/internal/providercache"
-	"github.com/hashicorp/terraform/internal/stacks/stackconfig"
-	"github.com/hashicorp/terraform/internal/stacks/stackplan"
-	"github.com/hashicorp/terraform/internal/stacks/stackstate"
+	"github.com/hashicorp/terracina/internal/depsfile"
+	"github.com/hashicorp/terracina/internal/providercache"
+	"github.com/hashicorp/terracina/internal/stacks/stackconfig"
+	"github.com/hashicorp/terracina/internal/stacks/stackplan"
+	"github.com/hashicorp/terracina/internal/stacks/stackstate"
 )
 
 // handle represents an identifier shared between client and server to identify

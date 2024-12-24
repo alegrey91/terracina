@@ -12,7 +12,7 @@ import (
 	"github.com/zclconf/go-cty-debug/ctydebug"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
 )
 
 func TestParseBackendStateFile(t *testing.T) {
@@ -32,31 +32,31 @@ func TestParseBackendStateFile(t *testing.T) {
 		"older version": {
 			Input: `{
 				"version": 2,
-				"terraform_version": "0.3.0"
+				"terracina_version": "0.3.0"
 			}`,
-			WantErr: `unsupported backend state version 2; you may need to use Terraform CLI v0.3.0 to work in this directory`,
+			WantErr: `unsupported backend state version 2; you may need to use Terracina CLI v0.3.0 to work in this directory`,
 		},
 		"newer version": {
 			Input: `{
 				"version": 4,
-				"terraform_version": "54.23.9"
+				"terracina_version": "54.23.9"
 			}`,
-			WantErr: `unsupported backend state version 4; you may need to use Terraform CLI v54.23.9 to work in this directory`,
+			WantErr: `unsupported backend state version 4; you may need to use Terracina CLI v54.23.9 to work in this directory`,
 		},
 		"legacy remote state is active": {
 			Input: `{
 				"version": 3,
-				"terraform_version": "0.8.0",
+				"terracina_version": "0.8.0",
 				"remote": {
 					"anything": "goes"
 				}
 			}`,
-			WantErr: `this working directory uses legacy remote state and so must first be upgraded using Terraform v0.9`,
+			WantErr: `this working directory uses legacy remote state and so must first be upgraded using Terracina v0.9`,
 		},
 		"active backend": {
 			Input: `{
 				"version": 3,
-				"terraform_version": "0.8.0",
+				"terracina_version": "0.8.0",
 				"backend": {
 					"type": "treasure_chest_buried_on_a_remote_island",
 					"config": {}

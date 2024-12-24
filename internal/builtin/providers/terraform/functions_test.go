@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"testing"
@@ -10,7 +10,7 @@ import (
 	"github.com/zclconf/go-cty-debug/ctydebug"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/providers"
+	"github.com/hashicorp/terracina/internal/providers"
 )
 
 func TestTfvarsencode(t *testing.T) {
@@ -120,7 +120,7 @@ two   = 2
 			Input: cty.ObjectVal(map[string]cty.Value{
 				"not valid identifier": cty.StringVal("!"),
 			}),
-			WantErr: `invalid variable name "not valid identifier": must be a valid identifier, per Terraform's rules for input variable declarations`,
+			WantErr: `invalid variable name "not valid identifier": must be a valid identifier, per Terracina's rules for input variable declarations`,
 		},
 	})
 }

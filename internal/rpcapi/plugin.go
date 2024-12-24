@@ -8,18 +8,18 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/go-plugin"
-	svchost "github.com/hashicorp/terraform-svchost"
-	"github.com/hashicorp/terraform-svchost/auth"
-	"github.com/hashicorp/terraform-svchost/disco"
+	svchost "github.com/hashicorp/terracina-svchost"
+	"github.com/hashicorp/terracina-svchost/auth"
+	"github.com/hashicorp/terracina-svchost/disco"
 	"google.golang.org/grpc"
 
-	"github.com/hashicorp/terraform/internal/command/cliconfig"
-	pluginDiscovery "github.com/hashicorp/terraform/internal/plugin/discovery"
-	"github.com/hashicorp/terraform/internal/rpcapi/dynrpcserver"
-	"github.com/hashicorp/terraform/internal/rpcapi/terraform1/dependencies"
-	"github.com/hashicorp/terraform/internal/rpcapi/terraform1/packages"
-	"github.com/hashicorp/terraform/internal/rpcapi/terraform1/setup"
-	"github.com/hashicorp/terraform/internal/rpcapi/terraform1/stacks"
+	"github.com/hashicorp/terracina/internal/command/cliconfig"
+	pluginDiscovery "github.com/hashicorp/terracina/internal/plugin/discovery"
+	"github.com/hashicorp/terracina/internal/rpcapi/dynrpcserver"
+	"github.com/hashicorp/terracina/internal/rpcapi/terracina1/dependencies"
+	"github.com/hashicorp/terracina/internal/rpcapi/terracina1/packages"
+	"github.com/hashicorp/terracina/internal/rpcapi/terracina1/setup"
+	"github.com/hashicorp/terracina/internal/rpcapi/terracina1/stacks"
 )
 
 type corePlugin struct {
@@ -64,12 +64,12 @@ func serverHandshake(s *grpc.Server, opts *serviceOpts) func(context.Context, *s
 		handles := newHandleTable()
 
 		// NOTE: This is intentionally not the same disco that "package main"
-		// instantiates for Terraform CLI, because the RPC API is
+		// instantiates for Terracina CLI, because the RPC API is
 		// architecturally independent from CLI despite being launched through
 		// it, and so it is not subject to any ambient CLI configuration files
 		// that might be in scope. If we later discover requirements for
 		// callers to customize the service discovery settings, consider
-		// adding new fields to terraform1.ClientCapabilities (even though
+		// adding new fields to terracina1.ClientCapabilities (even though
 		// this isn't strictly a "capability") so that the RPC caller has
 		// full control without needing to also tinker with the current user's
 		// CLI configuration.

@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 
 syntax = "proto3";
-package terraform1.stacks;
+package terracina1.stacks;
 
 import "google/protobuf/any.proto";
-import "terraform1.proto";
+import "terracina1.proto";
 
 
 service Stacks {
@@ -56,11 +56,11 @@ service Stacks {
 message OpenStackConfiguration {
   message Request {
     int64 source_bundle_handle = 1;
-    terraform1.SourceAddress source_address = 2;
+    terracina1.SourceAddress source_address = 2;
   }
   message Response {
     int64 stack_config_handle = 1;
-    repeated terraform1.Diagnostic diagnostics = 2;
+    repeated terracina1.Diagnostic diagnostics = 2;
   }
 }
 
@@ -79,7 +79,7 @@ message ValidateStackConfiguration {
     int64 provider_cache_handle = 3;
   }
   message Response {
-    repeated terraform1.Diagnostic diagnostics = 1;
+    repeated terracina1.Diagnostic diagnostics = 1;
   }
 }
 
@@ -161,7 +161,7 @@ message PlanStackChanges {
   message Event {
     oneof event {
       PlannedChange planned_change = 1;
-      terraform1.Diagnostic diagnostic = 2;
+      terracina1.Diagnostic diagnostic = 2;
       StackChangeProgress progress = 10;
     }
     reserved 3 to 9; // formerly used for individual progress events
@@ -192,7 +192,7 @@ message ApplyStackChanges {
     // results will be unpredictable.
     int64 stack_config_handle = 1;
     // The caller should send all of the keys present in the previous
-    // apply's description map. Terraform Core will use this for
+    // apply's description map. Terracina Core will use this for
     // situations such as updating existing descriptions to newer
     // formats even if no change is being made to the corresponding
     // real objects.
@@ -229,7 +229,7 @@ message ApplyStackChanges {
   message Event {
     oneof event {
       AppliedChange applied_change = 1;
-      terraform1.Diagnostic diagnostic = 2;
+      terracina1.Diagnostic diagnostic = 2;
       StackChangeProgress progress = 3;
     }
   }
@@ -245,7 +245,7 @@ message OpenStackInspector {
   }
   message Response {
     int64 stack_inspector_handle = 1;
-    repeated terraform1.Diagnostic diagnostics = 2;
+    repeated terracina1.Diagnostic diagnostics = 2;
   }
 }
 
@@ -263,11 +263,11 @@ message InspectExpressionResult {
     //
     // Uses a MessagePack encoding with in-band type information.
     DynamicValue result = 1;
-    repeated terraform1.Diagnostic diagnostics = 2;
+    repeated terracina1.Diagnostic diagnostics = 2;
   }
 }
 
-// Represents dynamically-typed data from within the Terraform language.
+// Represents dynamically-typed data from within the Terracina language.
 // Typically only one of the available serialization formats will be populated,
 // depending on what serializations are appropriate for a particular context
 // and what capabilities the client and the server negotiated during Handshake.
@@ -287,7 +287,7 @@ message DynamicValueChange {
 // situations such as returning error messages.
 message DynamicValueWithSource {
   DynamicValue value = 1;
-  terraform1.SourceRange source_range = 2;
+  terracina1.SourceRange source_range = 2;
 }
 
 message AttributePath {
@@ -373,14 +373,14 @@ enum ChangeType {
 // this information over multiple messages just allows the individual events
 // to double as progress notifications for an interactive UI.
 message PlannedChange {
-  // Terraform Core's internal representation(s) of this change. Callers
+  // Terracina Core's internal representation(s) of this change. Callers
   // must provide the messages in this field, if any, verbatim to the
   // ApplyStackChanges RPC in order to apply this change, and must not
   // attempt to decode or analyze the contents because they are subject
-  // to change in future versions of Terraform Core.
+  // to change in future versions of Terracina Core.
   //
   // This might be unpopulated if this message represents only information
-  // for the caller and Terraform Core doesn't actually need to recall this
+  // for the caller and Terracina Core doesn't actually need to recall this
   // information during the apply step. Callers must append each raw item
   // to the raw plan in the order specified, and provide them all together
   // in the same order to ApplyStackChanges.
@@ -395,12 +395,12 @@ message PlannedChange {
   // by treating them the same way as if each description had arrived in
   // a separate PlannedChange message. Clients should not treat the grouping
   // or not-grouping of change description objects as meaningful information,
-  // since it's subject to change in future Terraform Core versions.
+  // since it's subject to change in future Terracina Core versions.
   //
   // DO NOT attempt to use this to surgically filter particular changes
   // from a larger plan. Although external descriptions often match with
   // the raw representations in field "raw", that is not guaranteed and
-  // Terraform Core assumes that it will always be provided with the full
+  // Terracina Core assumes that it will always be provided with the full
   // set of raw messages -- in the same order they were emitted -- during
   // the apply step. For example, some raw messages might omit information
   // that is implied by earlier raw messages and would therefore be
@@ -412,7 +412,7 @@ message PlannedChange {
   // presenting information to end users in the UI and for other subsystems
   // such as imposing policy rules on the resulting plan.
   //
-  // New description types might be added in future versions of Terraform
+  // New description types might be added in future versions of Terracina
   // Core, and so clients should tolerate description messages that appear
   // to have none of the oneof fields set, and should just ignore those
   // messages entirely.
@@ -428,7 +428,7 @@ message PlannedChange {
   }
 
   // Reports the existence of a particular instance of a component,
-  // once Terraform has resolved arguments such as "for_each" that
+  // once Terracina has resolved arguments such as "for_each" that
   // might make the set of instances dynamic.
   message ComponentInstance {
     ComponentInstanceInStackAddr addr = 1;
@@ -440,10 +440,10 @@ message PlannedChange {
     // A flag for whether applying this plan is expected to cause the
     // desired state and actual state to become converged.
     //
-    // If this field is false, that means Terraform expects that at least
+    // If this field is false, that means Terracina expects that at least
     // one more plan/apply round will be needed to reach convergence.
     //
-    // If this field is true then Terraform hopes to be able to converge
+    // If this field is true then Terracina hopes to be able to converge
     // after this plan is applied, but callers should ideally still check
     // anyway by running one more plan to confirm that there aren't any
     // unexpected differences caused by such situations as contradictory
@@ -462,7 +462,7 @@ message PlannedChange {
 
     // previous_run_value is included only if it would be
     // different from values.old, which typically means that
-    // Terraform detected some changes made outside of Terraform
+    // Terracina detected some changes made outside of Terracina
     // since the previous run. In that case, this field is
     // the un-refreshed (but still upgraded) value from
     // the previous run and values.old is the refreshed version.
@@ -471,12 +471,12 @@ message PlannedChange {
     // previous run value, if needed.
     DynamicValue previous_run_value = 9;
 
-    // This flag is set if Terraform Core considers the difference
+    // This flag is set if Terracina Core considers the difference
     // between previous_run_value and values.old to be "notable",
     // which is a heuristic subject to change over time but is
     // broadly intended to mean that it would be worth mentioning
     // the difference between the two in the UI as a
-    // "change outside of Terraform". If this isn't set then the
+    // "change outside of Terracina". If this isn't set then the
     // difference is probably not worth mentioning to the user
     // by default, although it could still be shown behind an
     // optional disclosure in UI contexts where such things are possible.
@@ -552,7 +552,7 @@ message Deferred {
 // in the order of the emission of the messages and then retain the entirety
 // of both data structures to populate fields in the next PlanStackChanges call.
 message AppliedChange {
-  // Terraform Core's internal representation of the change, presented as
+  // Terracina Core's internal representation of the change, presented as
   // a sequence of modifications to the raw state data structure.
   //
   // For each element, in order:
@@ -607,7 +607,7 @@ message AppliedChange {
   // DO NOT attempt to use this to surgically filter particular raw state
   // updates from a larger plan. Although external descriptions often match
   // with the raw representations in field "raw", that is not guaranteed and
-  // Terraform Core assumes that it will always be provided with the full
+  // Terracina Core assumes that it will always be provided with the full
   // raw state map during the next plan step.
   repeated ChangeDescription descriptions = 2;
 
@@ -637,11 +637,11 @@ message AppliedChange {
     string resource_type = 5;
     string provider_addr = 6;
 
-    // Sometimes Terraform needs to make changes to a resource in
+    // Sometimes Terracina needs to make changes to a resource in
     // multiple steps during the apply phase, with each step
     // changing something about the state. This flag will be set
     // for such interim updates, and left unset for whatever
-    // description Terraform Core considers to be "final", at
+    // description Terracina Core considers to be "final", at
     // which point the new value should be converged with the
     // desired state.
     //
@@ -651,7 +651,7 @@ message AppliedChange {
     // confusion by showing the not-yet-converged intermediate
     // states.
     //
-    // If Terraform encounters a problem during the apply phase
+    // If Terracina encounters a problem during the apply phase
     // and needs to stop partway through then a "final" change
     // description might never arrive. In that case, callers
     // should save the most recent interim object as the final
@@ -793,7 +793,7 @@ message StackChangeProgress {
     // Clients should sum all of the other count fields they know about
     // and compare to total. If the sum is less than total then the
     // difference should be treated as an "other change types" category,
-    // for forward-compatibility when the Terraform Core RPC server is
+    // for forward-compatibility when the Terracina Core RPC server is
     // using a newer version of this protocol than the client.
     int32 total = 2;
     int32 add = 3;

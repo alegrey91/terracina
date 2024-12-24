@@ -1,18 +1,18 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"fmt"
 	"log"
 
 	"github.com/hashicorp/hcl/v2"
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/dag"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/dag"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 func transformProviders(concrete ConcreteProviderNodeFunc, config *configs.Config, externalProviderConfigs map[addrs.RootProviderConfig]providers.Interface) GraphTransformer {
@@ -781,7 +781,7 @@ func (t *externalProviderTransformer) Transform(g *Graph) error {
 			// practice because externalProviderTransformer should be
 			// the first transformer that introduces graph nodes representing
 			// provider configurations.
-			return fmt.Errorf("conflicting %T node for externally-configured provider %s (this is a bug in Terraform)", existing, absAddr)
+			return fmt.Errorf("conflicting %T node for externally-configured provider %s (this is a bug in Terracina)", existing, absAddr)
 		}
 		abstract := &NodeAbstractProvider{
 			Addr: absAddr,

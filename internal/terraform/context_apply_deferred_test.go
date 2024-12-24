@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"encoding/json"
@@ -13,13 +13,13 @@ import (
 	"github.com/zclconf/go-cty-debug/ctydebug"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	testing_provider "github.com/hashicorp/terraform/internal/providers/testing"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	testing_provider "github.com/hashicorp/terracina/internal/providers/testing"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 type deferredActionsTest struct {
@@ -1838,7 +1838,7 @@ output "a" {
 
 				wantDiagnostic: func(diags tfdiags.Diagnostics) bool {
 					for _, diag := range diags {
-						if diag.Description().Summary == "Provider deferred changes when Terraform did not allow deferrals" {
+						if diag.Description().Summary == "Provider deferred changes when Terracina did not allow deferrals" {
 							return true
 						}
 					}
@@ -1945,7 +1945,7 @@ output "b" {
 
 				wantDiagnostic: func(diags tfdiags.Diagnostics) bool {
 					for _, diag := range diags {
-						if diag.Description().Summary == "Provider deferred changes when Terraform did not allow deferrals" {
+						if diag.Description().Summary == "Provider deferred changes when Terracina did not allow deferrals" {
 							return true
 						}
 					}
@@ -2391,7 +2391,7 @@ output "a" {
 				complete:     false,
 				wantDiagnostic: func(diags tfdiags.Diagnostics) bool {
 					for _, diag := range diags {
-						if diag.Description().Summary == "Provider deferred changes when Terraform did not allow deferrals" {
+						if diag.Description().Summary == "Provider deferred changes when Terracina did not allow deferrals" {
 							return true
 						}
 					}
@@ -2492,7 +2492,7 @@ import {
 
 				wantDiagnostic: func(diags tfdiags.Diagnostics) bool {
 					for _, diag := range diags {
-						if diag.Description().Summary == "Provider deferred changes when Terraform did not allow deferrals" {
+						if diag.Description().Summary == "Provider deferred changes when Terracina did not allow deferrals" {
 							return true
 						}
 					}
@@ -3571,8 +3571,8 @@ func TestContextApply_deferredActions(t *testing.T) {
 						// all the deferred changes should include a valid
 						// provider.
 						for _, change := range plan.DeferredResources {
-							if diff := cmp.Diff("provider[\"registry.terraform.io/hashicorp/test\"]", change.ChangeSrc.ProviderAddr.String()); diff != "" {
-								if otherDiff := cmp.Diff("provider[\"registry.terraform.io/hashicorp/other\"]", change.ChangeSrc.ProviderAddr.String()); otherDiff != "" {
+							if diff := cmp.Diff("provider[\"registry.terracina.io/hashicorp/test\"]", change.ChangeSrc.ProviderAddr.String()); diff != "" {
+								if otherDiff := cmp.Diff("provider[\"registry.terracina.io/hashicorp/other\"]", change.ChangeSrc.ProviderAddr.String()); otherDiff != "" {
 									t.Errorf("wrong provider address in plan\n, should be hashicorp/test or hashicorp/other %s", diff)
 								}
 							}

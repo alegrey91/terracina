@@ -1,4 +1,4 @@
-terraform {
+terracina {
   required_providers {
     boop = {
       source = "foobar/beep" # intentional mismatch between local name and type

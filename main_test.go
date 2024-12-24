@@ -290,11 +290,11 @@ func TestMain_autoComplete(t *testing.T) {
 		return &testCommandCLI{}, nil
 	}
 
-	os.Setenv("COMP_LINE", "terraform versio")
+	os.Setenv("COMP_LINE", "terracina versio")
 	defer os.Unsetenv("COMP_LINE")
 
 	// Run it!
-	os.Args = []string{"terraform", "terraform", "versio"}
+	os.Args = []string{"terracina", "terracina", "versio"}
 	exit := realMain()
 	if exit != 0 {
 		t.Fatalf("unexpected exit status %d; want 0", exit)

@@ -14,15 +14,15 @@ import (
 	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/protobuf/types/known/anypb"
 
-	"github.com/hashicorp/terraform/internal/collections"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/promising"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/stacks/stackconfig"
-	"github.com/hashicorp/terraform/internal/stacks/stackplan"
-	"github.com/hashicorp/terraform/internal/stacks/stackstate"
-	"github.com/hashicorp/terraform/internal/stacks/stackstate/statekeys"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/collections"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/promising"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/stacks/stackconfig"
+	"github.com/hashicorp/terracina/internal/stacks/stackplan"
+	"github.com/hashicorp/terracina/internal/stacks/stackstate"
+	"github.com/hashicorp/terracina/internal/stacks/stackstate/statekeys"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // ApplyPlan internally instantiates a [Main] configured to apply the given
@@ -168,7 +168,7 @@ func ApplyPlan(ctx context.Context, config *stackconfig.Config, plan *stackplan.
 							// those two artifacts, but we don't know who that
 							// caller is (it probably came from a client of the
 							// Core RPC API) so we don't include our typical
-							// "This is a bug in Terraform" language here.
+							// "This is a bug in Terracina" language here.
 							var diags tfdiags.Diagnostics
 							diags = diags.Append(tfdiags.Sourceless(
 								tfdiags.Error,
@@ -352,8 +352,8 @@ type ApplyOutput struct {
 	//
 	// Each announced change can have a raw element, an external-facing
 	// element, or both. The raw element is opaque to anything outside of
-	// Terraform Core, while the external-facing element is never consumed
-	// by Terraform Core and is instead for other uses such as presenting
+	// Terracina Core, while the external-facing element is never consumed
+	// by Terracina Core and is instead for other uses such as presenting
 	// changes in the UI.
 	//
 	// The callback should return relatively quickly to minimize the

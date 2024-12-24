@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 	"github.com/posener/complete"
 )
 
@@ -94,9 +94,9 @@ func (c *WorkspaceListCommand) AutocompleteFlags() complete.Flags {
 
 func (c *WorkspaceListCommand) Help() string {
 	helpText := `
-Usage: terraform [global options] workspace list
+Usage: terracina [global options] workspace list
 
-  List Terraform workspaces.
+  List Terracina workspaces.
 
 `
 	return strings.TrimSpace(helpText)

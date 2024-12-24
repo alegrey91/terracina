@@ -14,10 +14,10 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclparse"
 
-	"github.com/hashicorp/terraform/internal/backend/backendrun"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/moduletest"
-	hcltest "github.com/hashicorp/terraform/internal/moduletest/hcl"
+	"github.com/hashicorp/terracina/internal/backend/backendrun"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/moduletest"
+	hcltest "github.com/hashicorp/terracina/internal/moduletest/hcl"
 )
 
 func TestTransformForTest(t *testing.T) {

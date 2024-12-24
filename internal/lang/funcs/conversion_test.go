@@ -11,7 +11,7 @@ import (
 	"github.com/zclconf/go-cty-debug/ctydebug"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/lang/marks"
+	"github.com/hashicorp/terracina/internal/lang/marks"
 )
 
 func TestTo(t *testing.T) {

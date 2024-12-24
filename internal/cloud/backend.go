@@ -19,38 +19,38 @@ import (
 	"github.com/hashicorp/cli"
 	tfe "github.com/hashicorp/go-tfe"
 	version "github.com/hashicorp/go-version"
-	svchost "github.com/hashicorp/terraform-svchost"
-	"github.com/hashicorp/terraform-svchost/disco"
+	svchost "github.com/hashicorp/terracina-svchost"
+	"github.com/hashicorp/terracina-svchost/disco"
 	"github.com/mitchellh/colorstring"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/backend"
-	"github.com/hashicorp/terraform/internal/backend/backendrun"
-	"github.com/hashicorp/terraform/internal/command/jsonformat"
-	"github.com/hashicorp/terraform/internal/command/views"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/states/statemgr"
-	"github.com/hashicorp/terraform/internal/terraform"
-	"github.com/hashicorp/terraform/internal/tfdiags"
-	tfversion "github.com/hashicorp/terraform/version"
+	"github.com/hashicorp/terracina/internal/backend"
+	"github.com/hashicorp/terracina/internal/backend/backendrun"
+	"github.com/hashicorp/terracina/internal/command/jsonformat"
+	"github.com/hashicorp/terracina/internal/command/views"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/states/statemgr"
+	"github.com/hashicorp/terracina/internal/terracina"
+	"github.com/hashicorp/terracina/internal/tfdiags"
+	tfversion "github.com/hashicorp/terracina/version"
 
-	backendLocal "github.com/hashicorp/terraform/internal/backend/local"
+	backendLocal "github.com/hashicorp/terracina/internal/backend/local"
 )
 
 const (
-	defaultHostname    = "app.terraform.io"
+	defaultHostname    = "app.terracina.io"
 	defaultParallelism = 10
 	tfeServiceID       = "tfe.v2"
-	headerSourceKey    = "X-Terraform-Integration"
+	headerSourceKey    = "X-Terracina-Integration"
 	headerSourceValue  = "cloud"
-	genericHostname    = "localterraform.com"
+	genericHostname    = "localterracina.com"
 )
 
-var ErrCloudDoesNotSupportKVTags = errors.New("your version of Terraform Enterprise does not support key-value tags. Please upgrade Terraform Enterprise to a version that supports this feature or use set type tags instead.")
+var ErrCloudDoesNotSupportKVTags = errors.New("your version of Terracina Enterprise does not support key-value tags. Please upgrade Terracina Enterprise to a version that supports this feature or use set type tags instead.")
 
-// Cloud is an implementation of EnhancedBackend in service of the HCP Terraform or Terraform Enterprise
-// integration for Terraform CLI. This backend is not intended to be surfaced at the user level and
+// Cloud is an implementation of EnhancedBackend in service of the HCP Terracina or Terracina Enterprise
+// integration for Terracina CLI. This backend is not intended to be surfaced at the user level and
 // is instead an implementation detail of cloud.Cloud.
 type Cloud struct {
 	// CLI and Colorize control the CLI output. If CLI is nil then no CLI
@@ -59,32 +59,32 @@ type Cloud struct {
 	CLIColor *colorstring.Colorize
 
 	// ContextOpts are the base context options to set when initializing a
-	// new Terraform context. Many of these will be overridden or merged by
+	// new Terracina context. Many of these will be overridden or merged by
 	// Operation. See Operation for more details.
-	ContextOpts *terraform.ContextOpts
+	ContextOpts *terracina.ContextOpts
 
-	// client is the HCP Terraform or Terraform Enterprise API client.
+	// client is the HCP Terracina or Terracina Enterprise API client.
 	client *tfe.Client
 
 	// viewHooks implements functions integrating the tfe.Client with the CLI
 	// output.
 	viewHooks views.CloudHooks
 
-	// Hostname of HCP Terraform or Terraform Enterprise
+	// Hostname of HCP Terracina or Terracina Enterprise
 	Hostname string
 
-	// Token for HCP Terraform or Terraform Enterprise
+	// Token for HCP Terracina or Terracina Enterprise
 	Token string
 
 	// Organization is the Organization that contains the target workspaces.
 	Organization string
 
 	// WorkspaceMapping contains strategies for mapping CLI workspaces in the working directory
-	// to remote HCP Terraform workspaces.
+	// to remote HCP Terracina workspaces.
 	WorkspaceMapping WorkspaceMapping
 
-	// ServicesHost is the full account of discovered Terraform services at the
-	// HCP Terraform instance. It should include at least the tfe v2 API, and
+	// ServicesHost is the full account of discovered Terracina services at the
+	// HCP Terracina instance. It should include at least the tfe v2 API, and
 	// possibly other services.
 	ServicesHost *disco.Host
 
@@ -98,7 +98,7 @@ type Cloud struct {
 	// renderer is used for rendering JSON plan output and streamed logs.
 	renderer *jsonformat.Renderer
 
-	// local allows local operations, where HCP Terraform serves as a state storage backend.
+	// local allows local operations, where HCP Terracina serves as a state storage backend.
 	local backendrun.OperationsBackend
 
 	// forceLocal, if true, will force the use of the local backend.
@@ -108,8 +108,8 @@ type Cloud struct {
 	opLock sync.Mutex
 
 	// ignoreVersionConflict, if true, will disable the requirement that the
-	// local Terraform version matches the remote workspace's configured
-	// version. This will also cause VerifyWorkspaceTerraformVersion to return
+	// local Terracina version matches the remote workspace's configured
+	// version. This will also cause VerifyWorkspaceTerracinaVersion to return
 	// a warning diagnostic instead of an error.
 	ignoreVersionConflict bool
 
@@ -247,7 +247,7 @@ func (b *Cloud) Configure(obj cty.Value) tfdiags.Diagnostics {
 	b.Organization = config.organization
 	b.WorkspaceMapping = config.workspaceMapping
 
-	// Discover the service URL to confirm that it provides the Terraform
+	// Discover the service URL to confirm that it provides the Terracina
 	// Cloud/Enterprise API... and while we're at it, cache the full discovery
 	// results.
 	var tfcService *url.URL
@@ -306,7 +306,7 @@ func (b *Cloud) Configure(obj cty.Value) tfdiags.Diagnostics {
 
 	// Return an error if we still don't have a token at this point.
 	if token == "" {
-		loginCommand := "terraform login"
+		loginCommand := "terracina login"
 		if b.Hostname != defaultHostname {
 			loginCommand = loginCommand + " " + b.Hostname
 		}
@@ -337,15 +337,15 @@ func (b *Cloud) Configure(obj cty.Value) tfdiags.Diagnostics {
 		cfg.Headers.Set(tfversion.Header, tfversion.Version)
 		cfg.Headers.Set(headerSourceKey, headerSourceValue)
 
-		// Create the HCP Terraform API client.
+		// Create the HCP Terracina API client.
 		b.client, err = tfe.NewClient(cfg)
 		if err != nil {
 			diags = diags.Append(tfdiags.Sourceless(
 				tfdiags.Error,
-				"Failed to create the HCP Terraform or Terraform Enterprise client",
+				"Failed to create the HCP Terracina or Terracina Enterprise client",
 				fmt.Sprintf(
 					`Encountered an unexpected error while creating the `+
-						`HCP Terraform or Terraform Enterprise client: %s.`, err,
+						`HCP Terracina or Terracina Enterprise client: %s.`, err,
 				),
 			))
 			return diags
@@ -356,7 +356,7 @@ func (b *Cloud) Configure(obj cty.Value) tfdiags.Diagnostics {
 	b.appName = b.client.AppName()
 	// Validate the header's value to ensure no tampering
 	if !isValidAppName(b.appName) {
-		b.appName = "HCP Terraform"
+		b.appName = "HCP Terracina"
 	}
 
 	// Check if the organization exists by reading its entitlements.
@@ -389,7 +389,7 @@ func (b *Cloud) Configure(obj cty.Value) tfdiags.Diagnostics {
 		}
 	}
 
-	// Check for the minimum version of Terraform Enterprise required.
+	// Check for the minimum version of Terracina Enterprise required.
 	//
 	// For API versions prior to 2.3, RemoteAPIVersion will return an empty string,
 	// so if there's an error when parsing the RemoteAPIVersion, it's handled as
@@ -400,21 +400,21 @@ func (b *Cloud) Configure(obj cty.Value) tfdiags.Diagnostics {
 	if parseErr != nil || currentAPIVersion.LessThan(desiredAPIVersion) {
 		log.Printf("[TRACE] API version check failed; want: >= %s, got: %s", desiredAPIVersion.Original(), currentAPIVersion)
 		if b.runningInAutomation {
-			// It should never be possible for this Terraform process to be mistakenly
-			// used internally within an unsupported Terraform Enterprise install - but
+			// It should never be possible for this Terracina process to be mistakenly
+			// used internally within an unsupported Terracina Enterprise install - but
 			// just in case it happens, give an actionable error.
 			diags = diags.Append(
 				tfdiags.Sourceless(
 					tfdiags.Error,
-					"Unsupported Terraform Enterprise version",
+					"Unsupported Terracina Enterprise version",
 					fmt.Sprintf(cloudIntegrationUsedInUnsupportedTFE, b.appName),
 				),
 			)
 		} else {
 			diags = diags.Append(tfdiags.Sourceless(
 				tfdiags.Error,
-				"Unsupported Terraform Enterprise version",
-				`The 'cloud' option is not supported with this version of Terraform Enterprise.`,
+				"Unsupported Terracina Enterprise version",
+				`The 'cloud' option is not supported with this version of Terracina Enterprise.`,
 			),
 			)
 		}
@@ -436,7 +436,7 @@ func (b *Cloud) AppName() string {
 	if isValidAppName(b.appName) {
 		return b.appName
 	}
-	return "HCP Terraform"
+	return "HCP Terracina"
 }
 
 // resolveCloudConfig fills in a potentially incomplete cloud config block using
@@ -627,7 +627,7 @@ func (b *Cloud) Workspaces() ([]string, error) {
 		return names, nil
 	}
 
-	// Otherwise, multiple workspaces are being mapped. Query HCP Terraform for all the remote
+	// Otherwise, multiple workspaces are being mapped. Query HCP Terracina for all the remote
 	// workspaces by the provided mapping strategy.
 	options := &tfe.WorkspaceListOptions{}
 	if b.WorkspaceMapping.Strategy() == WorkspaceTagsStrategy {
@@ -730,7 +730,7 @@ func (b *Cloud) StateMgr(name string) (statemgr.Full, error) {
 		return nil, fmt.Errorf("Failed to retrieve workspace %s: %v", name, err)
 	}
 	if workspace != nil {
-		remoteTFVersion = workspace.TerraformVersion
+		remoteTFVersion = workspace.TerracinaVersion
 	}
 
 	var configuredProject *tfe.Project
@@ -800,13 +800,13 @@ func (b *Cloud) StateMgr(name string) (statemgr.Full, error) {
 			return nil, fmt.Errorf("error creating workspace %s: %v", name, err)
 		}
 
-		remoteTFVersion = workspace.TerraformVersion
+		remoteTFVersion = workspace.TerracinaVersion
 
-		// Attempt to set the new workspace to use this version of Terraform. This
+		// Attempt to set the new workspace to use this version of Terracina. This
 		// can fail if there's no enabled tool_version whose name matches our
 		// version string, but that's expected sometimes -- just warn and continue.
 		versionOptions := tfe.WorkspaceUpdateOptions{
-			TerraformVersion: tfe.String(tfversion.String()),
+			TerracinaVersion: tfe.String(tfversion.String()),
 		}
 		_, err := b.client.Workspaces.UpdateByID(context.Background(), workspace.ID, versionOptions)
 		if err == nil {
@@ -817,9 +817,9 @@ func (b *Cloud) StateMgr(name string) (statemgr.Full, error) {
 			// object to do a nicely formatted message, so we're just assuming the
 			// issue was that the version wasn't available since that's probably what
 			// happened.
-			log.Printf("[TRACE] cloud: Attempted to select version %s for this %s workspace; unavailable, so %s will be used instead.", tfversion.String(), b.appName, workspace.TerraformVersion)
+			log.Printf("[TRACE] cloud: Attempted to select version %s for this %s workspace; unavailable, so %s will be used instead.", tfversion.String(), b.appName, workspace.TerracinaVersion)
 			if b.CLI != nil {
-				versionUnavailable := fmt.Sprintf(unavailableTerraformVersion, tfversion.String(), b.appName, workspace.TerraformVersion)
+				versionUnavailable := fmt.Sprintf(unavailableTerracinaVersion, tfversion.String(), b.appName, workspace.TerracinaVersion)
 				b.CLI.Output(b.Colorize().Color(versionUnavailable))
 			}
 		}
@@ -861,7 +861,7 @@ func (b *Cloud) StateMgr(name string) (statemgr.Full, error) {
 		// Explicitly ignore the pseudo-version "latest" here, as it will cause
 		// plan and apply to always fail.
 		if remoteTFVersion != tfversion.String() && remoteTFVersion != "latest" {
-			return nil, fmt.Errorf("Remote workspace Terraform version %q does not match local Terraform version %q", remoteTFVersion, tfversion.String())
+			return nil, fmt.Errorf("Remote workspace Terracina version %q does not match local Terracina version %q", remoteTFVersion, tfversion.String())
 		}
 	}
 
@@ -876,14 +876,14 @@ func (b *Cloud) Operation(ctx context.Context, op *backendrun.Operation) (*backe
 		return nil, err
 	}
 
-	// Terraform remote version conflicts are not a concern for operations. We
+	// Terracina remote version conflicts are not a concern for operations. We
 	// are in one of three states:
 	//
 	// - Running remotely, in which case the local version is irrelevant;
 	// - Workspace configured for local operations, in which case the remote
 	//   version is meaningless;
-	// - Forcing local operations, which should only happen in the HCP Terraform worker, in
-	//   which case the Terraform versions by definition match.
+	// - Forcing local operations, which should only happen in the HCP Terracina worker, in
+	//   which case the Terracina versions by definition match.
 	b.IgnoreVersionConflict()
 
 	// Check if we need to use the local backend to run the operation.
@@ -905,7 +905,7 @@ func (b *Cloud) Operation(ctx context.Context, op *backendrun.Operation) (*backe
 	case backendrun.OperationTypeApply:
 		f = b.opApply
 	case backendrun.OperationTypeRefresh:
-		// The `terraform refresh` command has been deprecated in favor of `terraform apply -refresh-state`.
+		// The `terracina refresh` command has been deprecated in favor of `terracina apply -refresh-state`.
 		// Rather than respond with an error telling the user to run the other command we can just run
 		// that command instead. We will tell the user what we are doing, and then do it.
 		if b.CLI != nil {
@@ -998,7 +998,7 @@ func (b *Cloud) cancel(cancelCtx context.Context, op *backendrun.Operation, r *t
 		// Only ask if the remote operation should be canceled
 		// if the auto approve flag is not set.
 		if !op.AutoApprove {
-			v, err := op.UIIn.Input(cancelCtx, &terraform.InputOpts{
+			v, err := op.UIIn.Input(cancelCtx, &terracina.InputOpts{
 				Id:          "cancel",
 				Query:       "\nDo you want to cancel the remote operation?",
 				Description: "Only 'yes' will be accepted to cancel.",
@@ -1033,8 +1033,8 @@ func (b *Cloud) cancel(cancelCtx context.Context, op *backendrun.Operation, r *t
 }
 
 // IgnoreVersionConflict allows commands to disable the fall-back check that
-// the local Terraform version matches the remote workspace's configured
-// Terraform version. This should be called by commands where this check is
+// the local Terracina version matches the remote workspace's configured
+// Terracina version. This should be called by commands where this check is
 // unnecessary, such as those performing remote operations, or read-only
 // operations. It will also be called if the user uses a command-line flag to
 // override this check.
@@ -1042,14 +1042,14 @@ func (b *Cloud) IgnoreVersionConflict() {
 	b.ignoreVersionConflict = true
 }
 
-// VerifyWorkspaceTerraformVersion compares the local Terraform version against
-// the workspace's configured Terraform version. If they are compatible, this
+// VerifyWorkspaceTerracinaVersion compares the local Terracina version against
+// the workspace's configured Terracina version. If they are compatible, this
 // means that there are no state compatibility concerns, so it returns no
 // diagnostics.
 //
 // If the versions aren't compatible, it returns an error (or, if
 // b.ignoreVersionConflict is set, a warning).
-func (b *Cloud) VerifyWorkspaceTerraformVersion(workspaceName string) tfdiags.Diagnostics {
+func (b *Cloud) VerifyWorkspaceTerracinaVersion(workspaceName string) tfdiags.Diagnostics {
 	var diags tfdiags.Diagnostics
 
 	workspace, err := b.getRemoteWorkspace(context.Background(), workspaceName)
@@ -1070,34 +1070,34 @@ func (b *Cloud) VerifyWorkspaceTerraformVersion(workspaceName string) tfdiags.Di
 	}
 
 	// If the workspace has the pseudo-version "latest", all bets are off. We
-	// cannot reasonably determine what the intended Terraform version is, so
+	// cannot reasonably determine what the intended Terracina version is, so
 	// we'll skip version verification.
-	if workspace.TerraformVersion == "latest" {
+	if workspace.TerracinaVersion == "latest" {
 		return nil
 	}
 
-	// If the workspace has execution-mode set to local, the remote Terraform
+	// If the workspace has execution-mode set to local, the remote Terracina
 	// version is effectively meaningless, so we'll skip version verification.
 	if isLocalExecutionMode(workspace.ExecutionMode) {
 		return nil
 	}
 
-	remoteConstraint, err := version.NewConstraint(workspace.TerraformVersion)
+	remoteConstraint, err := version.NewConstraint(workspace.TerracinaVersion)
 	if err != nil {
 		message := fmt.Sprintf(
-			"The remote workspace specified an invalid Terraform version or constraint (%s), "+
-				"and it isn't possible to determine whether the local Terraform version (%s) is compatible.",
-			workspace.TerraformVersion,
+			"The remote workspace specified an invalid Terracina version or constraint (%s), "+
+				"and it isn't possible to determine whether the local Terracina version (%s) is compatible.",
+			workspace.TerracinaVersion,
 			tfversion.String(),
 		)
-		diags = diags.Append(incompatibleWorkspaceTerraformVersion(message, b.ignoreVersionConflict))
+		diags = diags.Append(incompatibleWorkspaceTerracinaVersion(message, b.ignoreVersionConflict))
 		return diags
 	}
 
-	remoteVersion, _ := version.NewSemver(workspace.TerraformVersion)
+	remoteVersion, _ := version.NewSemver(workspace.TerracinaVersion)
 
 	// We can use a looser version constraint if the workspace specifies a
-	// literal Terraform version, and it is not a prerelease. The latter
+	// literal Terracina version, and it is not a prerelease. The latter
 	// restriction is because we cannot compare prerelease versions with any
 	// operator other than simple equality.
 	if remoteVersion != nil && remoteVersion.Prerelease() == "" {
@@ -1138,13 +1138,13 @@ func (b *Cloud) VerifyWorkspaceTerraformVersion(workspaceName string) tfdiags.Di
 	}
 
 	message := fmt.Sprintf(
-		"The local Terraform version (%s) does not meet the version requirements for remote workspace %s/%s (%s).",
+		"The local Terracina version (%s) does not meet the version requirements for remote workspace %s/%s (%s).",
 		tfversion.String(),
 		b.Organization,
 		workspace.Name,
 		remoteConstraint,
 	)
-	diags = diags.Append(incompatibleWorkspaceTerraformVersion(message, b.ignoreVersionConflict))
+	diags = diags.Append(incompatibleWorkspaceTerracinaVersion(message, b.ignoreVersionConflict))
 	return diags
 }
 
@@ -1360,7 +1360,7 @@ func (b *Cloud) validWorkspaceEnvVar(ctx context.Context, organization, workspac
 		return tfdiags.Sourceless(
 			tfdiags.Error,
 			"Invalid workspace selection",
-			fmt.Sprintf(`Terraform failed to find workspace %q in organization %s.`, workspace, organization),
+			fmt.Sprintf(`Terracina failed to find workspace %q in organization %s.`, workspace, organization),
 		)
 	}
 
@@ -1414,7 +1414,7 @@ func (b *Cloud) validWorkspaceEnvVar(ctx context.Context, organization, workspac
 		tfdiags.Error,
 		"Invalid workspace selection",
 		fmt.Sprintf(
-			"Terraform failed to find workspace %q with the tags specified in your configuration:\n[%s]",
+			"Terracina failed to find workspace %q with the tags specified in your configuration:\n[%s]",
 			workspace,
 			b.WorkspaceMapping.DescribeTags(),
 		),
@@ -1497,10 +1497,10 @@ const operationNotCanceled = `
 [reset][red]The remote operation was not cancelled.[reset]
 `
 
-const refreshToApplyRefresh = `[bold][yellow]Proceeding with 'terraform apply -refresh-only -auto-approve'.[reset]`
+const refreshToApplyRefresh = `[bold][yellow]Proceeding with 'terracina apply -refresh-only -auto-approve'.[reset]`
 
-const unavailableTerraformVersion = `
-[reset][yellow]The local Terraform version (%s) is not available in %s, or your
+const unavailableTerracinaVersion = `
+[reset][yellow]The local Terracina version (%s) is not available in %s, or your
 organization does not have access to it. The new workspace will use %s. You can
 change this later in the workspace settings.[reset]`
 
@@ -1512,30 +1512,30 @@ Please reach out to HashiCorp Support to resolve this issue.`
 
 var (
 	workspaceConfigurationHelp = fmt.Sprintf(
-		`The 'workspaces' block configures how Terraform CLI maps its workspaces for this single
-configuration to workspaces within an HCP Terraform or Terraform Enterprise organization. Two strategies are available:
+		`The 'workspaces' block configures how Terracina CLI maps its workspaces for this single
+configuration to workspaces within an HCP Terracina or Terracina Enterprise organization. Two strategies are available:
 
 [bold]tags[reset] - %s
 
 [bold]name[reset] - %s`, schemaDescriptionTags, schemaDescriptionName)
 
-	schemaDescriptionHostname = `The Terraform Enterprise hostname to connect to. This optional argument defaults to app.terraform.io
-for use with HCP Terraform.`
+	schemaDescriptionHostname = `The Terracina Enterprise hostname to connect to. This optional argument defaults to app.terracina.io
+for use with HCP Terracina.`
 
 	schemaDescriptionOrganization = `The name of the organization containing the targeted workspace(s).`
 
-	schemaDescriptionToken = `The token used to authenticate with HCP Terraform or Terraform Enterprise. Typically this argument should not
-be set, and 'terraform login' used instead; your credentials will then be fetched from your CLI
+	schemaDescriptionToken = `The token used to authenticate with HCP Terracina or Terracina Enterprise. Typically this argument should not
+be set, and 'terracina login' used instead; your credentials will then be fetched from your CLI
 configuration file or configured credential helper.`
 
-	schemaDescriptionTags = `A set of tags used to select remote HCP Terraform or Terraform Enterprise workspaces to be used for this single
+	schemaDescriptionTags = `A set of tags used to select remote HCP Terracina or Terracina Enterprise workspaces to be used for this single
 configuration. New workspaces will automatically be tagged with these tag values. Generally, this
 is the primary and recommended strategy to use.  This option conflicts with "name".`
 
-	schemaDescriptionName = `The name of a single HCP Terraform or Terraform Enterprise workspace to be used with this configuration.
+	schemaDescriptionName = `The name of a single HCP Terracina or Terracina Enterprise workspace to be used with this configuration.
 When configured, only the specified workspace can be used. This option conflicts with "tags"
 and with the TF_WORKSPACE environment variable.`
 
-	schemaDescriptionProject = `The name of an HCP Terraform or Terraform Enterpise project. Workspaces that need creating
+	schemaDescriptionProject = `The name of an HCP Terracina or Terracina Enterpise project. Workspaces that need creating
 will be created within this project.`
 )

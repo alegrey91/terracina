@@ -1,44 +1,44 @@
 ---
-page_title: terraform show command reference
-description: The `terraform show` command provides human-readable output from a state or plan file. 
+page_title: terracina show command reference
+description: The `terracina show` command provides human-readable output from a state or plan file. 
 ---
 
-# `terraform show` command
+# `terracina show` command
 
-The `terraform show` command provides human-readable output
+The `terracina show` command provides human-readable output
 from a state or plan file. Use the command to inspect a plan to ensure
 that the planned operations are expected, or to inspect the current state
-as Terraform sees it.
+as Terracina sees it.
 
 
 -> **Note:** When using the `-json` command-line flag, any sensitive values in
-Terraform state will be displayed in plain text. For more information, see
-[Sensitive Data in State](/terraform/language/state/sensitive-data).
+Terracina state will be displayed in plain text. For more information, see
+[Sensitive Data in State](/terracina/language/state/sensitive-data).
 
 ## JSON Output
 
 Add the `-json` command-line flag to generate machine-readable output.
 
-For Terraform state files, including when no path is provided,
-`terraform show -json` shows a JSON representation of the state.
+For Terracina state files, including when no path is provided,
+`terracina show -json` shows a JSON representation of the state.
 
-For Terraform plan files, `terraform show -json` shows a JSON representation
+For Terracina plan files, `terracina show -json` shows a JSON representation
 of the plan, configuration, and current state.
 
 If you updated providers that contain new schema versions since the state
-was written, upgrade the state before so that Terraform can display it with
+was written, upgrade the state before so that Terracina can display it with
 `show -json`. If you are viewing a plan, it must be created without
-`-refresh=false`. If you are viewing a state file, run `terraform refresh`
+`-refresh=false`. If you are viewing a state file, run `terracina refresh`
 first.
 
-The output format is covered in detail in [JSON Output Format](/terraform/internals/json-format).
+The output format is covered in detail in [JSON Output Format](/terracina/internals/json-format).
 
 ## Usage
 
-Usage: `terraform show [options] [file]`
+Usage: `terracina show [options] [file]`
 
-You may use `show` with a path to either a Terraform state file or plan
-file. If you don't specify a file path, Terraform will show the latest state
+You may use `show` with a path to either a Terracina state file or plan
+file. If you don't specify a file path, Terracina will show the latest state
 snapshot.
 
 This command accepts the following options:
@@ -47,4 +47,4 @@ This command accepts the following options:
 
 * `-json` - Displays machine-readable output from a state or plan file
 
--> JSON output via the `-json` option requires **Terraform v0.12 or later**.
+-> JSON output via the `-json` option requires **Terracina v0.12 or later**.

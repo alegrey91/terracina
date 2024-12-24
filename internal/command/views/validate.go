@@ -7,10 +7,10 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/hashicorp/terraform/internal/command/arguments"
-	"github.com/hashicorp/terraform/internal/command/format"
-	viewsjson "github.com/hashicorp/terraform/internal/command/views/json"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/command/arguments"
+	"github.com/hashicorp/terracina/internal/command/format"
+	viewsjson "github.com/hashicorp/terracina/internal/command/views/json"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // The Validate is used for the validate command.
@@ -36,7 +36,7 @@ func NewValidate(vt arguments.ViewType, view *View) Validate {
 }
 
 // The ValidateHuman implementation renders diagnostics in a human-readable form,
-// along with a success/failure message if Terraform is able to execute the
+// along with a success/failure message if Terracina is able to execute the
 // validation walk.
 type ValidateHuman struct {
 	view *View

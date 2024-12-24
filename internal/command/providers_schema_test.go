@@ -15,9 +15,9 @@ import (
 	"github.com/hashicorp/cli"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/providers"
-	testing_provider "github.com/hashicorp/terraform/internal/providers/testing"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/providers"
+	testing_provider "github.com/hashicorp/terracina/internal/providers/testing"
 )
 
 func TestProvidersSchema_error(t *testing.T) {
@@ -75,7 +75,7 @@ func TestProvidersSchema_output(t *testing.T) {
 				t.Fatalf("init failed\n%s", done(t).Stderr())
 			}
 
-			// `terraform provider schemas` command
+			// `terracina provider schemas` command
 			pc := &ProvidersSchemaCommand{Meta: m}
 			if code := pc.Run([]string{"-json"}); code != 0 {
 				t.Fatalf("wrong exit status %d; want 0\nstderr: %s", code, ui.ErrorWriter.String())

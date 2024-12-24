@@ -11,20 +11,20 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/collections"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/instances"
-	"github.com/hashicorp/terraform/internal/lang"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/promising"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/stacks/stackplan"
-	"github.com/hashicorp/terraform/internal/stacks/stackstate"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/terraform"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/collections"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/instances"
+	"github.com/hashicorp/terracina/internal/lang"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/promising"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/stacks/stackplan"
+	"github.com/hashicorp/terracina/internal/stacks/stackstate"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/terracina"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 var (
@@ -133,7 +133,7 @@ func (r *RemovedInstance) ModuleTreePlan(ctx context.Context) (*plans.Plan, tfdi
 
 		plantimestamp := r.main.PlanTimestamp()
 		forget := !r.call.Config(ctx).config.Destroy
-		opts := &terraform.PlanOpts{
+		opts := &terracina.PlanOpts{
 			Mode:                       plans.DestroyMode,
 			SetVariables:               r.PlanPrevInputs(ctx),
 			ExternalProviders:          providerClients,
@@ -167,14 +167,14 @@ func (r *RemovedInstance) PlanPrevDependents(ctx context.Context) collections.Se
 	return r.main.PlanPrevState().DependentsForComponent(r.Addr())
 }
 
-func (r *RemovedInstance) PlanPrevInputs(ctx context.Context) terraform.InputValues {
+func (r *RemovedInstance) PlanPrevInputs(ctx context.Context) terracina.InputValues {
 	variables := r.main.PlanPrevState().InputsForComponent(r.Addr())
 
-	inputs := make(terraform.InputValues, len(variables))
+	inputs := make(terracina.InputValues, len(variables))
 	for k, v := range variables {
-		inputs[k.Name] = &terraform.InputValue{
+		inputs[k.Name] = &terracina.InputValue{
 			Value:      v,
-			SourceType: terraform.ValueFromPlan,
+			SourceType: terracina.ValueFromPlan,
 		}
 	}
 	return inputs
@@ -225,7 +225,7 @@ func (r *RemovedInstance) ApplyResult(ctx context.Context) (*ComponentInstanceAp
 		diags = diags.Append(tfdiags.Sourceless(
 			tfdiags.Error,
 			"Component instance apply not scheduled",
-			fmt.Sprintf("Terraform needs the result from applying changes to %s, but that apply was apparently not scheduled to run: %s. This is a bug in Terraform.", r.Addr(), err),
+			fmt.Sprintf("Terracina needs the result from applying changes to %s, but that apply was apparently not scheduled to run: %s. This is a bug in Terracina.", r.Addr(), err),
 		))
 	}
 	return applyResult, diags
@@ -327,7 +327,7 @@ func (r *RemovedInstance) ResourceSchema(ctx context.Context, providerTypeAddr a
 	// This should not be able to fail with an error because we should
 	// be retrieving the same schema that was already used to encode
 	// the object we're working with. The error handling here is for
-	// robustness but any error here suggests a bug in Terraform.
+	// robustness but any error here suggests a bug in Terracina.
 
 	providerType := r.main.ProviderType(ctx, providerTypeAddr)
 	providerSchema, err := providerType.Schema(ctx)

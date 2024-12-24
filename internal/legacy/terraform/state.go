@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"bytes"
@@ -10,7 +10,7 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/hashicorp/terraform/internal/configs/hcl2shim"
+	"github.com/hashicorp/terracina/internal/configs/hcl2shim"
 	"github.com/mitchellh/copystructure"
 	"github.com/zclconf/go-cty/cty"
 )
@@ -18,22 +18,22 @@ import (
 // InstanceState is used to track the unique state information belonging
 // to a given instance.
 type InstanceState struct {
-	// A unique ID for this resource. This is opaque to Terraform
+	// A unique ID for this resource. This is opaque to Terracina
 	// and is only meant as a lookup mechanism for the providers.
 	ID string `json:"id"`
 
 	// Attributes are basic information about the resource. Any keys here
-	// are accessible in variable format within Terraform configurations:
+	// are accessible in variable format within Terracina configurations:
 	// ${resourcetype.name.attribute}.
 	Attributes map[string]string `json:"attributes"`
 
 	// Ephemeral is used to store any state associated with this instance
-	// that is necessary for the Terraform run to complete, but is not
+	// that is necessary for the Terracina run to complete, but is not
 	// persisted to a state file.
 	Ephemeral EphemeralState `json:"-"`
 
 	// Meta is a simple K/V map that is persisted to the State but otherwise
-	// ignored by Terraform core. It's meant to be used for accounting by
+	// ignored by Terracina core. It's meant to be used for accounting by
 	// external client code. The value here must only contain Go primitives
 	// and collections.
 	Meta map[string]interface{} `json:"meta"`

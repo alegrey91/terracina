@@ -1,13 +1,13 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"log"
 
-	"github.com/hashicorp/terraform/internal/dag"
-	"github.com/hashicorp/terraform/internal/logging"
+	"github.com/hashicorp/terracina/internal/dag"
+	"github.com/hashicorp/terracina/internal/logging"
 )
 
 // GraphTransformer is the interface that transformers implement. This

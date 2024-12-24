@@ -8,9 +8,9 @@ import (
 	"strings"
 
 	"github.com/hashicorp/hcl/v2"
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/lang/marks"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/lang/marks"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 	"github.com/zclconf/go-cty/cty"
 	"github.com/zclconf/go-cty/cty/convert"
 )
@@ -63,7 +63,7 @@ func EvalCheckErrorMessage(expr hcl.Expression, hclCtx *hcl.EvalContext, ruleAdd
 		diags = diags.Append(&hcl.Diagnostic{
 			Severity: hcl.DiagWarning,
 			Summary:  "Error message refers to sensitive values",
-			Detail: `The error expression used to explain this condition refers to sensitive values, so Terraform will not display the resulting message.
+			Detail: `The error expression used to explain this condition refers to sensitive values, so Terracina will not display the resulting message.
 
 You can correct this by removing references to sensitive values, or by carefully using the nonsensitive() function if the expression will not reveal the sensitive data.`,
 			Subject:     expr.Range().Ptr(),
@@ -84,7 +84,7 @@ You can correct this by removing references to sensitive values, or by carefully
 		diags = diags.Append(&hcl.Diagnostic{
 			Severity: hcl.DiagWarning,
 			Summary:  "Error message refers to ephemeral values",
-			Detail: `The error expression used to explain this condition refers to ephemeral values, so Terraform will not display the resulting message.
+			Detail: `The error expression used to explain this condition refers to ephemeral values, so Terracina will not display the resulting message.
 
 You can correct this by removing references to ephemeral values, or by using the ephemeralasnull() function on the references to not reveal ephemeral data.`,
 			Subject: expr.Range().Ptr(),

@@ -4,8 +4,8 @@
 package stackaddrs
 
 import (
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/collections"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/collections"
 )
 
 // StackCall represents a call to an embedded stack. This is essentially the

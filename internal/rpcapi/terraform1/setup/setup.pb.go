@@ -524,28 +524,28 @@ func file_setup_proto_rawDescGZIP() []byte {
 
 var file_setup_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_setup_proto_goTypes = []any{
-	(*Handshake)(nil),          // 0: terraform1.setup.Handshake
-	(*Stop)(nil),               // 1: terraform1.setup.Stop
-	(*Config)(nil),             // 2: terraform1.setup.Config
-	(*HostCredential)(nil),     // 3: terraform1.setup.HostCredential
-	(*ClientCapabilities)(nil), // 4: terraform1.setup.ClientCapabilities
-	(*ServerCapabilities)(nil), // 5: terraform1.setup.ServerCapabilities
-	(*Handshake_Request)(nil),  // 6: terraform1.setup.Handshake.Request
-	(*Handshake_Response)(nil), // 7: terraform1.setup.Handshake.Response
-	(*Stop_Request)(nil),       // 8: terraform1.setup.Stop.Request
-	(*Stop_Response)(nil),      // 9: terraform1.setup.Stop.Response
-	nil,                        // 10: terraform1.setup.Config.CredentialsEntry
+	(*Handshake)(nil),          // 0: terracina1.setup.Handshake
+	(*Stop)(nil),               // 1: terracina1.setup.Stop
+	(*Config)(nil),             // 2: terracina1.setup.Config
+	(*HostCredential)(nil),     // 3: terracina1.setup.HostCredential
+	(*ClientCapabilities)(nil), // 4: terracina1.setup.ClientCapabilities
+	(*ServerCapabilities)(nil), // 5: terracina1.setup.ServerCapabilities
+	(*Handshake_Request)(nil),  // 6: terracina1.setup.Handshake.Request
+	(*Handshake_Response)(nil), // 7: terracina1.setup.Handshake.Response
+	(*Stop_Request)(nil),       // 8: terracina1.setup.Stop.Request
+	(*Stop_Response)(nil),      // 9: terracina1.setup.Stop.Response
+	nil,                        // 10: terracina1.setup.Config.CredentialsEntry
 }
 var file_setup_proto_depIdxs = []int32{
-	10, // 0: terraform1.setup.Config.credentials:type_name -> terraform1.setup.Config.CredentialsEntry
-	4,  // 1: terraform1.setup.Handshake.Request.capabilities:type_name -> terraform1.setup.ClientCapabilities
-	2,  // 2: terraform1.setup.Handshake.Request.config:type_name -> terraform1.setup.Config
-	5,  // 3: terraform1.setup.Handshake.Response.capabilities:type_name -> terraform1.setup.ServerCapabilities
-	3,  // 4: terraform1.setup.Config.CredentialsEntry.value:type_name -> terraform1.setup.HostCredential
-	6,  // 5: terraform1.setup.Setup.Handshake:input_type -> terraform1.setup.Handshake.Request
-	8,  // 6: terraform1.setup.Setup.Stop:input_type -> terraform1.setup.Stop.Request
-	7,  // 7: terraform1.setup.Setup.Handshake:output_type -> terraform1.setup.Handshake.Response
-	9,  // 8: terraform1.setup.Setup.Stop:output_type -> terraform1.setup.Stop.Response
+	10, // 0: terracina1.setup.Config.credentials:type_name -> terracina1.setup.Config.CredentialsEntry
+	4,  // 1: terracina1.setup.Handshake.Request.capabilities:type_name -> terracina1.setup.ClientCapabilities
+	2,  // 2: terracina1.setup.Handshake.Request.config:type_name -> terracina1.setup.Config
+	5,  // 3: terracina1.setup.Handshake.Response.capabilities:type_name -> terracina1.setup.ServerCapabilities
+	3,  // 4: terracina1.setup.Config.CredentialsEntry.value:type_name -> terracina1.setup.HostCredential
+	6,  // 5: terracina1.setup.Setup.Handshake:input_type -> terracina1.setup.Handshake.Request
+	8,  // 6: terracina1.setup.Setup.Stop:input_type -> terracina1.setup.Stop.Request
+	7,  // 7: terracina1.setup.Setup.Handshake:output_type -> terracina1.setup.Handshake.Response
+	9,  // 8: terracina1.setup.Setup.Stop:output_type -> terracina1.setup.Stop.Response
 	7,  // [7:9] is the sub-list for method output_type
 	5,  // [5:7] is the sub-list for method input_type
 	5,  // [5:5] is the sub-list for extension type_name
@@ -733,7 +733,7 @@ func NewSetupClient(cc grpc.ClientConnInterface) SetupClient {
 
 func (c *setupClient) Handshake(ctx context.Context, in *Handshake_Request, opts ...grpc.CallOption) (*Handshake_Response, error) {
 	out := new(Handshake_Response)
-	err := c.cc.Invoke(ctx, "/terraform1.setup.Setup/Handshake", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/terracina1.setup.Setup/Handshake", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -742,7 +742,7 @@ func (c *setupClient) Handshake(ctx context.Context, in *Handshake_Request, opts
 
 func (c *setupClient) Stop(ctx context.Context, in *Stop_Request, opts ...grpc.CallOption) (*Stop_Response, error) {
 	out := new(Stop_Response)
-	err := c.cc.Invoke(ctx, "/terraform1.setup.Setup/Stop", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/terracina1.setup.Setup/Stop", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -787,7 +787,7 @@ func _Setup_Handshake_Handler(srv interface{}, ctx context.Context, dec func(int
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/terraform1.setup.Setup/Handshake",
+		FullMethod: "/terracina1.setup.Setup/Handshake",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SetupServer).Handshake(ctx, req.(*Handshake_Request))
@@ -805,7 +805,7 @@ func _Setup_Stop_Handler(srv interface{}, ctx context.Context, dec func(interfac
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/terraform1.setup.Setup/Stop",
+		FullMethod: "/terracina1.setup.Setup/Stop",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SetupServer).Stop(ctx, req.(*Stop_Request))
@@ -814,7 +814,7 @@ func _Setup_Stop_Handler(srv interface{}, ctx context.Context, dec func(interfac
 }
 
 var _Setup_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "terraform1.setup.Setup",
+	ServiceName: "terracina1.setup.Setup",
 	HandlerType: (*SetupServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

@@ -6,7 +6,7 @@ package json
 import (
 	"strings"
 
-	"github.com/hashicorp/terraform/internal/moduletest"
+	"github.com/hashicorp/terracina/internal/moduletest"
 )
 
 type TestSuiteAbstract map[string][]string

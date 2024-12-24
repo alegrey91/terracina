@@ -1,18 +1,18 @@
 ---
-page_title: terraform state replace-provider command reference
+page_title: terracina state replace-provider command reference
 description: >-
-  The `terraform state replace-provider` command replaces the provider for
-  resources in the Terraform state.
+  The `terracina state replace-provider` command replaces the provider for
+  resources in the Terracina state.
 ---
 
-# `terraform state replace-provider` command
+# `terracina state replace-provider` command
 
-The `terraform state replace-provider` command replaces the provider
-for resources in a [Terraform state](/terraform/language/state).
+The `terracina state replace-provider` command replaces the provider
+for resources in a [Terracina state](/terracina/language/state).
 
 ## Usage
 
-Usage: `terraform state replace-provider [options] FROM_PROVIDER_FQN TO_PROVIDER_FQN`
+Usage: `terracina state replace-provider [options] FROM_PROVIDER_FQN TO_PROVIDER_FQN`
 
 This command will update all resources using the "from" provider, setting the
 provider to the specified "to" provider. This allows changing the source of a
@@ -32,20 +32,20 @@ This command also accepts the following options:
 
 - `-lock-timeout=0s` - Duration to retry a state lock.
 
-For configurations using the [HCP Terraform CLI integration](/terraform/cli/cloud) or the [`remote` backend](/terraform/language/backend/remote)
-only, `terraform state replace-provider`
+For configurations using the [HCP Terracina CLI integration](/terracina/cli/cloud) or the [`remote` backend](/terracina/language/backend/remote)
+only, `terracina state replace-provider`
 also accepts the option
-[`-ignore-remote-version`](/terraform/cli/cloud/command-line-arguments#ignore-remote-version).
+[`-ignore-remote-version`](/terracina/cli/cloud/command-line-arguments#ignore-remote-version).
 
 For configurations using
-[the `local` state](/terraform/language/backend/local) only,
-`terraform state replace-provider` also accepts the legacy options
-[`-state`, `-state-out`, and `-backup`](/terraform/language/backend/local#command-line-arguments).
+[the `local` state](/terracina/language/backend/local) only,
+`terracina state replace-provider` also accepts the legacy options
+[`-state`, `-state-out`, and `-backup`](/terracina/language/backend/local#command-line-arguments).
 
 ## Example
 
 The example below replaces the `hashicorp/aws` provider with a fork by `acme`, hosted at a private registry at `registry.acme.corp`:
 
 ```shell
-$ terraform state replace-provider hashicorp/aws registry.acme.corp/acme/aws
+$ terracina state replace-provider hashicorp/aws registry.acme.corp/acme/aws
 ```

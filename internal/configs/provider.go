@@ -10,8 +10,8 @@ import (
 	"github.com/hashicorp/hcl/v2/gohcl"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // Provider represents a "provider" block in a module or file. A provider
@@ -103,7 +103,7 @@ func decodeProviderBlock(block *hcl.Block, testFile bool) (*Provider, hcl.Diagno
 			diags = append(diags, &hcl.Diagnostic{
 				Severity: hcl.DiagWarning,
 				Summary:  "Version constraints inside provider configuration blocks are deprecated",
-				Detail:   "Terraform 0.13 and earlier allowed provider version constraints inside the provider configuration block, but that is now deprecated and will be removed in a future version of Terraform. To silence this warning, move the provider version constraint into the required_providers block.",
+				Detail:   "Terracina 0.13 and earlier allowed provider version constraints inside the provider configuration block, but that is now deprecated and will be removed in a future version of Terracina. To silence this warning, move the provider version constraint into the required_providers block.",
 				Subject:  attr.Expr.Range().Ptr(),
 			})
 			var versionDiags hcl.Diagnostics
@@ -118,7 +118,7 @@ func decodeProviderBlock(block *hcl.Block, testFile bool) (*Provider, hcl.Diagno
 			diags = append(diags, &hcl.Diagnostic{
 				Severity: hcl.DiagError,
 				Summary:  "Reserved argument name in provider block",
-				Detail:   fmt.Sprintf("The provider argument name %q is reserved for use by Terraform in a future version.", name),
+				Detail:   fmt.Sprintf("The provider argument name %q is reserved for use by Terracina in a future version.", name),
 				Subject:  &attr.NameRange,
 			})
 		}
@@ -153,7 +153,7 @@ func decodeProviderBlock(block *hcl.Block, testFile bool) (*Provider, hcl.Diagno
 			diags = append(diags, &hcl.Diagnostic{
 				Severity: hcl.DiagError,
 				Summary:  "Reserved block type name in provider block",
-				Detail:   fmt.Sprintf("The block type name %q is reserved for use by Terraform in a future version.", block.Type),
+				Detail:   fmt.Sprintf("The block type name %q is reserved for use by Terracina in a future version.", block.Type),
 				Subject:  &block.TypeRange,
 			})
 		}

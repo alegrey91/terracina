@@ -4,7 +4,7 @@
 package jsonprovider
 
 import (
-	"github.com/hashicorp/terraform/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
 )
 
 type Block struct {

@@ -10,15 +10,15 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/hcl/v2"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/providers"
-	testing_provider "github.com/hashicorp/terraform/internal/providers/testing"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/providers"
+	testing_provider "github.com/hashicorp/terracina/internal/providers/testing"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 func TestValidate_modulesWithProviderConfigs(t *testing.T) {
 	// This test checks that we're correctly prohibiting inline provider
-	// configurations in Terraform modules used as stack components, which
+	// configurations in Terracina modules used as stack components, which
 	// is forbidden because the stacks language is responsible for provider
 	// configurations.
 	//
@@ -71,7 +71,7 @@ func TestValidate_modulesWithProviderConfigs(t *testing.T) {
 		wantDiags = wantDiags.Append(&hcl.Diagnostic{
 			Severity: hcl.DiagError,
 			Summary:  "Inline provider configuration not allowed",
-			Detail:   "This module is not compatible with Terraform Stacks, because it declares an inline provider configuration.\n\nTo be used with stacks, this module must instead accept provider configurations from its caller.",
+			Detail:   "This module is not compatible with Terracina Stacks, because it declares an inline provider configuration.\n\nTo be used with stacks, this module must instead accept provider configurations from its caller.",
 			Subject: &hcl.Range{
 				Filename: "https://testing.invalid/validating.tar.gz//modules_with_provider_configs/module-b/modules-with-provider-configs-b.tf",
 				Start:    hcl.Pos{Line: 9, Column: 1, Byte: 104},

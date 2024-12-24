@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"context"
@@ -16,18 +16,18 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/configs/configload"
-	"github.com/hashicorp/terraform/internal/initwd"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	testing_provider "github.com/hashicorp/terraform/internal/providers/testing"
-	"github.com/hashicorp/terraform/internal/provisioners"
-	"github.com/hashicorp/terraform/internal/registry"
-	"github.com/hashicorp/terraform/internal/states"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/configs/configload"
+	"github.com/hashicorp/terracina/internal/initwd"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	testing_provider "github.com/hashicorp/terracina/internal/providers/testing"
+	"github.com/hashicorp/terracina/internal/provisioners"
+	"github.com/hashicorp/terracina/internal/registry"
+	"github.com/hashicorp/terracina/internal/states"
 
-	_ "github.com/hashicorp/terraform/internal/logging"
+	_ "github.com/hashicorp/terracina/internal/logging"
 )
 
 // This is the directory where our test fixtures are.
@@ -296,37 +296,37 @@ func (h *HookRecordApplyOrder) PreApply(id HookResourceIdentity, dk addrs.Depose
 // Below are all the constant strings that are the expected output for
 // various tests.
 
-const testTerraformInputProviderOnlyStr = `
+const testTerracinaInputProviderOnlyStr = `
 aws_instance.foo:
   ID = 
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = us-west-2
   type = 
 `
 
-const testTerraformApplyStr = `
+const testTerracinaApplyStr = `
 aws_instance.bar:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = bar
   type = aws_instance
 aws_instance.foo:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   num = 2
   type = aws_instance
 `
 
-const testTerraformApplyDataBasicStr = `
+const testTerracinaApplyDataBasicStr = `
 data.null_data_source.testing:
   ID = yo
-  provider = provider["registry.terraform.io/hashicorp/null"]
+  provider = provider["registry.terracina.io/hashicorp/null"]
 `
 
-const testTerraformApplyRefCountStr = `
+const testTerracinaApplyRefCountStr = `
 aws_instance.bar:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = 3
   type = aws_instance
 
@@ -334,53 +334,53 @@ aws_instance.bar:
     aws_instance.foo
 aws_instance.foo.0:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   type = aws_instance
 aws_instance.foo.1:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   type = aws_instance
 aws_instance.foo.2:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   type = aws_instance
 `
 
-const testTerraformApplyProviderAliasStr = `
+const testTerracinaApplyProviderAliasStr = `
 aws_instance.bar:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"].bar
+  provider = provider["registry.terracina.io/hashicorp/aws"].bar
   foo = bar
   type = aws_instance
 aws_instance.foo:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   num = 2
   type = aws_instance
 `
 
-const testTerraformApplyProviderAliasConfigStr = `
+const testTerracinaApplyProviderAliasConfigStr = `
 another_instance.bar:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/another"].two
+  provider = provider["registry.terracina.io/hashicorp/another"].two
   type = another_instance
 another_instance.foo:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/another"]
+  provider = provider["registry.terracina.io/hashicorp/another"]
   type = another_instance
 `
 
-const testTerraformApplyEmptyModuleStr = `
+const testTerracinaApplyEmptyModuleStr = `
 <no state>
 Outputs:
 
 end = XXXX
 `
 
-const testTerraformApplyDependsCreateBeforeStr = `
+const testTerracinaApplyDependsCreateBeforeStr = `
 aws_instance.lb:
   ID = baz
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   instance = foo
   type = aws_instance
 
@@ -388,39 +388,39 @@ aws_instance.lb:
     aws_instance.web
 aws_instance.web:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   require_new = ami-new
   type = aws_instance
 `
 
-const testTerraformApplyCreateBeforeStr = `
+const testTerracinaApplyCreateBeforeStr = `
 aws_instance.bar:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   require_new = xyz
   type = aws_instance
 `
 
-const testTerraformApplyCreateBeforeUpdateStr = `
+const testTerracinaApplyCreateBeforeUpdateStr = `
 aws_instance.bar:
   ID = bar
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = baz
   type = aws_instance
 `
 
-const testTerraformApplyCancelStr = `
+const testTerracinaApplyCancelStr = `
 aws_instance.foo:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   type = aws_instance
   value = 2
 `
 
-const testTerraformApplyComputeStr = `
+const testTerracinaApplyComputeStr = `
 aws_instance.bar:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = computed_value
   type = aws_instance
 
@@ -428,7 +428,7 @@ aws_instance.bar:
     aws_instance.foo
 aws_instance.foo:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   compute = value
   compute_value = 1
   num = 2
@@ -436,41 +436,41 @@ aws_instance.foo:
   value = computed_value
 `
 
-const testTerraformApplyCountDecStr = `
+const testTerracinaApplyCountDecStr = `
 aws_instance.bar:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = bar
   type = aws_instance
 aws_instance.foo.0:
   ID = bar
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = foo
   type = aws_instance
 aws_instance.foo.1:
   ID = bar
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = foo
   type = aws_instance
 `
 
-const testTerraformApplyCountDecToOneStr = `
+const testTerracinaApplyCountDecToOneStr = `
 aws_instance.foo:
   ID = bar
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = foo
   type = aws_instance
 `
 
-const testTerraformApplyCountDecToOneCorruptedStr = `
+const testTerracinaApplyCountDecToOneCorruptedStr = `
 aws_instance.foo:
   ID = bar
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = foo
   type = aws_instance
 `
 
-const testTerraformApplyCountDecToOneCorruptedPlanStr = `
+const testTerracinaApplyCountDecToOneCorruptedPlanStr = `
 DIFF:
 
 DESTROY: aws_instance.foo[0]
@@ -483,32 +483,32 @@ STATE:
 
 aws_instance.foo:
   ID = bar
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = foo
   type = aws_instance
 aws_instance.foo.0:
   ID = baz
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   type = aws_instance
 `
 
-const testTerraformApplyCountVariableStr = `
+const testTerracinaApplyCountVariableStr = `
 aws_instance.foo.0:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = foo
   type = aws_instance
 aws_instance.foo.1:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = foo
   type = aws_instance
 `
 
-const testTerraformApplyCountVariableRefStr = `
+const testTerracinaApplyCountVariableRefStr = `
 aws_instance.bar:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = 2
   type = aws_instance
 
@@ -516,140 +516,140 @@ aws_instance.bar:
     aws_instance.foo
 aws_instance.foo.0:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   type = aws_instance
 aws_instance.foo.1:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   type = aws_instance
 `
-const testTerraformApplyForEachVariableStr = `
+const testTerracinaApplyForEachVariableStr = `
 aws_instance.foo["b15c6d616d6143248c575900dff57325eb1de498"]:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = foo
   type = aws_instance
 aws_instance.foo["c3de47d34b0a9f13918dd705c141d579dd6555fd"]:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = foo
   type = aws_instance
 aws_instance.foo["e30a7edcc42a846684f2a4eea5f3cd261d33c46d"]:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = foo
   type = aws_instance
 aws_instance.one["a"]:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   type = aws_instance
 aws_instance.one["b"]:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   type = aws_instance
 aws_instance.two["a"]:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   type = aws_instance
 
   Dependencies:
     aws_instance.one
 aws_instance.two["b"]:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   type = aws_instance
 
   Dependencies:
     aws_instance.one`
-const testTerraformApplyMinimalStr = `
+const testTerracinaApplyMinimalStr = `
 aws_instance.bar:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   type = aws_instance
 aws_instance.foo:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   type = aws_instance
 `
 
-const testTerraformApplyModuleStr = `
+const testTerracinaApplyModuleStr = `
 aws_instance.bar:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = bar
   type = aws_instance
 aws_instance.foo:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   num = 2
   type = aws_instance
 
 module.child:
   aws_instance.baz:
     ID = foo
-    provider = provider["registry.terraform.io/hashicorp/aws"]
+    provider = provider["registry.terracina.io/hashicorp/aws"]
     foo = bar
     type = aws_instance
 `
 
-const testTerraformApplyModuleBoolStr = `
+const testTerracinaApplyModuleBoolStr = `
 aws_instance.bar:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = true
   type = aws_instance
 `
 
-const testTerraformApplyModuleDestroyOrderStr = `
+const testTerracinaApplyModuleDestroyOrderStr = `
 <no state>
 `
 
-const testTerraformApplyMultiProviderStr = `
+const testTerracinaApplyMultiProviderStr = `
 aws_instance.bar:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = bar
   type = aws_instance
 do_instance.foo:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/do"]
+  provider = provider["registry.terracina.io/hashicorp/do"]
   num = 2
   type = do_instance
 `
 
-const testTerraformApplyModuleOnlyProviderStr = `
+const testTerracinaApplyModuleOnlyProviderStr = `
 <no state>
 module.child:
   aws_instance.foo:
     ID = foo
-    provider = provider["registry.terraform.io/hashicorp/aws"]
+    provider = provider["registry.terracina.io/hashicorp/aws"]
     type = aws_instance
   test_instance.foo:
     ID = foo
-    provider = provider["registry.terraform.io/hashicorp/test"]
+    provider = provider["registry.terracina.io/hashicorp/test"]
     type = test_instance
 `
 
-const testTerraformApplyModuleProviderAliasStr = `
+const testTerracinaApplyModuleProviderAliasStr = `
 <no state>
 module.child:
   aws_instance.foo:
     ID = foo
-    provider = module.child.provider["registry.terraform.io/hashicorp/aws"].eu
+    provider = module.child.provider["registry.terracina.io/hashicorp/aws"].eu
     type = aws_instance
 `
 
-const testTerraformApplyModuleVarRefExistingStr = `
+const testTerracinaApplyModuleVarRefExistingStr = `
 aws_instance.foo:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = bar
   type = aws_instance
 
 module.child:
   aws_instance.foo:
     ID = foo
-    provider = provider["registry.terraform.io/hashicorp/aws"]
+    provider = provider["registry.terracina.io/hashicorp/aws"]
     type = aws_instance
     value = bar
 
@@ -657,21 +657,21 @@ module.child:
       aws_instance.foo
 `
 
-const testTerraformApplyOutputOrphanModuleStr = `
+const testTerracinaApplyOutputOrphanModuleStr = `
 <no state>
 `
 
-const testTerraformApplyProvisionerStr = `
+const testTerracinaApplyProvisionerStr = `
 aws_instance.bar:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   type = aws_instance
 
   Dependencies:
     aws_instance.foo
 aws_instance.foo:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   compute = value
   compute_value = 1
   num = 2
@@ -679,169 +679,169 @@ aws_instance.foo:
   value = computed_value
 `
 
-const testTerraformApplyProvisionerModuleStr = `
+const testTerracinaApplyProvisionerModuleStr = `
 <no state>
 module.child:
   aws_instance.bar:
     ID = foo
-    provider = provider["registry.terraform.io/hashicorp/aws"]
+    provider = provider["registry.terracina.io/hashicorp/aws"]
     type = aws_instance
 `
 
-const testTerraformApplyProvisionerFailStr = `
+const testTerracinaApplyProvisionerFailStr = `
 aws_instance.bar: (tainted)
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   type = aws_instance
 aws_instance.foo:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   num = 2
   type = aws_instance
 `
 
-const testTerraformApplyProvisionerFailCreateStr = `
+const testTerracinaApplyProvisionerFailCreateStr = `
 aws_instance.bar: (tainted)
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   type = aws_instance
 `
 
-const testTerraformApplyProvisionerFailCreateNoIdStr = `
+const testTerracinaApplyProvisionerFailCreateNoIdStr = `
 <no state>
 `
 
-const testTerraformApplyProvisionerFailCreateBeforeDestroyStr = `
+const testTerracinaApplyProvisionerFailCreateBeforeDestroyStr = `
 aws_instance.bar: (tainted) (1 deposed)
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   require_new = xyz
   type = aws_instance
   Deposed ID 1 = bar
 `
 
-const testTerraformApplyProvisionerResourceRefStr = `
+const testTerracinaApplyProvisionerResourceRefStr = `
 aws_instance.bar:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   num = 2
   type = aws_instance
 `
 
-const testTerraformApplyProvisionerSelfRefStr = `
+const testTerracinaApplyProvisionerSelfRefStr = `
 aws_instance.foo:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = bar
   type = aws_instance
 `
 
-const testTerraformApplyProvisionerMultiSelfRefStr = `
+const testTerracinaApplyProvisionerMultiSelfRefStr = `
 aws_instance.foo.0:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = number 0
   type = aws_instance
 aws_instance.foo.1:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = number 1
   type = aws_instance
 aws_instance.foo.2:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = number 2
   type = aws_instance
 `
 
-const testTerraformApplyProvisionerMultiSelfRefSingleStr = `
+const testTerracinaApplyProvisionerMultiSelfRefSingleStr = `
 aws_instance.foo.0:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = number 0
   type = aws_instance
 aws_instance.foo.1:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = number 1
   type = aws_instance
 aws_instance.foo.2:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = number 2
   type = aws_instance
 `
 
-const testTerraformApplyProvisionerDiffStr = `
+const testTerracinaApplyProvisionerDiffStr = `
 aws_instance.bar:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = bar
   type = aws_instance
 `
 
-const testTerraformApplyProvisionerSensitiveStr = `
+const testTerracinaApplyProvisionerSensitiveStr = `
 aws_instance.foo:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   type = aws_instance
 `
 
-const testTerraformApplyDestroyStr = `
+const testTerracinaApplyDestroyStr = `
 <no state>
 `
 
-const testTerraformApplyErrorStr = `
+const testTerracinaApplyErrorStr = `
 aws_instance.bar: (tainted)
   ID = 
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = 2
 
   Dependencies:
     aws_instance.foo
 aws_instance.foo:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   type = aws_instance
   value = 2
 `
 
-const testTerraformApplyErrorCreateBeforeDestroyStr = `
+const testTerracinaApplyErrorCreateBeforeDestroyStr = `
 aws_instance.bar:
   ID = bar
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   require_new = abc
   type = aws_instance
 `
 
-const testTerraformApplyErrorDestroyCreateBeforeDestroyStr = `
+const testTerracinaApplyErrorDestroyCreateBeforeDestroyStr = `
 aws_instance.bar: (1 deposed)
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   require_new = xyz
   type = aws_instance
   Deposed ID 1 = bar
 `
 
-const testTerraformApplyErrorPartialStr = `
+const testTerracinaApplyErrorPartialStr = `
 aws_instance.bar:
   ID = bar
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   type = aws_instance
 
   Dependencies:
     aws_instance.foo
 aws_instance.foo:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   type = aws_instance
   value = 2
 `
 
-const testTerraformApplyResourceDependsOnModuleStr = `
+const testTerracinaApplyResourceDependsOnModuleStr = `
 aws_instance.a:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   ami = parent
   type = aws_instance
 
@@ -851,15 +851,15 @@ aws_instance.a:
 module.child:
   aws_instance.child:
     ID = foo
-    provider = provider["registry.terraform.io/hashicorp/aws"]
+    provider = provider["registry.terracina.io/hashicorp/aws"]
     ami = child
     type = aws_instance
 `
 
-const testTerraformApplyResourceDependsOnModuleDeepStr = `
+const testTerracinaApplyResourceDependsOnModuleDeepStr = `
 aws_instance.a:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   ami = parent
   type = aws_instance
 
@@ -869,17 +869,17 @@ aws_instance.a:
 module.child.grandchild:
   aws_instance.c:
     ID = foo
-    provider = provider["registry.terraform.io/hashicorp/aws"]
+    provider = provider["registry.terracina.io/hashicorp/aws"]
     ami = grandchild
     type = aws_instance
 `
 
-const testTerraformApplyResourceDependsOnModuleInModuleStr = `
+const testTerracinaApplyResourceDependsOnModuleInModuleStr = `
 <no state>
 module.child:
   aws_instance.b:
     ID = foo
-    provider = provider["registry.terraform.io/hashicorp/aws"]
+    provider = provider["registry.terracina.io/hashicorp/aws"]
     ami = child
     type = aws_instance
 
@@ -888,23 +888,23 @@ module.child:
 module.child.grandchild:
   aws_instance.c:
     ID = foo
-    provider = provider["registry.terraform.io/hashicorp/aws"]
+    provider = provider["registry.terracina.io/hashicorp/aws"]
     ami = grandchild
     type = aws_instance
 `
 
-const testTerraformApplyTaintStr = `
+const testTerracinaApplyTaintStr = `
 aws_instance.bar:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   num = 2
   type = aws_instance
 `
 
-const testTerraformApplyTaintDepStr = `
+const testTerracinaApplyTaintDepStr = `
 aws_instance.bar:
   ID = bar
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = foo
   num = 2
   type = aws_instance
@@ -913,15 +913,15 @@ aws_instance.bar:
     aws_instance.foo
 aws_instance.foo:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   num = 2
   type = aws_instance
 `
 
-const testTerraformApplyTaintDepRequireNewStr = `
+const testTerracinaApplyTaintDepRequireNewStr = `
 aws_instance.bar:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = foo
   require_new = yes
   type = aws_instance
@@ -930,20 +930,20 @@ aws_instance.bar:
     aws_instance.foo
 aws_instance.foo:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   num = 2
   type = aws_instance
 `
 
-const testTerraformApplyOutputStr = `
+const testTerracinaApplyOutputStr = `
 aws_instance.bar:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = bar
   type = aws_instance
 aws_instance.foo:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   num = 2
   type = aws_instance
 
@@ -952,15 +952,15 @@ Outputs:
 foo_num = 2
 `
 
-const testTerraformApplyOutputAddStr = `
+const testTerracinaApplyOutputAddStr = `
 aws_instance.test.0:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = foo0
   type = aws_instance
 aws_instance.test.1:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = foo1
   type = aws_instance
 
@@ -970,25 +970,25 @@ firstOutput = foo0
 secondOutput = foo1
 `
 
-const testTerraformApplyOutputListStr = `
+const testTerracinaApplyOutputListStr = `
 aws_instance.bar.0:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = bar
   type = aws_instance
 aws_instance.bar.1:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = bar
   type = aws_instance
 aws_instance.bar.2:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = bar
   type = aws_instance
 aws_instance.foo:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   num = 2
   type = aws_instance
 
@@ -997,25 +997,25 @@ Outputs:
 foo_num = [bar,bar,bar]
 `
 
-const testTerraformApplyOutputMultiStr = `
+const testTerracinaApplyOutputMultiStr = `
 aws_instance.bar.0:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = bar
   type = aws_instance
 aws_instance.bar.1:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = bar
   type = aws_instance
 aws_instance.bar.2:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = bar
   type = aws_instance
 aws_instance.foo:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   num = 2
   type = aws_instance
 
@@ -1024,25 +1024,25 @@ Outputs:
 foo_num = bar,bar,bar
 `
 
-const testTerraformApplyOutputMultiIndexStr = `
+const testTerracinaApplyOutputMultiIndexStr = `
 aws_instance.bar.0:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = bar
   type = aws_instance
 aws_instance.bar.1:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = bar
   type = aws_instance
 aws_instance.bar.2:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = bar
   type = aws_instance
 aws_instance.foo:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   num = 2
   type = aws_instance
 
@@ -1051,24 +1051,24 @@ Outputs:
 foo_num = bar
 `
 
-const testTerraformApplyUnknownAttrStr = `
+const testTerracinaApplyUnknownAttrStr = `
 aws_instance.foo: (tainted)
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   num = 2
   type = aws_instance
 `
 
-const testTerraformApplyVarsStr = `
+const testTerracinaApplyVarsStr = `
 aws_instance.bar:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   bar = override
   baz = override
   foo = us-east-1
 aws_instance.foo:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   bar = baz
   list.# = 2
   list.0 = Hello
@@ -1079,10 +1079,10 @@ aws_instance.foo:
   num = 2
 `
 
-const testTerraformApplyVarsEnvStr = `
+const testTerracinaApplyVarsEnvStr = `
 aws_instance.bar:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   list.# = 2
   list.0 = Hello
   list.1 = World
@@ -1093,13 +1093,13 @@ aws_instance.bar:
   type = aws_instance
 `
 
-const testTerraformRefreshDataRefDataStr = `
+const testTerracinaRefreshDataRefDataStr = `
 data.null_data_source.bar:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/null"]
+  provider = provider["registry.terracina.io/hashicorp/null"]
   bar = yes
 data.null_data_source.foo:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/null"]
+  provider = provider["registry.terracina.io/hashicorp/null"]
   foo = yes
 `

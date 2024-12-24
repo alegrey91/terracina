@@ -10,14 +10,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hashicorp/terraform/internal/backend/local"
-	"github.com/hashicorp/terraform/internal/cloud"
-	"github.com/hashicorp/terraform/internal/command/arguments"
-	"github.com/hashicorp/terraform/internal/command/jsonformat"
-	"github.com/hashicorp/terraform/internal/command/views"
-	"github.com/hashicorp/terraform/internal/logging"
-	"github.com/hashicorp/terraform/internal/moduletest"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/backend/local"
+	"github.com/hashicorp/terracina/internal/cloud"
+	"github.com/hashicorp/terracina/internal/command/arguments"
+	"github.com/hashicorp/terracina/internal/command/jsonformat"
+	"github.com/hashicorp/terracina/internal/command/views"
+	"github.com/hashicorp/terracina/internal/logging"
+	"github.com/hashicorp/terracina/internal/moduletest"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 type TestCommand struct {
@@ -26,13 +26,13 @@ type TestCommand struct {
 
 func (c *TestCommand) Help() string {
 	helpText := `
-Usage: terraform [global options] test [options]
+Usage: terracina [global options] test [options]
 
-  Executes automated integration tests against the current Terraform
+  Executes automated integration tests against the current Terracina
   configuration.
 
-  Terraform will search for .tftest.hcl files within the current configuration
-  and testing directories. Terraform will then execute the testing run blocks
+  Terracina will search for .tftest.hcl files within the current configuration
+  and testing directories. Terracina will then execute the testing run blocks
   within any testing files in order, and verify conditional checks and
   assertions against the created infrastructure.
 
@@ -42,15 +42,15 @@ Usage: terraform [global options] test [options]
 
 Options:
 
-  -cloud-run=source     If specified, Terraform will execute this test run 
-                        remotely using HCP Terraform or Terraform Enterprise. 
+  -cloud-run=source     If specified, Terracina will execute this test run 
+                        remotely using HCP Terracina or Terracina Enterprise. 
 						You must specify the source of a module registered in 
 						a private module registry as the argument to this flag. 
-						This allows Terraform to associate the cloud run with 
-						the correct HCP Terraform or Terraform Enterprise module 
+						This allows Terracina to associate the cloud run with 
+						the correct HCP Terracina or Terracina Enterprise module 
 						and organization.
 
-  -filter=testfile      If specified, Terraform will only execute the test files
+  -filter=testfile      If specified, Terracina will only execute the test files
                         specified by this flag. You can use this option multiple
                         times to execute more than one test file.
 
@@ -59,14 +59,14 @@ Options:
 
   -no-color             If specified, output won't contain any color.
 
-  -test-directory=path	Set the Terraform test directory, defaults to "tests".
+  -test-directory=path	Set the Terracina test directory, defaults to "tests".
 
   -var 'foo=bar'        Set a value for one of the input variables in the root
                         module of the configuration. Use this option more than
                         once to set more than one variable.
 
   -var-file=filename    Load variable values from the given file, in addition
-                        to the default files terraform.tfvars and *.auto.tfvars.
+                        to the default files terracina.tfvars and *.auto.tfvars.
                         Use this option more than once to include more than one
                         variables file.
 
@@ -77,7 +77,7 @@ Options:
 }
 
 func (c *TestCommand) Synopsis() string {
-	return "Execute integration tests for Terraform modules"
+	return "Execute integration tests for Terracina modules"
 }
 
 func (c *TestCommand) Run(rawArgs []string) int {
@@ -110,7 +110,7 @@ func (c *TestCommand) Run(rawArgs []string) int {
 			diags = diags.Append(tfdiags.Sourceless(
 				tfdiags.Error,
 				"JUnit XML output is not available",
-				"The -junit-xml option is currently experimental and therefore available only in alpha releases of Terraform CLI.",
+				"The -junit-xml option is currently experimental and therefore available only in alpha releases of Terracina CLI.",
 			))
 			view.Diagnostics(nil, nil, diags)
 			return 1
@@ -157,7 +157,7 @@ func (c *TestCommand) Run(rawArgs []string) int {
 	}
 	c.variableArgs = arguments.FlagNameValueSlice{Items: &items}
 
-	// Collect variables for "terraform test"
+	// Collect variables for "terracina test"
 	testVariables, variableDiags := c.collectVariableValuesForTests(args.TestDirectory)
 	diags = diags.Append(variableDiags)
 

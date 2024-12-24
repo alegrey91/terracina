@@ -4,12 +4,12 @@
 package stubs
 
 import (
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // offlineProvider is a stub provider that is used in place of a provider that
-// is not configured  and should never be configured by the current Terraform
+// is not configured  and should never be configured by the current Terracina
 // configuration.
 //
 // The only functionality that should be called on an offlineProvider are
@@ -38,7 +38,7 @@ func (o *offlineProvider) ValidateProviderConfig(request providers.ValidateProvi
 	diags = diags.Append(tfdiags.AttributeValue(
 		tfdiags.Error,
 		"Called ValidateProviderConfig on an unconfigured provider",
-		"Cannot validate provider configuration because this provider is not configured. This is a bug in Terraform - please report it.",
+		"Cannot validate provider configuration because this provider is not configured. This is a bug in Terracina - please report it.",
 		nil, // nil attribute path means the overall configuration block
 	))
 	return providers.ValidateProviderConfigResponse{
@@ -51,7 +51,7 @@ func (o *offlineProvider) ValidateResourceConfig(request providers.ValidateResou
 	diags = diags.Append(tfdiags.AttributeValue(
 		tfdiags.Error,
 		"Called ValidateResourceConfig on an unconfigured provider",
-		"Cannot validate resource configuration because this provider is not configured. This is a bug in Terraform - please report it.",
+		"Cannot validate resource configuration because this provider is not configured. This is a bug in Terracina - please report it.",
 		nil, // nil attribute path means the overall configuration block
 	))
 	return providers.ValidateResourceConfigResponse{
@@ -64,7 +64,7 @@ func (o *offlineProvider) ValidateDataResourceConfig(request providers.ValidateD
 	diags = diags.Append(tfdiags.AttributeValue(
 		tfdiags.Error,
 		"Called ValidateDataResourceConfig on an unconfigured provider",
-		"Cannot validate data source configuration because this provider is not configured. This is a bug in Terraform - please report it.",
+		"Cannot validate data source configuration because this provider is not configured. This is a bug in Terracina - please report it.",
 		nil, // nil attribute path means the overall configuration block
 	))
 	return providers.ValidateDataResourceConfigResponse{
@@ -78,7 +78,7 @@ func (p *offlineProvider) ValidateEphemeralResourceConfig(providers.ValidateEphe
 	diags = diags.Append(tfdiags.AttributeValue(
 		tfdiags.Error,
 		"Called ValidateEphemeralResourceConfig on an unconfigured provider",
-		"Cannot validate this resource config because this provider is not configured. This is a bug in Terraform - please report it.",
+		"Cannot validate this resource config because this provider is not configured. This is a bug in Terracina - please report it.",
 		nil, // nil attribute path means the overall configuration block
 	))
 	return providers.ValidateEphemeralResourceConfigResponse{
@@ -91,7 +91,7 @@ func (o *offlineProvider) UpgradeResourceState(request providers.UpgradeResource
 	diags = diags.Append(tfdiags.AttributeValue(
 		tfdiags.Error,
 		"Called UpgradeResourceState on an unconfigured provider",
-		"Cannot upgrade the state of this resource because this provider is not configured. This is a bug in Terraform - please report it.",
+		"Cannot upgrade the state of this resource because this provider is not configured. This is a bug in Terracina - please report it.",
 		nil, // nil attribute path means the overall configuration block
 	))
 	return providers.UpgradeResourceStateResponse{
@@ -104,7 +104,7 @@ func (o *offlineProvider) ConfigureProvider(request providers.ConfigureProviderR
 	diags = diags.Append(tfdiags.AttributeValue(
 		tfdiags.Error,
 		"Called ConfigureProvider on an unconfigured provider",
-		"Cannot configure this provider because it is not configured. This is a bug in Terraform - please report it.",
+		"Cannot configure this provider because it is not configured. This is a bug in Terracina - please report it.",
 		nil, // nil attribute path means the overall configuration block
 	))
 	return providers.ConfigureProviderResponse{
@@ -122,7 +122,7 @@ func (o *offlineProvider) ReadResource(request providers.ReadResourceRequest) pr
 	diags = diags.Append(tfdiags.AttributeValue(
 		tfdiags.Error,
 		"Called ReadResource on an unconfigured provider",
-		"Cannot read from this resource because this provider is not configured. This is a bug in Terraform - please report it.",
+		"Cannot read from this resource because this provider is not configured. This is a bug in Terracina - please report it.",
 		nil, // nil attribute path means the overall configuration block
 	))
 	return providers.ReadResourceResponse{
@@ -135,7 +135,7 @@ func (o *offlineProvider) PlanResourceChange(request providers.PlanResourceChang
 	diags = diags.Append(tfdiags.AttributeValue(
 		tfdiags.Error,
 		"Called PlanResourceChange on an unconfigured provider",
-		"Cannot plan changes to this resource because this provider is not configured. This is a bug in Terraform - please report it.",
+		"Cannot plan changes to this resource because this provider is not configured. This is a bug in Terracina - please report it.",
 		nil, // nil attribute path means the overall configuration block
 	))
 	return providers.PlanResourceChangeResponse{
@@ -148,7 +148,7 @@ func (o *offlineProvider) ApplyResourceChange(request providers.ApplyResourceCha
 	diags = diags.Append(tfdiags.AttributeValue(
 		tfdiags.Error,
 		"Called ApplyResourceChange on an unconfigured provider",
-		"Cannot apply changes to this resource because this provider is not configured. This is a bug in Terraform - please report it.",
+		"Cannot apply changes to this resource because this provider is not configured. This is a bug in Terracina - please report it.",
 		nil, // nil attribute path means the overall configuration block
 	))
 	return providers.ApplyResourceChangeResponse{
@@ -161,7 +161,7 @@ func (o *offlineProvider) ImportResourceState(request providers.ImportResourceSt
 	diags = diags.Append(tfdiags.AttributeValue(
 		tfdiags.Error,
 		"Called ImportResourceState on an unconfigured provider",
-		"Cannot import an existing object into this resource because this provider is not configured. This is a bug in Terraform - please report it.",
+		"Cannot import an existing object into this resource because this provider is not configured. This is a bug in Terracina - please report it.",
 		nil, // nil attribute path means the overall configuration block
 	))
 	return providers.ImportResourceStateResponse{
@@ -178,7 +178,7 @@ func (o *offlineProvider) ReadDataSource(request providers.ReadDataSourceRequest
 	diags = diags.Append(tfdiags.AttributeValue(
 		tfdiags.Error,
 		"Called ReadDataSource on an unconfigured provider",
-		"Cannot read from this data source because this provider is not configured. This is a bug in Terraform - please report it.",
+		"Cannot read from this data source because this provider is not configured. This is a bug in Terracina - please report it.",
 		nil, // nil attribute path means the overall configuration block
 	))
 	return providers.ReadDataSourceResponse{
@@ -192,7 +192,7 @@ func (u *offlineProvider) OpenEphemeralResource(providers.OpenEphemeralResourceR
 	diags = diags.Append(tfdiags.AttributeValue(
 		tfdiags.Error,
 		"Called OpenEphemeralResource on an unconfigured provider",
-		"Cannot open this resource instance because this provider is not configured. This is a bug in Terraform - please report it.",
+		"Cannot open this resource instance because this provider is not configured. This is a bug in Terracina - please report it.",
 		nil, // nil attribute path means the overall configuration block
 	))
 	return providers.OpenEphemeralResourceResponse{

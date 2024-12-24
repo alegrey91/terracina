@@ -8,13 +8,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform/internal/e2e"
+	"github.com/hashicorp/terracina/internal/e2e"
 )
 
-func TestTerraformProviderData(t *testing.T) {
+func TestTerracinaProviderData(t *testing.T) {
 
-	fixturePath := filepath.Join("testdata", "terraform-managed-data")
-	tf := e2e.NewBinary(t, terraformBin, fixturePath)
+	fixturePath := filepath.Join("testdata", "terracina-managed-data")
+	tf := e2e.NewBinary(t, terracinaBin, fixturePath)
 
 	_, stderr, err := tf.Run("init", "-input=false")
 	if err != nil {

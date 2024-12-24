@@ -3,15 +3,15 @@
 
 schema = "2"
 
-project "terraform" {
+project "terracina" {
   // the team key is not used by CRT currently
-  team = "terraform"
+  team = "terracina"
   slack {
     notification_channel = "C011WJ112MD"
   }
   github {
     organization = "hashicorp"
-    repository = "terraform"
+    repository = "terracina"
 
     release_branches = [
       "main",
@@ -25,7 +25,7 @@ event "build" {
   depends = ["merge"]
   action "build" {
     organization = "hashicorp"
-    repository = "terraform"
+    repository = "terracina"
     workflow = "build"
   }
 }
@@ -86,7 +86,7 @@ event "promote-production" {
     update-ironbank = true
     post-promotion {
       organization = "hashicorp"
-      repository = "terraform-releases"
+      repository = "terracina-releases"
       workflow = "crt-hook-tfc-upload"
     }
   }

@@ -17,10 +17,10 @@ import (
 	"github.com/zclconf/go-cty-debug/ctydebug"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/collections"
-	"github.com/hashicorp/terraform/internal/lang"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/collections"
+	"github.com/hashicorp/terracina/internal/lang"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 func TestEvalExpr(t *testing.T) {
@@ -81,7 +81,7 @@ func TestEvalExpr(t *testing.T) {
 			hcltest.MockExprTraversalSrc(`stack.multi["bar"]`),
 			hcltest.MockExprTraversalSrc("provider.beep.boop"),
 			hcltest.MockExprTraversalSrc(`provider.beep.boops["baz"]`),
-			hcltest.MockExprTraversalSrc(`terraform.applying`),
+			hcltest.MockExprTraversalSrc(`terracina.applying`),
 		})
 
 		scope := newStaticExpressionScope()
@@ -99,7 +99,7 @@ func TestEvalExpr(t *testing.T) {
 		scope.AddVal(stackaddrs.ProviderConfigRef{ProviderLocalName: "beep", Name: "boops"}, cty.ObjectVal(map[string]cty.Value{
 			"baz": cty.StringVal("provider config from for_each"),
 		}))
-		scope.AddVal(stackaddrs.TerraformApplying, cty.StringVal("terraform.applying value")) // NOTE: Not a realistic terraform.applying value; just a placeholder to help exercise EvalExpr
+		scope.AddVal(stackaddrs.TerracinaApplying, cty.StringVal("terracina.applying value")) // NOTE: Not a realistic terracina.applying value; just a placeholder to help exercise EvalExpr
 
 		got, diags := EvalExpr(ctx, expr, PlanPhase, scope)
 		if diags.HasErrors() {
@@ -114,7 +114,7 @@ func TestEvalExpr(t *testing.T) {
 			cty.StringVal("stack call from for_each"),
 			cty.StringVal("provider config singleton"),
 			cty.StringVal("provider config from for_each"),
-			cty.StringVal("terraform.applying value"),
+			cty.StringVal("terracina.applying value"),
 		})
 		if diff := cmp.Diff(want, got, ctydebug.CmpOptions); diff != "" {
 			t.Errorf("wrong result\n%s", diff)
@@ -184,9 +184,9 @@ func TestReferencesInExpr(t *testing.T) {
 			},
 		},
 		{
-			`terraform.applying`,
+			`terracina.applying`,
 			[]stackaddrs.Referenceable{
-				stackaddrs.TerraformApplying,
+				stackaddrs.TerracinaApplying,
 			},
 		},
 	}

@@ -13,7 +13,7 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/hashicorp/terraform/internal/rpcapi/terraform1/setup"
+	"github.com/hashicorp/terracina/internal/rpcapi/terracina1/setup"
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -262,14 +262,14 @@ func TestTelemetryInTestsGRPC(t *testing.T) {
 	t.Run("client span", func(t *testing.T) {
 		span := clientSpan
 		t.Logf("client span: %s", spew.Sdump(span))
-		if got, want := span.Name, "terraform1.setup.Setup/Handshake"; got != want {
+		if got, want := span.Name, "terracina1.setup.Setup/Handshake"; got != want {
 			t.Errorf("wrong name\ngot:  %s\nwant: %s", got, want)
 		}
 		attrs := otelAttributesMap(span.Attributes)
 		if got, want := attrs["rpc.system"], "grpc"; got != want {
 			t.Errorf("wrong rpc.system\ngot:  %s\nwant: %s", got, want)
 		}
-		if got, want := attrs["rpc.service"], "terraform1.setup.Setup"; got != want {
+		if got, want := attrs["rpc.service"], "terracina1.setup.Setup"; got != want {
 			t.Errorf("wrong rpc.service\ngot:  %s\nwant: %s", got, want)
 		}
 		if got, want := attrs["rpc.method"], "Handshake"; got != want {
@@ -279,7 +279,7 @@ func TestTelemetryInTestsGRPC(t *testing.T) {
 	t.Run("server span", func(t *testing.T) {
 		span := serverSpan
 		t.Logf("server span: %s", spew.Sdump(span))
-		if got, want := span.Name, "terraform1.setup.Setup/Handshake"; got != want {
+		if got, want := span.Name, "terracina1.setup.Setup/Handshake"; got != want {
 			t.Errorf("wrong name\ngot:  %s\nwant: %s", got, want)
 		}
 		if got, want := span.Parent.SpanID(), clientSpan.SpanContext.SpanID(); got != want {
@@ -292,7 +292,7 @@ func TestTelemetryInTestsGRPC(t *testing.T) {
 		if got, want := attrs["rpc.system"], "grpc"; got != want {
 			t.Errorf("wrong rpc.system\ngot:  %s\nwant: %s", got, want)
 		}
-		if got, want := attrs["rpc.service"], "terraform1.setup.Setup"; got != want {
+		if got, want := attrs["rpc.service"], "terracina1.setup.Setup"; got != want {
 			t.Errorf("wrong rpc.service\ngot:  %s\nwant: %s", got, want)
 		}
 		if got, want := attrs["rpc.method"], "Handshake"; got != want {

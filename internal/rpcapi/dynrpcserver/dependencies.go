@@ -8,7 +8,7 @@ import (
 	"context"
 	"sync"
 
-	dependencies "github.com/hashicorp/terraform/internal/rpcapi/terraform1/dependencies"
+	dependencies "github.com/hashicorp/terracina/internal/rpcapi/terracina1/dependencies"
 )
 
 type Dependencies struct {

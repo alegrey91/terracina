@@ -9,11 +9,11 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/hashicorp/terraform/internal/communicator/shared"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/plugin/convert"
-	"github.com/hashicorp/terraform/internal/provisioners"
-	"github.com/hashicorp/terraform/internal/tfplugin5"
+	"github.com/hashicorp/terracina/internal/communicator/shared"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/plugin/convert"
+	"github.com/hashicorp/terracina/internal/provisioners"
+	"github.com/hashicorp/terracina/internal/tfplugin5"
 )
 
 // New wraps a provisioners.Interface to implement a grpc ProviderServer.
@@ -103,7 +103,7 @@ func (p *provisioner) Stop(context.Context, *tfplugin5.Stop_Request) (*tfplugin5
 	return resp, nil
 }
 
-// uiOutput implements the terraform.UIOutput interface to adapt the grpc
+// uiOutput implements the terracina.UIOutput interface to adapt the grpc
 // stream to the legacy Provisioner.Apply method.
 type uiOutput struct {
 	srv tfplugin5.Provisioner_ProvisionResourceServer

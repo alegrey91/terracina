@@ -10,9 +10,9 @@ import (
 
 	"github.com/hashicorp/hcl"
 	hclast "github.com/hashicorp/hcl/hcl/ast"
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/getproviders"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/getproviders"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // ProviderInstallation is the structure of the "provider_installation"
@@ -31,7 +31,7 @@ type ProviderInstallation struct {
 	// This is _not_ intended for "production" use because it bypasses the
 	// usual version selection and checksum verification mechanisms for
 	// the providers in question. To make that intent/effect clearer, some
-	// Terraform commands emit warnings when overrides are present. Local
+	// Terracina commands emit warnings when overrides are present. Local
 	// mirror directories are a better way to distribute "released"
 	// providers, because they are still subject to version constraints and
 	// checksum verification.

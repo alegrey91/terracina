@@ -12,17 +12,17 @@ import (
 	"github.com/hashicorp/hcl/v2/gohcl"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // Component represents the declaration of a single component within a
 // particular [Stack].
 //
 // Components are the most important object in a stack configuration, just as
-// resources are the most important object in a Terraform module: each one
-// refers to a Terraform module that describes the infrastructure that the
+// resources are the most important object in a Terracina module: each one
+// refers to a Terracina module that describes the infrastructure that the
 // component is "made of".
 type Component struct {
 	Name string
@@ -59,7 +59,7 @@ type Component struct {
 	//
 	// This map deals with the slight schism between the stacks language's
 	// treatment of provider configurations as regular values of a special
-	// data type vs. the main Terraform language's treatment of provider
+	// data type vs. the main Terracina language's treatment of provider
 	// configurations as something special passed out of band from the
 	// input variables. The overall structure and the map keys are fixed
 	// statically during decoding, but the final provider configuration objects
@@ -213,9 +213,9 @@ func decodeProvidersAttribute(attr *hcl.Attribute) (map[addrs.LocalProviderConfi
 	var diags tfdiags.Diagnostics
 
 	// This particular argument has some enforced static structure because
-	// it's populating an inflexible part of Terraform Core's input.
+	// it's populating an inflexible part of Terracina Core's input.
 	// This argument, if present, must always be an object constructor
-	// whose attributes are Terraform Core-style provider configuration
+	// whose attributes are Terracina Core-style provider configuration
 	// addresses, but whose values are just arbitrary expressions for now
 	// and will be resolved into specific provider configuration addresses
 	// dynamically at runtime.

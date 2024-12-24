@@ -1,11 +1,11 @@
-# Terraform Stacks functionality
+# Terracina Stacks functionality
 
-The Go packages under this directory together implement the Terraform Stacks
+The Go packages under this directory together implement the Terracina Stacks
 features.
 
-Terraform Stacks is an orchestration layer on top of zero or more trees of
-Terraform modules, and so much of what you'll find here is analogous to
-a top-level package that serves a similar purpose for individual Terraform
+Terracina Stacks is an orchestration layer on top of zero or more trees of
+Terracina modules, and so much of what you'll find here is analogous to
+a top-level package that serves a similar purpose for individual Terracina
 modules or trees of modules.
 
 The main components here are:
@@ -20,10 +20,10 @@ The main components here are:
 
 - `stackconfig`: Implements the loading, parsing, and static decoding for
   the stacks language, analogous to the top-level package `configs` that
-  does similarly for Terraform's module language.
+  does similarly for Terracina's module language.
 
 - `stackplan` and `stackstate` together provide the models and
-  marshalling/unmarshalling logic for the Stacks variants of Terraform's
+  marshalling/unmarshalling logic for the Stacks variants of Terracina's
   "plan" and "state" concepts.
 
 - `stackruntime` deals with the runtime behavior of stacks, including
@@ -36,13 +36,13 @@ The main components here are:
   used for preserving plan and state data between runs. These formats are
   implementation details that external callers are not permitted to rely on.
 
-    (The public interface is via the Terraform Core RPC API, which is
+    (The public interface is via the Terracina Core RPC API, which is
     implemented in the sibling directory `rpcapi`.)
 
 ## More Documentation
 
 The following are some more specific and therefore more detailed documents
-about some particular parts of the implementation of the Terraform Stacks
+about some particular parts of the implementation of the Terracina Stacks
 features:
 
 * [Stacks Runtime internal architecture](./stackruntime/internal/stackeval/README.md)

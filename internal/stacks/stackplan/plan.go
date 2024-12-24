@@ -9,15 +9,15 @@ import (
 	"github.com/zclconf/go-cty/cty"
 	"google.golang.org/protobuf/types/known/anypb"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/collections"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/collections"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
 )
 
 // Plan is the main type in this package, representing an entire stack plan,
-// or at least the subset of the information that Terraform needs to reliably
+// or at least the subset of the information that Terracina needs to reliably
 // apply the plan and detect any inconsistencies during the apply process.
 //
 // However, the process of _creating_ a plan doesn't actually produce a single

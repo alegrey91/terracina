@@ -11,7 +11,7 @@ import (
 var tracer trace.Tracer
 
 func init() {
-	tracer = otel.Tracer("github.com/hashicorp/terraform/internal/stacks/stackruntime/internal/stackeval")
+	tracer = otel.Tracer("github.com/hashicorp/terracina/internal/stacks/stackruntime/internal/stackeval")
 }
 
 // tracingNamer is implemented by types that can return a suitable name for

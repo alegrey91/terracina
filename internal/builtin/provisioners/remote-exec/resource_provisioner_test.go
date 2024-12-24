@@ -15,9 +15,9 @@ import (
 	"strings"
 
 	"github.com/hashicorp/cli"
-	"github.com/hashicorp/terraform/internal/communicator"
-	"github.com/hashicorp/terraform/internal/communicator/remote"
-	"github.com/hashicorp/terraform/internal/provisioners"
+	"github.com/hashicorp/terracina/internal/communicator"
+	"github.com/hashicorp/terracina/internal/communicator/remote"
+	"github.com/hashicorp/terracina/internal/provisioners"
 	"github.com/zclconf/go-cty/cty"
 )
 

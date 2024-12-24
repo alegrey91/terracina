@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"fmt"
@@ -9,12 +9,12 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/plans/deferring"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/states"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/plans/deferring"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/states"
 )
 
 func TestNodeAbstractResourceInstanceProvider(t *testing.T) {
@@ -39,15 +39,15 @@ func TestNodeAbstractResourceInstanceProvider(t *testing.T) {
 		{
 			Addr: addrs.Resource{
 				Mode: addrs.DataResourceMode,
-				Type: "terraform_remote_state",
+				Type: "terracina_remote_state",
 				Name: "baz",
 			}.Instance(addrs.NoKey).Absolute(addrs.RootModuleInstance),
 			Want: addrs.Provider{
-				// As a special case, the type prefix "terraform_" maps to
+				// As a special case, the type prefix "terracina_" maps to
 				// the builtin provider, not the default one.
 				Hostname:  addrs.BuiltInProviderHost,
 				Namespace: addrs.BuiltInProviderNamespace,
-				Type:      "terraform",
+				Type:      "terracina",
 			},
 		},
 		{
@@ -75,7 +75,7 @@ func TestNodeAbstractResourceInstanceProvider(t *testing.T) {
 		{
 			Addr: addrs.Resource{
 				Mode: addrs.DataResourceMode,
-				Type: "terraform_remote_state",
+				Type: "terracina_remote_state",
 				Name: "baz",
 			}.Instance(addrs.NoKey).Absolute(addrs.RootModuleInstance),
 			Config: &configs.Resource{
@@ -170,7 +170,7 @@ func TestNodeAbstractResourceInstance_WriteResourceInstanceState(t *testing.T) {
 		Addr: mustResourceInstanceAddr("aws_instance.foo"),
 		// instanceState:        obj,
 		NodeAbstractResource: NodeAbstractResource{
-			ResolvedProvider: mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+			ResolvedProvider: mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 		},
 	}
 	ctx.ProviderProvider = mockProvider
@@ -184,7 +184,7 @@ func TestNodeAbstractResourceInstance_WriteResourceInstanceState(t *testing.T) {
 	checkStateString(t, state, `
 aws_instance.foo:
   ID = i-abc123
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
 	`)
 }
 
@@ -225,7 +225,7 @@ func TestNodeAbstractResourceInstance_refresh_with_deferred_read(t *testing.T) {
 	node := &NodeAbstractResourceInstance{
 		Addr: mustResourceInstanceAddr("aws_instance.foo"),
 		NodeAbstractResource: NodeAbstractResource{
-			ResolvedProvider: mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+			ResolvedProvider: mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 		},
 	}
 	evalCtx.ProviderProvider = mockProvider

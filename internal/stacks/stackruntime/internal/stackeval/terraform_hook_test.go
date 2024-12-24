@@ -10,15 +10,15 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/stacks/stackruntime/hooks"
-	"github.com/hashicorp/terraform/internal/terraform"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/stacks/stackruntime/hooks"
+	"github.com/hashicorp/terracina/internal/terracina"
 	"github.com/zclconf/go-cty/cty"
 )
 
-func TestTerraformHook(t *testing.T) {
+func TestTerracinaHook(t *testing.T) {
 	var gotRihd *hooks.ResourceInstanceStatusHookData
 	testHooks := &Hooks{
 		ReportResourceInstanceStatus: func(ctx context.Context, span any, rihd *hooks.ResourceInstanceStatusHookData) any {
@@ -34,8 +34,8 @@ func TestTerraformHook(t *testing.T) {
 		},
 	}
 
-	makeHook := func() *componentInstanceTerraformHook {
-		return &componentInstanceTerraformHook{
+	makeHook := func() *componentInstanceTerracinaHook {
+		return &componentInstanceTerracinaHook{
 			ctx: context.Background(),
 			seq: &hookSeq{
 				tracking: "boop",
@@ -61,7 +61,7 @@ func TestTerraformHook(t *testing.T) {
 		Namespace: "hashicorp",
 		Hostname:  "example.com",
 	}
-	resourceIdentity := terraform.HookResourceIdentity{
+	resourceIdentity := terracina.HookResourceIdentity{
 		Addr:         resourceAddr,
 		ProviderAddr: providerAddr,
 	}
@@ -76,7 +76,7 @@ func TestTerraformHook(t *testing.T) {
 		if err != nil {
 			t.Errorf("unexpected error: %s", err)
 		}
-		if action != terraform.HookActionContinue {
+		if action != terracina.HookActionContinue {
 			t.Errorf("wrong action: %#v", action)
 		}
 		if hook.seq.tracking != "boop" {
@@ -99,7 +99,7 @@ func TestTerraformHook(t *testing.T) {
 		if err != nil {
 			t.Errorf("unexpected error: %s", err)
 		}
-		if action != terraform.HookActionContinue {
+		if action != terracina.HookActionContinue {
 			t.Errorf("wrong action: %#v", action)
 		}
 		if hook.seq.tracking != "boop" {
@@ -122,7 +122,7 @@ func TestTerraformHook(t *testing.T) {
 		if err != nil {
 			t.Errorf("unexpected error: %s", err)
 		}
-		if action != terraform.HookActionContinue {
+		if action != terracina.HookActionContinue {
 			t.Errorf("wrong action: %#v", action)
 		}
 		if hook.seq.tracking != "boop" {
@@ -146,7 +146,7 @@ func TestTerraformHook(t *testing.T) {
 		if err != nil {
 			t.Errorf("unexpected error: %s", err)
 		}
-		if action != terraform.HookActionContinue {
+		if action != terracina.HookActionContinue {
 			t.Errorf("wrong action: %#v", action)
 		}
 
@@ -154,7 +154,7 @@ func TestTerraformHook(t *testing.T) {
 		if err != nil {
 			t.Errorf("unexpected error: %s", err)
 		}
-		if action != terraform.HookActionContinue {
+		if action != terracina.HookActionContinue {
 			t.Errorf("wrong action: %#v", action)
 		}
 		if hook.seq.tracking != "boop" {
@@ -178,7 +178,7 @@ func TestTerraformHook(t *testing.T) {
 		if err != nil {
 			t.Errorf("unexpected error: %s", err)
 		}
-		if action != terraform.HookActionContinue {
+		if action != terracina.HookActionContinue {
 			t.Errorf("wrong action: %#v", action)
 		}
 
@@ -186,7 +186,7 @@ func TestTerraformHook(t *testing.T) {
 		if err != nil {
 			t.Errorf("unexpected error: %s", err)
 		}
-		if action != terraform.HookActionContinue {
+		if action != terracina.HookActionContinue {
 			t.Errorf("wrong action: %#v", action)
 		}
 		if hook.seq.tracking != "boop" {

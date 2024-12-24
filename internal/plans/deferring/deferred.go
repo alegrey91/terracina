@@ -9,11 +9,11 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/lang/marks"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/lang/marks"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // Deferred keeps track of deferrals that have already happened, to help
@@ -431,7 +431,7 @@ func (d *Deferred) DependenciesDeferred(deps []addrs.ConfigResource) bool {
 // for that resource.
 func (d *Deferred) ReportResourceExpansionDeferred(addr addrs.PartialExpandedResource, change *plans.ResourceInstanceChange) {
 	if change == nil {
-		// This indicates a bug in Terraform, we shouldn't ever be setting a
+		// This indicates a bug in Terracina, we shouldn't ever be setting a
 		// null change. Note, if we don't make this check here, then we'll
 		// just crash later anyway. This way the stack trace points to the
 		// source of the problem.
@@ -469,7 +469,7 @@ func (d *Deferred) ReportResourceExpansionDeferred(addr addrs.PartialExpandedRes
 // planning for that data source.
 func (d *Deferred) ReportDataSourceExpansionDeferred(addr addrs.PartialExpandedResource, change *plans.ResourceInstanceChange) {
 	if change == nil {
-		// This indicates a bug in Terraform, we shouldn't ever be setting a
+		// This indicates a bug in Terracina, we shouldn't ever be setting a
 		// null change. Note, if we don't make this check here, then we'll
 		// just crash later anyway. This way the stack trace points to the
 		// source of the problem.
@@ -534,7 +534,7 @@ func (d *Deferred) ReportEphemeralResourceExpansionDeferred(addr addrs.PartialEx
 // other than its address being only partially-decided.
 func (d *Deferred) ReportResourceInstanceDeferred(addr addrs.AbsResourceInstance, reason providers.DeferredReason, change *plans.ResourceInstanceChange) {
 	if change == nil {
-		// This indicates a bug in Terraform, we shouldn't ever be setting a
+		// This indicates a bug in Terracina, we shouldn't ever be setting a
 		// null change. Note, if we don't make this check here, then we'll
 		// just crash later anyway. This way the stack trace points to the
 		// source of the problem.
@@ -563,7 +563,7 @@ func (d *Deferred) ReportResourceInstanceDeferred(addr addrs.AbsResourceInstance
 
 func (d *Deferred) ReportDataSourceInstanceDeferred(addr addrs.AbsResourceInstance, reason providers.DeferredReason, change *plans.ResourceInstanceChange) {
 	if change == nil {
-		// This indicates a bug in Terraform, we shouldn't ever be setting a
+		// This indicates a bug in Terracina, we shouldn't ever be setting a
 		// null change. Note, if we don't make this check here, then we'll
 		// just crash later anyway. This way the stack trace points to the
 		// source of the problem.
@@ -629,5 +629,5 @@ func (d *Deferred) ReportModuleExpansionDeferred(addr addrs.PartialExpandedModul
 // UnexpectedProviderDeferralDiagnostic is a diagnostic that indicates that a
 // provider was deferred although deferrals were not allowed.
 func UnexpectedProviderDeferralDiagnostic(addrs addrs.AbsResourceInstance) tfdiags.Diagnostic {
-	return tfdiags.Sourceless(tfdiags.Error, "Provider deferred changes when Terraform did not allow deferrals", fmt.Sprintf("The provider signaled a deferred action for %q, but in this context deferrals are disabled. This is a bug in the provider, please file an issue with the provider developers.", addrs.String()))
+	return tfdiags.Sourceless(tfdiags.Error, "Provider deferred changes when Terracina did not allow deferrals", fmt.Sprintf("The provider signaled a deferred action for %q, but in this context deferrals are disabled. This is a bug in the provider, please file an issue with the provider developers.", addrs.String()))
 }

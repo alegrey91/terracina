@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/cli"
-	"github.com/hashicorp/terraform/internal/provisioners"
+	"github.com/hashicorp/terracina/internal/provisioners"
 	"github.com/zclconf/go-cty/cty"
 )
 

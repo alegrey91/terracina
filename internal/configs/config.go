@@ -11,9 +11,9 @@ import (
 	version "github.com/hashicorp/go-version"
 	"github.com/hashicorp/hcl/v2"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/depsfile"
-	"github.com/hashicorp/terraform/internal/getproviders/providerreqs"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/depsfile"
+	"github.com/hashicorp/terracina/internal/getproviders/providerreqs"
 )
 
 // A Config is a node in the tree of modules within a configuration.
@@ -235,7 +235,7 @@ func (c *Config) TargetExists(target addrs.Targetable) bool {
 // directly via a remote source address or indirectly via a registry source
 // address.
 //
-// Other behaviors in Terraform may treat package crossings as a special
+// Other behaviors in Terracina may treat package crossings as a special
 // situation, because that indicates that the caller and callee can change
 // independently of one another and thus we should disallow using any features
 // where the caller assumes anything about the callee other than its input
@@ -257,11 +257,11 @@ func (c *Config) EntersNewPackage() bool {
 // multiple inconsistencies then it will attempt to describe as many of them
 // as possible, rather than stopping at the first problem.
 //
-// It's typically the responsibility of "terraform init" to change the locked
+// It's typically the responsibility of "terracina init" to change the locked
 // dependencies to conform with the configuration, and so
 // VerifyDependencySelections is intended for other commands to check whether
 // it did so correctly and to catch if anything has changed in configuration
-// since the last "terraform init" which requires re-initialization. However,
+// since the last "terracina init" which requires re-initialization. However,
 // it's up to the caller to decide how to advise users recover from these
 // errors, because the advise can vary depending on what operation the user
 // is attempting.
@@ -528,7 +528,7 @@ func (c *Config) addProviderRequirements(reqs providerreqs.Requirements, recurse
 				if i.ProviderConfigRef.Name != target.ProviderConfigRef.Name || i.ProviderConfigRef.Alias != target.ProviderConfigRef.Alias {
 					// This means we have a provider specified in both the
 					// import block and the resource block, and they disagree.
-					// This is bad as Terraform now has different instructions
+					// This is bad as Terracina now has different instructions
 					// about which provider to use.
 					//
 					// The general guidance is that only the resource should be
@@ -915,7 +915,7 @@ type RequiredProviderConfig struct {
 // an configuration for a provider even when there is no such declaration
 // inside the module itself.
 //
-// Terraform Core treats root modules differently than downstream modules in
+// Terracina Core treats root modules differently than downstream modules in
 // that it will implicitly create empty provider configurations for any provider
 // config addresses that are implied in the configuration but not explicitly
 // configured. This function assumes those implied empty configurations don't
@@ -929,7 +929,7 @@ type RequiredProviderConfig struct {
 // This function assumes that the configuration is valid. It may produce under-
 // or over-constrained results if called on an invalid configuration.
 func (c *Config) EffectiveRequiredProviderConfigs() addrs.Map[addrs.RootProviderConfig, RequiredProviderConfig] {
-	// The Terraform language has accumulated so many different ways to imply
+	// The Terracina language has accumulated so many different ways to imply
 	// the need for a provider configuration that answering this is quite a
 	// complicated process that ends up potentially needing to visit the
 	// entire subtree of modules even though we're only actually answering
@@ -1028,7 +1028,7 @@ func (c *Config) EffectiveRequiredProviderConfigs() addrs.Map[addrs.RootProvider
 		// the module implicitly requires a default configuration
 		// for each provider the child module mentions, since
 		// that would get implicitly passed into the child by
-		// Terraform Core.
+		// Terracina Core.
 		// (We don't need to visit the child module at all if
 		// the call has an explicit "providers" argument, because
 		// we require that to be exhaustive when present.)

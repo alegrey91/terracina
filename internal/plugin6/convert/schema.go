@@ -8,9 +8,9 @@ import (
 	"reflect"
 	"sort"
 
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/providers"
-	proto "github.com/hashicorp/terraform/internal/tfplugin6"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/providers"
+	proto "github.com/hashicorp/terracina/internal/tfplugin6"
 	"github.com/zclconf/go-cty/cty"
 )
 
@@ -104,7 +104,7 @@ func ProtoToProviderSchema(s *proto.Schema) providers.Schema {
 }
 
 // ProtoToConfigSchema takes the GetSchcema_Block from a grpc response and converts it
-// to a terraform *configschema.Block.
+// to a terracina *configschema.Block.
 func ProtoToConfigSchema(b *proto.Schema_Block) *configschema.Block {
 	block := &configschema.Block{
 		Attributes: make(map[string]*configschema.Attribute),

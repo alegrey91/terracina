@@ -10,13 +10,13 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/stacks/stackconfig/stackconfigtypes"
-	"github.com/hashicorp/terraform/internal/stacks/stackruntime/internal/stackeval/stubs"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/stacks/stackconfig/stackconfigtypes"
+	"github.com/hashicorp/terracina/internal/stacks/stackruntime/internal/stackeval/stubs"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // ConfigComponentExpressionScope is an extension to ExpressionScope that
@@ -24,7 +24,7 @@ import (
 // evaluated by this scope.
 //
 // This is typically used to share code between removed and component blocks
-// which both load and execute Terraform configurations.
+// which both load and execute Terracina configurations.
 type ConfigComponentExpressionScope[Addr any] interface {
 	ExpressionScope
 
@@ -112,10 +112,10 @@ func EvalProviderTypes(ctx context.Context, stack *StackConfig, providers map[ad
 					// within the module.
 					if !moduleProviderTypeExplicit {
 						// Yes! The provider type within the module has been
-						// implied by Terraform and not explicitly set within
+						// implied by Terracina and not explicitly set within
 						// the required_providers block. We'll suggest the user
 						// to update the required_providers block of the module.
-						errorDetail = fmt.Sprintf("\n\nThe module does not declare a source address for %q in its required_providers block, so Terraform assumed %q for backward-compatibility with older versions of Terraform", componentAddr.LocalName, elem.Key.Provider.ForDisplay())
+						errorDetail = fmt.Sprintf("\n\nThe module does not declare a source address for %q in its required_providers block, so Terracina assumed %q for backward-compatibility with older versions of Terracina", componentAddr.LocalName, elem.Key.Provider.ForDisplay())
 					}
 
 					// Otherwise the user has explicitly set the provider type
@@ -385,7 +385,7 @@ func evalProviderValue(ctx context.Context, sourceAddr addrs.RootProviderConfig,
 }
 
 // requiredProviderInstances returns a description of all of the provider
-// instance slots ("provider configurations" in main Terraform language
+// instance slots ("provider configurations" in main Terracina language
 // terminology) that are either explicitly declared or implied by the
 // root module of the scope's module tree.
 //

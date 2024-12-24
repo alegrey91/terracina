@@ -12,17 +12,17 @@ import (
 	"github.com/hashicorp/hcl/v2/hcldec"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/instances"
-	"github.com/hashicorp/terraform/internal/lang"
-	"github.com/hashicorp/terraform/internal/promising"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/stacks/stackplan"
-	"github.com/hashicorp/terraform/internal/stacks/stackruntime/internal/stackeval/stubs"
-	"github.com/hashicorp/terraform/internal/stacks/stackstate"
-	"github.com/hashicorp/terraform/internal/tfdiags"
-	"github.com/hashicorp/terraform/version"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/instances"
+	"github.com/hashicorp/terracina/internal/lang"
+	"github.com/hashicorp/terracina/internal/promising"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/stacks/stackplan"
+	"github.com/hashicorp/terracina/internal/stacks/stackruntime/internal/stackeval/stubs"
+	"github.com/hashicorp/terracina/internal/stacks/stackstate"
+	"github.com/hashicorp/terracina/internal/tfdiags"
+	"github.com/hashicorp/terracina/version"
 )
 
 // ProviderInstance represents one instance of a provider.
@@ -171,7 +171,7 @@ func (p *ProviderInstance) CheckClient(ctx context.Context, phase EvalPhase) (pr
 
 			if p.repetition.EachKey != cty.NilVal && !p.repetition.EachKey.IsKnown() {
 				// We should have triggered and returned a stub.UnknownProvider
-				// in this case, so there's a bug somewhere in Terraform if
+				// in this case, so there's a bug somewhere in Terracina if
 				// this happens.
 				panic("provider instance with unknown for_each key")
 			}
@@ -243,7 +243,7 @@ func (p *ProviderInstance) CheckClient(ctx context.Context, phase EvalPhase) (pr
 			// supports the "I don't need you to fetch my schema" capability
 			// and, if not, do a redundant re-fetch of the schema in here
 			// somewhere. Refer to the corresponding behavior in the
-			// "terraform" package for non-Stacks usage and try to mimick
+			// "terracina" package for non-Stacks usage and try to mimick
 			// what it does in as lightweight a way as possible.
 
 			// We unmark the config before making the RPC call, as marks cannot
@@ -256,7 +256,7 @@ func (p *ProviderInstance) CheckClient(ctx context.Context, phase EvalPhase) (pr
 			}
 
 			resp := client.ConfigureProvider(providers.ConfigureProviderRequest{
-				TerraformVersion: version.SemVer.String(),
+				TerracinaVersion: version.SemVer.String(),
 				Config:           unmarkedArgs,
 				ClientCapabilities: providers.ClientCapabilities{
 					DeferralAllowed:            true,

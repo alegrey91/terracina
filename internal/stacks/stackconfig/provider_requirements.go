@@ -10,8 +10,8 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/gohcl"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 type ProviderRequirements struct {
@@ -167,7 +167,7 @@ func decodeProviderRequirementsBlock(block *hcl.Block) (*ProviderRequirements, t
 				diags = diags.Append(&hcl.Diagnostic{
 					Severity: hcl.DiagError,
 					Summary:  "Unsupported attribute",
-					Detail:   fmt.Sprintf("The provider %q is built in to Terraform, so does not support version constraints.", providerAddr.ForDisplay()),
+					Detail:   fmt.Sprintf("The provider %q is built in to Terracina, so does not support version constraints.", providerAddr.ForDisplay()),
 					Subject:  attr.Expr.StartRange().Ptr(),
 				})
 				continue

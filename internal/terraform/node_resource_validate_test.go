@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"errors"
@@ -12,14 +12,14 @@ import (
 	"github.com/hashicorp/hcl/v2/hcltest"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/lang/marks"
-	"github.com/hashicorp/terraform/internal/providers"
-	testing_provider "github.com/hashicorp/terraform/internal/providers/testing"
-	"github.com/hashicorp/terraform/internal/provisioners"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/lang/marks"
+	"github.com/hashicorp/terracina/internal/providers"
+	testing_provider "github.com/hashicorp/terracina/internal/providers/testing"
+	"github.com/hashicorp/terracina/internal/provisioners"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 func TestNodeValidatableResource_ValidateProvisioner_valid(t *testing.T) {
@@ -239,7 +239,7 @@ func TestNodeValidatableResource_ValidateResource_managedResource(t *testing.T) 
 		NodeAbstractResource: &NodeAbstractResource{
 			Addr:             mustConfigResourceAddr("test_foo.bar"),
 			Config:           rc,
-			ResolvedProvider: mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+			ResolvedProvider: mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 		},
 	}
 
@@ -307,7 +307,7 @@ func TestNodeValidatableResource_ValidateResource_managedResourceCount(t *testin
 				NodeAbstractResource: &NodeAbstractResource{
 					Addr:             mustConfigResourceAddr("test_foo.bar"),
 					Config:           rc,
-					ResolvedProvider: mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+					ResolvedProvider: mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 				},
 			}
 
@@ -353,7 +353,7 @@ func TestNodeValidatableResource_ValidateResource_dataSource(t *testing.T) {
 		NodeAbstractResource: &NodeAbstractResource{
 			Addr:             mustConfigResourceAddr("test_foo.bar"),
 			Config:           rc,
-			ResolvedProvider: mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+			ResolvedProvider: mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 		},
 	}
 
@@ -389,7 +389,7 @@ func TestNodeValidatableResource_ValidateResource_valid(t *testing.T) {
 		NodeAbstractResource: &NodeAbstractResource{
 			Addr:             mustConfigResourceAddr("test_object.foo"),
 			Config:           rc,
-			ResolvedProvider: mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+			ResolvedProvider: mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 		},
 	}
 
@@ -426,7 +426,7 @@ func TestNodeValidatableResource_ValidateResource_warningsAndErrorsPassedThrough
 		NodeAbstractResource: &NodeAbstractResource{
 			Addr:             mustConfigResourceAddr("test_foo.bar"),
 			Config:           rc,
-			ResolvedProvider: mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+			ResolvedProvider: mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 		},
 	}
 
@@ -488,7 +488,7 @@ func TestNodeValidatableResource_ValidateResource_invalidDependsOn(t *testing.T)
 		NodeAbstractResource: &NodeAbstractResource{
 			Addr:             mustConfigResourceAddr("test_foo.bar"),
 			Config:           rc,
-			ResolvedProvider: mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+			ResolvedProvider: mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 		},
 	}
 
@@ -572,7 +572,7 @@ func TestNodeValidatableResource_ValidateResource_invalidIgnoreChangesNonexisten
 		NodeAbstractResource: &NodeAbstractResource{
 			Addr:             mustConfigResourceAddr("test_foo.bar"),
 			Config:           rc,
-			ResolvedProvider: mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+			ResolvedProvider: mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 		},
 	}
 
@@ -655,7 +655,7 @@ func TestNodeValidatableResource_ValidateResource_invalidIgnoreChangesComputed(t
 		NodeAbstractResource: &NodeAbstractResource{
 			Addr:             mustConfigResourceAddr("test_foo.bar"),
 			Config:           rc,
-			ResolvedProvider: mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+			ResolvedProvider: mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 		},
 	}
 
@@ -682,7 +682,7 @@ func TestNodeValidatableResource_ValidateResource_invalidIgnoreChangesComputed(t
 	if diags.HasErrors() {
 		t.Fatalf("got unexpected error: %s", diags.ErrWithWarnings())
 	}
-	if got, want := diags.ErrWithWarnings().Error(), `Redundant ignore_changes element: Adding an attribute name to ignore_changes tells Terraform to ignore future changes to the argument in configuration after the object has been created, retaining the value originally configured.
+	if got, want := diags.ErrWithWarnings().Error(), `Redundant ignore_changes element: Adding an attribute name to ignore_changes tells Terracina to ignore future changes to the argument in configuration after the object has been created, retaining the value originally configured.
 
 The attribute computed_string is decided by the provider alone and therefore there can be no configured value to compare with. Including this attribute in ignore_changes has no effect. Remove the attribute from ignore_changes to quiet this warning.`; !strings.Contains(got, want) {
 		t.Fatalf("wrong error\ngot:  %s\nwant: Message containing %q", got, want)

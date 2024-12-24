@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"testing"
@@ -10,10 +10,10 @@ import (
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/lang/langrefs"
-	"github.com/hashicorp/terraform/internal/providers"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/lang/langrefs"
+	"github.com/hashicorp/terracina/internal/providers"
 )
 
 func TestStaticValidateReferences(t *testing.T) {
@@ -68,7 +68,7 @@ For example, to correlate with indices of a referring resource, use:
 		},
 		{
 			Ref:     "boop_whatever.nope",
-			WantErr: `Invalid resource type: A managed resource type "boop_whatever" is not supported by provider "registry.terraform.io/foobar/beep".`,
+			WantErr: `Invalid resource type: A managed resource type "boop_whatever" is not supported by provider "registry.terracina.io/foobar/beep".`,
 		},
 		{
 			Ref:     "data.boop_data.boop_nested",

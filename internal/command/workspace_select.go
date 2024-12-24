@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/hashicorp/cli"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 	"github.com/posener/complete"
 )
 
@@ -149,13 +149,13 @@ func (c *WorkspaceSelectCommand) AutocompleteFlags() complete.Flags {
 
 func (c *WorkspaceSelectCommand) Help() string {
 	helpText := `
-Usage: terraform [global options] workspace select NAME
+Usage: terracina [global options] workspace select NAME
 
-  Select a different Terraform workspace.
+  Select a different Terracina workspace.
 
 Options:
 
-    -or-create=false    Create the Terraform workspace if it doesn't exist.
+    -or-create=false    Create the Terracina workspace if it doesn't exist.
 
 `
 	return strings.TrimSpace(helpText)

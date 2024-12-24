@@ -18,16 +18,16 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/configs/configload"
-	"github.com/hashicorp/terraform/internal/getmodules"
-	"github.com/hashicorp/terraform/internal/getmodules/moduleaddrs"
-	"github.com/hashicorp/terraform/internal/modsdir"
-	"github.com/hashicorp/terraform/internal/registry"
-	"github.com/hashicorp/terraform/internal/registry/regsrc"
-	"github.com/hashicorp/terraform/internal/registry/response"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/configs/configload"
+	"github.com/hashicorp/terracina/internal/getmodules"
+	"github.com/hashicorp/terracina/internal/getmodules/moduleaddrs"
+	"github.com/hashicorp/terracina/internal/modsdir"
+	"github.com/hashicorp/terracina/internal/registry"
+	"github.com/hashicorp/terracina/internal/registry/regsrc"
+	"github.com/hashicorp/terracina/internal/registry/response"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 type ModuleInstaller struct {
@@ -106,7 +106,7 @@ func (i *ModuleInstaller) InstallModules(ctx context.Context, rootDir, testsDir 
 	} else if vDiags := rootMod.CheckCoreVersionRequirements(nil, nil); vDiags.HasErrors() {
 		// If the core version requirements are not met, we drop any other
 		// diagnostics, as they may reflect language changes from future
-		// Terraform versions.
+		// Terracina versions.
 		diags = diags.Append(vDiags)
 	} else {
 		diags = diags.Append(mDiags)
@@ -227,7 +227,7 @@ func (i *ModuleInstaller) moduleInstallWalker(ctx context.Context, manifest mods
 						Severity: hcl.DiagError,
 						Summary:  "Failed to remove local module cache",
 						Detail: fmt.Sprintf(
-							"Terraform tried to remove %s in order to reinstall this module, but encountered an error: %s",
+							"Terracina tried to remove %s in order to reinstall this module, but encountered an error: %s",
 							instPath, err,
 						),
 					})
@@ -247,7 +247,7 @@ func (i *ModuleInstaller) moduleInstallWalker(ctx context.Context, manifest mods
 					} else if vDiags := mod.CheckCoreVersionRequirements(req.Path, req.SourceAddr); vDiags.HasErrors() {
 						// If the core version requirements are not met, we drop any other
 						// diagnostics, as they may reflect language changes from future
-						// Terraform versions.
+						// Terracina versions.
 						diags = diags.Extend(vDiags)
 					} else {
 						diags = diags.Extend(mDiags)
@@ -393,7 +393,7 @@ func (i *ModuleInstaller) installLocalModule(req *configs.ModuleRequest, key str
 	} else if vDiags := mod.CheckCoreVersionRequirements(req.Path, req.SourceAddr); vDiags.HasErrors() {
 		// If the core version requirements are not met, we drop any other
 		// diagnostics, as they may reflect language changes from future
-		// Terraform versions.
+		// Terracina versions.
 		diags = diags.Extend(vDiags)
 	} else {
 		diags = diags.Extend(mDiags)
@@ -472,7 +472,7 @@ func (i *ModuleInstaller) installRegistryModule(ctx context.Context, req *config
 		diags = diags.Append(&hcl.Diagnostic{
 			Severity: hcl.DiagError,
 			Summary:  "Invalid response from remote module registry",
-			Detail:   fmt.Sprintf("The registry at %s returned an invalid response when Terraform requested available versions for module %q (%s:%d).", hostname, req.Name, req.CallRange.Filename, req.CallRange.Start.Line),
+			Detail:   fmt.Sprintf("The registry at %s returned an invalid response when Terracina requested available versions for module %q (%s:%d).", hostname, req.Name, req.CallRange.Filename, req.CallRange.Start.Line),
 			Subject:  req.CallRange.Ptr(),
 		})
 		return nil, nil, diags
@@ -491,7 +491,7 @@ func (i *ModuleInstaller) installRegistryModule(ctx context.Context, req *config
 			diags = diags.Append(&hcl.Diagnostic{
 				Severity: hcl.DiagWarning,
 				Summary:  "Invalid response from remote module registry",
-				Detail:   fmt.Sprintf("The registry at %s returned an invalid version string %q for module %q (%s:%d), which Terraform ignored.", hostname, mv.Version, req.Name, req.CallRange.Filename, req.CallRange.Start.Line),
+				Detail:   fmt.Sprintf("The registry at %s returned an invalid version string %q for module %q (%s:%d), which Terracina ignored.", hostname, mv.Version, req.Name, req.CallRange.Filename, req.CallRange.Start.Line),
 				Subject:  req.CallRange.Ptr(),
 			})
 			continue
@@ -660,11 +660,11 @@ func (i *ModuleInstaller) installRegistryModule(ctx context.Context, req *config
 	mod, mDiags := i.loader.Parser().LoadConfigDir(modDir)
 	if mod == nil {
 		// a nil module indicates a missing or unreadable directory, typically
-		// this would indicate that Terraform has done something wrong.
+		// this would indicate that Terracina has done something wrong.
 		// However, if the subDir is not empty then it is possible that the
 		// module was properly downloaded but the user is trying to read a
 		// subdirectory that doesn't exist. In this case, it's not a problem
-		// with Terraform.
+		// with Terracina.
 		if len(subDir) > 0 {
 			// Let's make this error message as precise as possible.
 			_, instErr := os.Stat(instPath)
@@ -681,27 +681,27 @@ func (i *ModuleInstaller) installRegistryModule(ctx context.Context, req *config
 				})
 			} else {
 				// There's something else gone wrong here, so we'll report it
-				// as a bug in Terraform.
+				// as a bug in Terracina.
 				diags = diags.Append(&hcl.Diagnostic{
 					Severity: hcl.DiagError,
 					Summary:  "Unreadable module directory",
-					Detail:   fmt.Sprintf("The directory %s could not be read. This is a bug in Terraform and should be reported.", modDir),
+					Detail:   fmt.Sprintf("The directory %s could not be read. This is a bug in Terracina and should be reported.", modDir),
 				})
 			}
 		} else {
 			// If there is no subDir, then somehow the module was downloaded but
 			// could not be read even at the root directory it was downloaded into.
-			// This is definitely something that Terraform is doing wrong.
+			// This is definitely something that Terracina is doing wrong.
 			diags = diags.Append(&hcl.Diagnostic{
 				Severity: hcl.DiagError,
 				Summary:  "Unreadable module directory",
-				Detail:   fmt.Sprintf("The directory %s could not be read. This is a bug in Terraform and should be reported.", modDir),
+				Detail:   fmt.Sprintf("The directory %s could not be read. This is a bug in Terracina and should be reported.", modDir),
 			})
 		}
 	} else if vDiags := mod.CheckCoreVersionRequirements(req.Path, req.SourceAddr); vDiags.HasErrors() {
 		// If the core version requirements are not met, we drop any other
 		// diagnostics, as they may reflect language changes from future
-		// Terraform versions.
+		// Terracina versions.
 		diags = diags.Extend(vDiags)
 	} else {
 		diags = diags.Extend(mDiags)
@@ -797,12 +797,12 @@ func (i *ModuleInstaller) installGoGetterModule(ctx context.Context, req *config
 		diags = diags.Append(&hcl.Diagnostic{
 			Severity: hcl.DiagError,
 			Summary:  "Unreadable module directory",
-			Detail:   fmt.Sprintf("The directory %s could not be read. This is a bug in Terraform and should be reported.", modDir),
+			Detail:   fmt.Sprintf("The directory %s could not be read. This is a bug in Terracina and should be reported.", modDir),
 		})
 	} else if vDiags := mod.CheckCoreVersionRequirements(req.Path, req.SourceAddr); vDiags.HasErrors() {
 		// If the core version requirements are not met, we drop any other
 		// diagnostics, as they may reflect language changes from future
-		// Terraform versions.
+		// Terracina versions.
 		diags = diags.Extend(vDiags)
 	} else {
 		diags = diags.Extend(mDiags)
@@ -924,12 +924,12 @@ func maybeImproveLocalInstallError(req *configs.ModuleRequest, diags hcl.Diagnos
 			// ...but we'll replace any errors with this more precise error.
 			var suggestion string
 			if strings.HasPrefix(packageAddr, "/") || filepath.VolumeName(packageAddr) != "" {
-				// It might be somewhat surprising that Terraform treats
+				// It might be somewhat surprising that Terracina treats
 				// absolute filesystem paths as "external" even though it
 				// treats relative paths as local, so if it seems like that's
 				// what the user was doing then we'll add an additional note
 				// about it.
-				suggestion = "\n\nTerraform treats absolute filesystem paths as external modules which establish a new module package. To treat this directory as part of the same package as its caller, use a local path starting with either \"./\" or \"../\"."
+				suggestion = "\n\nTerracina treats absolute filesystem paths as external modules which establish a new module package. To treat this directory as part of the same package as its caller, use a local path starting with either \"./\" or \"../\"."
 			}
 			newDiags = newDiags.Append(&hcl.Diagnostic{
 				Severity: hcl.DiagError,

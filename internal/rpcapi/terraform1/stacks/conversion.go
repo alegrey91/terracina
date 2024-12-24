@@ -9,10 +9,10 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/lang/marks"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/lang/marks"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // This file contains some hand-written type conversion helpers to complement
@@ -59,7 +59,7 @@ func ToDynamicValue(from cty.Value, ty cty.Type) (*DynamicValue, error) {
 		// getting here, since we only know how to preserve the sensitive
 		// marking.
 		return nil, fmt.Errorf(
-			"%s: unhandled value marks %#v (this is a bug in Terraform)",
+			"%s: unhandled value marks %#v (this is a bug in Terracina)",
 			tfdiags.FormatCtyPath(otherMarkses[0].Path), otherMarkses[0].Marks,
 		)
 	}
@@ -71,7 +71,7 @@ func ToDynamicValue(from cty.Value, ty cty.Type) (*DynamicValue, error) {
 }
 
 // NewDynamicValue constructs a [DynamicValue] message object from a
-// [plans.DynamicValue], which is Terraform Core's typical in-memory
+// [plans.DynamicValue], which is Terracina Core's typical in-memory
 // representation of an already-serialized dynamic value.
 //
 // The plans package represents the sensitive value mark as a separate field

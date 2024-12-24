@@ -9,8 +9,8 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // PlanComputedValuesForResource accepts a target value, and populates it with
@@ -133,7 +133,7 @@ func populateComputedValues(target cty.Value, with MockedData, schema *configsch
 		diags = diags.Append(&hcl.Diagnostic{
 			Severity: hcl.DiagError,
 			Detail:   "Failed to generate values",
-			Summary:  fmt.Sprintf("Terraform failed to generate computed values for a mocked resource, data source, or module: %s. This is a bug in Terraform - please report it.", err),
+			Summary:  fmt.Sprintf("Terracina failed to generate computed values for a mocked resource, data source, or module: %s. This is a bug in Terracina - please report it.", err),
 			Subject:  with.Range.Ptr(),
 		})
 	}
@@ -183,7 +183,7 @@ func (data MockedData) makeKnown(attribute *configschema.Attribute, with cty.Val
 			diags = diags.Append(tfdiags.AttributeValue(
 				tfdiags.Error,
 				"Failed to compute attribute",
-				fmt.Sprintf("Terraform could not compute a value for the target type %s with the mocked data defined at %s with the attribute %q: %s.", attribute.ImpliedType().FriendlyName(), data.Range, fmtPath(append(path, relPath...)), err),
+				fmt.Sprintf("Terracina could not compute a value for the target type %s with the mocked data defined at %s with the attribute %q: %s.", attribute.ImpliedType().FriendlyName(), data.Range, fmtPath(append(path, relPath...)), err),
 				path))
 
 			// We still want to return a valid value here. If the conversion did
@@ -217,7 +217,7 @@ func (data MockedData) validate() bool {
 // they want to replace anything at all within nested sets. The indices for sets
 // will never be the same because the user supplied values will, by design, have
 // values for the computed attributes which will be null or unknown within the
-// values from Terraform so the paths will never match.
+// values from Terracina so the paths will never match.
 //
 // What the above paragraph means is that for nested blocks and attributes,
 // users can only specify a single replacement value that will apply to all
@@ -248,7 +248,7 @@ func (data MockedData) getMockedDataForPath(path cty.Path) (cty.Value, tfdiags.D
 				diags = diags.Append(tfdiags.AttributeValue(
 					tfdiags.Error,
 					"Failed to compute attribute",
-					fmt.Sprintf("Terraform expected an object type for attribute %q defined within the mocked data at %s, but found %s.", fmtPath(currentPath), data.Range, current.Type().FriendlyName()),
+					fmt.Sprintf("Terracina expected an object type for attribute %q defined within the mocked data at %s, but found %s.", fmtPath(currentPath), data.Range, current.Type().FriendlyName()),
 					currentPath))
 
 				return cty.NilVal, diags

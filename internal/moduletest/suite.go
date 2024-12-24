@@ -3,7 +3,7 @@
 
 package moduletest
 
-import "github.com/hashicorp/terraform/internal/tfdiags"
+import "github.com/hashicorp/terracina/internal/tfdiags"
 
 type Suite struct {
 	Status Status

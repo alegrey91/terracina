@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"fmt"
@@ -13,18 +13,18 @@ import (
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/genconfig"
-	"github.com/hashicorp/terraform/internal/instances"
-	"github.com/hashicorp/terraform/internal/lang/ephemeral"
-	"github.com/hashicorp/terraform/internal/moduletest/mocking"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/plans/deferring"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/genconfig"
+	"github.com/hashicorp/terracina/internal/instances"
+	"github.com/hashicorp/terracina/internal/lang/ephemeral"
+	"github.com/hashicorp/terracina/internal/moduletest/mocking"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/plans/deferring"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // NodePlannableResourceInstance represents a _single_ resource
@@ -113,7 +113,7 @@ func (n *NodePlannableResourceInstance) dataResourceExecute(ctx EvalContext) (di
 		return diags
 	}
 
-	// A nil change here indicates that Terraform is deciding NOT to make a
+	// A nil change here indicates that Terracina is deciding NOT to make a
 	// change at all. In which case even if we wanted to try and defer it
 	// (because of a dependency) we can't as there is no change to defer.
 	//
@@ -421,7 +421,7 @@ func (n *NodePlannableResourceInstance) managedResourceExecute(ctx EvalContext) 
 			//
 			// Future work should adjust these APIs such that it is impossible to
 			// update these two data structures incorrectly through any objects
-			// reachable via the terraform.EvalContext API.
+			// reachable via the terracina.EvalContext API.
 			diags = diags.Append(n.writeChange(ctx, change, ""))
 			if diags.HasErrors() {
 				return diags
@@ -779,7 +779,7 @@ func (n *NodePlannableResourceInstance) importState(ctx EvalContext, addr addrs.
 					"the provider detected that no object exists with the given id. "+
 					"Only pre-existing objects can be imported; check that the id "+
 					"is correct and that it is associated with the provider's "+
-					"configured region or endpoint, or use \"terraform apply\" to "+
+					"configured region or endpoint, or use \"terracina apply\" to "+
 					"create a new remote object for this resource.",
 				n.Addr,
 			),

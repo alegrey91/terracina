@@ -3,4 +3,4 @@
 
 package funcs
 
-import _ "github.com/hashicorp/terraform/internal/logging"
+import _ "github.com/hashicorp/terracina/internal/logging"

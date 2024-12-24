@@ -1,12 +1,12 @@
-// the provider-plugin tests uses the -plugin-cache flag so terraform pulls the
+// the provider-plugin tests uses the -plugin-cache flag so terracina pulls the
 // test binaries instead of reaching out to the registry.
-terraform {
+terracina {
   required_providers {
     simple5 = {
-      source = "registry.terraform.io/hashicorp/simple"
+      source = "registry.terracina.io/hashicorp/simple"
     }
     simple6 = {
-      source = "registry.terraform.io/hashicorp/simple6"
+      source = "registry.terracina.io/hashicorp/simple6"
     }
   }
 }

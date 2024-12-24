@@ -1,17 +1,17 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"fmt"
 	"log"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // NodePlannableResourceInstanceOrphan represents a resource that is "applyable":
@@ -143,7 +143,7 @@ func (n *NodePlannableResourceInstanceOrphan) managedResourceExecute(ctx EvalCon
 		// order to catch missing resources. If this is a normal plan,
 		// providers expect a Read request to remove missing resources from the
 		// plan before apply, and may not handle a missing resource during
-		// Delete correctly.  If this is a simple refresh, Terraform is
+		// Delete correctly.  If this is a simple refresh, Terracina is
 		// expected to remove the missing resource from the state entirely
 		refreshedState, refreshDeferred, refreshDiags := n.refresh(ctx, states.NotDeposed, oldState, ctx.Deferrals().DeferralAllowed())
 		diags = diags.Append(refreshDiags)

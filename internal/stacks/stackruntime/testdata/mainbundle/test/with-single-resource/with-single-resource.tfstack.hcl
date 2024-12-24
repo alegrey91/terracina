@@ -1,17 +1,17 @@
 required_providers {
-  terraform = {
-    source = "terraform.io/builtin/terraform"
+  terracina = {
+    source = "terracina.io/builtin/terracina"
   }
 }
 
-provider "terraform" "default" {
+provider "terracina" "default" {
 }
 
 component "self" {
   source = "./"
 
   providers = {
-    terraform = provider.terraform.default
+    terracina = provider.terracina.default
   }
 }
 

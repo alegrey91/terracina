@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"fmt"
@@ -10,9 +10,9 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // NodeApplyableProvider represents a provider during an apply.
@@ -216,7 +216,7 @@ func (n *nodeExternalProvider) Execute(ctx EvalContext, op walkOperation) tfdiag
 		diags = diags.Append(tfdiags.Sourceless(
 			tfdiags.Error,
 			"Failed to initialize externally-configured provider",
-			fmt.Sprintf("Despite it having been pre-initialized by an external caller, %s somehow failed to initialize. This is a bug in Terraform.", n.Addr),
+			fmt.Sprintf("Despite it having been pre-initialized by an external caller, %s somehow failed to initialize. This is a bug in Terracina.", n.Addr),
 		))
 	}
 

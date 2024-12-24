@@ -1,16 +1,16 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"fmt"
 	"strings"
 
 	"github.com/hashicorp/go-uuid"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 	"github.com/zclconf/go-cty/cty"
 	ctyjson "github.com/zclconf/go-cty/cty/json"
 )
@@ -126,7 +126,7 @@ func applyDataStoreResourceChange(req providers.ApplyResourceChangeRequest) (res
 
 	if !req.PlannedState.GetAttr("id").IsKnown() {
 		idString, err := uuid.GenerateUUID()
-		// Terraform would probably never get this far without a good random
+		// Terracina would probably never get this far without a good random
 		// source, but catch the error anyway.
 		if err != nil {
 			diag := tfdiags.AttributeValue(
@@ -151,7 +151,7 @@ func applyDataStoreResourceChange(req providers.ApplyResourceChangeRequest) (res
 	return resp
 }
 
-// TODO: This isn't very useful even for examples, because terraform_data has
+// TODO: This isn't very useful even for examples, because terracina_data has
 // no way to refresh the full resource value from only the import ID. This
 // minimal implementation allows the import to succeed, and can be extended
 // once the configuration is available during import.
@@ -173,7 +173,7 @@ func importDataStore(req providers.ImportResourceStateRequest) (resp providers.I
 }
 
 // moveDataStoreResourceState enables moving from the official null_resource
-// managed resource to the terraform_data managed resource.
+// managed resource to the terracina_data managed resource.
 func moveDataStoreResourceState(req providers.MoveResourceStateRequest) (resp providers.MoveResourceStateResponse) {
 	// Verify that the source provider is an official hashicorp/null provider,
 	// but ignore the hostname for mirrors.
@@ -181,7 +181,7 @@ func moveDataStoreResourceState(req providers.MoveResourceStateRequest) (resp pr
 		diag := tfdiags.Sourceless(
 			tfdiags.Error,
 			"Unsupported source provider for move operation",
-			"Only moving from the official hashicorp/null provider to terraform_data is supported.",
+			"Only moving from the official hashicorp/null provider to terracina_data is supported.",
 		)
 		resp.Diagnostics = resp.Diagnostics.Append(diag)
 
@@ -193,7 +193,7 @@ func moveDataStoreResourceState(req providers.MoveResourceStateRequest) (resp pr
 		diag := tfdiags.Sourceless(
 			tfdiags.Error,
 			"Unsupported source resource type for move operation",
-			"Only moving from the null_resource managed resource to terraform_data is supported.",
+			"Only moving from the null_resource managed resource to terracina_data is supported.",
 		)
 		resp.Diagnostics = resp.Diagnostics.Append(diag)
 

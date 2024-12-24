@@ -11,10 +11,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform/internal/backend"
-	"github.com/hashicorp/terraform/internal/backend/backendrun"
-	"github.com/hashicorp/terraform/internal/states/statefile"
-	"github.com/hashicorp/terraform/internal/states/statemgr"
+	"github.com/hashicorp/terracina/internal/backend"
+	"github.com/hashicorp/terracina/internal/backend/backendrun"
+	"github.com/hashicorp/terracina/internal/states/statefile"
+	"github.com/hashicorp/terracina/internal/states/statemgr"
 )
 
 func TestLocal_impl(t *testing.T) {
@@ -189,7 +189,7 @@ func (b *testDelegateBackend) StateMgr(name string) (statemgr.Full, error) {
 	if b.stateErr {
 		return nil, errTestDelegateState
 	}
-	s := statemgr.NewFilesystem("terraform.tfstate")
+	s := statemgr.NewFilesystem("terracina.tfstate")
 	return s, nil
 }
 

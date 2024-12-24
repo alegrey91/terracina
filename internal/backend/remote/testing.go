@@ -15,23 +15,23 @@ import (
 
 	"github.com/hashicorp/cli"
 	tfe "github.com/hashicorp/go-tfe"
-	svchost "github.com/hashicorp/terraform-svchost"
-	"github.com/hashicorp/terraform-svchost/auth"
-	"github.com/hashicorp/terraform-svchost/disco"
+	svchost "github.com/hashicorp/terracina-svchost"
+	"github.com/hashicorp/terracina-svchost/auth"
+	"github.com/hashicorp/terracina-svchost/disco"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/backend"
-	"github.com/hashicorp/terraform/internal/backend/backendrun"
-	backendLocal "github.com/hashicorp/terraform/internal/backend/local"
-	"github.com/hashicorp/terraform/internal/cloud"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/httpclient"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/states/remote"
-	"github.com/hashicorp/terraform/internal/terraform"
-	"github.com/hashicorp/terraform/internal/tfdiags"
-	"github.com/hashicorp/terraform/version"
+	"github.com/hashicorp/terracina/internal/backend"
+	"github.com/hashicorp/terracina/internal/backend/backendrun"
+	backendLocal "github.com/hashicorp/terracina/internal/backend/local"
+	"github.com/hashicorp/terracina/internal/cloud"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/httpclient"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/states/remote"
+	"github.com/hashicorp/terracina/internal/terracina"
+	"github.com/hashicorp/terracina/internal/tfdiags"
+	"github.com/hashicorp/terracina/version"
 )
 
 const (
@@ -45,12 +45,12 @@ var (
 	})
 )
 
-// mockInput is a mock implementation of terraform.UIInput.
+// mockInput is a mock implementation of terracina.UIInput.
 type mockInput struct {
 	answers map[string]string
 }
 
-func (m *mockInput) Input(ctx context.Context, opts *terraform.InputOpts) (string, error) {
+func (m *mockInput) Input(ctx context.Context, opts *terracina.InputOpts) (string, error) {
 	v, ok := m.answers[opts.Id]
 	if !ok {
 		return "", fmt.Errorf("unexpected input request in test: %s", opts.Id)
@@ -206,7 +206,7 @@ func testServer(t *testing.T) *httptest.Server {
 	mux := http.NewServeMux()
 
 	// Respond to service discovery calls.
-	mux.HandleFunc("/well-known/terraform.json", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/well-known/terracina.json", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		io.WriteString(w, `{
   "state.v2": "/api/v2/",
@@ -220,7 +220,7 @@ func testServer(t *testing.T) *httptest.Server {
 		w.Header().Set("Content-Type", "application/json")
 		io.WriteString(w, fmt.Sprintf(`{
   "service": "%s",
-  "product": "terraform",
+  "product": "terracina",
   "minimum": "0.1.0",
   "maximum": "10.0.0"
 }`, path.Base(r.URL.Path)))
@@ -287,7 +287,7 @@ func testServer(t *testing.T) *httptest.Server {
 	return httptest.NewServer(mux)
 }
 
-// testDisco returns a *disco.Disco mapping app.terraform.io and
+// testDisco returns a *disco.Disco mapping app.terracina.io and
 // localhost to a local test server.
 func testDisco(s *httptest.Server) *disco.Disco {
 	services := map[string]interface{}{
@@ -296,7 +296,7 @@ func testDisco(s *httptest.Server) *disco.Disco {
 		"versions.v1": fmt.Sprintf("%s/v1/versions/", s.URL),
 	}
 	d := disco.NewWithCredentialsSource(credsSrc)
-	d.SetUserAgent(httpclient.TerraformUserAgent(version.String()))
+	d.SetUserAgent(httpclient.TerracinaUserAgent(version.String()))
 
 	d.ForceHostServices(svchost.Hostname(defaultHostname), services)
 	d.ForceHostServices(svchost.Hostname("localhost"), services)
@@ -305,18 +305,18 @@ func testDisco(s *httptest.Server) *disco.Disco {
 
 type unparsedVariableValue struct {
 	value  string
-	source terraform.ValueSourceType
+	source terracina.ValueSourceType
 }
 
-func (v *unparsedVariableValue) ParseVariableValue(mode configs.VariableParsingMode) (*terraform.InputValue, tfdiags.Diagnostics) {
-	return &terraform.InputValue{
+func (v *unparsedVariableValue) ParseVariableValue(mode configs.VariableParsingMode) (*terracina.InputValue, tfdiags.Diagnostics) {
+	return &terracina.InputValue{
 		Value:      cty.StringVal(v.value),
 		SourceType: v.source,
 	}, tfdiags.Diagnostics{}
 }
 
 // testVariable returns a backend.UnparsedVariableValue used for testing.
-func testVariables(s terraform.ValueSourceType, vs ...string) map[string]backendrun.UnparsedVariableValue {
+func testVariables(s terracina.ValueSourceType, vs ...string) map[string]backendrun.UnparsedVariableValue {
 	vars := make(map[string]backendrun.UnparsedVariableValue, len(vs))
 	for _, v := range vs {
 		vars[v] = &unparsedVariableValue{

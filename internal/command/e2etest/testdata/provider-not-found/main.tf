@@ -1,7 +1,7 @@
-terraform {
+terracina {
   required_providers {
     nonexist = {
-      source = "registry.terraform.io/hashicorp/nonexist"
+      source = "registry.terracina.io/hashicorp/nonexist"
     }
   }
 }

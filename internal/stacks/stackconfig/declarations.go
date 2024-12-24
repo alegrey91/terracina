@@ -8,8 +8,8 @@ import (
 
 	"github.com/hashicorp/hcl/v2"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // Declarations represent the various items that can be declared in a stack
@@ -23,7 +23,7 @@ type Declarations struct {
 	// stack. These are declared with "stack" blocks in the stack language.
 	EmbeddedStacks map[string]*EmbeddedStack
 
-	// Components are calls to trees of Terraform modules that represent the
+	// Components are calls to trees of Terracina modules that represent the
 	// real infrastructure described by a stack.
 	Components map[string]*Component
 

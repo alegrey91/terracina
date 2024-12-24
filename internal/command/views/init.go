@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hashicorp/terraform/internal/command/arguments"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/command/arguments"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // The Init view is used for the init command.
@@ -101,7 +101,7 @@ func (v *InitJSON) Output(messageCode InitMessageCode, params ...any) {
 	json_data := map[string]string{
 		"@level":       "info",
 		"@message":     preppedMessage,
-		"@module":      "terraform.ui",
+		"@module":      "terracina.ui",
 		"@timestamp":   current_timestamp,
 		"type":         "init_output",
 		"message_code": string(messageCode),
@@ -174,9 +174,9 @@ var MessageRegistry map[InitMessageCode]InitMessage = map[InitMessageCode]InitMe
 		HumanValue: "[reset][bold]Initializing modules...",
 		JSONValue:  "Initializing modules...",
 	},
-	"initializing_terraform_cloud_message": {
-		HumanValue: "\n[reset][bold]Initializing HCP Terraform...",
-		JSONValue:  "Initializing HCP Terraform...",
+	"initializing_terracina_cloud_message": {
+		HumanValue: "\n[reset][bold]Initializing HCP Terracina...",
+		JSONValue:  "Initializing HCP Terracina...",
 	},
 	"initializing_backend_message": {
 		HumanValue: "\n[reset][bold]Initializing the backend...",
@@ -199,8 +199,8 @@ var MessageRegistry map[InitMessageCode]InitMessage = map[InitMessageCode]InitMe
 		JSONValue:  "%s v%s: Using previously-installed provider version",
 	},
 	"built_in_provider_available_message": {
-		HumanValue: "- %s is built in to Terraform",
-		JSONValue:  "%s is built in to Terraform",
+		HumanValue: "- %s is built in to Terracina",
+		JSONValue:  "%s is built in to Terracina",
 	},
 	"reusing_previous_version_info": {
 		HumanValue: "- Reusing previous version of %s from the dependency lock file",
@@ -255,7 +255,7 @@ const (
 	OutputInitSuccessCLIMessage         InitMessageCode = "output_init_success_cli_message"
 	OutputInitSuccessCLICloudMessage    InitMessageCode = "output_init_success_cli_cloud_message"
 	UpgradingModulesMessage             InitMessageCode = "upgrading_modules_message"
-	InitializingTerraformCloudMessage   InitMessageCode = "initializing_terraform_cloud_message"
+	InitializingTerracinaCloudMessage   InitMessageCode = "initializing_terracina_cloud_message"
 	InitializingModulesMessage          InitMessageCode = "initializing_modules_message"
 	InitializingBackendMessage          InitMessageCode = "initializing_backend_message"
 	InitializingProviderPluginMessage   InitMessageCode = "initializing_provider_plugin_message"
@@ -275,104 +275,104 @@ const (
 )
 
 const outputInitEmpty = `
-[reset][bold]Terraform initialized in an empty directory![reset]
+[reset][bold]Terracina initialized in an empty directory![reset]
 
-The directory has no Terraform configuration files. You may begin working
-with Terraform immediately by creating Terraform configuration files.
+The directory has no Terracina configuration files. You may begin working
+with Terracina immediately by creating Terracina configuration files.
 `
 
 const outputInitEmptyJSON = `
-Terraform initialized in an empty directory!
+Terracina initialized in an empty directory!
 
-The directory has no Terraform configuration files. You may begin working
-with Terraform immediately by creating Terraform configuration files.
+The directory has no Terracina configuration files. You may begin working
+with Terracina immediately by creating Terracina configuration files.
 `
 
 const outputInitSuccess = `
-[reset][bold][green]Terraform has been successfully initialized![reset][green]
+[reset][bold][green]Terracina has been successfully initialized![reset][green]
 `
 
 const outputInitSuccessJSON = `
-Terraform has been successfully initialized!
+Terracina has been successfully initialized!
 `
 
 const outputInitSuccessCloud = `
-[reset][bold][green]HCP Terraform has been successfully initialized![reset][green]
+[reset][bold][green]HCP Terracina has been successfully initialized![reset][green]
 `
 
 const outputInitSuccessCloudJSON = `
-HCP Terraform has been successfully initialized!
+HCP Terracina has been successfully initialized!
 `
 
 const outputInitSuccessCLI = `[reset][green]
-You may now begin working with Terraform. Try running "terraform plan" to see
-any changes that are required for your infrastructure. All Terraform commands
+You may now begin working with Terracina. Try running "terracina plan" to see
+any changes that are required for your infrastructure. All Terracina commands
 should now work.
 
-If you ever set or change modules or backend configuration for Terraform,
+If you ever set or change modules or backend configuration for Terracina,
 rerun this command to reinitialize your working directory. If you forget, other
 commands will detect it and remind you to do so if necessary.
 `
 
 const outputInitSuccessCLI_JSON = `
-You may now begin working with Terraform. Try running "terraform plan" to see
-any changes that are required for your infrastructure. All Terraform commands
+You may now begin working with Terracina. Try running "terracina plan" to see
+any changes that are required for your infrastructure. All Terracina commands
 should now work.
 
-If you ever set or change modules or backend configuration for Terraform,
+If you ever set or change modules or backend configuration for Terracina,
 rerun this command to reinitialize your working directory. If you forget, other
 commands will detect it and remind you to do so if necessary.
 `
 
 const outputInitSuccessCLICloud = `[reset][green]
-You may now begin working with HCP Terraform. Try running "terraform plan" to
+You may now begin working with HCP Terracina. Try running "terracina plan" to
 see any changes that are required for your infrastructure.
 
-If you ever set or change modules or Terraform Settings, run "terraform init"
+If you ever set or change modules or Terracina Settings, run "terracina init"
 again to reinitialize your working directory.
 `
 
 const outputInitSuccessCLICloudJSON = `
-You may now begin working with HCP Terraform. Try running "terraform plan" to
+You may now begin working with HCP Terracina. Try running "terracina plan" to
 see any changes that are required for your infrastructure.
 
-If you ever set or change modules or Terraform Settings, run "terraform init"
+If you ever set or change modules or Terracina Settings, run "terracina init"
 again to reinitialize your working directory.
 `
 
 const previousLockInfoHuman = `
-Terraform has created a lock file [bold].terraform.lock.hcl[reset] to record the provider
+Terracina has created a lock file [bold].terracina.lock.hcl[reset] to record the provider
 selections it made above. Include this file in your version control repository
-so that Terraform can guarantee to make the same selections by default when
-you run "terraform init" in the future.`
+so that Terracina can guarantee to make the same selections by default when
+you run "terracina init" in the future.`
 
 const previousLockInfoJSON = `
-Terraform has created a lock file .terraform.lock.hcl to record the provider
+Terracina has created a lock file .terracina.lock.hcl to record the provider
 selections it made above. Include this file in your version control repository
-so that Terraform can guarantee to make the same selections by default when
-you run "terraform init" in the future.`
+so that Terracina can guarantee to make the same selections by default when
+you run "terracina init" in the future.`
 
 const dependenciesLockChangesInfo = `
-Terraform has made some changes to the provider dependency selections recorded
-in the .terraform.lock.hcl file. Review those changes and commit them to your
+Terracina has made some changes to the provider dependency selections recorded
+in the .terracina.lock.hcl file. Review those changes and commit them to your
 version control system if they represent changes you intended to make.`
 
 const partnerAndCommunityProvidersInfo = "\nPartner and community providers are signed by their developers.\n" +
 	"If you'd like to know more about provider signing, you can read about it here:\n" +
-	"https://www.terraform.io/docs/cli/plugins/signing.html"
+	"https://www.terracina.io/docs/cli/plugins/signing.html"
 
 const errInitConfigError = `
-[reset]Terraform encountered problems during initialisation, including problems
+[reset]Terracina encountered problems during initialisation, including problems
 with the configuration, described below.
 
-The Terraform configuration must be valid before initialization so that
-Terraform can determine which modules and providers need to be installed.
+The Terracina configuration must be valid before initialization so that
+Terracina can determine which modules and providers need to be installed.
 `
 
 const errInitConfigErrorJSON = `
-Terraform encountered problems during initialisation, including problems
+Terracina encountered problems during initialisation, including problems
 with the configuration, described below.
 
-The Terraform configuration must be valid before initialization so that
-Terraform can determine which modules and providers need to be installed.
+The Terracina configuration must be valid before initialization so that
+Terracina can determine which modules and providers need to be installed.
 `

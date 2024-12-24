@@ -7,15 +7,15 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/hashicorp/terraform/internal/e2e"
+	"github.com/hashicorp/terracina/internal/e2e"
 )
 
-func TestTerraformProviderRead(t *testing.T) {
-	// Ensure the terraform provider can correctly read a remote state
+func TestTerracinaProviderRead(t *testing.T) {
+	// Ensure the terracina provider can correctly read a remote state
 
 	t.Parallel()
-	fixturePath := filepath.Join("testdata", "terraform-provider")
-	tf := e2e.NewBinary(t, terraformBin, fixturePath)
+	fixturePath := filepath.Join("testdata", "terracina-provider")
+	tf := e2e.NewBinary(t, terracinaBin, fixturePath)
 
 	//// INIT
 	_, stderr, err := tf.Run("init")

@@ -11,13 +11,13 @@ import (
 
 	"github.com/hashicorp/cli"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/backend/backendrun"
-	"github.com/hashicorp/terraform/internal/command/arguments"
-	"github.com/hashicorp/terraform/internal/lang"
-	"github.com/hashicorp/terraform/internal/repl"
-	"github.com/hashicorp/terraform/internal/terraform"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/backend/backendrun"
+	"github.com/hashicorp/terracina/internal/command/arguments"
+	"github.com/hashicorp/terracina/internal/lang"
+	"github.com/hashicorp/terracina/internal/repl"
+	"github.com/hashicorp/terracina/internal/terracina"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // ConsoleCommand is a Command implementation that starts an interactive
@@ -130,7 +130,7 @@ func (c *ConsoleCommand) Run(args []string) int {
 		_, scope, planDiags = lr.Core.PlanAndEval(lr.Config, lr.InputState, lr.PlanOpts)
 		diags = diags.Append(planDiags)
 	} else {
-		evalOpts := &terraform.EvalOpts{}
+		evalOpts := &terracina.EvalOpts{}
 		if lr.PlanOpts != nil {
 			// the LocalRun type is built primarily to support the main operations,
 			// so the variable values end up in the "PlanOpts" even though we're
@@ -210,9 +210,9 @@ func (c *ConsoleCommand) modePiped(session *repl.Session, ui cli.Ui) int {
 
 func (c *ConsoleCommand) Help() string {
 	helpText := `
-Usage: terraform [global options] console [options]
+Usage: terracina [global options] console [options]
 
-  Starts an interactive console for experimenting with Terraform
+  Starts an interactive console for experimenting with Terracina
   interpolations.
 
   This will open an interactive console that you can use to type
@@ -227,22 +227,22 @@ Options:
   -state=path       Legacy option for the local backend only. See the local
                     backend's documentation for more information.
 
-  -plan             Create a new plan (as if running "terraform plan") and
+  -plan             Create a new plan (as if running "terracina plan") and
                     then evaluate expressions against its planned state,
                     instead of evaluating against the current state.
                     You can use this to inspect the effects of configuration
                     changes that haven't been applied yet.
 
-  -var 'foo=bar'    Set a variable in the Terraform configuration. This
+  -var 'foo=bar'    Set a variable in the Terracina configuration. This
                     flag can be set multiple times.
 
-  -var-file=foo     Set variables in the Terraform configuration from
-                    a file. If "terraform.tfvars" or any ".auto.tfvars"
+  -var-file=foo     Set variables in the Terracina configuration from
+                    a file. If "terracina.tfvars" or any ".auto.tfvars"
                     files are present, they will be automatically loaded.
 `
 	return strings.TrimSpace(helpText)
 }
 
 func (c *ConsoleCommand) Synopsis() string {
-	return "Try Terraform expressions at an interactive command prompt"
+	return "Try Terracina expressions at an interactive command prompt"
 }

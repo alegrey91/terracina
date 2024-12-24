@@ -1,7 +1,7 @@
-# This file is maintained automatically by "terraform init".
+# This file is maintained automatically by "terracina init".
 # Manual edits may be lost in future updates.
 
-provider "registry.terraform.io/hashicorp/tfcoremock" {
+provider "registry.terracina.io/hashicorp/tfcoremock" {
   version     = "0.1.1"
   constraints = "0.1.1"
   hashes = [

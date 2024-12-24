@@ -9,15 +9,15 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/collections"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/lang/marks"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/collections"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/lang/marks"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // PlanProducer is an interface of an object that can produce a plan and
@@ -90,7 +90,7 @@ func FromPlan(ctx context.Context, config *configs.Config, plan *plans.Plan, ref
 				tfdiags.Error,
 				"Can't fetch provider schema to save plan",
 				fmt.Sprintf(
-					"Failed to retrieve the schema for %s from provider %s: %s. This is a bug in Terraform.",
+					"Failed to retrieve the schema for %s from provider %s: %s. This is a bug in Terracina.",
 					rsrcChange.Addr, rsrcChange.ProviderAddr.Provider, err,
 				),
 			))
@@ -119,9 +119,9 @@ func FromPlan(ctx context.Context, config *configs.Config, plan *plans.Plan, ref
 			// TODO: Also provide the previous run state, if it's
 			// different from the prior state, and signal whether the
 			// difference from previous run seems "notable" per
-			// Terraform Core's heuristics. Only the external plan
+			// Terracina Core's heuristics. Only the external plan
 			// description needs that info, to populate the
-			// "changes outside of Terraform" part of the plan UI;
+			// "changes outside of Terracina" part of the plan UI;
 			// the raw plan only needs the prior state.
 		})
 		seenObjects.Add(objAddr)
@@ -150,7 +150,7 @@ func FromPlan(ctx context.Context, config *configs.Config, plan *plans.Plan, ref
 				tfdiags.Error,
 				"Can't fetch provider schema to save plan",
 				fmt.Sprintf(
-					"Failed to retrieve the schema for %s from provider %s: %s. This is a bug in Terraform.",
+					"Failed to retrieve the schema for %s from provider %s: %s. This is a bug in Terracina.",
 					rsrcChange.Addr, rsrcChange.ProviderAddr.Provider, err,
 				),
 			))
@@ -200,7 +200,7 @@ func FromPlan(ctx context.Context, config *configs.Config, plan *plans.Plan, ref
 					tfdiags.Error,
 					"Can't fetch provider schema to save plan",
 					fmt.Sprintf(
-						"Failed to retrieve the schema for %s from provider %s: %s. This is a bug in Terraform.",
+						"Failed to retrieve the schema for %s from provider %s: %s. This is a bug in Terracina.",
 						addr, rs.ProviderConfig.Provider, err,
 					),
 				))
@@ -286,7 +286,7 @@ func OutputsFromPlan(config *configs.Config, plan *plans.Plan) map[string]cty.Va
 	// FIXME: We're using UIMode for this decision, despite its doc comment
 	// saying we shouldn't, because this behavior is an offshoot of the
 	// already-documented annoying exception to that rule where various
-	// parts of Terraform use UIMode == DestroyMode in particular to deal
+	// parts of Terracina use UIMode == DestroyMode in particular to deal
 	// with necessary variations during a "full destroy". Hopefully we'll
 	// eventually find a more satisfying solution for that, in which case
 	// we should update the following to use that solution too.

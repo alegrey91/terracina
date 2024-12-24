@@ -10,11 +10,11 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // This test verifies that modules are sorted before resources:
-// https://github.com/hashicorp/terraform/issues/21552
+// https://github.com/hashicorp/terracina/issues/21552
 func TestVersion4_sort(t *testing.T) {
 	resources := sortResourcesV4{
 		{

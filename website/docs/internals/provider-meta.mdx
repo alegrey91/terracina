@@ -6,7 +6,7 @@ description: >-
 
 # Collect Provider Metadata
 
-This topic describes how to create an inferface in the providers you develop that allows you to collect metadata that is unrelated to the resources in the module, such as usage statistics. This is an advanced topic and is not required to use Terraform. 
+This topic describes how to create an inferface in the providers you develop that allows you to collect metadata that is unrelated to the resources in the module, such as usage statistics. This is an advanced topic and is not required to use Terracina. 
 
 ## Introduction
 
@@ -29,7 +29,7 @@ rather than the module developer.
 
 ~> **Experimental Feature:** This functionality is
 experimental. You should [coordinate
-with the Terraform team](https://github.com/hashicorp/terraform/issues/new)
+with the Terracina team](https://github.com/hashicorp/terracina/issues/new)
 so that they can understand how you are using this functionality. Doing so ensures that your use cases are taken into account as the feature evolves.
 
 ## Defining the Schema
@@ -42,7 +42,7 @@ functions similarly to the provider config: a map of strings to the
 
 ## Using the Data
 
-When Terraform calls your provider, you can use the `schema.ResourceData`
+When Terracina calls your provider, you can use the `schema.ResourceData`
 that your `Create`, `Read`, and `Update` functions already use to get
 access to the provider metadata being passed. First define a struct
 that matches your schema, then call the `GetProviderSchema` method on
@@ -53,11 +53,11 @@ an error if there was an issue with parsing the data into the struct.
 ## Specifying Data in Modules
 
 To include data in your modules, create a `provider_meta` nested block under
-your module's `terraform` block, with the name of the provider it's trying
+your module's `terracina` block, with the name of the provider it's trying
 to pass information to:
 
 ```hcl
-terraform {
+terracina {
   provider_meta "my-provider" {
     hello = "world"
   }
@@ -70,9 +70,9 @@ The `provider_meta` block must match the schema the provider has defined.
 
 Any module taking advantage of this functionality must make sure that the
 provider metadata supplied matches the schema defined in the provider, and
-that the version of Terraform that is being run has support for the provider
+that the version of Terracina that is being run has support for the provider
 metadata functionality. It's therefore recommended that any module taking
-advantage of this functionality should specify a minimum Terraform version of
+advantage of this functionality should specify a minimum Terracina version of
 0.13.0 or higher, and a minimum version of each of the providers it specifies
 metadata as the first version the schema being used was supported by the
 provider.

@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 
 syntax = "proto3";
-package terraform1.dependencies;
+package terracina1.dependencies;
 
-import "terraform1.proto";
+import "terracina1.proto";
 
 service Dependencies {
   // Opens a source bundle that was already extracted into the filesystem
@@ -46,7 +46,7 @@ service Dependencies {
   // This particular RPC can only install already-selected provider packages
   // recorded in a dependency locks object; it does not support "upgrading"
   // provider selections to newer versions as a CLI user would do with
-  // "terraform init -upgrade", because there would be no way to then
+  // "terracina init -upgrade", because there would be no way to then
   // commit the updated locks to disk as a lock file.
   rpc BuildProviderPluginCache(BuildProviderPluginCache.Request) returns (stream BuildProviderPluginCache.Event);
 
@@ -62,16 +62,16 @@ service Dependencies {
   rpc GetCachedProviders(GetCachedProviders.Request) returns (GetCachedProviders.Response);
 
   // Returns information about the built-in providers that are compiled in
-  // to this Terraform Core server.
+  // to this Terracina Core server.
   rpc GetBuiltInProviders(GetBuiltInProviders.Request) returns (GetBuiltInProviders.Response);
 
   // Returns a description of the schema for a particular provider in a
   // given provider plugin cache, or of a particular built-in provider
-  // known to this version of Terraform Core.
+  // known to this version of Terracina Core.
   //
   // WARNING: This operation requires executing the selected provider plugin,
   // which therefore allows it to run arbitrary code as a child process of
-  // this Terraform Core server, with access to all of the same resources.
+  // this Terracina Core server, with access to all of the same resources.
   // This should typically be used only with providers explicitly selected
   // in a dependency lock file, so users can control what external code
   // has the potential to run in a context that probably has access to
@@ -100,11 +100,11 @@ message CloseSourceBundle {
 message OpenDependencyLockFile {
   message Request {
     int64 source_bundle_handle = 1;
-    terraform1.SourceAddress source_address = 2;
+    terracina1.SourceAddress source_address = 2;
   }
   message Response {
     int64 dependency_locks_handle = 1;
-    repeated terraform1.Diagnostic diagnostics = 2;
+    repeated terracina1.Diagnostic diagnostics = 2;
   }
 }
 
@@ -115,8 +115,8 @@ message CreateDependencyLocks {
     // A typical value would be the result of an earlier call to
     // GetLockedProviderDependencies on some other locks object,
     // e.g. if a caller needs to propagate a set of locks from one
-    // Terraform Core RPC server to another.
-    repeated terraform1.ProviderPackage provider_selections = 1;
+    // Terracina Core RPC server to another.
+    repeated terracina1.ProviderPackage provider_selections = 1;
   }
   message Response {
     int64 dependency_locks_handle = 1;
@@ -136,7 +136,7 @@ message GetLockedProviderDependencies {
     int64 dependency_locks_handle = 1;
   }
   message Response {
-    repeated terraform1.ProviderPackage selected_providers = 1;
+    repeated terracina1.ProviderPackage selected_providers = 1;
   }
 }
 
@@ -147,11 +147,11 @@ message BuildProviderPluginCache {
     repeated InstallMethod installation_methods = 3;
 
     // If set, this populates the cache with plugins for a different
-    // platform than the one the Terraform Core RPC server is running on.
+    // platform than the one the Terracina Core RPC server is running on.
     // If unset (empty) then the cache will be populated with packages
-    // for the same platform as Terraform Core was built for, if available.
+    // for the same platform as Terracina Core was built for, if available.
     //
-    // If this is set to a different platform than the Terraform Core RPC
+    // If this is set to a different platform than the Terracina Core RPC
     // server's then the generated cache directory will appear empty to
     // other operations on this server.
     string override_platform = 4;
@@ -179,7 +179,7 @@ message BuildProviderPluginCache {
       FetchBegin fetch_begin = 7;
       FetchComplete fetch_complete = 8;
 
-      terraform1.Diagnostic diagnostic = 9;
+      terracina1.Diagnostic diagnostic = 9;
     }
 
     message Pending {
@@ -255,7 +255,7 @@ message GetCachedProviders {
     int64 provider_cache_handle = 1;
   }
   message Response {
-    repeated terraform1.ProviderPackage available_providers = 1;
+    repeated terracina1.ProviderPackage available_providers = 1;
   }
 }
 
@@ -263,14 +263,14 @@ message GetBuiltInProviders {
   message Request {
   }
   message Response {
-    // The built-in providers that are compiled in to this Terraform Core
+    // The built-in providers that are compiled in to this Terracina Core
     // server.
     //
-    // This uses terraform1.ProviderPackage messages for consistency with the other
+    // This uses terracina1.ProviderPackage messages for consistency with the other
     // operations which list providers, but built-in providers do not
     // have version numbers nor hashes so those fields will always be
     // unset in the result.
-    repeated terraform1.ProviderPackage available_providers = 1;
+    repeated terracina1.ProviderPackage available_providers = 1;
   }
 }
 
@@ -279,17 +279,17 @@ message GetProviderSchema {
     // The address of the provider to retrieve schema for, using the
     // typical provider source address syntax.
     //
-    // When requesting schema based on a terraform1.ProviderPackage message, populate
+    // When requesting schema based on a terracina1.ProviderPackage message, populate
     // this with its "source_addr" field.
     string provider_addr = 1;
     // The version number of the given provider to retrieve the schema
     // of, which must have already been populated into the cache directory.
     //
     // Not supported for built-in providers because we can only access the
-    // single "version" of the provider that's compiled into this Terraform
+    // single "version" of the provider that's compiled into this Terracina
     // Core server, and so must be left unset or empty for those.
     //
-    // When requesting schema based on a terraform1.ProviderPackage message, populate
+    // When requesting schema based on a terracina1.ProviderPackage message, populate
     // this with its "version" field.
     string provider_version = 2;
 

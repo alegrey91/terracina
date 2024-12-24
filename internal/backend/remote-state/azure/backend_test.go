@@ -8,7 +8,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/hashicorp/terraform/internal/backend"
+	"github.com/hashicorp/terracina/internal/backend"
 )
 
 func TestBackend_impl(t *testing.T) {

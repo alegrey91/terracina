@@ -18,8 +18,8 @@ import (
 	"github.com/aliyun/aliyun-tablestore-go-sdk/tablestore"
 	uuid "github.com/hashicorp/go-uuid"
 
-	"github.com/hashicorp/terraform/internal/states/remote"
-	"github.com/hashicorp/terraform/internal/states/statemgr"
+	"github.com/hashicorp/terracina/internal/states/remote"
+	"github.com/hashicorp/terracina/internal/states/statemgr"
 )
 
 const (

@@ -12,9 +12,9 @@ import (
 	"github.com/zclconf/go-cty/cty/function"
 	"github.com/zclconf/go-cty/cty/function/stdlib"
 
-	"github.com/hashicorp/terraform/internal/collections"
-	"github.com/hashicorp/terraform/internal/experiments"
-	"github.com/hashicorp/terraform/internal/lang/funcs"
+	"github.com/hashicorp/terracina/internal/collections"
+	"github.com/hashicorp/terracina/internal/experiments"
+	"github.com/hashicorp/terracina/internal/lang/funcs"
 )
 
 var impureFunctions = []string{
@@ -26,7 +26,7 @@ var impureFunctions = []string{
 // filesystemFunctions are the functions that allow interacting with arbitrary
 // paths in the local filesystem, and which can therefore have their results
 // vary based on something other than their arguments, and might allow template
-// rendering to expose details about the system where Terraform is running.
+// rendering to expose details about the system where Terracina is running.
 var filesystemFunctions = collections.NewSetCmp[string](
 	"file",
 	"fileexists",
@@ -194,12 +194,12 @@ func (s *Scope) Functions() map[string]function.Function {
 		coreFuncs["templatestring"] = funcs.MakeTemplateStringFunc(funcsFunc)
 
 		if s.ConsoleMode {
-			// The type function is only available in terraform console.
+			// The type function is only available in terracina console.
 			coreFuncs["type"] = funcs.TypeFunc
 		}
 
 		if !s.ConsoleMode {
-			// The plantimestamp function doesn't make sense in the terraform
+			// The plantimestamp function doesn't make sense in the terracina
 			// console.
 			coreFuncs["plantimestamp"] = funcs.MakeStaticTimestampFunc(s.PlanTimestamp)
 		}
@@ -258,7 +258,7 @@ func TestingFunctions() map[string]function.Function {
 }
 
 // baseFunctions loads the set of functions that are used in both the testing
-// framework and the main Terraform operations.
+// framework and the main Terracina operations.
 func baseFunctions(baseDir string) map[string]function.Function {
 	// Some of our functions are just directly the cty stdlib functions.
 	// Others are implemented in the subdirectory "funcs" here in this
@@ -431,7 +431,7 @@ func (s *Scope) experimentalFunction(experiment experiments.Experiment, fn funct
 }
 
 // ExternalFuncs represents functions defined by extension components outside
-// of Terraform Core.
+// of Terracina Core.
 //
 // This package expects the caller to provide ready-to-use function.Function
 // instances for each function, which themselves perform whatever adaptations

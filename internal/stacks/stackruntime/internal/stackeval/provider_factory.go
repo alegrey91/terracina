@@ -6,9 +6,9 @@ package stackeval
 import (
 	"fmt"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // ProviderFactories is a collection of factory functions for starting new
@@ -63,7 +63,7 @@ func (p unconfigurableProvider) ConfigureProvider(request providers.ConfigurePro
 			tfdiags.AttributeValue(
 				tfdiags.Error,
 				"Called ConfigureProvider on an unconfigurable provider",
-				"This provider should have already been configured, or should never be configured. This is a bug in Terraform - please report it.",
+				"This provider should have already been configured, or should never be configured. This is a bug in Terracina - please report it.",
 				nil, // nil attribute path means the overall configuration block
 			),
 		},

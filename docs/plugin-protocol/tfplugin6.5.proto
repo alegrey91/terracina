@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: MPL-2.0
 
-// Terraform Plugin RPC protocol version 6.5
+// Terracina Plugin RPC protocol version 6.5
 //
 // This file defines version 6.5 of the RPC protocol. To implement a plugin
 // against this protocol, copy this definition into your own codebase and
@@ -12,19 +12,19 @@
 // compatibility. Breaking changes, if any are required, will come
 // in a subsequent major version with its own separate proto definition.
 //
-// Note that only the proto files included in a release tag of Terraform are
+// Note that only the proto files included in a release tag of Terracina are
 // official protocol releases. Proto files taken from other commits may include
 // incomplete changes or features that did not make it into a final release.
 // In all reasonable cases, plugin developers should take the proto file from
-// the tag of the most recent release of Terraform, and not from the main
+// the tag of the most recent release of Terracina, and not from the main
 // branch or any other development branch.
 //
 syntax = "proto3";
-option go_package = "github.com/hashicorp/terraform/internal/tfplugin6";
+option go_package = "github.com/hashicorp/terracina/internal/tfplugin6";
 
 package tfplugin6;
 
-// DynamicValue is an opaque encoding of terraform data, with the field name
+// DynamicValue is an opaque encoding of terracina data, with the field name
 // indicating the encoding scheme used.
 message DynamicValue {
     bytes msgpack = 1;
@@ -159,7 +159,7 @@ message Function {
     repeated Parameter parameters = 1;
 
     // variadic_parameter is an optional final parameter which accepts
-    // zero or more argument values, in which Terraform will send an
+    // zero or more argument values, in which Terracina will send an
     // ordered list of the parameter type.
     Parameter variadic_parameter = 2;
 
@@ -187,13 +187,13 @@ message Function {
         bytes type = 2;
 
         // allow_null_value when enabled denotes that a null argument value can
-        // be passed to the provider. When disabled, Terraform returns an error
+        // be passed to the provider. When disabled, Terracina returns an error
         // if the argument value is null.
         bool allow_null_value = 3;
 
         // allow_unknown_values when enabled denotes that only wholly known
         // argument values will be passed to the provider. When disabled,
-        // Terraform skips the function call entirely and assumes an unknown
+        // Terracina skips the function call entirely and assumes an unknown
         // value result from the function.
         bool allow_unknown_values = 4;
 
@@ -377,7 +377,7 @@ message ValidateDataResourceConfig {
 
 message ConfigureProvider {
     message Request {
-        string terraform_version = 1;
+        string terracina_version = 1;
         DynamicValue config = 2;
     }
     message Response {
@@ -423,8 +423,8 @@ message PlanResourceChange {
         bytes planned_private = 3;
         repeated Diagnostic diagnostics = 4;
 
-        // This may be set only by the helper/schema "SDK" in the main Terraform
-        // repository, to request that Terraform Core >=0.12 permit additional
+        // This may be set only by the helper/schema "SDK" in the main Terracina
+        // repository, to request that Terracina Core >=0.12 permit additional
         // inconsistencies that can result from the legacy SDK type system
         // and its imprecise mapping to the >=0.12 type system.
         // The change in behavior implied by this flag makes sense only for the
@@ -452,8 +452,8 @@ message ApplyResourceChange {
         bytes private = 2;
         repeated Diagnostic diagnostics = 3;
 
-        // This may be set only by the helper/schema "SDK" in the main Terraform
-        // repository, to request that Terraform Core >=0.12 permit additional
+        // This may be set only by the helper/schema "SDK" in the main Terracina
+        // repository, to request that Terracina Core >=0.12 permit additional
         // inconsistencies that can result from the legacy SDK type system
         // and its imprecise mapping to the >=0.12 type system.
         // The change in behavior implied by this flag makes sense only for the

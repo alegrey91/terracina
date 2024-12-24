@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"bytes"
@@ -19,16 +19,16 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/configs/hcl2shim"
-	"github.com/hashicorp/terraform/internal/lang/marks"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	testing_provider "github.com/hashicorp/terraform/internal/providers/testing"
-	"github.com/hashicorp/terraform/internal/provisioners"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/configs/hcl2shim"
+	"github.com/hashicorp/terracina/internal/lang/marks"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	testing_provider "github.com/hashicorp/terracina/internal/providers/testing"
+	"github.com/hashicorp/terracina/internal/provisioners"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 func TestContext2Plan_basic(t *testing.T) {
@@ -93,7 +93,7 @@ func TestContext2Plan_createBefore_deposed(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"baz","type":"aws_instance"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 	root.SetResourceInstanceDeposed(
 		mustResourceInstanceAddr("aws_instance.foo").Resource,
@@ -102,7 +102,7 @@ func TestContext2Plan_createBefore_deposed(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"foo"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -121,7 +121,7 @@ func TestContext2Plan_createBefore_deposed(t *testing.T) {
 	expectedState := strings.TrimSpace(`
  aws_instance.foo: (1 deposed)
   ID = baz
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   type = aws_instance
   Deposed ID 1 = foo`)
 
@@ -809,7 +809,7 @@ func TestContext2Plan_moduleOrphans(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"baz"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -859,14 +859,14 @@ func TestContext2Plan_moduleOrphans(t *testing.T) {
 module.child:
   aws_instance.foo:
     ID = baz
-    provider = provider["registry.terraform.io/hashicorp/aws"]`
+    provider = provider["registry.terracina.io/hashicorp/aws"]`
 
 	if plan.PriorState.String() != expectedState {
 		t.Fatalf("\nexpected state: %q\n\ngot: %q", expectedState, plan.PriorState.String())
 	}
 }
 
-// https://github.com/hashicorp/terraform/issues/3114
+// https://github.com/hashicorp/terracina/issues/3114
 func TestContext2Plan_moduleOrphansWithProvisioner(t *testing.T) {
 	m := testModule(t, "plan-modules-remove-provisioners")
 	p := testProvider("aws")
@@ -881,7 +881,7 @@ func TestContext2Plan_moduleOrphansWithProvisioner(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"top","type":"aws_instance"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 	child1 := state.EnsureModule(addrs.RootModuleInstance.Child("parent", addrs.NoKey).Child("child1", addrs.NoKey))
 	child1.SetResourceInstanceCurrent(
@@ -890,7 +890,7 @@ func TestContext2Plan_moduleOrphansWithProvisioner(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"baz","type":"aws_instance"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 	child2 := state.EnsureModule(addrs.RootModuleInstance.Child("parent", addrs.NoKey).Child("child2", addrs.NoKey))
 	child2.SetResourceInstanceCurrent(
@@ -899,7 +899,7 @@ func TestContext2Plan_moduleOrphansWithProvisioner(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"baz","type":"aws_instance"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -950,18 +950,18 @@ func TestContext2Plan_moduleOrphansWithProvisioner(t *testing.T) {
 
 	expectedState := `aws_instance.top:
   ID = top
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   type = aws_instance
 
 module.parent.child1:
   aws_instance.foo:
     ID = baz
-    provider = provider["registry.terraform.io/hashicorp/aws"]
+    provider = provider["registry.terracina.io/hashicorp/aws"]
     type = aws_instance
 module.parent.child2:
   aws_instance.foo:
     ID = baz
-    provider = provider["registry.terraform.io/hashicorp/aws"]
+    provider = provider["registry.terracina.io/hashicorp/aws"]
     type = aws_instance`
 
 	if expectedState != plan.PriorState.String() {
@@ -1378,7 +1378,7 @@ func TestContext2Plan_preventDestroy_bad(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"i-abc123"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -1400,7 +1400,7 @@ func TestContext2Plan_preventDestroy_bad(t *testing.T) {
 
 	// The plan should still include the proposal to replace the object
 	// that cannot be destroyed, since the change is valid in isolation,
-	// and this then allows Terraform CLI and HCP Terraform to still
+	// and this then allows Terracina CLI and HCP Terracina to still
 	// show the problematic change that caused the error as additional
 	// context.
 	changes := plan.Changes
@@ -1416,7 +1416,7 @@ func TestContext2Plan_preventDestroy_bad(t *testing.T) {
 	} else {
 		t.Errorf("no planned change for aws_instance.foo")
 	}
-	// The plan must also be marked as errored, so that Terraform will reject
+	// The plan must also be marked as errored, so that Terracina will reject
 	// any attempts to apply the plan with the forbidden replace action.
 	if got, want := plan.Errored, true; got != want {
 		t.Errorf("plan is not marked as errored\ngot:  %#v\nwant: %#v", got, want)
@@ -1436,7 +1436,7 @@ func TestContext2Plan_preventDestroy_good(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"i-abc123","type":"aws_instance"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -1471,7 +1471,7 @@ func TestContext2Plan_preventDestroy_countBad(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"i-abc123"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 	root.SetResourceInstanceCurrent(
 		mustResourceInstanceAddr("aws_instance.foo[1]").Resource,
@@ -1479,7 +1479,7 @@ func TestContext2Plan_preventDestroy_countBad(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"i-abc345"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -1522,7 +1522,7 @@ func TestContext2Plan_preventDestroy_countGood(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"i-abc123"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 	root.SetResourceInstanceCurrent(
 		mustResourceInstanceAddr("aws_instance.foo[1]").Resource,
@@ -1530,7 +1530,7 @@ func TestContext2Plan_preventDestroy_countGood(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"i-abc345"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -1573,7 +1573,7 @@ func TestContext2Plan_preventDestroy_countGoodNoChange(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"i-abc123","current":"0","type":"aws_instance"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -1604,7 +1604,7 @@ func TestContext2Plan_preventDestroy_destroyPlan(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"i-abc123"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -2005,7 +2005,7 @@ func TestContext2Plan_dataResourceBecomesComputed(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"i-abc123","foo":"baz"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -2627,7 +2627,7 @@ func TestContext2Plan_countDecreaseToOne(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"bar","foo":"foo","type":"aws_instance"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 	root.SetResourceInstanceCurrent(
 		mustResourceInstanceAddr("aws_instance.foo[1]").Resource,
@@ -2635,7 +2635,7 @@ func TestContext2Plan_countDecreaseToOne(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"bar"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 	root.SetResourceInstanceCurrent(
 		mustResourceInstanceAddr("aws_instance.foo[2]").Resource,
@@ -2643,7 +2643,7 @@ func TestContext2Plan_countDecreaseToOne(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"bar"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -2699,15 +2699,15 @@ func TestContext2Plan_countDecreaseToOne(t *testing.T) {
 
 	expectedState := `aws_instance.foo:
   ID = bar
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = foo
   type = aws_instance
 aws_instance.foo.1:
   ID = bar
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
 aws_instance.foo.2:
   ID = bar
-  provider = provider["registry.terraform.io/hashicorp/aws"]`
+  provider = provider["registry.terracina.io/hashicorp/aws"]`
 
 	if plan.PriorState.String() != expectedState {
 		t.Fatalf("epected state:\n%q\n\ngot state:\n%q\n", expectedState, plan.PriorState.String())
@@ -2727,7 +2727,7 @@ func TestContext2Plan_countIncreaseFromNotSet(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"bar","type":"aws_instance","foo":"foo"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -2804,7 +2804,7 @@ func TestContext2Plan_countIncreaseFromOne(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"bar","foo":"foo","type":"aws_instance"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -2869,7 +2869,7 @@ func TestContext2Plan_countIncreaseFromOne(t *testing.T) {
 	}
 }
 
-// https://github.com/PeoplePerHour/terraform/pull/11
+// https://github.com/PeoplePerHour/terracina/pull/11
 //
 // This tests a case where both a "resource" and "resource.0" are in
 // the state file, which apparently is a reasonable backwards compatibility
@@ -2887,7 +2887,7 @@ func TestContext2Plan_countIncreaseFromOneCorrupted(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"bar","foo":"foo","type":"aws_instance"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 	root.SetResourceInstanceCurrent(
 		mustResourceInstanceAddr("aws_instance.foo[0]").Resource,
@@ -2895,7 +2895,7 @@ func TestContext2Plan_countIncreaseFromOneCorrupted(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"bar","foo":"foo","type":"aws_instance"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -2995,7 +2995,7 @@ func TestContext2Plan_countIncreaseWithSplatReference(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"bar","name":"foo 0"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 	root.SetResourceInstanceCurrent(
 		mustResourceInstanceAddr("aws_instance.foo[1]").Resource,
@@ -3003,7 +3003,7 @@ func TestContext2Plan_countIncreaseWithSplatReference(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"bar","name":"foo 1"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 	root.SetResourceInstanceCurrent(
 		mustResourceInstanceAddr("aws_instance.bar[0]").Resource,
@@ -3011,7 +3011,7 @@ func TestContext2Plan_countIncreaseWithSplatReference(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"bar","foo_name":"foo 0"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 	root.SetResourceInstanceCurrent(
 		mustResourceInstanceAddr("aws_instance.bar[1]").Resource,
@@ -3019,7 +3019,7 @@ func TestContext2Plan_countIncreaseWithSplatReference(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"bar","foo_name":"foo 1"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -3159,7 +3159,7 @@ func TestContext2Plan_destroy(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"bar"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 	root.SetResourceInstanceCurrent(
 		mustResourceInstanceAddr("aws_instance.two").Resource,
@@ -3167,7 +3167,7 @@ func TestContext2Plan_destroy(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"baz"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -3220,7 +3220,7 @@ func TestContext2Plan_moduleDestroy(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"bar"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 	child := state.EnsureModule(addrs.RootModuleInstance.Child("child", addrs.NoKey))
 	child.SetResourceInstanceCurrent(
@@ -3229,7 +3229,7 @@ func TestContext2Plan_moduleDestroy(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"bar"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -3282,7 +3282,7 @@ func TestContext2Plan_moduleDestroyCycle(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"a"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 	bModule := state.EnsureModule(addrs.RootModuleInstance.Child("b_module", addrs.NoKey))
 	bModule.SetResourceInstanceCurrent(
@@ -3291,7 +3291,7 @@ func TestContext2Plan_moduleDestroyCycle(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"b"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -3344,7 +3344,7 @@ func TestContext2Plan_moduleDestroyMultivar(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"bar0"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 	child.SetResourceInstanceCurrent(
 		mustResourceInstanceAddr("aws_instance.foo[1]").Resource,
@@ -3352,7 +3352,7 @@ func TestContext2Plan_moduleDestroyMultivar(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"bar1"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -3465,7 +3465,7 @@ func TestContext2Plan_diffVar(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"bar","num":"2","type":"aws_instance"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -3580,7 +3580,7 @@ func TestContext2Plan_orphan(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"bar"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -3662,7 +3662,7 @@ func TestContext2Plan_state(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"bar"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 	ctx := testContext2(t, &ContextOpts{
 		Providers: map[addrs.Provider]providers.Factory{
@@ -3764,7 +3764,7 @@ func TestContext2Plan_requiresReplace(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"v":"hello"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -3822,7 +3822,7 @@ func TestContext2Plan_taint(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"bar","num":"2","type":"aws_instance"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 	root.SetResourceInstanceCurrent(
 		mustResourceInstanceAddr("aws_instance.bar").Resource,
@@ -3830,7 +3830,7 @@ func TestContext2Plan_taint(t *testing.T) {
 			Status:    states.ObjectTainted,
 			AttrsJSON: []byte(`{"id":"baz"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -3908,7 +3908,7 @@ func TestContext2Plan_taintIgnoreChanges(t *testing.T) {
 			Status:    states.ObjectTainted,
 			AttrsJSON: []byte(`{"id":"foo","vars":"foo","type":"aws_instance"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -3972,7 +3972,7 @@ func TestContext2Plan_taintDestroyInterpolatedCountRace(t *testing.T) {
 			Status:    states.ObjectTainted,
 			AttrsJSON: []byte(`{"id":"bar","type":"aws_instance"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 	root.SetResourceInstanceCurrent(
 		mustResourceInstanceAddr("aws_instance.foo[1]").Resource,
@@ -3980,7 +3980,7 @@ func TestContext2Plan_taintDestroyInterpolatedCountRace(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"bar","type":"aws_instance"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 	root.SetResourceInstanceCurrent(
 		mustResourceInstanceAddr("aws_instance.foo[2]").Resource,
@@ -3988,7 +3988,7 @@ func TestContext2Plan_taintDestroyInterpolatedCountRace(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"bar","type":"aws_instance"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	for i := 0; i < 100; i++ {
@@ -4224,7 +4224,7 @@ func TestContext2Plan_targetedOrphan(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"i-789xyz"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 	root.SetResourceInstanceCurrent(
 		mustResourceInstanceAddr("aws_instance.nottargeted").Resource,
@@ -4232,7 +4232,7 @@ func TestContext2Plan_targetedOrphan(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"i-abc123"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -4281,7 +4281,7 @@ func TestContext2Plan_targetedOrphan(t *testing.T) {
 	}
 }
 
-// https://github.com/hashicorp/terraform/issues/2538
+// https://github.com/hashicorp/terracina/issues/2538
 func TestContext2Plan_targetedModuleOrphan(t *testing.T) {
 	m := testModule(t, "plan-targeted-module-orphan")
 	p := testProvider("aws")
@@ -4294,7 +4294,7 @@ func TestContext2Plan_targetedModuleOrphan(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"i-789xyz"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 	child.SetResourceInstanceCurrent(
 		mustResourceInstanceAddr("aws_instance.nottargeted").Resource,
@@ -4302,7 +4302,7 @@ func TestContext2Plan_targetedModuleOrphan(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"i-abc123"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -4439,7 +4439,7 @@ func TestContext2Plan_outputContainsTargetedResource(t *testing.T) {
 	}
 }
 
-// https://github.com/hashicorp/terraform/issues/4515
+// https://github.com/hashicorp/terracina/issues/4515
 func TestContext2Plan_targetedOverTen(t *testing.T) {
 	m := testModule(t, "plan-targeted-over-ten")
 	p := testProvider("aws")
@@ -4458,7 +4458,7 @@ func TestContext2Plan_targetedOverTen(t *testing.T) {
 				Status:    states.ObjectReady,
 				AttrsJSON: []byte(attrs),
 			},
-			mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+			mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 		)
 	}
 
@@ -4556,7 +4556,7 @@ func TestContext2Plan_ignoreChanges(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"bar","ami":"ami-abcd1234","type":"aws_instance"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -4628,7 +4628,7 @@ func TestContext2Plan_ignoreChangesWildcard(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"bar","ami":"ami-abcd1234","instance":"t2.micro","type":"aws_instance","foo":"bar"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -4754,7 +4754,7 @@ func TestContext2Plan_ignoreChangesSensitive(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"bar","ami":"ami-abcd1234","type":"aws_instance"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -5145,7 +5145,7 @@ func TestContext2Plan_ignoreChangesWithFlatmaps(t *testing.T) {
 				"lst":["j"]
 			}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -5216,7 +5216,7 @@ func TestContext2Plan_resourceNestedCount(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"foo0","type":"aws_instance"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 	root.SetResourceInstanceCurrent(
 		mustResourceInstanceAddr("aws_instance.foo[1]").Resource,
@@ -5224,7 +5224,7 @@ func TestContext2Plan_resourceNestedCount(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"foo1","type":"aws_instance"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 	root.SetResourceInstanceCurrent(
 		mustResourceInstanceAddr("aws_instance.bar[0]").Resource,
@@ -5233,7 +5233,7 @@ func TestContext2Plan_resourceNestedCount(t *testing.T) {
 			AttrsJSON:    []byte(`{"id":"bar0","type":"aws_instance"}`),
 			Dependencies: []addrs.ConfigResource{mustConfigResourceAddr("aws_instance.foo")},
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 	root.SetResourceInstanceCurrent(
 		mustResourceInstanceAddr("aws_instance.bar[1]").Resource,
@@ -5242,7 +5242,7 @@ func TestContext2Plan_resourceNestedCount(t *testing.T) {
 			AttrsJSON:    []byte(`{"id":"bar1","type":"aws_instance"}`),
 			Dependencies: []addrs.ConfigResource{mustConfigResourceAddr("aws_instance.foo")},
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 	root.SetResourceInstanceCurrent(
 		mustResourceInstanceAddr("aws_instance.baz[0]").Resource,
@@ -5251,7 +5251,7 @@ func TestContext2Plan_resourceNestedCount(t *testing.T) {
 			AttrsJSON:    []byte(`{"id":"baz0","type":"aws_instance"}`),
 			Dependencies: []addrs.ConfigResource{mustConfigResourceAddr("aws_instance.bar")},
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 	root.SetResourceInstanceCurrent(
 		mustResourceInstanceAddr("aws_instance.baz[1]").Resource,
@@ -5260,7 +5260,7 @@ func TestContext2Plan_resourceNestedCount(t *testing.T) {
 			AttrsJSON:    []byte(`{"id":"baz1","type":"aws_instance"}`),
 			Dependencies: []addrs.ConfigResource{mustConfigResourceAddr("aws_instance.bar")},
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 	ctx := testContext2(t, &ContextOpts{
 		Providers: map[addrs.Provider]providers.Factory{
@@ -5876,7 +5876,7 @@ resource "aws_instance" "foo" {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"child","type":"aws_instance"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 	state.EnsureModule(addrs.RootModuleInstance.Child("mod", addrs.IntKey(1))).SetResourceInstanceCurrent(
 		mustResourceInstanceAddr("aws_instance.foo").Resource,
@@ -5884,7 +5884,7 @@ resource "aws_instance" "foo" {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"child","type":"aws_instance"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	p := testProvider("aws")
@@ -6163,7 +6163,7 @@ data "test_data_source" "foo" {}
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"data_id", "foo":"foo"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -6212,7 +6212,7 @@ resource "test_instance" "b" {
 			AttrsJSON:    []byte(`{"id":"a0"}`),
 			Dependencies: []addrs.ConfigResource{},
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 	root.SetResourceInstanceCurrent(
 		mustResourceInstanceAddr("test_instance.b").Resource,
@@ -6221,7 +6221,7 @@ resource "test_instance" "b" {
 			AttrsJSON:    []byte(`{"id":"b"}`),
 			Dependencies: []addrs.ConfigResource{mustConfigResourceAddr("test_instance.a")},
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -6508,7 +6508,7 @@ resource "test_instance" "a" {
 			AttrsJSON:    []byte(`{"id":"a","type":"test_instance"}`),
 			Dependencies: []addrs.ConfigResource{},
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -6680,7 +6680,7 @@ resource "test_instance" "a" {
 			AttrsJSON:    []byte(`{"id":"a","data":"foo"}`),
 			Dependencies: []addrs.ConfigResource{},
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -6743,7 +6743,7 @@ resource "test_instance" "a" {
 			AttrsJSON:    []byte(`{"id":"a","data":"foo"}`),
 			Dependencies: []addrs.ConfigResource{},
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -6783,7 +6783,7 @@ resource "test_instance" "a" {
 	p.PlanResourceChangeFn = func(req providers.PlanResourceChangeRequest) (resp providers.PlanResourceChangeResponse) {
 		plan := req.ProposedNewState.AsValueMap()
 		// Update both the computed id and the configured data.
-		// Legacy providers expect terraform to be able to ignore these.
+		// Legacy providers expect terracina to be able to ignore these.
 
 		plan["id"] = cty.StringVal("updated")
 		plan["data"] = cty.StringVal("updated")
@@ -6801,7 +6801,7 @@ resource "test_instance" "a" {
 			AttrsJSON:    []byte(`{"id":"orig","data":"orig"}`),
 			Dependencies: []addrs.ConfigResource{},
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -6840,7 +6840,7 @@ resource "test_instance" "a" {
 			AttrsJSON:    []byte(`{"id":"a","data":"foo"}`),
 			Dependencies: []addrs.ConfigResource{},
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 
 	// the provider for this data source is no longer in the config, but that
@@ -6852,7 +6852,7 @@ resource "test_instance" "a" {
 			AttrsJSON:    []byte(`{"id":"d"}`),
 			Dependencies: []addrs.ConfigResource{},
 		},
-		mustProviderConfig(`provider["registry.terraform.io/local/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/local/test"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -6861,7 +6861,7 @@ resource "test_instance" "a" {
 			// We still need to be able to locate the provider to decode the
 			// state, since we do not know during init that this provider is
 			// only used for an orphaned data source.
-			addrs.NewProvider("registry.terraform.io", "local", "test"): testProviderFuncFixed(p),
+			addrs.NewProvider("registry.terracina.io", "local", "test"): testProviderFuncFixed(p),
 		},
 	})
 	_, diags := ctx.Plan(m, state, DefaultPlanOpts)

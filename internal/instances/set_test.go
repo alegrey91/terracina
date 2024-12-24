@@ -8,7 +8,7 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
+	"github.com/hashicorp/terracina/internal/addrs"
 )
 
 func TestSet(t *testing.T) {

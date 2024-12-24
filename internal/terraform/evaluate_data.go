@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"fmt"
@@ -11,13 +11,13 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/didyoumean"
-	"github.com/hashicorp/terraform/internal/lang/marks"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/didyoumean"
+	"github.com/hashicorp/terracina/internal/lang/marks"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
-// evaluationData is the base struct for evaluating data from within Terraform
+// evaluationData is the base struct for evaluating data from within Terracina
 // Core. It contains some common data and functions shared by the various
 // implemented evaluators.
 type evaluationData struct {
@@ -97,15 +97,15 @@ func (d *evaluationData) GetPathAttr(addr addrs.PathAttr, rng tfdiags.SourceRang
 	}
 }
 
-// GetTerraformAttr implements lang.Data.
-func (d *evaluationData) GetTerraformAttr(addr addrs.TerraformAttr, rng tfdiags.SourceRange) (cty.Value, tfdiags.Diagnostics) {
+// GetTerracinaAttr implements lang.Data.
+func (d *evaluationData) GetTerracinaAttr(addr addrs.TerracinaAttr, rng tfdiags.SourceRange) (cty.Value, tfdiags.Diagnostics) {
 	var diags tfdiags.Diagnostics
 	switch addr.Name {
 
 	case "workspace":
 		// The absence of an "env" (really: workspace) name suggests that
 		// we're running in a non-workspace context, such as in a component
-		// of a stack. terraform.workspace is a legacy thing from workspaces
+		// of a stack. terracina.workspace is a legacy thing from workspaces
 		// mode that isn't carried forward to stacks, because stack
 		// configurations can instead vary their behavior based on input
 		// variables provided in the deployment configuration.
@@ -113,7 +113,7 @@ func (d *evaluationData) GetTerraformAttr(addr addrs.TerraformAttr, rng tfdiags.
 			diags = diags.Append(&hcl.Diagnostic{
 				Severity: hcl.DiagError,
 				Summary:  `Invalid reference`,
-				Detail:   `The terraform.workspace attribute is only available for modules used in Terraform workspaces. Use input variables instead to create variations between different instances of this module.`,
+				Detail:   `The terracina.workspace attribute is only available for modules used in Terracina workspaces. Use input variables instead to create variations between different instances of this module.`,
 				Subject:  rng.ToHCL().Ptr(),
 			})
 			return cty.DynamicVal, diags
@@ -121,7 +121,7 @@ func (d *evaluationData) GetTerraformAttr(addr addrs.TerraformAttr, rng tfdiags.
 		workspaceName := d.Evaluator.Meta.Env
 		return cty.StringVal(workspaceName), diags
 
-	// terraform.applying is an ephemeral boolean value that's set to true
+	// terracina.applying is an ephemeral boolean value that's set to true
 	// during an apply walk or false in any other situation. This is
 	// intended to allow, for example, using a more privileged auth role
 	// in a provider configuration during the apply phase but a more
@@ -130,13 +130,13 @@ func (d *evaluationData) GetTerraformAttr(addr addrs.TerraformAttr, rng tfdiags.
 		return cty.BoolVal(d.Evaluator.Operation == walkApply).Mark(marks.Ephemeral), nil
 
 	case "env":
-		// Prior to Terraform 0.12 there was an attribute "env", which was
+		// Prior to Terracina 0.12 there was an attribute "env", which was
 		// an alias name for "workspace". This was deprecated and is now
 		// removed.
 		diags = diags.Append(&hcl.Diagnostic{
 			Severity: hcl.DiagError,
-			Summary:  `Invalid "terraform" attribute`,
-			Detail:   `The terraform.env attribute was deprecated in v0.10 and removed in v0.12. The "state environment" concept was renamed to "workspace" in v0.12, and so the workspace name can now be accessed using the terraform.workspace attribute.`,
+			Summary:  `Invalid "terracina" attribute`,
+			Detail:   `The terracina.env attribute was deprecated in v0.10 and removed in v0.12. The "state environment" concept was renamed to "workspace" in v0.12, and so the workspace name can now be accessed using the terracina.workspace attribute.`,
 			Subject:  rng.ToHCL().Ptr(),
 		})
 		return cty.DynamicVal, diags
@@ -144,8 +144,8 @@ func (d *evaluationData) GetTerraformAttr(addr addrs.TerraformAttr, rng tfdiags.
 	default:
 		diags = diags.Append(&hcl.Diagnostic{
 			Severity: hcl.DiagError,
-			Summary:  `Invalid "terraform" attribute`,
-			Detail:   fmt.Sprintf(`The "terraform" object does not have an attribute named %q. The only supported attributes are terraform.workspace, the name of the currently-selected workspace, and terraform.applying, a boolean which is true only during apply.`, addr.Name),
+			Summary:  `Invalid "terracina" attribute`,
+			Detail:   fmt.Sprintf(`The "terracina" object does not have an attribute named %q. The only supported attributes are terracina.workspace, the name of the currently-selected workspace, and terracina.applying, a boolean which is true only during apply.`, addr.Name),
 			Subject:  rng.ToHCL().Ptr(),
 		})
 		return cty.DynamicVal, diags
@@ -176,7 +176,7 @@ func (d *evaluationData) GetCheckBlock(addr addrs.Check, rng tfdiags.SourceRange
 	diags = diags.Append(&hcl.Diagnostic{
 		Severity: hcl.DiagError,
 		Summary:  "Reference to \"check\" in invalid context",
-		Detail:   "The \"check\" object can only be referenced from an \"expect_failures\" attribute within a Terraform testing \"run\" block.",
+		Detail:   "The \"check\" object can only be referenced from an \"expect_failures\" attribute within a Terracina testing \"run\" block.",
 		Subject:  rng.ToHCL().Ptr(),
 	})
 	return cty.NilVal, diags

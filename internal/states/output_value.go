@@ -4,7 +4,7 @@
 package states
 
 import (
-	"github.com/hashicorp/terraform/internal/addrs"
+	"github.com/hashicorp/terracina/internal/addrs"
 	"github.com/zclconf/go-cty/cty"
 )
 

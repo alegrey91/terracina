@@ -15,14 +15,14 @@ import (
 	"github.com/hashicorp/go-uuid"
 	"github.com/tombuildsstuff/giovanni/storage/2018-11-09/blob/blobs"
 
-	"github.com/hashicorp/terraform/internal/states/remote"
-	"github.com/hashicorp/terraform/internal/states/statemgr"
+	"github.com/hashicorp/terracina/internal/states/remote"
+	"github.com/hashicorp/terracina/internal/states/statemgr"
 )
 
 const (
 	leaseHeader = "x-ms-lease-id"
 	// Must be lower case
-	lockInfoMetaKey = "terraformlockid"
+	lockInfoMetaKey = "terracinalockid"
 )
 
 type RemoteClient struct {

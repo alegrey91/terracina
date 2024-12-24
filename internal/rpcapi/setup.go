@@ -7,14 +7,14 @@ import (
 	"context"
 	"sync"
 
-	"github.com/hashicorp/terraform/internal/rpcapi/terraform1/setup"
+	"github.com/hashicorp/terracina/internal/rpcapi/terracina1/setup"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 // setupServer is an implementation of the "Setup" service defined in our
-// terraform1 package.
+// terracina1 package.
 //
 // This service is here mainly to offer the "Handshake" function, which clients
 // must call to negotiate access to any other services. This is really just

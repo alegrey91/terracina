@@ -6,8 +6,8 @@ package cloud
 import (
 	"testing"
 
-	"github.com/hashicorp/terraform/internal/command/workdir"
-	"github.com/hashicorp/terraform/internal/configs"
+	"github.com/hashicorp/terracina/internal/command/workdir"
+	"github.com/hashicorp/terracina/internal/configs"
 )
 
 func TestDetectConfigChangeType(t *testing.T) {
@@ -61,7 +61,7 @@ func TestDetectConfigChangeType(t *testing.T) {
 		},
 
 		// Various other cases can potentially be valid (decided by the
-		// Terraform CLI layer) but are irrelevant for Cloud mode purposes.
+		// Terracina CLI layer) but are irrelevant for Cloud mode purposes.
 		"init default local": {
 			``, ``, false,
 			ConfigChangeIrrelevant,

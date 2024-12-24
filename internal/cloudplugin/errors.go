@@ -9,9 +9,9 @@ import (
 )
 
 var (
-	// ErrCloudPluginNotSupported is the error returned when the upstream HCP Terraform does not
+	// ErrCloudPluginNotSupported is the error returned when the upstream HCP Terracina does not
 	// have a manifest.
-	ErrCloudPluginNotSupported = errors.New("cloud plugin is not supported by the remote version of Terraform Enterprise")
+	ErrCloudPluginNotSupported = errors.New("cloud plugin is not supported by the remote version of Terracina Enterprise")
 
 	// ErrRequestCanceled is the error returned when the context was cancelled.
 	ErrRequestCanceled = errors.New("request was canceled")
@@ -37,7 +37,7 @@ type ErrCloudPluginNotVerified struct {
 
 // Error returns a string representation of ErrQueryFailed
 func (e ErrQueryFailed) Error() string {
-	return fmt.Sprintf("failed to fetch cloud plugin from HCP Terraform: %s", e.inner)
+	return fmt.Sprintf("failed to fetch cloud plugin from HCP Terracina: %s", e.inner)
 }
 
 // Unwrap returns the inner error of ErrQueryFailed

@@ -9,16 +9,16 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/terraform"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/terracina"
 
-	legacy "github.com/hashicorp/terraform/internal/legacy/terraform"
+	legacy "github.com/hashicorp/terracina/internal/legacy/terracina"
 )
 
-func testCountHookResourceID(addr addrs.AbsResourceInstance) terraform.HookResourceIdentity {
-	return terraform.HookResourceIdentity{
+func testCountHookResourceID(addr addrs.AbsResourceInstance) terracina.HookResourceIdentity {
+	return terracina.HookResourceIdentity{
 		Addr: addr,
 		ProviderAddr: addrs.Provider{
 			Type:      "test",
@@ -29,7 +29,7 @@ func testCountHookResourceID(addr addrs.AbsResourceInstance) terraform.HookResou
 }
 
 func TestCountHook_impl(t *testing.T) {
-	var _ terraform.Hook = new(countHook)
+	var _ terracina.Hook = new(countHook)
 }
 
 func TestCountHookPostDiff_DestroyDeposed(t *testing.T) {

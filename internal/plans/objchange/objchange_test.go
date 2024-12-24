@@ -10,7 +10,7 @@ import (
 	"github.com/zclconf/go-cty-debug/ctydebug"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
 )
 
 func TestProposedNew(t *testing.T) {

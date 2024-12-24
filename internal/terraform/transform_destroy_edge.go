@@ -1,14 +1,14 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"log"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/dag"
-	"github.com/hashicorp/terraform/internal/plans"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/dag"
+	"github.com/hashicorp/terracina/internal/plans"
 )
 
 // GraphNodeDestroyer must be implemented by nodes that destroy resources.
@@ -319,7 +319,7 @@ func (t *pruneUnusedNodesTransformer) Transform(g *Graph) error {
 	// for configuration. Since the destroyer should already be hooked up to the
 	// provider, keeping all the destroyer dependencies should suffice.
 	for _, n := range g.Vertices() {
-		// a special case of destroyer, is that by convention Terraform expects
+		// a special case of destroyer, is that by convention Terracina expects
 		// root outputs to be "destroyed", and the output node is what writes
 		// the nil state. A root module output currently identifies itself as a
 		// temporary value which is not temporary for that reason.

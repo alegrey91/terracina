@@ -15,8 +15,8 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/spf13/afero"
 
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/modsdir"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/modsdir"
 )
 
 // LoadConfigWithSnapshot is a variant of LoadConfig that also simultaneously

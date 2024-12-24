@@ -9,12 +9,12 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/lang/ephemeral"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/lang/ephemeral"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // crossTypeMover is a collection of data that is needed to calculate the
@@ -50,9 +50,9 @@ func (m *crossTypeMover) getProvider(providers addrs.Provider) (providers.Interf
 	}
 
 	// Then we don't have a provider in the cache - this represents a bug in
-	// Terraform since we should have already loaded all the providers in the
+	// Terracina since we should have already loaded all the providers in the
 	// configuration and the state.
-	return nil, fmt.Errorf("provider %s implementation not found; this is a bug in Terraform - please report it", providers)
+	return nil, fmt.Errorf("provider %s implementation not found; this is a bug in Terracina - please report it", providers)
 }
 
 // prepareCrossTypeMove checks if the provided MoveStatement is a cross-type
@@ -196,7 +196,7 @@ func (move *crossTypeMove) applyCrossTypeMove(stmt *MoveStatement, source, targe
 		diags = diags.Append(&hcl.Diagnostic{
 			Severity: hcl.DiagError,
 			Summary:  "Failed to encode source value",
-			Detail:   fmt.Sprintf("Terraform failed to encode the value in state for %s: %v. This is a bug in Terraform; Please report it.", source.String(), err),
+			Detail:   fmt.Sprintf("Terracina failed to encode the value in state for %s: %v. This is a bug in Terracina; Please report it.", source.String(), err),
 			Subject:  stmt.DeclRange.ToHCL().Ptr(),
 		})
 		return diags

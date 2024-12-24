@@ -7,20 +7,20 @@ import (
 	"context"
 
 	"github.com/hashicorp/hcl/v2"
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/stacks/stackconfig"
-	"github.com/hashicorp/terraform/internal/stacks/stackruntime/internal/stackeval"
-	"github.com/hashicorp/terraform/internal/stacks/stackstate"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/stacks/stackconfig"
+	"github.com/hashicorp/terracina/internal/stacks/stackruntime/internal/stackeval"
+	"github.com/hashicorp/terracina/internal/stacks/stackstate"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 	"github.com/zclconf/go-cty/cty"
 )
 
 // EvalExpr evaluates the given expression in a specified evaluation
 // environment and scope.
 //
-// This is intended for situations like the "terraform console" command which
+// This is intended for situations like the "terracina console" command which
 // need to evaluate arbitrary expressions against a configuration and
 // previously-established state snapshot.
 func EvalExpr(ctx context.Context, expr hcl.Expression, req *EvalExprRequest) (cty.Value, tfdiags.Diagnostics) {

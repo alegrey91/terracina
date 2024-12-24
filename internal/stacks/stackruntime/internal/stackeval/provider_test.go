@@ -13,11 +13,11 @@ import (
 	"github.com/zclconf/go-cty-debug/ctydebug"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/instances"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/stacks/stackconfig/stackconfigtypes"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/instances"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/stacks/stackconfig/stackconfigtypes"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 func TestProviderCheckInstances(t *testing.T) {
@@ -25,7 +25,7 @@ func TestProviderCheckInstances(t *testing.T) {
 		t.Helper()
 		mainStack := main.MainStack(ctx)
 		provider := mainStack.Provider(ctx, stackaddrs.ProviderConfig{
-			Provider: addrs.MustParseProviderSourceString("terraform.io/builtin/foo"),
+			Provider: addrs.MustParseProviderSourceString("terracina.io/builtin/foo"),
 			Name:     "bar",
 		})
 		if provider == nil {
@@ -229,7 +229,7 @@ func TestProviderCheckInstances(t *testing.T) {
 }
 
 func TestProviderExprReferenceValue(t *testing.T) {
-	providerTypeAddr := addrs.MustParseProviderSourceString("terraform.io/builtin/foo")
+	providerTypeAddr := addrs.MustParseProviderSourceString("terracina.io/builtin/foo")
 	providerRefType := providerInstanceRefType(providerTypeAddr)
 	getProvider := func(ctx context.Context, t *testing.T, main *Main) *Provider {
 		t.Helper()

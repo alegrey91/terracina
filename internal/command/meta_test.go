@@ -15,9 +15,9 @@ import (
 	"github.com/google/go-cmp/cmp"
 
 	"github.com/hashicorp/cli"
-	"github.com/hashicorp/terraform/internal/backend"
-	"github.com/hashicorp/terraform/internal/backend/local"
-	"github.com/hashicorp/terraform/internal/terraform"
+	"github.com/hashicorp/terracina/internal/backend"
+	"github.com/hashicorp/terracina/internal/backend/local"
+	"github.com/hashicorp/terracina/internal/terracina"
 )
 
 func TestMetaColorize(t *testing.T) {
@@ -90,7 +90,7 @@ func TestMetaInputMode(t *testing.T) {
 		t.Fatalf("err: %s", err)
 	}
 
-	if m.InputMode() != terraform.InputModeStd {
+	if m.InputMode() != terracina.InputModeStd {
 		t.Fatalf("bad: %#v", m.InputMode())
 	}
 }
@@ -109,11 +109,11 @@ func TestMetaInputMode_envVar(t *testing.T) {
 		t.Fatalf("err: %s", err)
 	}
 
-	off := terraform.InputMode(0)
-	on := terraform.InputModeStd
+	off := terracina.InputMode(0)
+	on := terracina.InputModeStd
 	cases := []struct {
 		EnvVar   string
-		Expected terraform.InputMode
+		Expected terracina.InputMode
 	}{
 		{"false", off},
 		{"0", off},
@@ -360,7 +360,7 @@ func TestMeta_process(t *testing.T) {
 	// but we're still testing with these files in place to verify that
 	// they _aren't_ being interpreted by process, since that could otherwise
 	// cause them to be added more than once and mess up the precedence order.
-	defaultVarsfile := "terraform.tfvars"
+	defaultVarsfile := "terracina.tfvars"
 	err := ioutil.WriteFile(
 		filepath.Join(d, defaultVarsfile),
 		[]byte(""),

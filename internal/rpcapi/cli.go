@@ -13,11 +13,11 @@ import (
 )
 
 // CLICommand is a command initialization callback for use with
-// github.com/hashicorp/cli, allowing Terraform's "package main" to
+// github.com/hashicorp/cli, allowing Terracina's "package main" to
 // jump straight into the RPC plugin server without any interference
-// from the usual Terraform CLI machinery in package "command", which
+// from the usual Terracina CLI machinery in package "command", which
 // is irrelevant here because this RPC API exists to bypass the
-// Terraform CLI layer as much as possible.
+// Terracina CLI layer as much as possible.
 func CLICommandFactory(opts CommandFactoryOpts) func() (cli.Command, error) {
 	return func() (cli.Command, error) {
 		return cliCommand{opts}, nil
@@ -36,12 +36,12 @@ type cliCommand struct {
 // Help implements cli.Command.
 func (c cliCommand) Help() string {
 	helpText := `
-Usage: terraform [global options] rpcapi
+Usage: terracina [global options] rpcapi
 
-  Starts a gRPC server for programmatic access to Terraform Core from
+  Starts a gRPC server for programmatic access to Terracina Core from
   wrapping automation.
 
-  This interface is currently intended only for HCP Terraform and is
+  This interface is currently intended only for HCP Terracina and is
   subject to breaking changes even in patch releases. Do not use this.
 `
 	return strings.TrimSpace(helpText)
@@ -78,10 +78,10 @@ func (c cliCommand) Run(args []string) int {
 			// TODO:
 			//
 			// The following message says that this interface is for HCP
-			// Terraform only because we're using HCP Terraform's integration
+			// Terracina only because we're using HCP Terracina's integration
 			// with it to try to prove out the API/protocol design. By focusing
-			// only on HCP Terraform as a client first, we can accommodate
-			// any necessary breaking changes by ensuring that HCP Terraform's
+			// only on HCP Terracina as a client first, we can accommodate
+			// any necessary breaking changes by ensuring that HCP Terracina's
 			// client is updated before releasing an updated RPC API server
 			// implementation.
 			//
@@ -91,16 +91,16 @@ func (c cliCommand) Run(args []string) int {
 			// is a machine-oriented integration API rather than something for
 			// end-users to use directly. For example, the RPC server is likely
 			// to make a better integration point for tools like the
-			// Terraform Language Server in future too, assuming it grows to
+			// Terracina Language Server in future too, assuming it grows to
 			// include language analysis features.
 			fmt.Fprintf(
 				os.Stderr,
 				`
-This subcommand is for use by HCP Terraform and is not intended for direct use.
-Its behavior is not subject to Terraform compatibility promises. To interact
-with Terraform using the CLI workflow, refer to the main set of subcommands by
+This subcommand is for use by HCP Terracina and is not intended for direct use.
+Its behavior is not subject to Terracina compatibility promises. To interact
+with Terracina using the CLI workflow, refer to the main set of subcommands by
 running the following command:
-    terraform help
+    terracina help
 
 `)
 		} else {

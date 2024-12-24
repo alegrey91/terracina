@@ -12,9 +12,9 @@ import (
 
 	getter "github.com/hashicorp/go-getter"
 
-	"github.com/hashicorp/terraform/internal/copy"
-	"github.com/hashicorp/terraform/internal/getproviders"
-	"github.com/hashicorp/terraform/internal/httpclient"
+	"github.com/hashicorp/terracina/internal/copy"
+	"github.com/hashicorp/terracina/internal/getproviders"
+	"github.com/hashicorp/terracina/internal/httpclient"
 )
 
 // We borrow the "unpack a zip file into a target directory" logic from
@@ -33,7 +33,7 @@ func installFromHTTPURL(ctx context.Context, meta getproviders.PackageMeta, targ
 	httpGetter := getter.HttpGetter{
 		Client:                httpclient.New(),
 		Netrc:                 true,
-		XTerraformGetDisabled: true,
+		XTerracinaGetDisabled: true,
 	}
 
 	urlObj, err := url.Parse(urlStr)
@@ -43,7 +43,7 @@ func installFromHTTPURL(ctx context.Context, meta getproviders.PackageMeta, targ
 		// registry source.
 		return nil, fmt.Errorf("invalid provider download request: %s", err)
 	}
-	f, err := os.CreateTemp("", "terraform-provider")
+	f, err := os.CreateTemp("", "terracina-provider")
 	if err != nil {
 		return nil, fmt.Errorf("failed to open temporary file to download from %s: %w", urlStr, err)
 	}
@@ -106,7 +106,7 @@ func installFromLocalArchive(ctx context.Context, meta getproviders.PackageMeta,
 			)
 		} else if !matches {
 			return authResult, fmt.Errorf(
-				"the current package for %s %s doesn't match any of the checksums previously recorded in the dependency lock file; for more information: https://www.terraform.io/language/provider-checksum-verification",
+				"the current package for %s %s doesn't match any of the checksums previously recorded in the dependency lock file; for more information: https://www.terracina.io/language/provider-checksum-verification",
 				meta.Provider, meta.Version,
 			)
 		}
@@ -196,7 +196,7 @@ func installFromLocalDir(ctx context.Context, meta getproviders.PackageMeta, tar
 			)
 		} else if !matches {
 			return authResult, fmt.Errorf(
-				"the local package for %s %s doesn't match any of the checksums previously recorded in the dependency lock file (this might be because the available checksums are for packages targeting different platforms); for more information: https://www.terraform.io/language/provider-checksum-verification",
+				"the local package for %s %s doesn't match any of the checksums previously recorded in the dependency lock file (this might be because the available checksums are for packages targeting different platforms); for more information: https://www.terracina.io/language/provider-checksum-verification",
 				meta.Provider, meta.Version,
 			)
 		}

@@ -1,13 +1,13 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform/internal/providers"
+	"github.com/hashicorp/terracina/internal/providers"
 	"github.com/zclconf/go-cty/cty"
 	ctyjson "github.com/zclconf/go-cty/cty/json"
 )
@@ -22,7 +22,7 @@ func TestManagedDataValidate(t *testing.T) {
 
 	// empty
 	req := providers.ValidateResourceConfigRequest{
-		TypeName: "terraform_data",
+		TypeName: "terracina_data",
 		Config:   cty.ObjectVal(cfg),
 	}
 
@@ -66,7 +66,7 @@ func TestManagedDataUpgradeState(t *testing.T) {
 
 	// empty
 	req := providers.UpgradeResourceStateRequest{
-		TypeName:     "terraform_data",
+		TypeName:     "terracina_data",
 		RawStateJSON: jsState,
 	}
 
@@ -82,7 +82,7 @@ func TestManagedDataUpgradeState(t *testing.T) {
 
 func TestManagedDataRead(t *testing.T) {
 	req := providers.ReadResourceRequest{
-		TypeName: "terraform_data",
+		TypeName: "terracina_data",
 		PriorState: cty.ObjectVal(map[string]cty.Value{
 			"input":  cty.StringVal("input"),
 			"output": cty.StringVal("input"),
@@ -231,7 +231,7 @@ func TestManagedDataPlan(t *testing.T) {
 	} {
 		t.Run("plan-"+name, func(t *testing.T) {
 			req := providers.PlanResourceChangeRequest{
-				TypeName:         "terraform_data",
+				TypeName:         "terracina_data",
 				PriorState:       tc.prior,
 				ProposedNewState: tc.proposed,
 			}
@@ -367,7 +367,7 @@ func TestManagedDataApply(t *testing.T) {
 	} {
 		t.Run("apply-"+name, func(t *testing.T) {
 			req := providers.ApplyResourceChangeRequest{
-				TypeName:     "terraform_data",
+				TypeName:     "terracina_data",
 				PriorState:   tc.prior,
 				PlannedState: tc.planned,
 			}
@@ -398,10 +398,10 @@ func TestMoveDataStoreResourceState_Id(t *testing.T) {
 	}
 
 	req := providers.MoveResourceStateRequest{
-		SourceProviderAddress: "registry.terraform.io/hashicorp/null",
+		SourceProviderAddress: "registry.terracina.io/hashicorp/null",
 		SourceStateJSON:       nullResourceStateJSON,
 		SourceTypeName:        "null_resource",
-		TargetTypeName:        "terraform_data",
+		TargetTypeName:        "terracina_data",
 	}
 	resp := moveDataStoreResourceState(req)
 
@@ -425,7 +425,7 @@ func TestMoveResourceState_SourceProviderAddress(t *testing.T) {
 	t.Parallel()
 
 	req := providers.MoveResourceStateRequest{
-		SourceProviderAddress: "registry.terraform.io/examplecorp/null",
+		SourceProviderAddress: "registry.terracina.io/examplecorp/null",
 	}
 	resp := moveDataStoreResourceState(req)
 
@@ -438,7 +438,7 @@ func TestMoveResourceState_SourceTypeName(t *testing.T) {
 	t.Parallel()
 
 	req := providers.MoveResourceStateRequest{
-		SourceProviderAddress: "registry.terraform.io/hashicorp/null",
+		SourceProviderAddress: "registry.terracina.io/hashicorp/null",
 		SourceTypeName:        "null_data_source",
 	}
 	resp := moveDataStoreResourceState(req)
@@ -464,10 +464,10 @@ func TestMoveDataStoreResourceState_Triggers(t *testing.T) {
 	}
 
 	req := providers.MoveResourceStateRequest{
-		SourceProviderAddress: "registry.terraform.io/hashicorp/null",
+		SourceProviderAddress: "registry.terracina.io/hashicorp/null",
 		SourceStateJSON:       nullResourceStateJSON,
 		SourceTypeName:        "null_resource",
-		TargetTypeName:        "terraform_data",
+		TargetTypeName:        "terracina_data",
 	}
 	resp := moveDataStoreResourceState(req)
 

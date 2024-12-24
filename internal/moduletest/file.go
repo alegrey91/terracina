@@ -4,8 +4,8 @@
 package moduletest
 
 import (
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 type File struct {

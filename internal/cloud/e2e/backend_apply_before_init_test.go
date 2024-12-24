@@ -10,32 +10,32 @@ import (
 func Test_backend_apply_before_init(t *testing.T) {
 	t.Parallel()
 	skipIfMissingEnvVar(t)
-	skipWithoutRemoteTerraformVersion(t)
+	skipWithoutRemoteTerracinaVersion(t)
 
 	cases := testCases{
-		"terraform apply with cloud block - blank state": {
+		"terracina apply with cloud block - blank state": {
 			operations: []operationSets{
 				{
 					prep: func(t *testing.T, orgName, dir string) {
 						wsName := "new-workspace"
-						tfBlock := terraformConfigCloudBackendName(orgName, wsName)
+						tfBlock := terracinaConfigCloudBackendName(orgName, wsName)
 						writeMainTF(t, tfBlock, dir)
 					},
 					commands: []tfCommand{
 						{
 							command:           []string{"apply"},
-							expectedCmdOutput: `HCP Terraform initialization required: please run "terraform init"`,
+							expectedCmdOutput: `HCP Terracina initialization required: please run "terracina init"`,
 							expectError:       true,
 						},
 					},
 				},
 			},
 		},
-		"terraform apply with cloud block - local state": {
+		"terracina apply with cloud block - local state": {
 			operations: []operationSets{
 				{
 					prep: func(t *testing.T, orgName, dir string) {
-						tfBlock := terraformConfigLocalBackend()
+						tfBlock := terracinaConfigLocalBackend()
 						writeMainTF(t, tfBlock, dir)
 					},
 					commands: []tfCommand{
@@ -52,13 +52,13 @@ func Test_backend_apply_before_init(t *testing.T) {
 				{
 					prep: func(t *testing.T, orgName, dir string) {
 						wsName := "new-workspace"
-						tfBlock := terraformConfigCloudBackendName(orgName, wsName)
+						tfBlock := terracinaConfigCloudBackendName(orgName, wsName)
 						writeMainTF(t, tfBlock, dir)
 					},
 					commands: []tfCommand{
 						{
 							command:           []string{"apply"},
-							expectedCmdOutput: `HCP Terraform initialization required: please run "terraform init"`,
+							expectedCmdOutput: `HCP Terracina initialization required: please run "terracina init"`,
 							expectError:       true,
 						},
 					},

@@ -24,10 +24,10 @@ import (
 	"github.com/zclconf/go-cty/cty"
 	"github.com/zclconf/go-cty/cty/gocty"
 
-	"github.com/hashicorp/terraform/internal/backend"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/tfdiags"
-	"github.com/hashicorp/terraform/version"
+	"github.com/hashicorp/terracina/internal/backend"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/tfdiags"
+	"github.com/hashicorp/terracina/version"
 )
 
 func New() backend.Backend {
@@ -896,7 +896,7 @@ func (b *Backend) Configure(obj cty.Value) tfdiags.Diagnostics {
 	cfg := &awsbase.Config{
 		AccessKey:               stringAttr(obj, "access_key"),
 		APNInfo:                 stdUserAgentProducts(),
-		CallerDocumentationURL:  "https://www.terraform.io/docs/language/settings/backends/s3.html",
+		CallerDocumentationURL:  "https://www.terracina.io/docs/language/settings/backends/s3.html",
 		CallerName:              "S3 Backend",
 		Logger:                  baselog,
 		MaxRetries:              intAttrDefault(obj, "max_retries", 5),
@@ -1081,7 +1081,7 @@ func (b *Backend) Configure(obj cty.Value) tfdiags.Diagnostics {
 	_ /* ctx */, awsConfig, cfgDiags := awsbase.GetAwsConfig(ctx, cfg)
 	for _, d := range cfgDiags {
 		diags = diags.Append(tfdiags.Sourceless(
-			baseSeverityToTerraformSeverity(d.Severity()),
+			baseSeverityToTerracinaSeverity(d.Severity()),
 			d.Summary(),
 			d.Detail(),
 		))
@@ -1094,7 +1094,7 @@ func (b *Backend) Configure(obj cty.Value) tfdiags.Diagnostics {
 	accountID, _, awsDiags := awsbase.GetAwsAccountIDAndPartition(ctx, awsConfig, cfg)
 	for _, d := range awsDiags {
 		diags = append(diags, tfdiags.Sourceless(
-			baseSeverityToTerraformSeverity(d.Severity()),
+			baseSeverityToTerracinaSeverity(d.Severity()),
 			fmt.Sprintf("Retrieving AWS account details: %s", d.Summary()),
 			d.Detail(),
 		))
@@ -1145,7 +1145,7 @@ func stdUserAgentProducts() *awsbase.APNInfo {
 	return &awsbase.APNInfo{
 		PartnerName: "HashiCorp",
 		Products: []awsbase.UserAgentProduct{
-			{Name: "Terraform", Version: version.String(), Comment: "+https://www.terraform.io"},
+			{Name: "Terracina", Version: version.String(), Comment: "+https://www.terracina.io"},
 		},
 	}
 }

@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 func TestParseRefInTestingScope(t *testing.T) {
@@ -743,11 +743,11 @@ func TestParseRef(t *testing.T) {
 			``,
 		},
 
-		// terraform
+		// terracina
 		{
-			`terraform.workspace`,
+			`terracina.workspace`,
 			&Reference{
-				Subject: TerraformAttr{
+				Subject: TerracinaAttr{
 					Name: "workspace",
 				},
 				SourceRange: tfdiags.SourceRange{
@@ -758,9 +758,9 @@ func TestParseRef(t *testing.T) {
 			``,
 		},
 		{
-			`terraform.workspace.blah`,
+			`terracina.workspace.blah`,
 			&Reference{
-				Subject: TerraformAttr{
+				Subject: TerracinaAttr{
 					Name: "workspace",
 				},
 				SourceRange: tfdiags.SourceRange{
@@ -780,14 +780,14 @@ func TestParseRef(t *testing.T) {
 			``, // valid at this layer, but will fail during eval because "workspace" is a string
 		},
 		{
-			`terraform`,
+			`terracina`,
 			nil,
-			`The "terraform" object cannot be accessed directly. Instead, access one of its attributes.`,
+			`The "terracina" object cannot be accessed directly. Instead, access one of its attributes.`,
 		},
 		{
-			`terraform["workspace"]`,
+			`terracina["workspace"]`,
 			nil,
-			`The "terraform" object does not support this operation.`,
+			`The "terracina" object does not support this operation.`,
 		},
 
 		// var
@@ -840,7 +840,7 @@ func TestParseRef(t *testing.T) {
 		// the "resource" prefix forces interpreting the next name as a
 		// resource type name. This is an alias for just using a resource
 		// type name at the top level, to be used only if a later edition
-		// of the Terraform language introduces a new reserved word that
+		// of the Terracina language introduces a new reserved word that
 		// overlaps with a resource type name.
 		{
 			`resource.boop_instance.foo`,
@@ -864,17 +864,17 @@ func TestParseRef(t *testing.T) {
 		{
 			`template.foo`,
 			nil,
-			`The symbol name "template" is reserved for use in a future Terraform version. If you are using a provider that already uses this as a resource type name, add the prefix "resource." to force interpretation as a resource type name.`,
+			`The symbol name "template" is reserved for use in a future Terracina version. If you are using a provider that already uses this as a resource type name, add the prefix "resource." to force interpretation as a resource type name.`,
 		},
 		{
 			`lazy.foo`,
 			nil,
-			`The symbol name "lazy" is reserved for use in a future Terraform version. If you are using a provider that already uses this as a resource type name, add the prefix "resource." to force interpretation as a resource type name.`,
+			`The symbol name "lazy" is reserved for use in a future Terracina version. If you are using a provider that already uses this as a resource type name, add the prefix "resource." to force interpretation as a resource type name.`,
 		},
 		{
 			`arg.foo`,
 			nil,
-			`The symbol name "arg" is reserved for use in a future Terraform version. If you are using a provider that already uses this as a resource type name, add the prefix "resource." to force interpretation as a resource type name.`,
+			`The symbol name "arg" is reserved for use in a future Terracina version. If you are using a provider that already uses this as a resource type name, add the prefix "resource." to force interpretation as a resource type name.`,
 		},
 
 		// anything else, interpreted as a managed resource reference

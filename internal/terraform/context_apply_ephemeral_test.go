@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"fmt"
@@ -9,13 +9,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	testing_provider "github.com/hashicorp/terraform/internal/providers/testing"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	testing_provider "github.com/hashicorp/terracina/internal/providers/testing"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 	"github.com/zclconf/go-cty/cty"
 )
 
@@ -805,7 +805,7 @@ resource "ephem_write_only" "wo" {
 	expectedDiags = append(expectedDiags, tfdiags.Sourceless(
 		tfdiags.Error,
 		"Write-only attribute set",
-		`Provider "provider[\"registry.terraform.io/hashicorp/ephem\"]" returned a value for the write-only attribute "ephem_write_only.wo.write_only". Write-only attributes cannot be read back from the provider. This is a bug in the provider, which should be reported in the provider's own issue tracker.`,
+		`Provider "provider[\"registry.terracina.io/hashicorp/ephem\"]" returned a value for the write-only attribute "ephem_write_only.wo.write_only". Write-only attributes cannot be read back from the provider. This is a bug in the provider, which should be reported in the provider's own issue tracker.`,
 	))
 
 	assertDiagnosticsMatch(t, diags, expectedDiags)
@@ -877,7 +877,7 @@ resource "ephem_write_only" "wo" {
 	expectedDiags = append(expectedDiags, tfdiags.Sourceless(
 		tfdiags.Error,
 		"Write-only attribute set",
-		`Provider "provider[\"registry.terraform.io/hashicorp/ephem\"]" returned a value for the write-only attribute "ephem_write_only.wo.write_only". Write-only attributes cannot be read back from the provider. This is a bug in the provider, which should be reported in the provider's own issue tracker.`,
+		`Provider "provider[\"registry.terracina.io/hashicorp/ephem\"]" returned a value for the write-only attribute "ephem_write_only.wo.write_only". Write-only attributes cannot be read back from the provider. This is a bug in the provider, which should be reported in the provider's own issue tracker.`,
 	))
 
 	assertDiagnosticsMatch(t, diags, expectedDiags)
@@ -964,7 +964,7 @@ resource "ephem_write_only" "wo" {
 	expectedDiags = append(expectedDiags, tfdiags.Sourceless(
 		tfdiags.Error,
 		"Write-only attribute set",
-		`Provider "provider[\"registry.terraform.io/hashicorp/ephem\"]" returned a value for the write-only attribute "ephem_write_only.wo.write_only". Write-only attributes cannot be read back from the provider. This is a bug in the provider, which should be reported in the provider's own issue tracker.`,
+		`Provider "provider[\"registry.terracina.io/hashicorp/ephem\"]" returned a value for the write-only attribute "ephem_write_only.wo.write_only". Write-only attributes cannot be read back from the provider. This is a bug in the provider, which should be reported in the provider's own issue tracker.`,
 	))
 
 	assertDiagnosticsMatch(t, diags, expectedDiags)

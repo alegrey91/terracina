@@ -12,10 +12,10 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/test/bufconn"
 
-	"github.com/hashicorp/terraform/internal/rpcapi/terraform1/dependencies"
-	"github.com/hashicorp/terraform/internal/rpcapi/terraform1/packages"
-	"github.com/hashicorp/terraform/internal/rpcapi/terraform1/setup"
-	"github.com/hashicorp/terraform/internal/rpcapi/terraform1/stacks"
+	"github.com/hashicorp/terracina/internal/rpcapi/terracina1/dependencies"
+	"github.com/hashicorp/terracina/internal/rpcapi/terracina1/packages"
+	"github.com/hashicorp/terracina/internal/rpcapi/terracina1/setup"
+	"github.com/hashicorp/terracina/internal/rpcapi/terracina1/stacks"
 )
 
 // Client is a client for the RPC API.
@@ -34,10 +34,10 @@ type Client struct {
 }
 
 // NewInternalClient returns a client for the RPC API that uses in-memory
-// buffers to allow callers within the same Terraform CLI process to access
+// buffers to allow callers within the same Terracina CLI process to access
 // the RPC API without any sockets or child processes.
 //
-// This is intended for exposing Terraform Core functionality through Terraform
+// This is intended for exposing Terracina Core functionality through Terracina
 // CLI, to establish an explicit interface between those two sides without
 // the overhead of forking a child process containing exactly the same code.
 //

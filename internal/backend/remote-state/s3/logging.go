@@ -8,8 +8,8 @@ import (
 
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-uuid"
-	"github.com/hashicorp/terraform/internal/logging"
-	"github.com/hashicorp/terraform/internal/states/statemgr"
+	"github.com/hashicorp/terracina/internal/logging"
+	"github.com/hashicorp/terracina/internal/states/statemgr"
 )
 
 const (

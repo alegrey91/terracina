@@ -5,9 +5,9 @@
 // versions:
 // 	protoc-gen-go v1.34.2
 // 	protoc        v3.15.6
-// source: terraform1.proto
+// source: terracina1.proto
 
-package terraform1
+package terracina1
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -56,11 +56,11 @@ func (x Diagnostic_Severity) String() string {
 }
 
 func (Diagnostic_Severity) Descriptor() protoreflect.EnumDescriptor {
-	return file_terraform1_proto_enumTypes[0].Descriptor()
+	return file_terracina1_proto_enumTypes[0].Descriptor()
 }
 
 func (Diagnostic_Severity) Type() protoreflect.EnumType {
-	return &file_terraform1_proto_enumTypes[0]
+	return &file_terracina1_proto_enumTypes[0]
 }
 
 func (x Diagnostic_Severity) Number() protoreflect.EnumNumber {
@@ -69,7 +69,7 @@ func (x Diagnostic_Severity) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use Diagnostic_Severity.Descriptor instead.
 func (Diagnostic_Severity) EnumDescriptor() ([]byte, []int) {
-	return file_terraform1_proto_rawDescGZIP(), []int{2, 0}
+	return file_terracina1_proto_rawDescGZIP(), []int{2, 0}
 }
 
 // Represents a selected or available version of a provider, from either a
@@ -91,8 +91,8 @@ type ProviderPackage struct {
 	// distinguish installable vs. built-in providers without having to
 	// parse the source address syntax.
 	Version string `protobuf:"bytes,2,opt,name=version,proto3" json:"version,omitempty"`
-	// The hash strings that Terraform knows about for this provider package,
-	// using the same "scheme:hash" syntax used in Terraform's dependency
+	// The hash strings that Terracina knows about for this provider package,
+	// using the same "scheme:hash" syntax used in Terracina's dependency
 	// lock file format.
 	//
 	// For a message representing a "selected" provider package this enumerates
@@ -105,14 +105,14 @@ type ProviderPackage struct {
 	// describes only the actual package on disk, and so will typically
 	// include only the subset of the checksums from the corresponding
 	// "selected" package that are relevant to the current platform where
-	// Terraform Core is running.
+	// Terracina Core is running.
 	Hashes []string `protobuf:"bytes,3,rep,name=hashes,proto3" json:"hashes,omitempty"`
 }
 
 func (x *ProviderPackage) Reset() {
 	*x = ProviderPackage{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_terraform1_proto_msgTypes[0]
+		mi := &file_terracina1_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -125,7 +125,7 @@ func (x *ProviderPackage) String() string {
 func (*ProviderPackage) ProtoMessage() {}
 
 func (x *ProviderPackage) ProtoReflect() protoreflect.Message {
-	mi := &file_terraform1_proto_msgTypes[0]
+	mi := &file_terracina1_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -138,7 +138,7 @@ func (x *ProviderPackage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProviderPackage.ProtoReflect.Descriptor instead.
 func (*ProviderPackage) Descriptor() ([]byte, []int) {
-	return file_terraform1_proto_rawDescGZIP(), []int{0}
+	return file_terracina1_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *ProviderPackage) GetSourceAddr() string {
@@ -162,7 +162,7 @@ func (x *ProviderPackage) GetHashes() []string {
 	return nil
 }
 
-// A source address in the same form as it would appear in a Terraform
+// A source address in the same form as it would appear in a Terracina
 // configuration: a source string combined with an optional version constraint
 // string, where the latter is valid only for registry module addresses.
 //
@@ -181,7 +181,7 @@ type SourceAddress struct {
 func (x *SourceAddress) Reset() {
 	*x = SourceAddress{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_terraform1_proto_msgTypes[1]
+		mi := &file_terracina1_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -194,7 +194,7 @@ func (x *SourceAddress) String() string {
 func (*SourceAddress) ProtoMessage() {}
 
 func (x *SourceAddress) ProtoReflect() protoreflect.Message {
-	mi := &file_terraform1_proto_msgTypes[1]
+	mi := &file_terracina1_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -207,7 +207,7 @@ func (x *SourceAddress) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SourceAddress.ProtoReflect.Descriptor instead.
 func (*SourceAddress) Descriptor() ([]byte, []int) {
-	return file_terraform1_proto_rawDescGZIP(), []int{1}
+	return file_terracina1_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *SourceAddress) GetSource() string {
@@ -229,7 +229,7 @@ type Diagnostic struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Severity Diagnostic_Severity `protobuf:"varint,1,opt,name=severity,proto3,enum=terraform1.Diagnostic_Severity" json:"severity,omitempty"`
+	Severity Diagnostic_Severity `protobuf:"varint,1,opt,name=severity,proto3,enum=terracina1.Diagnostic_Severity" json:"severity,omitempty"`
 	Summary  string              `protobuf:"bytes,2,opt,name=summary,proto3" json:"summary,omitempty"`
 	Detail   string              `protobuf:"bytes,3,opt,name=detail,proto3" json:"detail,omitempty"`
 	Subject  *SourceRange        `protobuf:"bytes,4,opt,name=subject,proto3" json:"subject,omitempty"`
@@ -239,7 +239,7 @@ type Diagnostic struct {
 func (x *Diagnostic) Reset() {
 	*x = Diagnostic{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_terraform1_proto_msgTypes[2]
+		mi := &file_terracina1_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -252,7 +252,7 @@ func (x *Diagnostic) String() string {
 func (*Diagnostic) ProtoMessage() {}
 
 func (x *Diagnostic) ProtoReflect() protoreflect.Message {
-	mi := &file_terraform1_proto_msgTypes[2]
+	mi := &file_terracina1_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -265,7 +265,7 @@ func (x *Diagnostic) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Diagnostic.ProtoReflect.Descriptor instead.
 func (*Diagnostic) Descriptor() ([]byte, []int) {
-	return file_terraform1_proto_rawDescGZIP(), []int{2}
+	return file_terracina1_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *Diagnostic) GetSeverity() Diagnostic_Severity {
@@ -316,7 +316,7 @@ type SourceRange struct {
 func (x *SourceRange) Reset() {
 	*x = SourceRange{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_terraform1_proto_msgTypes[3]
+		mi := &file_terracina1_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -329,7 +329,7 @@ func (x *SourceRange) String() string {
 func (*SourceRange) ProtoMessage() {}
 
 func (x *SourceRange) ProtoReflect() protoreflect.Message {
-	mi := &file_terraform1_proto_msgTypes[3]
+	mi := &file_terracina1_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -342,7 +342,7 @@ func (x *SourceRange) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SourceRange.ProtoReflect.Descriptor instead.
 func (*SourceRange) Descriptor() ([]byte, []int) {
-	return file_terraform1_proto_rawDescGZIP(), []int{3}
+	return file_terracina1_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *SourceRange) GetSourceAddr() string {
@@ -379,7 +379,7 @@ type SourcePos struct {
 func (x *SourcePos) Reset() {
 	*x = SourcePos{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_terraform1_proto_msgTypes[4]
+		mi := &file_terracina1_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -392,7 +392,7 @@ func (x *SourcePos) String() string {
 func (*SourcePos) ProtoMessage() {}
 
 func (x *SourcePos) ProtoReflect() protoreflect.Message {
-	mi := &file_terraform1_proto_msgTypes[4]
+	mi := &file_terracina1_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -405,7 +405,7 @@ func (x *SourcePos) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SourcePos.ProtoReflect.Descriptor instead.
 func (*SourcePos) Descriptor() ([]byte, []int) {
-	return file_terraform1_proto_rawDescGZIP(), []int{4}
+	return file_terracina1_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *SourcePos) GetByte() int64 {
@@ -429,9 +429,9 @@ func (x *SourcePos) GetColumn() int64 {
 	return 0
 }
 
-var File_terraform1_proto protoreflect.FileDescriptor
+var File_terracina1_proto protoreflect.FileDescriptor
 
-var file_terraform1_proto_rawDesc = []byte{
+var file_terracina1_proto_rawDesc = []byte{
 	0x0a, 0x10, 0x74, 0x65, 0x72, 0x72, 0x61, 0x66, 0x6f, 0x72, 0x6d, 0x31, 0x2e, 0x70, 0x72, 0x6f,
 	0x74, 0x6f, 0x12, 0x0a, 0x74, 0x65, 0x72, 0x72, 0x61, 0x66, 0x6f, 0x72, 0x6d, 0x31, 0x22, 0x64,
 	0x0a, 0x0f, 0x50, 0x72, 0x6f, 0x76, 0x69, 0x64, 0x65, 0x72, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67,
@@ -479,33 +479,33 @@ var file_terraform1_proto_rawDesc = []byte{
 }
 
 var (
-	file_terraform1_proto_rawDescOnce sync.Once
-	file_terraform1_proto_rawDescData = file_terraform1_proto_rawDesc
+	file_terracina1_proto_rawDescOnce sync.Once
+	file_terracina1_proto_rawDescData = file_terracina1_proto_rawDesc
 )
 
-func file_terraform1_proto_rawDescGZIP() []byte {
-	file_terraform1_proto_rawDescOnce.Do(func() {
-		file_terraform1_proto_rawDescData = protoimpl.X.CompressGZIP(file_terraform1_proto_rawDescData)
+func file_terracina1_proto_rawDescGZIP() []byte {
+	file_terracina1_proto_rawDescOnce.Do(func() {
+		file_terracina1_proto_rawDescData = protoimpl.X.CompressGZIP(file_terracina1_proto_rawDescData)
 	})
-	return file_terraform1_proto_rawDescData
+	return file_terracina1_proto_rawDescData
 }
 
-var file_terraform1_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_terraform1_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
-var file_terraform1_proto_goTypes = []any{
-	(Diagnostic_Severity)(0), // 0: terraform1.Diagnostic.Severity
-	(*ProviderPackage)(nil),  // 1: terraform1.ProviderPackage
-	(*SourceAddress)(nil),    // 2: terraform1.SourceAddress
-	(*Diagnostic)(nil),       // 3: terraform1.Diagnostic
-	(*SourceRange)(nil),      // 4: terraform1.SourceRange
-	(*SourcePos)(nil),        // 5: terraform1.SourcePos
+var file_terracina1_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_terracina1_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_terracina1_proto_goTypes = []any{
+	(Diagnostic_Severity)(0), // 0: terracina1.Diagnostic.Severity
+	(*ProviderPackage)(nil),  // 1: terracina1.ProviderPackage
+	(*SourceAddress)(nil),    // 2: terracina1.SourceAddress
+	(*Diagnostic)(nil),       // 3: terracina1.Diagnostic
+	(*SourceRange)(nil),      // 4: terracina1.SourceRange
+	(*SourcePos)(nil),        // 5: terracina1.SourcePos
 }
-var file_terraform1_proto_depIdxs = []int32{
-	0, // 0: terraform1.Diagnostic.severity:type_name -> terraform1.Diagnostic.Severity
-	4, // 1: terraform1.Diagnostic.subject:type_name -> terraform1.SourceRange
-	4, // 2: terraform1.Diagnostic.context:type_name -> terraform1.SourceRange
-	5, // 3: terraform1.SourceRange.start:type_name -> terraform1.SourcePos
-	5, // 4: terraform1.SourceRange.end:type_name -> terraform1.SourcePos
+var file_terracina1_proto_depIdxs = []int32{
+	0, // 0: terracina1.Diagnostic.severity:type_name -> terracina1.Diagnostic.Severity
+	4, // 1: terracina1.Diagnostic.subject:type_name -> terracina1.SourceRange
+	4, // 2: terracina1.Diagnostic.context:type_name -> terracina1.SourceRange
+	5, // 3: terracina1.SourceRange.start:type_name -> terracina1.SourcePos
+	5, // 4: terracina1.SourceRange.end:type_name -> terracina1.SourcePos
 	5, // [5:5] is the sub-list for method output_type
 	5, // [5:5] is the sub-list for method input_type
 	5, // [5:5] is the sub-list for extension type_name
@@ -513,13 +513,13 @@ var file_terraform1_proto_depIdxs = []int32{
 	0, // [0:5] is the sub-list for field type_name
 }
 
-func init() { file_terraform1_proto_init() }
-func file_terraform1_proto_init() {
-	if File_terraform1_proto != nil {
+func init() { file_terracina1_proto_init() }
+func file_terracina1_proto_init() {
+	if File_terracina1_proto != nil {
 		return
 	}
 	if !protoimpl.UnsafeEnabled {
-		file_terraform1_proto_msgTypes[0].Exporter = func(v any, i int) any {
+		file_terracina1_proto_msgTypes[0].Exporter = func(v any, i int) any {
 			switch v := v.(*ProviderPackage); i {
 			case 0:
 				return &v.state
@@ -531,7 +531,7 @@ func file_terraform1_proto_init() {
 				return nil
 			}
 		}
-		file_terraform1_proto_msgTypes[1].Exporter = func(v any, i int) any {
+		file_terracina1_proto_msgTypes[1].Exporter = func(v any, i int) any {
 			switch v := v.(*SourceAddress); i {
 			case 0:
 				return &v.state
@@ -543,7 +543,7 @@ func file_terraform1_proto_init() {
 				return nil
 			}
 		}
-		file_terraform1_proto_msgTypes[2].Exporter = func(v any, i int) any {
+		file_terracina1_proto_msgTypes[2].Exporter = func(v any, i int) any {
 			switch v := v.(*Diagnostic); i {
 			case 0:
 				return &v.state
@@ -555,7 +555,7 @@ func file_terraform1_proto_init() {
 				return nil
 			}
 		}
-		file_terraform1_proto_msgTypes[3].Exporter = func(v any, i int) any {
+		file_terracina1_proto_msgTypes[3].Exporter = func(v any, i int) any {
 			switch v := v.(*SourceRange); i {
 			case 0:
 				return &v.state
@@ -567,7 +567,7 @@ func file_terraform1_proto_init() {
 				return nil
 			}
 		}
-		file_terraform1_proto_msgTypes[4].Exporter = func(v any, i int) any {
+		file_terracina1_proto_msgTypes[4].Exporter = func(v any, i int) any {
 			switch v := v.(*SourcePos); i {
 			case 0:
 				return &v.state
@@ -584,19 +584,19 @@ func file_terraform1_proto_init() {
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_terraform1_proto_rawDesc,
+			RawDescriptor: file_terracina1_proto_rawDesc,
 			NumEnums:      1,
 			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_terraform1_proto_goTypes,
-		DependencyIndexes: file_terraform1_proto_depIdxs,
-		EnumInfos:         file_terraform1_proto_enumTypes,
-		MessageInfos:      file_terraform1_proto_msgTypes,
+		GoTypes:           file_terracina1_proto_goTypes,
+		DependencyIndexes: file_terracina1_proto_depIdxs,
+		EnumInfos:         file_terracina1_proto_enumTypes,
+		MessageInfos:      file_terracina1_proto_msgTypes,
 	}.Build()
-	File_terraform1_proto = out.File
-	file_terraform1_proto_rawDesc = nil
-	file_terraform1_proto_goTypes = nil
-	file_terraform1_proto_depIdxs = nil
+	File_terracina1_proto = out.File
+	file_terracina1_proto_rawDesc = nil
+	file_terracina1_proto_goTypes = nil
+	file_terracina1_proto_depIdxs = nil
 }

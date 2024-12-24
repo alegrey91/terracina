@@ -14,26 +14,26 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/hashicorp/terraform/internal/backend"
-	"github.com/hashicorp/terraform/internal/backend/backendrun"
-	"github.com/hashicorp/terraform/internal/command/views"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/logging"
-	"github.com/hashicorp/terraform/internal/states/statemgr"
-	"github.com/hashicorp/terraform/internal/terraform"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/backend"
+	"github.com/hashicorp/terracina/internal/backend/backendrun"
+	"github.com/hashicorp/terracina/internal/command/views"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/logging"
+	"github.com/hashicorp/terracina/internal/states/statemgr"
+	"github.com/hashicorp/terracina/internal/terracina"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 	"github.com/zclconf/go-cty/cty"
 )
 
 const (
-	DefaultWorkspaceDir    = "terraform.tfstate.d"
+	DefaultWorkspaceDir    = "terracina.tfstate.d"
 	DefaultWorkspaceFile   = "environment"
-	DefaultStateFilename   = "terraform.tfstate"
+	DefaultStateFilename   = "terracina.tfstate"
 	DefaultBackupExtension = ".backup"
 )
 
 // Local is an implementation of EnhancedBackend that performs all operations
-// locally. This is the "default" backend and implements normal Terraform
+// locally. This is the "default" backend and implements normal Terracina
 // behavior as it is well known.
 type Local struct {
 	// The State* paths are set from the backend config, and may be left blank
@@ -67,9 +67,9 @@ type Local struct {
 	// here as they're loaded.
 	states map[string]statemgr.Full
 
-	// Terraform context. Many of these will be overridden or merged by
+	// Terracina context. Many of these will be overridden or merged by
 	// Operation. See Operation for more details.
-	ContextOpts *terraform.ContextOpts
+	ContextOpts *terracina.ContextOpts
 
 	// OpInput will ask for necessary input prior to performing any operations.
 	//
@@ -272,7 +272,7 @@ func (b *Local) StateMgr(name string) (statemgr.Full, error) {
 
 // Operation implements backendrun.OperationsBackend
 //
-// This will initialize an in-memory terraform.Context to perform the
+// This will initialize an in-memory terracina.Context to perform the
 // operation within this process.
 //
 // The given operation parameter will be merged with the ContextOpts on
@@ -295,8 +295,8 @@ func (b *Local) Operation(ctx context.Context, op *backendrun.Operation) (*backe
 	default:
 		return nil, fmt.Errorf(
 			"unsupported operation type: %s\n\n"+
-				"This is a bug in Terraform and should be reported. The local backend\n"+
-				"is built-in to Terraform and should always support all operations.",
+				"This is a bug in Terracina and should be reported. The local backend\n"+
+				"is built-in to Terracina and should always support all operations.",
 			op.Type)
 	}
 
@@ -342,7 +342,7 @@ func (b *Local) opWait(
 	doneCh <-chan struct{},
 	stopCtx context.Context,
 	cancelCtx context.Context,
-	tfCtx *terraform.Context,
+	tfCtx *terracina.Context,
 	opStateMgr statemgr.Persister,
 	view views.Operation) (canceled bool) {
 	// Wait for the operation to finish or for us to be interrupted so
@@ -495,4 +495,4 @@ func (b *Local) stateWorkspaceDir() string {
 
 const earlyStateWriteErrorFmt = `Error: %s
 
-Terraform encountered an error attempting to save the state before cancelling the current operation. Once the operation is complete another attempt will be made to save the final state.`
+Terracina encountered an error attempting to save the state before cancelling the current operation. Once the operation is complete another attempt will be made to save the final state.`

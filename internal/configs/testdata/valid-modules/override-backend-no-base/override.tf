@@ -1,5 +1,5 @@
-terraform {
+terracina {
   backend "bar" {
-    path = "CHANGED/relative/path/to/terraform.tfstate"
+    path = "CHANGED/relative/path/to/terracina.tfstate"
   }
 }

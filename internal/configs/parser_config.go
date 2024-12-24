@@ -32,7 +32,7 @@ func (p *Parser) LoadConfigFileOverride(path string) (*File, hcl.Diagnostics) {
 	return p.loadConfigFile(path, true)
 }
 
-// LoadTestFile reads the file at the given path and parses it as a Terraform
+// LoadTestFile reads the file at the given path and parses it as a Terracina
 // test file.
 //
 // It references the same LoadHCLFile as LoadConfigFile, so inherits the same
@@ -49,7 +49,7 @@ func (p *Parser) LoadTestFile(path string) (*TestFile, hcl.Diagnostics) {
 }
 
 // LoadMockDataFile reads the file at the given path and parses it as a
-// Terraform mock data file.
+// Terracina mock data file.
 //
 // It references the same LoadHCLFile as LoadConfigFile, so inherits the same
 // syntax selection behaviours.
@@ -92,11 +92,11 @@ func parseConfigFile(body hcl.Body, diags hcl.Diagnostics, override, allowExperi
 	for _, block := range content.Blocks {
 		switch block.Type {
 
-		case "terraform":
-			content, contentDiags := block.Body.Content(terraformBlockSchema)
+		case "terracina":
+			content, contentDiags := block.Body.Content(terracinaBlockSchema)
 			diags = append(diags, contentDiags...)
 
-			// We ignore the "terraform_version", "language" and "experiments"
+			// We ignore the "terracina_version", "language" and "experiments"
 			// attributes here because sniffCoreVersionRequirements and
 			// sniffActiveExperiments already dealt with those above.
 
@@ -140,11 +140,11 @@ func parseConfigFile(body hcl.Body, diags hcl.Diagnostics, override, allowExperi
 			}
 
 		case "required_providers":
-			// required_providers should be nested inside a "terraform" block
+			// required_providers should be nested inside a "terracina" block
 			diags = append(diags, &hcl.Diagnostic{
 				Severity: hcl.DiagError,
 				Summary:  "Invalid required_providers block",
-				Detail:   "A \"required_providers\" block must be nested inside a \"terraform\" block.",
+				Detail:   "A \"required_providers\" block must be nested inside a \"terracina\" block.",
 				Subject:  block.TypeRange.Ptr(),
 			})
 
@@ -242,18 +242,18 @@ func parseConfigFile(body hcl.Body, diags hcl.Diagnostics, override, allowExperi
 }
 
 // sniffCoreVersionRequirements does minimal parsing of the given body for
-// "terraform" blocks with "required_version" attributes, returning the
+// "terracina" blocks with "required_version" attributes, returning the
 // requirements found.
 //
 // This is intended to maximize the chance that we'll be able to read the
 // requirements (syntax errors notwithstanding) even if the config file contains
-// constructs that might've been added in future Terraform versions
+// constructs that might've been added in future Terracina versions
 //
 // This is a "best effort" sort of method which will return constraints it is
 // able to find, but may return no constraints at all if the given body is
 // so invalid that it cannot be decoded at all.
 func sniffCoreVersionRequirements(body hcl.Body) ([]VersionConstraint, hcl.Diagnostics) {
-	rootContent, _, diags := body.PartialContent(configFileTerraformBlockSniffRootSchema)
+	rootContent, _, diags := body.PartialContent(configFileTerracinaBlockSniffRootSchema)
 
 	var constraints []VersionConstraint
 
@@ -282,12 +282,12 @@ func sniffCoreVersionRequirements(body hcl.Body) ([]VersionConstraint, hcl.Diagn
 var configFileSchema = &hcl.BodySchema{
 	Blocks: []hcl.BlockHeaderSchema{
 		{
-			Type: "terraform",
+			Type: "terracina",
 		},
 		{
 			// This one is not really valid, but we include it here so we
 			// can create a specialized error message hinting the user to
-			// nest it inside a "terraform" block.
+			// nest it inside a "terracina" block.
 			Type: "required_providers",
 		},
 		{
@@ -337,9 +337,9 @@ var configFileSchema = &hcl.BodySchema{
 	},
 }
 
-// terraformBlockSchema is the schema for a top-level "terraform" block in
+// terracinaBlockSchema is the schema for a top-level "terracina" block in
 // a configuration file.
-var terraformBlockSchema = &hcl.BodySchema{
+var terracinaBlockSchema = &hcl.BodySchema{
 	Attributes: []hcl.AttributeSchema{
 		{Name: "required_version"},
 		{Name: "experiments"},
@@ -363,12 +363,12 @@ var terraformBlockSchema = &hcl.BodySchema{
 	},
 }
 
-// configFileTerraformBlockSniffRootSchema is a schema for
+// configFileTerracinaBlockSniffRootSchema is a schema for
 // sniffCoreVersionRequirements and sniffActiveExperiments.
-var configFileTerraformBlockSniffRootSchema = &hcl.BodySchema{
+var configFileTerracinaBlockSniffRootSchema = &hcl.BodySchema{
 	Blocks: []hcl.BlockHeaderSchema{
 		{
-			Type: "terraform",
+			Type: "terracina",
 		},
 	},
 }
@@ -383,7 +383,7 @@ var configFileVersionSniffBlockSchema = &hcl.BodySchema{
 }
 
 // configFileExperimentsSniffBlockSchema is a schema for sniffActiveExperiments,
-// to decode a single attribute from inside a "terraform" block.
+// to decode a single attribute from inside a "terracina" block.
 var configFileExperimentsSniffBlockSchema = &hcl.BodySchema{
 	Attributes: []hcl.AttributeSchema{
 		{Name: "experiments"},

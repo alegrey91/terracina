@@ -8,10 +8,10 @@ import (
 
 	"github.com/hashicorp/hcl/v2"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/experiments"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/experiments"
 
-	tfversion "github.com/hashicorp/terraform/version"
+	tfversion "github.com/hashicorp/terracina/version"
 )
 
 // Module is a container for a set of configuration constructs that are
@@ -228,8 +228,8 @@ func (m *Module) appendFile(file *File) hcl.Diagnostics {
 		if m.CloudConfig != nil {
 			diags = append(diags, &hcl.Diagnostic{
 				Severity: hcl.DiagError,
-				Summary:  "Duplicate HCP Terraform configurations",
-				Detail:   fmt.Sprintf("A module may have only one 'cloud' block configuring HCP Terraform or Terraform Enterprise. The 'cloud' block was previously configured at %s.", m.CloudConfig.DeclRange),
+				Summary:  "Duplicate HCP Terracina configurations",
+				Detail:   fmt.Sprintf("A module may have only one 'cloud' block configuring HCP Terracina or Terracina Enterprise. The 'cloud' block was previously configured at %s.", m.CloudConfig.DeclRange),
 				Subject:  &c.DeclRange,
 			})
 			continue
@@ -242,7 +242,7 @@ func (m *Module) appendFile(file *File) hcl.Diagnostics {
 		diags = append(diags, &hcl.Diagnostic{
 			Severity: hcl.DiagError,
 			Summary:  "Both a backend and cloud configuration are present",
-			Detail:   fmt.Sprintf("A module may declare either one 'cloud' block OR one 'backend' block configuring a state backend. The 'cloud' block is configured at %s; a backend is configured at %s. Remove the backend block to configure HCP Terraform or Terraform Enteprise.", m.CloudConfig.DeclRange, m.Backend.DeclRange),
+			Detail:   fmt.Sprintf("A module may declare either one 'cloud' block OR one 'backend' block configuring a state backend. The 'cloud' block is configured at %s; a backend is configured at %s. Remove the backend block to configure HCP Terracina or Terracina Enteprise.", m.CloudConfig.DeclRange, m.Backend.DeclRange),
 			Subject:  &m.Backend.DeclRange,
 		})
 	}
@@ -350,7 +350,7 @@ func (m *Module) appendFile(file *File) hcl.Diagnostics {
 		} else {
 			// an invalid resource name (for e.g. "null resource" instead of
 			// "null_resource") can cause a panic down the line in addrs:
-			// https://github.com/hashicorp/terraform/issues/25560
+			// https://github.com/hashicorp/terracina/issues/25560
 			implied, err := addrs.ParseProviderPart(r.Addr().ImpliedProvider())
 			if err == nil {
 				r.Provider = m.ImpliedProviderForUnqualifiedType(implied)
@@ -396,7 +396,7 @@ func (m *Module) appendFile(file *File) hcl.Diagnostics {
 		} else {
 			// an invalid resource name (for e.g. "null resource" instead of
 			// "null_resource") can cause a panic down the line in addrs:
-			// https://github.com/hashicorp/terraform/issues/25560
+			// https://github.com/hashicorp/terracina/issues/25560
 			implied, err := addrs.ParseProviderPart(r.Addr().ImpliedProvider())
 			if err == nil {
 				r.Provider = m.ImpliedProviderForUnqualifiedType(implied)
@@ -441,7 +441,7 @@ func (m *Module) appendFile(file *File) hcl.Diagnostics {
 		} else {
 			// an invalid data source name (for e.g. "null resource" instead of
 			// "null_resource") can cause a panic down the line in addrs:
-			// https://github.com/hashicorp/terraform/issues/25560
+			// https://github.com/hashicorp/terracina/issues/25560
 			implied, err := addrs.ParseProviderPart(r.Addr().ImpliedProvider())
 			if err == nil {
 				r.Provider = m.ImpliedProviderForUnqualifiedType(implied)
@@ -532,8 +532,8 @@ func (m *Module) mergeFile(file *File) hcl.Diagnostics {
 			// though it can override cloud/backend blocks from _other_ files.
 			diags = append(diags, &hcl.Diagnostic{
 				Severity: hcl.DiagError,
-				Summary:  "Duplicate HCP Terraform configurations",
-				Detail:   fmt.Sprintf("A module may have only one 'cloud' block configuring HCP Terraform or Terraform Enterprise. The 'cloud' block was previously configured at %s.", file.CloudConfigs[0].DeclRange),
+				Summary:  "Duplicate HCP Terracina configurations",
+				Detail:   fmt.Sprintf("A module may have only one 'cloud' block configuring HCP Terracina or Terracina Enterprise. The 'cloud' block was previously configured at %s.", file.CloudConfigs[0].DeclRange),
 				Subject:  &file.CloudConfigs[1].DeclRange,
 			})
 		}
@@ -741,7 +741,7 @@ func (m *Module) CheckCoreVersionRequirements(path addrs.Module, sourceAddr addr
 					Severity: hcl.DiagError,
 					Summary:  "Invalid required_version constraint",
 					Detail: fmt.Sprintf(
-						"Prerelease version constraints are not supported: %s. Remove the prerelease information from the constraint. Prerelease versions of terraform will match constraints using their version core only.",
+						"Prerelease version constraints are not supported: %s. Remove the prerelease information from the constraint. Prerelease versions of terracina will match constraints using their version core only.",
 						required.String()),
 					Subject: constraint.DeclRange.Ptr(),
 				})
@@ -760,9 +760,9 @@ func (m *Module) CheckCoreVersionRequirements(path addrs.Module, sourceAddr addr
 			case len(path) == 0:
 				diags = diags.Append(&hcl.Diagnostic{
 					Severity: hcl.DiagError,
-					Summary:  "Unsupported Terraform Core version",
+					Summary:  "Unsupported Terracina Core version",
 					Detail: fmt.Sprintf(
-						"This configuration does not support Terraform version %s. To proceed, either choose another supported Terraform version or update this version constraint. Version constraints are normally set for good reason, so updating the constraint may lead to other errors or unexpected behavior.",
+						"This configuration does not support Terracina version %s. To proceed, either choose another supported Terracina version or update this version constraint. Version constraints are normally set for good reason, so updating the constraint may lead to other errors or unexpected behavior.",
 						tfversion.String(),
 					),
 					Subject: constraint.DeclRange.Ptr(),
@@ -770,9 +770,9 @@ func (m *Module) CheckCoreVersionRequirements(path addrs.Module, sourceAddr addr
 			default:
 				diags = diags.Append(&hcl.Diagnostic{
 					Severity: hcl.DiagError,
-					Summary:  "Unsupported Terraform Core version",
+					Summary:  "Unsupported Terracina Core version",
 					Detail: fmt.Sprintf(
-						"Module %s (from %s) does not support Terraform version %s. To proceed, either choose another supported Terraform version or update this version constraint. Version constraints are normally set for good reason, so updating the constraint may lead to other errors or unexpected behavior.",
+						"Module %s (from %s) does not support Terracina version %s. To proceed, either choose another supported Terracina version or update this version constraint. Version constraints are normally set for good reason, so updating the constraint may lead to other errors or unexpected behavior.",
 						path, sourceAddr, tfversion.String(),
 					),
 					Subject: constraint.DeclRange.Ptr(),

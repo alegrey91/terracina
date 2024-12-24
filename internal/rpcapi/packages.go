@@ -9,16 +9,16 @@ import (
 	"strings"
 
 	"github.com/apparentlymart/go-versions/versions"
-	"github.com/hashicorp/terraform-svchost/disco"
+	"github.com/hashicorp/terracina-svchost/disco"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/getmodules"
-	"github.com/hashicorp/terraform/internal/getproviders"
-	"github.com/hashicorp/terraform/internal/providercache"
-	"github.com/hashicorp/terraform/internal/registry"
-	"github.com/hashicorp/terraform/internal/registry/regsrc"
-	"github.com/hashicorp/terraform/internal/rpcapi/terraform1"
-	"github.com/hashicorp/terraform/internal/rpcapi/terraform1/packages"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/getmodules"
+	"github.com/hashicorp/terracina/internal/getproviders"
+	"github.com/hashicorp/terracina/internal/providercache"
+	"github.com/hashicorp/terracina/internal/registry"
+	"github.com/hashicorp/terracina/internal/registry/regsrc"
+	"github.com/hashicorp/terracina/internal/rpcapi/terracina1"
+	"github.com/hashicorp/terracina/internal/rpcapi/terracina1/packages"
 )
 
 var _ packages.PackagesServer = (*packagesServer)(nil)
@@ -62,8 +62,8 @@ func (p *packagesServer) ProviderPackageVersions(ctx context.Context, request *p
 		displayWarnings[ix] = fmt.Sprintf("- %s", warning)
 	}
 	if len(displayWarnings) > 0 {
-		response.Diagnostics = append(response.Diagnostics, &terraform1.Diagnostic{
-			Severity: terraform1.Diagnostic_WARNING,
+		response.Diagnostics = append(response.Diagnostics, &terracina1.Diagnostic{
+			Severity: terracina1.Diagnostic_WARNING,
 			Summary:  "Additional provider information from registry",
 			Detail:   fmt.Sprintf("The remote registry returned warnings for %s:\n%s", provider.ForDisplay(), strings.Join(displayWarnings, "\n")),
 		})
@@ -72,8 +72,8 @@ func (p *packagesServer) ProviderPackageVersions(ctx context.Context, request *p
 	if err != nil {
 		// TODO: Parse the different error types so we can provide specific
 		//  error diagnostics, see commands/init.go:621.
-		response.Diagnostics = append(response.Diagnostics, &terraform1.Diagnostic{
-			Severity: terraform1.Diagnostic_ERROR,
+		response.Diagnostics = append(response.Diagnostics, &terracina1.Diagnostic{
+			Severity: terracina1.Diagnostic_ERROR,
 			Summary:  "Failed to query available provider packages",
 			Detail:   fmt.Sprintf("Could not retrieve the list of available versions for provider %s: %s.", provider.ForDisplay(), err),
 		})
@@ -92,8 +92,8 @@ func (p *packagesServer) FetchProviderPackage(ctx context.Context, request *pack
 
 	version, err := versions.ParseVersion(request.Version)
 	if err != nil {
-		response.Diagnostics = append(response.Diagnostics, &terraform1.Diagnostic{
-			Severity: terraform1.Diagnostic_ERROR,
+		response.Diagnostics = append(response.Diagnostics, &terracina1.Diagnostic{
+			Severity: terracina1.Diagnostic_ERROR,
 			Summary:  "Invalid platform",
 			Detail:   fmt.Sprintf("The requested version %s is invalid: %s.", request.Version, err),
 		})
@@ -118,8 +118,8 @@ func (p *packagesServer) FetchProviderPackage(ctx context.Context, request *pack
 
 		platform, err := getproviders.ParsePlatform(requestPlatform)
 		if err != nil {
-			result.Diagnostics = append(result.Diagnostics, &terraform1.Diagnostic{
-				Severity: terraform1.Diagnostic_ERROR,
+			result.Diagnostics = append(result.Diagnostics, &terracina1.Diagnostic{
+				Severity: terracina1.Diagnostic_ERROR,
 				Summary:  "Invalid platform",
 				Detail:   fmt.Sprintf("The requested platform %s is invalid: %s.", requestPlatform, err),
 			})
@@ -130,8 +130,8 @@ func (p *packagesServer) FetchProviderPackage(ctx context.Context, request *pack
 		if err != nil {
 			// TODO: Parse the different error types so we can provide specific
 			//  error diagnostics, see commands/init.go:731.
-			result.Diagnostics = append(result.Diagnostics, &terraform1.Diagnostic{
-				Severity: terraform1.Diagnostic_ERROR,
+			result.Diagnostics = append(result.Diagnostics, &terracina1.Diagnostic{
+				Severity: terracina1.Diagnostic_ERROR,
 				Summary:  "Failed to query provider package metadata",
 				Detail:   fmt.Sprintf("Could not retrieve package metadata for provider %s@%s for %s: %s.", provider.ForDisplay(), version.String(), platform.String(), err),
 			})
@@ -143,8 +143,8 @@ func (p *packagesServer) FetchProviderPackage(ctx context.Context, request *pack
 		if err != nil {
 			// TODO: Parse the different error types so we can provide specific
 			//  error diagnostics, see commands/init.go:731.
-			result.Diagnostics = append(result.Diagnostics, &terraform1.Diagnostic{
-				Severity: terraform1.Diagnostic_ERROR,
+			result.Diagnostics = append(result.Diagnostics, &terracina1.Diagnostic{
+				Severity: terracina1.Diagnostic_ERROR,
 				Summary:  "Failed to download provider package",
 				Detail:   fmt.Sprintf("Could not download provider %s@%s for %s: %s.", provider.ForDisplay(), version.String(), platform.String(), err),
 			})
@@ -161,15 +161,15 @@ func (p *packagesServer) FetchProviderPackage(ctx context.Context, request *pack
 		providerPackage := into.ProviderVersion(provider, version)
 		hash, err := providerPackage.Hash()
 		if err != nil {
-			result.Diagnostics = append(result.Diagnostics, &terraform1.Diagnostic{
-				Severity: terraform1.Diagnostic_ERROR,
+			result.Diagnostics = append(result.Diagnostics, &terracina1.Diagnostic{
+				Severity: terracina1.Diagnostic_ERROR,
 				Summary:  "Failed to hash provider package",
 				Detail:   fmt.Sprintf("Could not hash provider %s@%s for %s: %s.", provider.ForDisplay(), version.String(), platform.String(), err),
 			})
 			continue
 		}
 		hashes = append(hashes, string(hash))
-		result.Provider = &terraform1.ProviderPackage{
+		result.Provider = &terracina1.ProviderPackage{
 			SourceAddr: request.SourceAddr,
 			Version:    request.Version,
 			Hashes:     hashes,
@@ -184,8 +184,8 @@ func (p *packagesServer) ModulePackageVersions(ctx context.Context, request *pac
 
 	module, err := regsrc.ParseModuleSource(request.SourceAddr)
 	if err != nil {
-		response.Diagnostics = append(response.Diagnostics, &terraform1.Diagnostic{
-			Severity: terraform1.Diagnostic_ERROR,
+		response.Diagnostics = append(response.Diagnostics, &terracina1.Diagnostic{
+			Severity: terracina1.Diagnostic_ERROR,
 			Summary:  "Invalid module source",
 			Detail:   fmt.Sprintf("Module source %s is invalid: %s.", request.SourceAddr, err),
 		})
@@ -195,8 +195,8 @@ func (p *packagesServer) ModulePackageVersions(ctx context.Context, request *pac
 	client := registry.NewClient(p.services, nil)
 	versions, err := client.ModuleVersions(ctx, module)
 	if err != nil {
-		response.Diagnostics = append(response.Diagnostics, &terraform1.Diagnostic{
-			Severity: terraform1.Diagnostic_ERROR,
+		response.Diagnostics = append(response.Diagnostics, &terracina1.Diagnostic{
+			Severity: terracina1.Diagnostic_ERROR,
 			Summary:  "Failed to query available module packages",
 			Detail:   fmt.Sprintf("Could not retrieve the list of available modules for module %s: %s.", module.Display(), err),
 		})
@@ -217,8 +217,8 @@ func (p *packagesServer) ModulePackageSourceAddr(ctx context.Context, request *p
 
 	module, err := regsrc.ParseModuleSource(request.SourceAddr)
 	if err != nil {
-		response.Diagnostics = append(response.Diagnostics, &terraform1.Diagnostic{
-			Severity: terraform1.Diagnostic_ERROR,
+		response.Diagnostics = append(response.Diagnostics, &terracina1.Diagnostic{
+			Severity: terracina1.Diagnostic_ERROR,
 			Summary:  "Invalid module source",
 			Detail:   fmt.Sprintf("Module source %s is invalid: %s.", request.SourceAddr, err),
 		})
@@ -228,8 +228,8 @@ func (p *packagesServer) ModulePackageSourceAddr(ctx context.Context, request *p
 	client := registry.NewClient(p.services, nil)
 	location, err := client.ModuleLocation(ctx, module, request.Version)
 	if err != nil {
-		response.Diagnostics = append(response.Diagnostics, &terraform1.Diagnostic{
-			Severity: terraform1.Diagnostic_ERROR,
+		response.Diagnostics = append(response.Diagnostics, &terracina1.Diagnostic{
+			Severity: terracina1.Diagnostic_ERROR,
 			Summary:  "Failed to query module package metadata",
 			Detail:   fmt.Sprintf("Could not retrieve package metadata for provider %s at %s: %s.", module.Display(), request.Version, err),
 		})
@@ -245,8 +245,8 @@ func (p *packagesServer) FetchModulePackage(ctx context.Context, request *packag
 
 	fetcher := getmodules.NewPackageFetcher()
 	if err := fetcher.FetchPackage(ctx, request.CacheDir, request.Url); err != nil {
-		response.Diagnostics = append(response.Diagnostics, &terraform1.Diagnostic{
-			Severity: terraform1.Diagnostic_ERROR,
+		response.Diagnostics = append(response.Diagnostics, &terracina1.Diagnostic{
+			Severity: terracina1.Diagnostic_ERROR,
 			Summary:  "Failed to download module package",
 			Detail:   fmt.Sprintf("Could not download provider from %s: %s.", request.Url, err),
 		})

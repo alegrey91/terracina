@@ -13,10 +13,10 @@ import (
 	"github.com/hashicorp/go-uuid"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/providers/testing"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/providers/testing"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 var (
@@ -91,7 +91,7 @@ var (
 	}
 )
 
-// TestProvider is a wrapper around terraform.MockProvider that defines dynamic
+// TestProvider is a wrapper around terracina.MockProvider that defines dynamic
 // schemas, and keeps track of the resources and data sources that it contains.
 type TestProvider struct {
 	Provider *testing.MockProvider
@@ -289,7 +289,7 @@ func (provider *TestProvider) ApplyResourceChange(request providers.ApplyResourc
 		}
 
 		// Wait for a second to make sure the interrupts are processed by
-		// Terraform before the provider finishes. This is an attempt to ensure
+		// Terracina before the provider finishes. This is an attempt to ensure
 		// the output of any tests that rely on this behaviour is deterministic.
 		time.Sleep(time.Second)
 	}

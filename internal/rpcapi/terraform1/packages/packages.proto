@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 
 syntax = "proto3";
-package terraform1.packages;
+package terracina1.packages;
 
-import "terraform1.proto";
+import "terracina1.proto";
 
-// The Packages service provides helper functions for retrieving Terraform
+// The Packages service provides helper functions for retrieving Terracina
 // modules and providers.
 //
 // Unlike the Dependencies service, the Packages service does not require any
@@ -30,7 +30,7 @@ message ProviderPackageVersions {
   }
   message Response {
     repeated string versions = 1;
-    repeated terraform1.Diagnostic diagnostics = 2;
+    repeated terracina1.Diagnostic diagnostics = 2;
   }
 }
 
@@ -50,11 +50,11 @@ message FetchProviderPackage {
     // there will still be an entry in the results with diagnostics
     // explaining why.
     repeated FetchProviderPackage.PlatformResult results = 1;
-    repeated terraform1.Diagnostic diagnostics = 2;
+    repeated terracina1.Diagnostic diagnostics = 2;
   }
   message PlatformResult {
-    terraform1.ProviderPackage provider = 1;
-    repeated terraform1.Diagnostic diagnostics = 2;
+    terracina1.ProviderPackage provider = 1;
+    repeated terracina1.Diagnostic diagnostics = 2;
   }
 }
 
@@ -64,7 +64,7 @@ message ModulePackageVersions {
   }
   message Response {
     repeated string versions = 1;
-    repeated terraform1.Diagnostic diagnostics = 2;
+    repeated terracina1.Diagnostic diagnostics = 2;
   }
 }
 
@@ -75,7 +75,7 @@ message ModulePackageSourceAddr {
   }
   message Response {
     string url = 1;
-    repeated terraform1.Diagnostic diagnostics = 2;
+    repeated terracina1.Diagnostic diagnostics = 2;
   }
 }
 
@@ -86,6 +86,6 @@ message FetchModulePackage {
     string url = 2;
   }
   message Response {
-    repeated terraform1.Diagnostic diagnostics = 1;
+    repeated terracina1.Diagnostic diagnostics = 1;
   }
 }

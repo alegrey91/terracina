@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"fmt"
@@ -14,9 +14,9 @@ import (
 	"github.com/mitchellh/reflectwalk"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/configs/hcl2shim"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/configs/hcl2shim"
 )
 
 // InstanceInfo is used to hold information about the instance and/or
@@ -103,7 +103,7 @@ type ResourceConfig struct {
 //
 // The given value may contain hcl2shim.UnknownVariableValue to signal that
 // something is computed, but it must not contain unprocessed interpolation
-// sequences as we might've seen in Terraform v0.11 and prior.
+// sequences as we might've seen in Terracina v0.11 and prior.
 func NewResourceConfigRaw(raw map[string]interface{}) *ResourceConfig {
 	v := hcl2shim.HCL2ValueFromConfigValue(raw)
 

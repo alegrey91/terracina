@@ -11,9 +11,9 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hcldec"
 
-	"github.com/hashicorp/terraform/internal/collections"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/collections"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // Referrer is implemented by types that have expressions that can refer to
@@ -292,6 +292,6 @@ var (
 	DependsOnDeepReferenceDetail = strings.TrimSpace(`
 The depends_on argument should refer directly to an embedded stack or component in configuration, but this reference is too deep.
 
-Terraform Stacks has simplified the reference to the nearest valid target, %q. To remove this warning, update the configuration to the same target.
+Terracina Stacks has simplified the reference to the nearest valid target, %q. To remove this warning, update the configuration to the same target.
 `)
 )

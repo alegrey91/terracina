@@ -17,25 +17,25 @@ func Test_migrate_tfc_to_other(t *testing.T) {
 				{
 					prep: func(t *testing.T, orgName, dir string) {
 						wsName := "new-workspace"
-						tfBlock := terraformConfigCloudBackendName(orgName, wsName)
+						tfBlock := terracinaConfigCloudBackendName(orgName, wsName)
 						writeMainTF(t, tfBlock, dir)
 					},
 					commands: []tfCommand{
 						{
 							command:           []string{"init"},
-							expectedCmdOutput: `HCP Terraform has been successfully initialized!`,
+							expectedCmdOutput: `HCP Terracina has been successfully initialized!`,
 						},
 					},
 				},
 				{
 					prep: func(t *testing.T, orgName, dir string) {
-						tfBlock := terraformConfigLocalBackend()
+						tfBlock := terracinaConfigLocalBackend()
 						writeMainTF(t, tfBlock, dir)
 					},
 					commands: []tfCommand{
 						{
 							command:           []string{"init"},
-							expectedCmdOutput: `Migrating state from HCP Terraform to another backend is not yet implemented.`,
+							expectedCmdOutput: `Migrating state from HCP Terracina to another backend is not yet implemented.`,
 							expectError:       true,
 						},
 					},

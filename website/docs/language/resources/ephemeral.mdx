@@ -1,52 +1,52 @@
 ---
 page_title: Ephemeral resource configuration reference
-description: Learn about ephemeral resource blocks that you can specify in Terraform configurations. Ephemeral resource blocks represent temporary resources that Terraform does not store in state.
+description: Learn about ephemeral resource blocks that you can specify in Terracina configurations. Ephemeral resource blocks represent temporary resources that Terracina does not store in state.
 ---
 
 # Ephemeral resource configuration reference
 
 This topic provides reference information for the `ephemeral` block. 
 
--> **Note**: Ephemeral resources are available in Terraform v1.10 and later.
+-> **Note**: Ephemeral resources are available in Terracina v1.10 and later.
 
 ## Introduction
 
-Ephemeral resources are Terraform resources that are essentially temporary. Ephemeral resources have a unique lifecycle, and Terraform does not store them in its state. Each `ephemeral` block describes one or more ephemeral resources, such as a temporary password or connection to another system.
+Ephemeral resources are Terracina resources that are essentially temporary. Ephemeral resources have a unique lifecycle, and Terracina does not store them in its state. Each `ephemeral` block describes one or more ephemeral resources, such as a temporary password or connection to another system.
 
-<!-- After page exists, add: For information about how Terraform manages ephemeral resources, refer to
-[Epehemeral Values](/terraform/language/epehemeral-values). -->
+<!-- After page exists, add: For information about how Terracina manages ephemeral resources, refer to
+[Epehemeral Values](/terracina/language/epehemeral-values). -->
 
 An `ephemeral` block declares an ephemeral resource of a specific type with a
-specific local name, much like a `resource` block. Terraform uses an ephemeral resource's name to
+specific local name, much like a `resource` block. Terracina uses an ephemeral resource's name to
 refer to that resource in the same module, but an ephemeral resource's name has no meaning
 outside that module's scope.
 
 
 ## Lifecycle
 
-The lifecycle of an ephemeral resource is different from resources and data sources. When Terraform provisions ephemeral resources, it performs the following steps:
+The lifecycle of an ephemeral resource is different from resources and data sources. When Terracina provisions ephemeral resources, it performs the following steps:
 
-1. If Terraform needs to access the result of an ephemeral resource, it opens
-that ephemeral resource. For example, if Terraform opens an ephemeral resource for a Vault secret, the Vault provider obtains a lease and returns a secret. 
+1. If Terracina needs to access the result of an ephemeral resource, it opens
+that ephemeral resource. For example, if Terracina opens an ephemeral resource for a Vault secret, the Vault provider obtains a lease and returns a secret. 
 
-1. If Terraform needs access to the ephemeral resource for longer than the
-remote system's enforced expiration time, Terraform asks the provider
-to renew it periodically. For example, if Terraform renews a Vault secret ephemeral resource, the Vault provider then calls Vault's lease renewal API endpoint to extend the expiration time.
+1. If Terracina needs access to the ephemeral resource for longer than the
+remote system's enforced expiration time, Terracina asks the provider
+to renew it periodically. For example, if Terracina renews a Vault secret ephemeral resource, the Vault provider then calls Vault's lease renewal API endpoint to extend the expiration time.
 
-1. Once Terraform no longer needs an ephemeral resource, Terraform closes
+1. Once Terracina no longer needs an ephemeral resource, Terracina closes
 it. This happens after the providers that depend on a certain ephemeral resource
-complete all of their work for the current Terraform run phase. For example, closing a Vault secret ephemeral resource means the Vault provider explicitly ends the lease, allowing Vault to immediately revoke the associated credentials.
+complete all of their work for the current Terracina run phase. For example, closing a Vault secret ephemeral resource means the Vault provider explicitly ends the lease, allowing Vault to immediately revoke the associated credentials.
 
-Terraform follows these lifecycle steps for each instance of an ephemeral
+Terracina follows these lifecycle steps for each instance of an ephemeral
 resource in a given configuration.
 
 ## Dependency graph
 
-Ephemeral resources form nodes in Terraform's dependency graph, which interact similarly as resources and data sources. For example, when a resource or data source depends on an attribute of an ephemeral resource, Terraform automatically provisions the ephemeral resource first.
+Ephemeral resources form nodes in Terracina's dependency graph, which interact similarly as resources and data sources. For example, when a resource or data source depends on an attribute of an ephemeral resource, Terracina automatically provisions the ephemeral resource first.
 
 ## Configuration model
 
-Most of the arguments within the body of an `ephemeral` block are specific to the ephemeral resource you are defining. As with resources and data sources, each provider in the [Terraform Registry](https://registry.terraform.io/browse/providers) includes documentation for the ephemeral resources it supports, if any. An ephemeral resource type's documentation lists which arguments are available and how you should format your resource's values. 
+Most of the arguments within the body of an `ephemeral` block are specific to the ephemeral resource you are defining. As with resources and data sources, each provider in the [Terracina Registry](https://registry.terracina.io/browse/providers) includes documentation for the ephemeral resources it supports, if any. An ephemeral resource type's documentation lists which arguments are available and how you should format your resource's values. 
 
 The following list outlines general field hierarchy, language-specific data types, and requirements in the `ephemeral` block. 
 
@@ -68,33 +68,33 @@ ephemeral "<resource_type>" "<resource_name>" {
 ## Referencing ephemeral resources
 
 You can only reference ephemeral resources in specific ephemeral contexts or
-Terraform throws an error. The following are valid contexts for referencing
+Terracina throws an error. The following are valid contexts for referencing
 ephemeral resources:
 
 * In another ephemeral resource
-* In [local values](/terraform/language/values/locals#ephemeral-values)
-* In [ephemeral variables](/terraform/language/values/variables#exclude-values-from-state)
-* In [ephemeral outputs](/terraform/language/values/outputs#ephemeral-avoid-storing-values-in-state-or-plan-files)
+* In [local values](/terracina/language/values/locals#ephemeral-values)
+* In [ephemeral variables](/terracina/language/values/variables#exclude-values-from-state)
+* In [ephemeral outputs](/terracina/language/values/outputs#ephemeral-avoid-storing-values-in-state-or-plan-files)
 * Configuring providers in the `provider` block
-* In [provisioner](/terraform/language/resources/provisioners/syntax) and [connection](/terraform/language/resources/provisioners/connection) blocks
+* In [provisioner](/terracina/language/resources/provisioners/syntax) and [connection](/terracina/language/resources/provisioners/connection) blocks
 
 ## Meta-arguments
 
 You can use the following meta-arguments with ephemeral resources to change the behavior of those resources. The following meta-arguments work the same way for resources, data sources, and ephemeral
 resources:
 
-- [`depends_on`, for specifying hidden dependencies](/terraform/language/meta-arguments/depends_on)
-- [`count`, for creating multiple resource instances according to a count](/terraform/language/meta-arguments/count)
-- [`for_each`, to create multiple instances according to a map or set of strings](/terraform/language/meta-arguments/for_each)
-- [`provider`, for selecting a non-default provider configuration](/terraform/language/meta-arguments/resource-provider)
-- [`lifecycle`, for lifecycle customizations](/terraform/language/meta-arguments/lifecycle)
+- [`depends_on`, for specifying hidden dependencies](/terracina/language/meta-arguments/depends_on)
+- [`count`, for creating multiple resource instances according to a count](/terracina/language/meta-arguments/count)
+- [`for_each`, to create multiple instances according to a map or set of strings](/terracina/language/meta-arguments/for_each)
+- [`provider`, for selecting a non-default provider configuration](/terracina/language/meta-arguments/resource-provider)
+- [`lifecycle`, for lifecycle customizations](/terracina/language/meta-arguments/lifecycle)
 
 Ephemeral resources do not support the `provisioner` meta-argument.
 
 ## Example
 
 The following example configures the `postgresql` provider with credentials from
-an ephemeral resource. Since these credentials are managed by an ephemeral resource, Terraform does not store them in your state or plan files.
+an ephemeral resource. Since these credentials are managed by an ephemeral resource, Terracina does not store them in your state or plan files.
 
 ```hcl
 ephemeral "aws_secretsmanager_secret_version" "db_master" {

@@ -8,9 +8,9 @@ import (
 	"strings"
 
 	"github.com/hashicorp/cli"
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // StateListCommand is a Command implementation that lists the resources
@@ -95,11 +95,11 @@ func (c *StateListCommand) Run(args []string) int {
 
 func (c *StateListCommand) Help() string {
 	helpText := `
-Usage: terraform [global options] state list [options] [address...]
+Usage: terracina [global options] state list [options] [address...]
 
-  List resources in the Terraform state.
+  List resources in the Terracina state.
 
-  This command lists resource instances in the Terraform state. The address
+  This command lists resource instances in the Terracina state. The address
   argument can be used to filter the instances by resource or module. If
   no pattern is given, all resource instances are listed.
 
@@ -115,8 +115,8 @@ Usage: terraform [global options] state list [options] [address...]
 
 Options:
 
-  -state=statefile    Path to a Terraform state file to use to look
-                      up Terraform-managed resources. By default, Terraform
+  -state=statefile    Path to a Terracina state file to use to look
+                      up Terracina-managed resources. By default, Terracina
                       will consult the state of the currently-selected
                       workspace.
 
@@ -134,12 +134,12 @@ func (c *StateListCommand) Synopsis() string {
 
 const errStateLoadingState = `Error loading the state: %[1]s
 
-Please ensure that your Terraform state exists and that you've
+Please ensure that your Terracina state exists and that you've
 configured it properly. You can use the "-state" flag to point
-Terraform at another state file.`
+Terracina at another state file.`
 
 const errStateNotFound = `No state file was found!
 
 State management commands require a state file. Run this command
-in a directory where Terraform has been run or use the -state flag
+in a directory where Terracina has been run or use the -state flag
 to point the command to a specific state location.`

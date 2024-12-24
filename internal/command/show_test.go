@@ -15,14 +15,14 @@ import (
 	"github.com/hashicorp/cli"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	testing_provider "github.com/hashicorp/terraform/internal/providers/testing"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/states/statemgr"
-	"github.com/hashicorp/terraform/version"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	testing_provider "github.com/hashicorp/terracina/internal/providers/testing"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/states/statemgr"
+	"github.com/hashicorp/terracina/version"
 )
 
 func TestShow_badArgs(t *testing.T) {
@@ -127,7 +127,7 @@ func TestShow_argsWithState(t *testing.T) {
 	}
 }
 
-// https://github.com/hashicorp/terraform/issues/21462
+// https://github.com/hashicorp/terracina/issues/21462
 func TestShow_argsWithStateAliasedProvider(t *testing.T) {
 	// Create the default state with aliased resource
 	testState := states.BuildState(func(s *states.SyncState) {
@@ -360,8 +360,8 @@ func TestShow_planWithChanges(t *testing.T) {
 func TestShow_planWithForceReplaceChange(t *testing.T) {
 	// The main goal of this test is to see that the "replace by request"
 	// resource instance action reason can round-trip through a plan file and
-	// be reflected correctly in the "terraform show" output, the same way
-	// as it would appear in "terraform plan" output.
+	// be reflected correctly in the "terracina show" output, the same way
+	// as it would appear in "terracina plan" output.
 
 	_, snap := testModuleWithSnapshot(t, "show")
 	plannedVal := cty.ObjectVal(map[string]cty.Value{
@@ -463,7 +463,7 @@ func TestShow_planErrored(t *testing.T) {
 	}
 
 	got := output.Stdout()
-	want := `Planning failed. Terraform encountered an error while generating this plan.`
+	want := `Planning failed. Terracina encountered an error while generating this plan.`
 	if !strings.Contains(got, want) {
 		t.Fatalf("unexpected output\ngot: %s\nwant: %s", got, want)
 	}
@@ -600,7 +600,7 @@ func TestShow_json_output(t *testing.T) {
 			}
 
 			args := []string{
-				"-out=terraform.plan",
+				"-out=terracina.plan",
 			}
 
 			code := pc.Run(args)
@@ -629,9 +629,9 @@ func TestShow_json_output(t *testing.T) {
 
 			args = []string{
 				"-json",
-				"terraform.plan",
+				"terracina.plan",
 			}
-			defer os.Remove("terraform.plan")
+			defer os.Remove("terracina.plan")
 			code = sc.Run(args)
 			showOutput := showDone(t)
 
@@ -692,7 +692,7 @@ func TestShow_json_output_sensitive(t *testing.T) {
 	}
 
 	args := []string{
-		"-out=terraform.plan",
+		"-out=terracina.plan",
 	}
 	code := pc.Run(args)
 	planOutput := planDone(t)
@@ -713,9 +713,9 @@ func TestShow_json_output_sensitive(t *testing.T) {
 
 	args = []string{
 		"-json",
-		"terraform.plan",
+		"terracina.plan",
 	}
-	defer os.Remove("terraform.plan")
+	defer os.Remove("terracina.plan")
 	code = sc.Run(args)
 	showOutput := showDone(t)
 
@@ -788,7 +788,7 @@ func TestShow_json_output_conditions_refresh_only(t *testing.T) {
 
 	args := []string{
 		"-refresh-only",
-		"-out=terraform.plan",
+		"-out=terracina.plan",
 		"-var=ami=bad-ami",
 		"-state=for-refresh.tfstate",
 	}
@@ -811,9 +811,9 @@ func TestShow_json_output_conditions_refresh_only(t *testing.T) {
 
 	args = []string{
 		"-json",
-		"terraform.plan",
+		"terracina.plan",
 	}
-	defer os.Remove("terraform.plan")
+	defer os.Remove("terracina.plan")
 	code = sc.Run(args)
 	showOutput := showDone(t)
 
@@ -907,7 +907,7 @@ func TestShow_json_output_state(t *testing.T) {
 			// compare ui output to wanted output
 			type state struct {
 				FormatVersion    string                 `json:"format_version,omitempty"`
-				TerraformVersion string                 `json:"terraform_version"`
+				TerracinaVersion string                 `json:"terracina_version"`
 				Values           map[string]interface{} `json:"values,omitempty"`
 				SensitiveValues  map[string]bool        `json:"sensitive_values,omitempty"`
 			}
@@ -951,7 +951,7 @@ func TestShow_planWithNonDefaultStateLineage(t *testing.T) {
 	stateMeta := statemgr.SnapshotMeta{
 		Lineage:          "fake-for-plan",
 		Serial:           1,
-		TerraformVersion: version.SemVer,
+		TerracinaVersion: version.SemVer,
 	}
 	planPath := testPlanFileMatchState(t, snap, state, plan, stateMeta)
 
@@ -1064,7 +1064,7 @@ func showFixtureSensitiveSchema() *providers.GetProviderSchemaResponse {
 // operation with the configuration in testdata/show. This mock has
 // GetSchemaResponse, PlanResourceChangeFn, and ApplyResourceChangeFn populated,
 // with the plan/apply steps just passing through the data determined by
-// Terraform Core.
+// Terracina Core.
 func showFixtureProvider() *testing_provider.MockProvider {
 	p := testProvider()
 	p.GetProviderSchemaResponse = showFixtureSchema()
@@ -1127,7 +1127,7 @@ func showFixtureProvider() *testing_provider.MockProvider {
 // operation with the configuration in testdata/show. This mock has
 // GetSchemaResponse, PlanResourceChangeFn, and ApplyResourceChangeFn populated,
 // with the plan/apply steps just passing through the data determined by
-// Terraform Core. It also has a sensitive attribute in the provider schema.
+// Terracina Core. It also has a sensitive attribute in the provider schema.
 func showFixtureSensitiveProvider() *testing_provider.MockProvider {
 	p := testProvider()
 	p.GetProviderSchemaResponse = showFixtureSensitiveSchema()
@@ -1204,7 +1204,7 @@ func showFixturePlanFile(t *testing.T, action plans.Action) string {
 }
 
 // this simplified plan struct allows us to preserve field order when marshaling
-// the command output. NOTE: we are leaving "terraform_version" out of this test
+// the command output. NOTE: we are leaving "terracina_version" out of this test
 // to avoid needing to constantly update the expected output; as a potential
 // TODO we could write a jsonplan compare function.
 type plan struct {

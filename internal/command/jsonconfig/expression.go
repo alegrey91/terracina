@@ -13,10 +13,10 @@ import (
 	"github.com/zclconf/go-cty/cty"
 	ctyjson "github.com/zclconf/go-cty/cty/json"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/lang/blocktoattr"
-	"github.com/hashicorp/terraform/internal/lang/langrefs"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/lang/blocktoattr"
+	"github.com/hashicorp/terracina/internal/lang/langrefs"
 )
 
 // expression represents any unparsed expression
@@ -107,7 +107,7 @@ func marshalExpressions(body hcl.Body, schema *configschema.Block) expressions {
 	// Use the low-level schema with the body to decode one level We'll just
 	// ignore any additional content that's not covered by the schema, which
 	// will effectively ignore "dynamic" blocks, and may also ignore other
-	// unknown stuff but anything else would get flagged by Terraform as an
+	// unknown stuff but anything else would get flagged by Terracina as an
 	// error anyway, and so we wouldn't end up in here.
 	content, _, _ := body.PartialContent(lowSchema)
 	if content == nil {

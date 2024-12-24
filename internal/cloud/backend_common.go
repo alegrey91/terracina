@@ -21,11 +21,11 @@ import (
 	"github.com/hashicorp/go-retryablehttp"
 	tfe "github.com/hashicorp/go-tfe"
 	"github.com/hashicorp/jsonapi"
-	"github.com/hashicorp/terraform/internal/backend/backendrun"
-	"github.com/hashicorp/terraform/internal/command/jsonformat"
-	"github.com/hashicorp/terraform/internal/logging"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/terraform"
+	"github.com/hashicorp/terracina/internal/backend/backendrun"
+	"github.com/hashicorp/terracina/internal/command/jsonformat"
+	"github.com/hashicorp/terracina/internal/logging"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/terracina"
 )
 
 var (
@@ -405,7 +405,7 @@ func (b *Cloud) checkPolicy(stopCtx, cancelCtx context.Context, op *backendrun.O
 			} else if !b.input {
 				return errPolicyOverrideNeedsUIConfirmation
 			} else {
-				opts := &terraform.InputOpts{
+				opts := &terracina.InputOpts{
 					Id:          "override",
 					Query:       "\nDo you want to override the soft failed policy check?",
 					Description: "Only 'override' will be accepted to override.",
@@ -436,7 +436,7 @@ func (b *Cloud) checkPolicy(stopCtx, cancelCtx context.Context, op *backendrun.O
 	return nil
 }
 
-func (b *Cloud) confirm(stopCtx context.Context, op *backendrun.Operation, opts *terraform.InputOpts, r *tfe.Run, keyword string) error {
+func (b *Cloud) confirm(stopCtx context.Context, op *backendrun.Operation, opts *terracina.InputOpts, r *tfe.Run, keyword string) error {
 	doneCtx, cancel := context.WithCancel(stopCtx)
 	result := make(chan error, 2)
 
@@ -645,5 +645,5 @@ func decodeErrorPayload(r *http.Response) ([]string, error) {
 }
 
 func isValidAppName(name string) bool {
-	return name == "HCP Terraform" || name == "Terraform Enterprise"
+	return name == "HCP Terracina" || name == "Terracina Enterprise"
 }

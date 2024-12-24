@@ -11,11 +11,11 @@ import (
 	"github.com/hashicorp/go-slug/sourceaddrs"
 	"github.com/hashicorp/go-slug/sourcebundle"
 	"github.com/hashicorp/hcl/v2"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // Stack represents a single stack, which can potentially call other
-// "embedded stacks" in a similar manner to how Terraform modules can call
+// "embedded stacks" in a similar manner to how Terracina modules can call
 // other modules.
 type Stack struct {
 	SourceAddr sourceaddrs.FinalSource

@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"bytes"
@@ -18,18 +18,18 @@ import (
 	"github.com/zclconf/go-cty-debug/ctydebug"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/checks"
-	"github.com/hashicorp/terraform/internal/collections"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/dag"
-	"github.com/hashicorp/terraform/internal/lang/marks"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	testing_provider "github.com/hashicorp/terraform/internal/providers/testing"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/checks"
+	"github.com/hashicorp/terracina/internal/collections"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/dag"
+	"github.com/hashicorp/terracina/internal/lang/marks"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	testing_provider "github.com/hashicorp/terracina/internal/providers/testing"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // Test that the PreApply hook is called with the correct deposed key
@@ -49,7 +49,7 @@ func TestContext2Apply_createBeforeDestroy_deposedKeyPreApply(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"bar"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 	root.SetResourceInstanceDeposed(
 		mustResourceInstanceAddr("aws_instance.bar").Resource,
@@ -58,7 +58,7 @@ func TestContext2Apply_createBeforeDestroy_deposedKeyPreApply(t *testing.T) {
 			Status:    states.ObjectTainted,
 			AttrsJSON: []byte(`{"id":"foo"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	hook := new(MockHook)
@@ -233,7 +233,7 @@ resource "test_instance" "a" {
 		s.SetResourceInstanceCurrent(addrA, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{"id":"a","value":"old","type":"test"}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 
 		// test_instance.b depended on test_instance.a, and therefor should be
 		// destroyed before any changes to test_instance.a
@@ -241,7 +241,7 @@ resource "test_instance" "a" {
 			AttrsJSON:    []byte(`{"id":"b"}`),
 			Status:       states.ObjectReady,
 			Dependencies: []addrs.ConfigResource{addrA.ContainingResource().Config()},
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	ctx := testContext2(t, &ContextOpts{
@@ -282,7 +282,7 @@ func TestApply_updateDependencies(t *testing.T) {
 				bazAddr.ContainingResource().Config(),
 			},
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 	root.SetResourceInstanceCurrent(
 		binAddr.Resource,
@@ -293,7 +293,7 @@ func TestApply_updateDependencies(t *testing.T) {
 				bazAddr.ContainingResource().Config(),
 			},
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 	root.SetResourceInstanceCurrent(
 		bazAddr.Resource,
@@ -305,7 +305,7 @@ func TestApply_updateDependencies(t *testing.T) {
 				bamAddr.ContainingResource().Config(),
 			},
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 	root.SetResourceInstanceCurrent(
 		barAddr.Resource,
@@ -313,7 +313,7 @@ func TestApply_updateDependencies(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"id":"bar","foo":"foo"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/aws"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/aws"]`),
 	)
 
 	m := testModuleInline(t, map[string]string{
@@ -429,7 +429,7 @@ resource "test_resource" "b" {
 					cty.GetAttrPath("sensitive_attr"),
 				},
 				Status: states.ObjectReady,
-			}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+			}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 		)
 	})
 
@@ -587,7 +587,7 @@ resource "test_object" "x" {
 			Status:    states.ObjectTainted,
 			AttrsJSON: []byte(`{"test_string":"deposed"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -715,7 +715,7 @@ resource "test_object" "b" {
 			Status:    states.ObjectTainted,
 			AttrsJSON: []byte(`{"test_string":"ok"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 	root.SetResourceInstanceCurrent(
 		mustResourceInstanceAddr("test_object.b").Resource,
@@ -723,7 +723,7 @@ resource "test_object" "b" {
 			Status:    states.ObjectTainted,
 			AttrsJSON: []byte(`{"test_string":"ok"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -1043,7 +1043,7 @@ func TestContext2Apply_resourceConditionApplyTimeFail(t *testing.T) {
 	// a change in a resource other than the one the condition is attached to,
 	// and the condition result is unknown during planning.
 	//
-	// This edge case is a tricky one because it relies on Terraform still
+	// This edge case is a tricky one because it relies on Terracina still
 	// visiting test_resource.b (in the configuration below) to evaluate
 	// its conditions even though there aren't any changes directly planned
 	// for it, so that we can consider whether changes to test_resource.a
@@ -1424,7 +1424,7 @@ resource "test_object" "x" {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"test_string":"ok"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -1474,7 +1474,7 @@ resource "test_object" "y" {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"test_string":"x"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -1630,7 +1630,7 @@ output "from_resource" {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"test_string":"wrong_val"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -1685,7 +1685,7 @@ output "from_resource" {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"test_string":"wrong val"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 	state.SetOutputValue(
 		addrs.OutputValue{Name: "from_resource"}.Absolute(addrs.RootModuleInstance),
@@ -1758,7 +1758,7 @@ resource "test_object" "y" {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"test_string":"y"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 
 	ctx := testContext2(t, &ContextOpts{
@@ -2207,7 +2207,7 @@ resource "test_object" "a" {
 				Status:    states.ObjectReady,
 				AttrsJSON: []byte(`{"test_string":"foo"}`),
 			},
-			mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+			mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 		)
 	}), &PlanOpts{
 		Mode: plans.DestroyMode,
@@ -2279,7 +2279,7 @@ locals {
 		s.SetResourceInstanceCurrent(addrA, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{"test_string":"foo"}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	plan, diags := ctx.Plan(m, state, &PlanOpts{
@@ -2295,13 +2295,13 @@ locals {
 	// The local value should've been pruned from the graph because nothing
 	// refers to it and this was a destroy run.
 	gotGraph := g.String()
-	wantGraph := `provider["registry.terraform.io/hashicorp/test"]
-provider["registry.terraform.io/hashicorp/test"] (close)
+	wantGraph := `provider["registry.terracina.io/hashicorp/test"]
+provider["registry.terracina.io/hashicorp/test"] (close)
   test_object.a (destroy)
 root
-  provider["registry.terraform.io/hashicorp/test"] (close)
+  provider["registry.terracina.io/hashicorp/test"] (close)
 test_object.a (destroy)
-  provider["registry.terraform.io/hashicorp/test"]
+  provider["registry.terracina.io/hashicorp/test"]
 `
 	if diff := cmp.Diff(wantGraph, gotGraph); diff != "" {
 		t.Errorf("wrong apply graph\n%s", diff)
@@ -2337,7 +2337,7 @@ locals {
 		s.SetResourceInstanceCurrent(addrA, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{"test_string":"foo"}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	plan, diags := ctx.Plan(m, state, &PlanOpts{
@@ -2358,13 +2358,13 @@ locals {
 	// The local value should remain in the graph because the external
 	// reference uses it.
 	gotGraph := g.String()
-	wantGraph := `provider["registry.terraform.io/hashicorp/test"]
-provider["registry.terraform.io/hashicorp/test"] (close)
+	wantGraph := `provider["registry.terracina.io/hashicorp/test"]
+provider["registry.terracina.io/hashicorp/test"] (close)
   test_object.a (destroy)
 root
-  provider["registry.terraform.io/hashicorp/test"] (close)
+  provider["registry.terracina.io/hashicorp/test"] (close)
 test_object.a (destroy)
-  provider["registry.terraform.io/hashicorp/test"]
+  provider["registry.terracina.io/hashicorp/test"]
 `
 	if diff := cmp.Diff(wantGraph, gotGraph); diff != "" {
 		t.Errorf("wrong graph\n%s", diff)
@@ -2411,16 +2411,16 @@ locals {
 	gotGraph := g.String()
 	wantGraph := `local.local_value (expand)
   test_object.a
-provider["registry.terraform.io/hashicorp/test"]
-provider["registry.terraform.io/hashicorp/test"] (close)
+provider["registry.terracina.io/hashicorp/test"]
+provider["registry.terracina.io/hashicorp/test"] (close)
   test_object.a
 root
   local.local_value (expand)
-  provider["registry.terraform.io/hashicorp/test"] (close)
+  provider["registry.terracina.io/hashicorp/test"] (close)
 test_object.a
   test_object.a (expand)
 test_object.a (expand)
-  provider["registry.terraform.io/hashicorp/test"]
+  provider["registry.terracina.io/hashicorp/test"]
 `
 	if diff := cmp.Diff(wantGraph, gotGraph); diff != "" {
 		t.Errorf("wrong apply graph\n%s", diff)
@@ -2724,7 +2724,7 @@ removed {
 		s.SetResourceInstanceCurrent(addrA, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{"foo":"bar"}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	p := simpleMockProvider()
@@ -2775,7 +2775,7 @@ removed {
 		s.SetResourceInstanceDeposed(addrA, deposedKey, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{"foo":"bar"}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	p := simpleMockProvider()
@@ -2839,11 +2839,11 @@ func TestContext2Apply_destroy_and_forget(t *testing.T) {
 				s.SetResourceInstanceCurrent(addrA, &states.ResourceInstanceObjectSrc{
 					AttrsJSON: []byte(`{"foo":"bar"}`),
 					Status:    states.ObjectReady,
-				}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+				}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 				s.SetResourceInstanceCurrent(addrB, &states.ResourceInstanceObjectSrc{
 					AttrsJSON: []byte(`{"foo":"bar"}`),
 					Status:    states.ObjectReady,
-				}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+				}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 			},
 
 			expectedChangeAddresses: []string{addrA.String(), addrB.String()},
@@ -2859,11 +2859,11 @@ func TestContext2Apply_destroy_and_forget(t *testing.T) {
 				s.SetResourceInstanceCurrent(addrA, &states.ResourceInstanceObjectSrc{
 					AttrsJSON: []byte(`{"foo":"bar"}`),
 					Status:    states.ObjectReady,
-				}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+				}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 				s.SetResourceInstanceCurrent(addrB, &states.ResourceInstanceObjectSrc{
 					AttrsJSON: []byte(`{"foo":"bar"}`),
 					Status:    states.ObjectReady,
-				}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+				}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 			},
 
 			expectedChangeAddresses: []string{addrA.String(), addrB.String()},
@@ -2884,15 +2884,15 @@ func TestContext2Apply_destroy_and_forget(t *testing.T) {
 				s.SetResourceInstanceCurrent(addrAFirst, &states.ResourceInstanceObjectSrc{
 					AttrsJSON: []byte(`{"foo":"bar"}`),
 					Status:    states.ObjectReady,
-				}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+				}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 				s.SetResourceInstanceCurrent(addrASecond, &states.ResourceInstanceObjectSrc{
 					AttrsJSON: []byte(`{"foo":"bar"}`),
 					Status:    states.ObjectReady,
-				}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+				}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 				s.SetResourceInstanceCurrent(addrAThird, &states.ResourceInstanceObjectSrc{
 					AttrsJSON: []byte(`{"foo":"bar"}`),
 					Status:    states.ObjectReady,
-				}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+				}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 			},
 
 			expectedChangeAddresses: []string{addrAFirst.String(), addrASecond.String(), addrAThird.String()},
@@ -2908,11 +2908,11 @@ func TestContext2Apply_destroy_and_forget(t *testing.T) {
 				s.SetResourceInstanceCurrent(addrA, &states.ResourceInstanceObjectSrc{
 					AttrsJSON: []byte(`{"foo":"bar"}`),
 					Status:    states.ObjectReady,
-				}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+				}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 				s.SetResourceInstanceDeposed(addrA, states.DeposedKey("uhoh"), &states.ResourceInstanceObjectSrc{
 					AttrsJSON: []byte(`{"foo":"bar"}`),
 					Status:    states.ObjectReady,
-				}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+				}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 			},
 
 			expectedChangeAddresses: []string{addrA.String(), addrA.String()},
@@ -2994,11 +2994,11 @@ func TestContext2Apply_destroy_and_forget_single_resource(t *testing.T) {
 		s.SetResourceInstanceCurrent(addrA, &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{"foo":"bar"}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 		s.SetResourceInstanceDeposed(addrA, states.DeposedKey("uhoh"), &states.ResourceInstanceObjectSrc{
 			AttrsJSON: []byte(`{"foo":"bar"}`),
 			Status:    states.ObjectReady,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	p := simpleMockProvider()
@@ -3092,7 +3092,7 @@ resource "test_resource" "a" {
 				cty.GetAttrPath("value"),
 			},
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 
 	// Create a sensitive-marked value for the input variable. This is not
@@ -3239,26 +3239,26 @@ resource "test_object" "obj" {
 }
 
 func TestContext2Apply_applyingFlag(t *testing.T) {
-	// This test is for references to the symbol "terraform.applying", which
+	// This test is for references to the symbol "terracina.applying", which
 	// is an ephemeral value that's true during an apply phase but false in
 	// all other phases.
 
 	m := testModuleInline(t, map[string]string{
 		"main.tf": `
-			terraform {
+			terracina {
 				required_providers {
 					test = {
-						source = "terraform.io/builtin/test"
+						source = "terracina.io/builtin/test"
 					}
 				}
 			}
 
 			provider "test" {
-				applying = terraform.applying
+				applying = terracina.applying
 			}
 
 			resource "test_thing" "placeholder" {
-				# This is here just to give Terraform a reason to configure
+				# This is here just to give Terracina a reason to configure
 				# the provider.
 			}
 		`,
@@ -3476,7 +3476,7 @@ resource "test_object" "obj" {
 	p.ApplyResourceChangeFn = func(req providers.ApplyResourceChangeRequest) providers.ApplyResourceChangeResponse {
 		return providers.ApplyResourceChangeResponse{
 			// This is a bug, the provider shouldn't return unknown values from
-			// ApplyResourceChange. But, Terraform shouldn't crash in response
+			// ApplyResourceChange. But, Terracina shouldn't crash in response
 			// to this. It should return a nice error message.
 			NewState: req.PlannedState,
 		}
@@ -3554,7 +3554,7 @@ resource "test_instance" "obj" {
 			AttrsJSON:           []byte(`{"id":"old_id"}`),
 			Status:              states.ObjectReady,
 			CreateBeforeDestroy: true,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 	ctx := testContext2(t, &ContextOpts{
 		Providers: map[addrs.Provider]providers.Factory{
@@ -3625,17 +3625,17 @@ resource "test_object" "c" {
 			AttrsJSON:           []byte(`{"id":"a"}`),
 			Status:              states.ObjectReady,
 			CreateBeforeDestroy: true,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 		s.SetResourceInstanceCurrent(mustResourceInstanceAddr("test_object.b"), &states.ResourceInstanceObjectSrc{
 			AttrsJSON:           []byte(`{"id":"b","ref":"a","update":"old"}`),
 			Status:              states.ObjectReady,
 			CreateBeforeDestroy: true,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 		s.SetResourceInstanceCurrent(mustResourceInstanceAddr("test_object.c"), &states.ResourceInstanceObjectSrc{
 			AttrsJSON:           []byte(`{"id":"c","ref":"b"}`),
 			Status:              states.ObjectReady,
 			CreateBeforeDestroy: true,
-		}, mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`))
+		}, mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`))
 	})
 
 	ctx := testContext2(t, &ContextOpts{

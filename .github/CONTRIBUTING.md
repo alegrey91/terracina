@@ -1,14 +1,14 @@
-# Contributing to Terraform
+# Contributing to Terracina
 
 **All communication on GitHub, the community forum, and other HashiCorp-provided communication channels is subject to [the HashiCorp community guidelines](https://www.hashicorp.com/community-guidelines).**
 
-This repository contains Terraform core, which includes the command line interface and the main graph engine. 
+This repository contains Terracina core, which includes the command line interface and the main graph engine. 
 
-Providers are implemented as plugins that each have their own repository linked from the [Terraform Registry index](https://registry.terraform.io/browse/providers). Instructions for developing each provider are usually in the associated README file. For more information, see [the provider development overview](https://www.terraform.io/docs/plugins/provider.html).
+Providers are implemented as plugins that each have their own repository linked from the [Terracina Registry index](https://registry.terracina.io/browse/providers). Instructions for developing each provider are usually in the associated README file. For more information, see [the provider development overview](https://www.terracina.io/docs/plugins/provider.html).
 
-This document provides guidance on Terraform contribution recommended practices. It covers what we're looking for in order to help set expectations and help you get the most out of participation in this project. 
+This document provides guidance on Terracina contribution recommended practices. It covers what we're looking for in order to help set expectations and help you get the most out of participation in this project. 
 
-To report a bug, an enhancement proposal, or give any other product feedback, please [open a GitHub issue](https://github.com/hashicorp/terraform/issues/new/choose) using the most appropriate issue template. Please fill in all of the information the issue templates request. This will maximize our ability to act on your feedback.
+To report a bug, an enhancement proposal, or give any other product feedback, please [open a GitHub issue](https://github.com/hashicorp/terracina/issues/new/choose) using the most appropriate issue template. Please fill in all of the information the issue templates request. This will maximize our ability to act on your feedback.
 
 ---
 
@@ -24,7 +24,7 @@ To report a bug, an enhancement proposal, or give any other product feedback, pl
 	- [Pull Request Lifecycle](#pull-request-lifecycle)
 		- [Getting Your Pull Requests Merged Faster](#getting-your-pull-requests-merged-faster)
 	- [PR Checks](#pr-checks)
-- [Terraform CLI/Core Development Environment](#terraform-clicore-development-environment)
+- [Terracina CLI/Core Development Environment](#terracina-clicore-development-environment)
 - [Acceptance Tests: Testing interactions with external services](#acceptance-tests-testing-interactions-with-external-services)
 - [Generated Code](#generated-code)
 - [External Dependencies](#external-dependencies)
@@ -33,9 +33,9 @@ To report a bug, an enhancement proposal, or give any other product feedback, pl
 
 ## Introduction
 
-One of the great things about publicly available source code is that you can dive into the project and help _build the thing_ you believe is missing. It's a wonderful and generous instinct. However, Terraform is a complex tool. Even simple changes can have a serious impact on other areas of the code and it can take some time to become familiar with the effects of even basic changes. The Terraform team is not immune to unintended and sometimes undesirable consequences. We take our work seriously, and appreciate the responsibility of maintaining software for a globally diverse community that relies on Terraform for workflows of all sizes and criticality. 
+One of the great things about publicly available source code is that you can dive into the project and help _build the thing_ you believe is missing. It's a wonderful and generous instinct. However, Terracina is a complex tool. Even simple changes can have a serious impact on other areas of the code and it can take some time to become familiar with the effects of even basic changes. The Terracina team is not immune to unintended and sometimes undesirable consequences. We take our work seriously, and appreciate the responsibility of maintaining software for a globally diverse community that relies on Terracina for workflows of all sizes and criticality. 
 
-As a result of Terraform's complexity and high bar for stability, the most straightforward way to help with the Terraform project is to [file a feature request or bug report](https://github.com/hashicorp/terraform/issues/new/choose), following the template to fully express your desired use case. 
+As a result of Terracina's complexity and high bar for stability, the most straightforward way to help with the Terracina project is to [file a feature request or bug report](https://github.com/hashicorp/terracina/issues/new/choose), following the template to fully express your desired use case. 
 
 If you believe you can also implement the solution for your bug or feature, we request that you first discuss the proposed solution with the core maintainer team. This discussion happens in GitHub, on the issue you created to describe the bug or feature. This discussion gives the core team a chance to explore any missing best practices or unintended consequences of the proposed change. Participating in this discussion and getting the go-ahead from a core maintainer is the only way to ensure your code is reviewed for inclusion with the project. It is also possible that the proposed solution is not workable, and will save you time writing code that will not be used due to unforeseen unintended consequences. Please read the section [Proposing a Change](#proposing-a-change) for the full details on this process. 
 
@@ -44,45 +44,45 @@ If you believe you can also implement the solution for your bug or feature, we r
 
 ## Contributing a Pull Request
 
-If you are a new contributor to Terraform, or looking to get started committing to the Terraform ecosystem, here are a couple of tips to get started. 
+If you are a new contributor to Terracina, or looking to get started committing to the Terracina ecosystem, here are a couple of tips to get started. 
 
 First, the easiest way to get started is to make fixes or improvements to the documentation. This can be done completely within GitHub, no need to even clone the project! 
 
-Beyond documentation improvements, it is easiest to contribute to Terraform on the edges. If you are looking for a good starting place to contribute, finding and resolving issues in the providers is the best first step. These projects have huge breadth of coverage and are always looking for contributors to fix issues that might not otherwise get the attention of a maintainer. 
+Beyond documentation improvements, it is easiest to contribute to Terracina on the edges. If you are looking for a good starting place to contribute, finding and resolving issues in the providers is the best first step. These projects have huge breadth of coverage and are always looking for contributors to fix issues that might not otherwise get the attention of a maintainer. 
 
-Closer to home, within the Terraform core repository, working in areas like functions or backends tend to have less harmful unintended interactions with the core of Terraform (but, also, are not currently a high priority to be reviewed, so please discuss any changes with the team before you start.) It gets more difficult to contribute as you get closer to the core functionality (e.g., manipulating the graph and core language features). For these types of changes, please start with the [Proposing a Change](#proposing-a-change) section to understand how we think about managing this process.
+Closer to home, within the Terracina core repository, working in areas like functions or backends tend to have less harmful unintended interactions with the core of Terracina (but, also, are not currently a high priority to be reviewed, so please discuss any changes with the team before you start.) It gets more difficult to contribute as you get closer to the core functionality (e.g., manipulating the graph and core language features). For these types of changes, please start with the [Proposing a Change](#proposing-a-change) section to understand how we think about managing this process.
 
-Once you are ready to write code, please see the section [Terraform CLI/Core Development Environment](#terraform-clicore-development-environment) to create your dev environment. Please read the documentation, and don't be afraid to ask questions in our [community forum](https://discuss.hashicorp.com/c/terraform-core/27). 
+Once you are ready to write code, please see the section [Terracina CLI/Core Development Environment](#terracina-clicore-development-environment) to create your dev environment. Please read the documentation, and don't be afraid to ask questions in our [community forum](https://discuss.hashicorp.com/c/terracina-core/27). 
 
-You may see the `Good First Issue` label on issues in the Terraform repository on GitHub. We use this label to maintain a list of issues for new internal core team members to ramp up the codebase. That said, if you are feeling particularly ambitious, you can follow our process to propose a solution. Other HashiCorp repositories (for example, https://github.com/hashicorp/terraform-provider-aws/) do use the `Good First Issue` to indicate good issues for external contributors to get started. 
+You may see the `Good First Issue` label on issues in the Terracina repository on GitHub. We use this label to maintain a list of issues for new internal core team members to ramp up the codebase. That said, if you are feeling particularly ambitious, you can follow our process to propose a solution. Other HashiCorp repositories (for example, https://github.com/hashicorp/terracina-provider-aws/) do use the `Good First Issue` to indicate good issues for external contributors to get started. 
 
 
 ## Proposing a Change
 
-In order to be respectful of the time of community contributors, we aim to discuss potential changes in GitHub issues prior to implementation. That will allow us to give design feedback up front and set expectations about the scope of the change, and, for larger changes, how best to approach the work such that the Terraform team can review it and merge it along with other concurrent work.
+In order to be respectful of the time of community contributors, we aim to discuss potential changes in GitHub issues prior to implementation. That will allow us to give design feedback up front and set expectations about the scope of the change, and, for larger changes, how best to approach the work such that the Terracina team can review it and merge it along with other concurrent work.
 
-If the bug you wish to fix or enhancement you wish to implement isn't already covered by a GitHub issue that contains feedback from the Terraform team, please do start a discussion (either in [a new GitHub issue](https://github.com/hashicorp/terraform/issues/new/choose) or an existing one, as appropriate) before you invest significant development time. If you mention your intent to implement the change described in your issue, the Terraform team can, as best as possible, prioritize including implementation-related feedback in the subsequent discussion.
+If the bug you wish to fix or enhancement you wish to implement isn't already covered by a GitHub issue that contains feedback from the Terracina team, please do start a discussion (either in [a new GitHub issue](https://github.com/hashicorp/terracina/issues/new/choose) or an existing one, as appropriate) before you invest significant development time. If you mention your intent to implement the change described in your issue, the Terracina team can, as best as possible, prioritize including implementation-related feedback in the subsequent discussion.
 
-At this time, we do not have a formal process for reviewing outside proposals that significantly change Terraform's workflow, its primary usage patterns, and its language. Additionally, some seemingly simple proposals can have deep effects across Terraform, which is why we strongly suggest starting with an issue-based proposal. Also, we do not normally accept minor changes in comments or help text.
+At this time, we do not have a formal process for reviewing outside proposals that significantly change Terracina's workflow, its primary usage patterns, and its language. Additionally, some seemingly simple proposals can have deep effects across Terracina, which is why we strongly suggest starting with an issue-based proposal. Also, we do not normally accept minor changes in comments or help text.
 
 For large proposals that could entail a significant design phase, we wish to be up front with potential contributors that, unfortunately, we are unlikely to be able to give prompt feedback. We are still interested to hear about your use-cases so that we can consider ways to meet them as part of other larger projects.
 
-Most changes will involve updates to the test suite, and changes to Terraform's documentation. The Terraform team can advise on different testing strategies for specific scenarios, and may ask you to revise the specific phrasing of your proposed documentation prose to match better with the standard "voice" of Terraform's documentation.
+Most changes will involve updates to the test suite, and changes to Terracina's documentation. The Terracina team can advise on different testing strategies for specific scenarios, and may ask you to revise the specific phrasing of your proposed documentation prose to match better with the standard "voice" of Terracina's documentation.
 
-We cannot always respond promptly to pull requests, particularly if they do not relate to an existing GitHub issue where the Terraform team has already participated and indicated willingness to work on the issue or accept PRs for the proposal. We *are* grateful for all contributions however, and will give feedback on pull requests as soon as we are able. 
+We cannot always respond promptly to pull requests, particularly if they do not relate to an existing GitHub issue where the Terracina team has already participated and indicated willingness to work on the issue or accept PRs for the proposal. We *are* grateful for all contributions however, and will give feedback on pull requests as soon as we are able. 
 
 
 ### Caveats & areas of special concern
 
-There are some areas of Terraform which are of special concern to the Terraform team. 
+There are some areas of Terracina which are of special concern to the Terracina team. 
 
 #### State Storage Backends
 
-The Terraform team is not merging PRs for new state storage backends. Our priority regarding state storage backends is to find maintainers for existing backends and remove those backends without maintainers.
+The Terracina team is not merging PRs for new state storage backends. Our priority regarding state storage backends is to find maintainers for existing backends and remove those backends without maintainers.
 
-Please see the [CODEOWNERS](https://github.com/hashicorp/terraform/blob/main/CODEOWNERS) file for the status of a given backend. Community members with an interest in a particular backend are welcome to offer to maintain it.
+Please see the [CODEOWNERS](https://github.com/hashicorp/terracina/blob/main/CODEOWNERS) file for the status of a given backend. Community members with an interest in a particular backend are welcome to offer to maintain it.
 
-In terms of setting expectations, there are three categories of backends in the Terraform repository: backends maintained by the core team (ex.: http); backends maintained by one of HashiCorp's provider teams (e.g. AWS S3, Azure, etc); and backends maintained by third party maintainers (ex.: Postgres, COS). 
+In terms of setting expectations, there are three categories of backends in the Terracina repository: backends maintained by the core team (ex.: http); backends maintained by one of HashiCorp's provider teams (e.g. AWS S3, Azure, etc); and backends maintained by third party maintainers (ex.: Postgres, COS). 
 
 * Backends maintained by the core team are unlikely to see accepted contributions. We are triaging incoming pull requests, but these are not highly prioritized against our other work. The smaller and more-contained the change, the more likely it will be reviewed (please see also [Proposing a Change](#proposing-a-change)).
 
@@ -93,37 +93,37 @@ In terms of setting expectations, there are three categories of backends in the 
 
 #### Provisioners
 
-Provisioners are an area of concern in Terraform for a number of reasons. Chiefly, they are often used in the place of configuration management tools or custom providers. 
+Provisioners are an area of concern in Terracina for a number of reasons. Chiefly, they are often used in the place of configuration management tools or custom providers. 
 
-There are two main types of provisioners in Terraform, the generic provisioners (`file`,`local-exec`, and `remote-exec`) and the tool-specific provisioners (`chef`, `habbitat`, `puppet` & `salt-masterless`). **The tool-specific provisioners [are deprecated](https://discuss.hashicorp.com/t/notice-terraform-to-begin-deprecation-of-vendor-tool-specific-provisioners-starting-in-terraform-0-13-4/13997).** In practice this means we will not be accepting PRs for these areas of the codebase. 
+There are two main types of provisioners in Terracina, the generic provisioners (`file`,`local-exec`, and `remote-exec`) and the tool-specific provisioners (`chef`, `habbitat`, `puppet` & `salt-masterless`). **The tool-specific provisioners [are deprecated](https://discuss.hashicorp.com/t/notice-terracina-to-begin-deprecation-of-vendor-tool-specific-provisioners-starting-in-terracina-0-13-4/13997).** In practice this means we will not be accepting PRs for these areas of the codebase. 
 
-From our [documentation](https://www.terraform.io/docs/provisioners/index.html):
+From our [documentation](https://www.terracina.io/docs/provisioners/index.html):
 
-> ... they [...] add a considerable amount of complexity and uncertainty to Terraform usage.[...] we still recommend attempting to solve it [your problem] using other techniques first, and use provisioners only if there is no other option.
+> ... they [...] add a considerable amount of complexity and uncertainty to Terracina usage.[...] we still recommend attempting to solve it [your problem] using other techniques first, and use provisioners only if there is no other option.
 
-The Terraform team is in the process of building a way forward which continues to decrease reliance on provisioners. In the mean time however, as our documentation indicates, they are a tool of last resort. As such expect that PRs and issues for provisioners are not high in priority. 
+The Terracina team is in the process of building a way forward which continues to decrease reliance on provisioners. In the mean time however, as our documentation indicates, they are a tool of last resort. As such expect that PRs and issues for provisioners are not high in priority. 
 
-Please see the [CODEOWNERS](https://github.com/hashicorp/terraform/blob/main/CODEOWNERS) file for the status of a given provisioner.
+Please see the [CODEOWNERS](https://github.com/hashicorp/terracina/blob/main/CODEOWNERS) file for the status of a given provisioner.
 
 
 #### Maintainers
 
 Maintainers are key contributors to our community project. They contribute their time and expertise and we ask that the community take extra special care to be mindful of this when interacting with them.
 
-For code that has a listed maintainer or maintainers in our [CODEOWNERS](https://github.com/hashicorp/terraform/blob/main/CODEOWNERS) file, the Terraform team will highlight them for participation in PRs which relate to the area of code they maintain. The expectation is that a maintainer will review the code and work with the PR contributor before the code is merged by the Terraform team.
+For code that has a listed maintainer or maintainers in our [CODEOWNERS](https://github.com/hashicorp/terracina/blob/main/CODEOWNERS) file, the Terracina team will highlight them for participation in PRs which relate to the area of code they maintain. The expectation is that a maintainer will review the code and work with the PR contributor before the code is merged by the Terracina team.
 
 There is no expectation on response time for our maintainers; they may be indisposed for prolonged periods of time. Please be patient. Discussions on when code becomes "unmaintained" will be on a case-by-case basis. 
 
-If an an unmaintained area of code interests you and you'd like to become a maintainer, you may simply make a PR against our [CODEOWNERS](https://github.com/hashicorp/terraform/blob/main/CODEOWNERS) file with your github handle attached to the approriate area. If there is a maintainer or team of maintainers for that area, please coordinate with them as necessary. 
+If an an unmaintained area of code interests you and you'd like to become a maintainer, you may simply make a PR against our [CODEOWNERS](https://github.com/hashicorp/terracina/blob/main/CODEOWNERS) file with your github handle attached to the approriate area. If there is a maintainer or team of maintainers for that area, please coordinate with them as necessary. 
 
 
 ### Pull Request Lifecycle
 
 1. You are welcome to submit a [draft pull request](https://github.blog/2019-02-14-introducing-draft-pull-requests/) for commentary or review before it is fully completed. It's also a good idea to include specific questions or items you'd like feedback on.
 2. Once you believe your pull request is ready to be merged you can create your pull request.
-3. When time permits Terraform's core team members will look over your contribution and either merge, or provide comments letting you know if there is anything left to do. It may take some time for us to respond. We may also have questions that we need answered about the code, either because something doesn't make sense to us or because we want to understand your thought process. We kindly ask that you do not target specific team members. 
+3. When time permits Terracina's core team members will look over your contribution and either merge, or provide comments letting you know if there is anything left to do. It may take some time for us to respond. We may also have questions that we need answered about the code, either because something doesn't make sense to us or because we want to understand your thought process. We kindly ask that you do not target specific team members. 
 4. If we have requested changes, you can either make those changes or, if you disagree with the suggested changes, we can have a conversation about our reasoning and agree on a path forward. This may be a multi-step process. Our view is that pull requests are a chance to collaborate, and we welcome conversations about how to do things better. It is the contributor's responsibility to address any changes requested. While reviewers are happy to give guidance, it is unsustainable for us to perform the coding work necessary to get a PR into a mergeable state.
-5. Once all outstanding comments and checklist items have been addressed, your contribution will be merged! Merged PRs may or may not be included in the next release based on changes the Terraform teams deems as breaking or not. The core team takes care of updating the [CHANGELOG.md](https://github.com/hashicorp/terraform/blob/main/CHANGELOG.md) as they merge.
+5. Once all outstanding comments and checklist items have been addressed, your contribution will be merged! Merged PRs may or may not be included in the next release based on changes the Terracina teams deems as breaking or not. The core team takes care of updating the [CHANGELOG.md](https://github.com/hashicorp/terracina/blob/main/CHANGELOG.md) as they merge.
 6. In some cases, we might decide that a PR should be closed without merging. We'll make sure to provide clear reasoning when this happens. Following the recommended process above is one of the ways to ensure you don't spend time on a PR we can't or won't merge.
 
 #### Getting Your Pull Requests Merged Faster
@@ -142,48 +142,48 @@ Even with everyone making their best effort to be responsive, it can be time-con
 
 The following checks run when a PR is opened:
 
-- Contributor License Agreement (CLA): If this is your first contribution to Terraform you will be asked to sign the CLA.
+- Contributor License Agreement (CLA): If this is your first contribution to Terracina you will be asked to sign the CLA.
 - Tests: tests include unit tests and acceptance tests, and all tests must pass before a PR can be merged.
 - Vercel: this is an internal tool that does not run correctly for external contributors. We are aware of this and work around it for external contributions. 
 
 ----
 
-## Terraform CLI/Core Development Environment
+## Terracina CLI/Core Development Environment
 
-This repository contains the source code for Terraform CLI, which is the main component of Terraform that contains the core Terraform engine.
+This repository contains the source code for Terracina CLI, which is the main component of Terracina that contains the core Terracina engine.
 
-Terraform providers are not maintained in this repository; you can find relevant
+Terracina providers are not maintained in this repository; you can find relevant
 repository and relevant issue tracker for each provider within the
-[Terraform Registry index](https://registry.terraform.io/browse/providers).
+[Terracina Registry index](https://registry.terracina.io/browse/providers).
 
-This repository also does not include the source code for some other parts of the Terraform product including HCP Terraform, Terraform Enterprise, and the Terraform Registry. The source for those components is not publicly available. If you have feedback about these products, including bug reports, please email [tf-cloud@hashicorp.support](mailto:tf-cloud@hashicorp.support) or [open a support request](https://support.hashicorp.com/hc/en-us/requests/new).
+This repository also does not include the source code for some other parts of the Terracina product including HCP Terracina, Terracina Enterprise, and the Terracina Registry. The source for those components is not publicly available. If you have feedback about these products, including bug reports, please email [tf-cloud@hashicorp.support](mailto:tf-cloud@hashicorp.support) or [open a support request](https://support.hashicorp.com/hc/en-us/requests/new).
 
 ---
 
-If you wish to work on the Terraform CLI source code, you'll first need to install the [Go](https://golang.org/) compiler and the version control system [Git](https://git-scm.com/).
+If you wish to work on the Terracina CLI source code, you'll first need to install the [Go](https://golang.org/) compiler and the version control system [Git](https://git-scm.com/).
 
-At this time the Terraform development environment is targeting only Linux and Mac OS X systems. While Terraform itself is compatible with Windows, unfortunately the unit test suite currently contains Unix-specific assumptions around maximum path lengths, path separators, etc.
+At this time the Terracina development environment is targeting only Linux and Mac OS X systems. While Terracina itself is compatible with Windows, unfortunately the unit test suite currently contains Unix-specific assumptions around maximum path lengths, path separators, etc.
 
-Refer to the file [`.go-version`](https://github.com/hashicorp/terraform/blob/main/.go-version) to see which version of Go Terraform is currently built with. As of Go 1.21, the `go` command (e.g. in `go build`) will automatically install the version of the Go toolchain corresponding to the version specified in `go.mod`, if it is newer than the version you have installed. The version in `go.mod` is considered the _minimum_ compatible Go version for Terraform, while the version in `.go-version` is what the production binary is actually built with.
+Refer to the file [`.go-version`](https://github.com/hashicorp/terracina/blob/main/.go-version) to see which version of Go Terracina is currently built with. As of Go 1.21, the `go` command (e.g. in `go build`) will automatically install the version of the Go toolchain corresponding to the version specified in `go.mod`, if it is newer than the version you have installed. The version in `go.mod` is considered the _minimum_ compatible Go version for Terracina, while the version in `.go-version` is what the production binary is actually built with.
 
-Use Git to clone this repository into a location of your choice. Terraform is using [Go Modules](https://blog.golang.org/using-go-modules), and so you should *not* clone it inside your `GOPATH`.
+Use Git to clone this repository into a location of your choice. Terracina is using [Go Modules](https://blog.golang.org/using-go-modules), and so you should *not* clone it inside your `GOPATH`.
 
-Switch into the root directory of the cloned repository and build Terraform using the Go toolchain in the standard way:
+Switch into the root directory of the cloned repository and build Terracina using the Go toolchain in the standard way:
 
 ```
-cd terraform
+cd terracina
 go install .
 ```
 
 The first time you run the `go install` command, the Go toolchain will download any library dependencies that you don't already have in your Go modules cache. Subsequent builds will be faster because these dependencies will already be available on your local disk.
 
-Once the compilation process succeeds, you can find a `terraform` executable in the Go executable directory. If you haven't overridden it with the `GOBIN` environment variable, the executable directory is the `bin` directory inside the directory returned by the following command:
+Once the compilation process succeeds, you can find a `terracina` executable in the Go executable directory. If you haven't overridden it with the `GOBIN` environment variable, the executable directory is the `bin` directory inside the directory returned by the following command:
 
 ```
 go env GOPATH
 ```
 
-If you are planning to make changes to the Terraform source code, you should run the unit test suite before you start to make sure everything is initially passing:
+If you are planning to make changes to the Terracina source code, you should run the unit test suite before you start to make sure everything is initially passing:
 
 ```
 go test ./...
@@ -198,21 +198,21 @@ go test ./internal/addrs
 
 ## Acceptance Tests: Testing interactions with external services
 
-Terraform's unit test suite is self-contained, using mocks and local files to help ensure that it can run offline and is unlikely to be broken by changes to outside systems.
+Terracina's unit test suite is self-contained, using mocks and local files to help ensure that it can run offline and is unlikely to be broken by changes to outside systems.
 
-However, several Terraform components interact with external services, such as the automatic provider installation mechanism, the Terraform Registry, HCP Terraform, Terraform Enterprise, etc.
+However, several Terracina components interact with external services, such as the automatic provider installation mechanism, the Terracina Registry, HCP Terracina, Terracina Enterprise, etc.
 
-There are some optional tests in the Terraform CLI codebase that *do* interact with external services, which we collectively refer to as "acceptance tests". You can enable these by setting the environment variable `TF_ACC=1` when running the tests. We recommend focusing only on the specific package you are working on when enabling acceptance tests, both because it can help the test run to complete faster and because you are less likely to encounter failures due to drift in systems unrelated to your current goal:
+There are some optional tests in the Terracina CLI codebase that *do* interact with external services, which we collectively refer to as "acceptance tests". You can enable these by setting the environment variable `TF_ACC=1` when running the tests. We recommend focusing only on the specific package you are working on when enabling acceptance tests, both because it can help the test run to complete faster and because you are less likely to encounter failures due to drift in systems unrelated to your current goal:
 
 ```
 TF_ACC=1 go test ./internal/initwd
 ```
 
-Because the acceptance tests depend on services outside of the Terraform codebase, and because the acceptance tests are usually used only when making changes to the systems they cover, it is common and expected that drift in those external systems will cause test failures. Because of this, prior to working on a system covered by acceptance tests it's important to run the existing tests for that system in an *unchanged* work tree first and respond to any test failures that preexist, to avoid misinterpreting such failures as bugs in your new changes.
+Because the acceptance tests depend on services outside of the Terracina codebase, and because the acceptance tests are usually used only when making changes to the systems they cover, it is common and expected that drift in those external systems will cause test failures. Because of this, prior to working on a system covered by acceptance tests it's important to run the existing tests for that system in an *unchanged* work tree first and respond to any test failures that preexist, to avoid misinterpreting such failures as bugs in your new changes.
 
 ## Generated Code
 
-Some files in the Terraform CLI codebase are generated. In most cases, we update these using `go generate`, which is the standard way to encapsulate code generation steps in a Go codebase.
+Some files in the Terracina CLI codebase are generated. In most cases, we update these using `go generate`, which is the standard way to encapsulate code generation steps in a Go codebase.
 
 ```
 go generate ./...
@@ -220,7 +220,7 @@ go generate ./...
 
 Use `git diff` afterwards to inspect the changes and ensure that they are what you expected.
 
-Terraform includes generated Go stub code for the Terraform provider plugin protocol, which is defined using Protocol Buffers. Because the Protocol Buffers tools are not written in Go and thus cannot be automatically installed using `go get`, we follow a different process for generating these, which requires that you've already installed a suitable version of `protoc`:
+Terracina includes generated Go stub code for the Terracina provider plugin protocol, which is defined using Protocol Buffers. Because the Protocol Buffers tools are not written in Go and thus cannot be automatically installed using `go get`, we follow a different process for generating these, which requires that you've already installed a suitable version of `protoc`:
 
 ```
 make protobuf
@@ -228,11 +228,11 @@ make protobuf
 
 ## External Dependencies
 
-Terraform uses Go Modules for dependency management.
+Terracina uses Go Modules for dependency management.
 
-Our dependency licensing policy for Terraform excludes proprietary licenses and "copyleft"-style licenses. We accept the common Mozilla Public License v2, MIT License, and BSD licenses. We will consider other open source licenses in similar spirit to those three, but if you plan to include such a dependency in a contribution we'd recommend opening a GitHub issue first to discuss what you intend to implement and what dependencies it will require so that the Terraform team can review the relevant licenses to for whether they meet our licensing needs.
+Our dependency licensing policy for Terracina excludes proprietary licenses and "copyleft"-style licenses. We accept the common Mozilla Public License v2, MIT License, and BSD licenses. We will consider other open source licenses in similar spirit to those three, but if you plan to include such a dependency in a contribution we'd recommend opening a GitHub issue first to discuss what you intend to implement and what dependencies it will require so that the Terracina team can review the relevant licenses to for whether they meet our licensing needs.
 
-If you need to add a new dependency to Terraform or update the selected version for an existing one, use `go get` from the root of the Terraform repository as follows:
+If you need to add a new dependency to Terracina or update the selected version for an existing one, use `go get` from the root of the Terracina repository as follows:
 
 ```
 go get github.com/hashicorp/hcl/v2@2.0.0
@@ -252,7 +252,7 @@ To ensure that the upgrade has worked correctly, be sure to run the unit test su
 go test ./...
 ```
 
-Because dependency changes affect a shared, top-level file, they are more likely than some other change types to become conflicted with other proposed changes during the code review process. For that reason, and to make dependency changes more visible in the change history, we prefer to record dependency changes as separate commits that include only the results of the above commands and the minimal set of changes to Terraform's own code for compatibility with the new version:
+Because dependency changes affect a shared, top-level file, they are more likely than some other change types to become conflicted with other proposed changes during the code review process. For that reason, and to make dependency changes more visible in the change history, we prefer to record dependency changes as separate commits that include only the results of the above commands and the minimal set of changes to Terracina's own code for compatibility with the new version:
 
 ```
 git add go.mod go.sum

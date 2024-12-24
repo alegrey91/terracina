@@ -1,15 +1,15 @@
-# Terraform Documentation
+# Terracina Documentation
 
-This directory contains the portions of [the Terraform website](https://www.terraform.io/) that pertain to the core functionality, excluding providers and the overall configuration.
+This directory contains the portions of [the Terracina website](https://www.terracina.io/) that pertain to the core functionality, excluding providers and the overall configuration.
 
 The website uses the files in this directory in conjunction with
-[the `terraform-website` repository](https://github.com/hashicorp/terraform-website). The `terraform-website` repository brings all of the documentation together and contains the scripts for testing and building the entire site.
+[the `terracina-website` repository](https://github.com/hashicorp/terracina-website). The `terracina-website` repository brings all of the documentation together and contains the scripts for testing and building the entire site.
 
 ## Suggesting Changes
 
-You can [submit an issue](https://github.com/hashicorp/terraform/issues/new/choose) with documentation requests or submit a pull request with suggested changes.
+You can [submit an issue](https://github.com/hashicorp/terracina/issues/new/choose) with documentation requests or submit a pull request with suggested changes.
 
-Click **Edit this page** at the bottom of any Terraform website page to go directly to the associated markdown file in GitHub.
+Click **Edit this page** at the bottom of any Terracina website page to go directly to the associated markdown file in GitHub.
 
 ## Validating Content
 
@@ -27,19 +27,19 @@ You must update the sidebar navigation when you add or delete documentation .mdx
 
 To update the sidebar navigation, you must edit the appropriate `nav-data.json` file. This repository contains the sidebar navigation files for the following documentation sets:
 
-- Terraform Language: [`language-nav-data.json`](https://github.com/hashicorp/terraform/blob/main/website/data/language-nav-data.json)
-- Terraform CLI: [`cli-nav-data.json`](https://github.com/hashicorp/terraform/blob/main/website/data/cli-nav-data.json)
-- Introduction to Terraform: [`intro-nav-data.json`](https://github.com/hashicorp/terraform/blob/update-readme/website/data/intro-nav-data.json)
+- Terracina Language: [`language-nav-data.json`](https://github.com/hashicorp/terracina/blob/main/website/data/language-nav-data.json)
+- Terracina CLI: [`cli-nav-data.json`](https://github.com/hashicorp/terracina/blob/main/website/data/cli-nav-data.json)
+- Introduction to Terracina: [`intro-nav-data.json`](https://github.com/hashicorp/terracina/blob/update-readme/website/data/intro-nav-data.json)
 
-For more details about how to update the sidebar navigation, refer to [Editing Navigation Sidebars](https://github.com/hashicorp/terraform-website#editing-navigation-sidebars) in the `terraform-website` repository.
+For more details about how to update the sidebar navigation, refer to [Editing Navigation Sidebars](https://github.com/hashicorp/terracina-website#editing-navigation-sidebars) in the `terracina-website` repository.
 
 ## Adding Redirects
 
-You must add a redirect when you move, rename, or delete documentation pages. Refer to https://github.com/hashicorp/terraform-docs-common#redirects for details.
+You must add a redirect when you move, rename, or delete documentation pages. Refer to https://github.com/hashicorp/terracina-docs-common#redirects for details.
 
 ## Previewing Changes
 
-You should preview all of your changes locally before creating a pull request. The build includes content from this repository and the [`terraform-website`](https://github.com/hashicorp/terraform-website/) repository, allowing you to preview the entire Terraform documentation site.
+You should preview all of your changes locally before creating a pull request. The build includes content from this repository and the [`terracina-website`](https://github.com/hashicorp/terracina-website/) repository, allowing you to preview the entire Terracina documentation site.
 
 **Set Up Local Environment**
 
@@ -55,7 +55,7 @@ You should preview all of your changes locally before creating a pull request. T
 
 **Launch Site Locally**
 
-1. Navigate into your local `terraform` top-level directory and run `make website`.
+1. Navigate into your local `terracina` top-level directory and run `make website`.
 1. Open `http://localhost:3000` in your web browser. While the preview is running, you can edit pages and Next.js automatically rebuilds them.
 1. Press `ctrl-C` in your terminal to stop the server and end the preview.
 
@@ -63,7 +63,7 @@ You should preview all of your changes locally before creating a pull request. T
 
 Merging a PR to `main` queues up documentation changes for the next minor product release. Your changes are not immediately available on the website.
 
-The website generates versioned documentation by pointing to the HEAD of the release branch for that version. For example, the `v1.2.x` documentation on the website points to the HEAD of the `v1.2` release branch in the `terraform` repository. To update existing documentation versions, you must also backport your changes to that release branch. Backported changes become live on the site within one hour.
+The website generates versioned documentation by pointing to the HEAD of the release branch for that version. For example, the `v1.2.x` documentation on the website points to the HEAD of the `v1.2` release branch in the `terracina` repository. To update existing documentation versions, you must also backport your changes to that release branch. Backported changes become live on the site within one hour.
 
 ### Backporting
 

@@ -6,8 +6,8 @@ package stackaddrs
 import (
 	"fmt"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/collections"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/collections"
 )
 
 // ProviderConfigRef is a reference-only address type representing a reference

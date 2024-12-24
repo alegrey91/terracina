@@ -8,7 +8,7 @@ import (
 	"context"
 	"sync"
 
-	stacks "github.com/hashicorp/terraform/internal/rpcapi/terraform1/stacks"
+	stacks "github.com/hashicorp/terracina/internal/rpcapi/terracina1/stacks"
 )
 
 type Stacks struct {

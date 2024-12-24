@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/plans"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/plans"
 )
 
 type Hook interface {
@@ -412,7 +412,7 @@ func progressActionVerb(action plans.Action) string {
 	case plans.Forget:
 		// Removing a resource from state should not take very long. Fall back
 		// to "applying" just in case, since the terminology "forgetting" is
-		// meant to be internal to Terraform.
+		// meant to be internal to Terracina.
 		fallthrough
 	case plans.NoOp:
 		// This should never be possible: a no-op planned change should not

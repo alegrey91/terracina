@@ -13,17 +13,17 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/backend/backendrun"
-	"github.com/hashicorp/terraform/internal/command/arguments"
-	"github.com/hashicorp/terraform/internal/command/views"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/terraform"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/backend/backendrun"
+	"github.com/hashicorp/terracina/internal/command/arguments"
+	"github.com/hashicorp/terracina/internal/command/views"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/terracina"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // ImportCommand is a cli.Command implementation that imports resources
-// into the Terraform state.
+// into the Terracina state.
 type ImportCommand struct {
 	Meta
 }
@@ -40,7 +40,7 @@ func (c *ImportCommand) Run(args []string) int {
 	args = c.Meta.process(args)
 
 	cmdFlags := c.Meta.extendedFlagSet("import")
-	cmdFlags.BoolVar(&c.ignoreRemoteVersion, "ignore-remote-version", false, "continue even if remote and local Terraform versions are incompatible")
+	cmdFlags.BoolVar(&c.ignoreRemoteVersion, "ignore-remote-version", false, "continue even if remote and local Terracina versions are incompatible")
 	cmdFlags.IntVar(&c.Meta.parallelism, "parallelism", DefaultParallelism, "parallelism")
 	cmdFlags.StringVar(&c.Meta.statePath, "state", "", "path")
 	cmdFlags.StringVar(&c.Meta.stateOutPath, "state-out", "", "path")
@@ -90,9 +90,9 @@ func (c *ImportCommand) Run(args []string) int {
 	if !c.dirIsConfigPath(configPath) {
 		diags = diags.Append(&hcl.Diagnostic{
 			Severity: hcl.DiagError,
-			Summary:  "No Terraform configuration files",
+			Summary:  "No Terracina configuration files",
 			Detail: fmt.Sprintf(
-				"The directory %s does not contain any Terraform configuration files (.tf or .tf.json). To specify a different configuration directory, use the -config=\"...\" command line option.",
+				"The directory %s does not contain any Terracina configuration files (.tf or .tf.json). To specify a different configuration directory, use the -config=\"...\" command line option.",
 				configPath,
 			),
 		})
@@ -111,7 +111,7 @@ func (c *ImportCommand) Run(args []string) int {
 
 	// Verify that the given address points to something that exists in config.
 	// This is to reduce the risk that a typo in the resource address will
-	// import something that Terraform will want to immediately destroy on
+	// import something that Terracina will want to immediately destroy on
 	// the next plan, and generally acts as a reassurance of user intent.
 	targetConfig := config.DescendantForInstance(addr.Module)
 	if targetConfig == nil {
@@ -193,7 +193,7 @@ func (c *ImportCommand) Run(args []string) int {
 		c.showDiagnostics(diags)
 		return 1
 	}
-	opReq.Hooks = []terraform.Hook{c.uiHook()}
+	opReq.Hooks = []terracina.Hook{c.uiHook()}
 	{
 		var moreDiags tfdiags.Diagnostics
 		opReq.Variables, moreDiags = c.collectVariableValues()
@@ -205,7 +205,7 @@ func (c *ImportCommand) Run(args []string) int {
 	}
 	opReq.View = views.NewOperation(arguments.ViewHuman, c.RunningInAutomation, c.View)
 
-	// Check remote Terraform version is compatible
+	// Check remote Terracina version is compatible
 	remoteVersionDiags := c.remoteVersionCheck(b, opReq.Workspace)
 	diags = diags.Append(remoteVersionDiags)
 	c.showDiagnostics(diags)
@@ -232,8 +232,8 @@ func (c *ImportCommand) Run(args []string) int {
 	// Perform the import. Note that as you can see it is possible for this
 	// API to import more than one resource at once. For now, we only allow
 	// one while we stabilize this feature.
-	newState, importDiags := lr.Core.Import(lr.Config, lr.InputState, &terraform.ImportOpts{
-		Targets: []*terraform.ImportTarget{
+	newState, importDiags := lr.Core.Import(lr.Config, lr.InputState, &terracina.ImportOpts{
+		Targets: []*terracina.ImportTarget{
 			{
 				LegacyAddr: addr,
 				IDString:   args[1],
@@ -252,7 +252,7 @@ func (c *ImportCommand) Run(args []string) int {
 	}
 
 	// Get schemas, if possible, before writing state
-	var schemas *terraform.Schemas
+	var schemas *terracina.Schemas
 	if isCloudMode(b) {
 		var schemaDiags tfdiags.Diagnostics
 		schemas, schemaDiags = c.MaybeGetSchemas(newState, nil)
@@ -282,13 +282,13 @@ func (c *ImportCommand) Run(args []string) int {
 
 func (c *ImportCommand) Help() string {
 	helpText := `
-Usage: terraform [global options] import [options] ADDR ID
+Usage: terracina [global options] import [options] ADDR ID
 
-  Import existing infrastructure into your Terraform state.
+  Import existing infrastructure into your Terracina state.
 
-  This will find and import the specified resource into your Terraform
-  state, allowing existing infrastructure to come under Terraform
-  management without having to be initially created by Terraform.
+  This will find and import the specified resource into your Terracina
+  state, allowing existing infrastructure to come under Terracina
+  management without having to be initially created by Terracina.
 
   The ADDR specified is the address to import the resource to. Please
   see the documentation online for resource addresses. The ID is a
@@ -303,7 +303,7 @@ Usage: terraform [global options] import [options] ADDR ID
 
 Options:
 
-  -config=path            Path to a directory of Terraform configuration files
+  -config=path            Path to a directory of Terracina configuration files
                           to use to configure the provider. Defaults to pwd.
                           If no config files are present, they must be provided
                           via the input prompts or env vars.
@@ -318,12 +318,12 @@ Options:
 
   -no-color               If specified, output won't contain any color.
 
-  -var 'foo=bar'          Set a variable in the Terraform configuration. This
+  -var 'foo=bar'          Set a variable in the Terracina configuration. This
                           flag can be set multiple times. This is only useful
                           with the "-config" flag.
 
-  -var-file=foo           Set variables in the Terraform configuration from
-                          a file. If "terraform.tfvars" or any ".auto.tfvars"
+  -var-file=foo           Set variables in the Terracina configuration from
+                          a file. If "terracina.tfvars" or any ".auto.tfvars"
                           files are present, they will be automatically loaded.
 
   -ignore-remote-version  A rare option used for the remote backend only. See
@@ -337,11 +337,11 @@ Options:
 }
 
 func (c *ImportCommand) Synopsis() string {
-	return "Associate existing infrastructure with a Terraform resource"
+	return "Associate existing infrastructure with a Terracina resource"
 }
 
 const importCommandInvalidAddressReference = `For information on valid syntax, see:
-https://www.terraform.io/docs/cli/state/resource-addressing.html`
+https://www.terracina.io/docs/cli/state/resource-addressing.html`
 
 const importCommandMissingResourceFmt = `[reset][bold][red]Error:[reset][bold] resource address %q does not exist in the configuration.[reset]
 
@@ -355,5 +355,5 @@ resource %q %q {
 const importCommandSuccessMsg = `Import successful!
 
 The resources that were imported are shown above. These resources are now in
-your Terraform state and will henceforth be managed by Terraform.
+your Terracina state and will henceforth be managed by Terracina.
 `

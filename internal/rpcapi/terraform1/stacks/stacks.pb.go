@@ -11,7 +11,7 @@ package stacks
 
 import (
 	context "context"
-	terraform1 "github.com/hashicorp/terraform/internal/rpcapi/terraform1"
+	terracina1 "github.com/hashicorp/terracina/internal/rpcapi/terracina1"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -933,7 +933,7 @@ func (*InspectExpressionResult) Descriptor() ([]byte, []int) {
 	return file_stacks_proto_rawDescGZIP(), []int{11}
 }
 
-// Represents dynamically-typed data from within the Terraform language.
+// Represents dynamically-typed data from within the Terracina language.
 // Typically only one of the available serialization formats will be populated,
 // depending on what serializations are appropriate for a particular context
 // and what capabilities the client and the server negotiated during Handshake.
@@ -1057,7 +1057,7 @@ type DynamicValueWithSource struct {
 	unknownFields protoimpl.UnknownFields
 
 	Value       *DynamicValue           `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
-	SourceRange *terraform1.SourceRange `protobuf:"bytes,2,opt,name=source_range,json=sourceRange,proto3" json:"source_range,omitempty"`
+	SourceRange *terracina1.SourceRange `protobuf:"bytes,2,opt,name=source_range,json=sourceRange,proto3" json:"source_range,omitempty"`
 }
 
 func (x *DynamicValueWithSource) Reset() {
@@ -1099,7 +1099,7 @@ func (x *DynamicValueWithSource) GetValue() *DynamicValue {
 	return nil
 }
 
-func (x *DynamicValueWithSource) GetSourceRange() *terraform1.SourceRange {
+func (x *DynamicValueWithSource) GetSourceRange() *terracina1.SourceRange {
 	if x != nil {
 		return x.SourceRange
 	}
@@ -1361,14 +1361,14 @@ type PlannedChange struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Terraform Core's internal representation(s) of this change. Callers
+	// Terracina Core's internal representation(s) of this change. Callers
 	// must provide the messages in this field, if any, verbatim to the
 	// ApplyStackChanges RPC in order to apply this change, and must not
 	// attempt to decode or analyze the contents because they are subject
-	// to change in future versions of Terraform Core.
+	// to change in future versions of Terracina Core.
 	//
 	// This might be unpopulated if this message represents only information
-	// for the caller and Terraform Core doesn't actually need to recall this
+	// for the caller and Terracina Core doesn't actually need to recall this
 	// information during the apply step. Callers must append each raw item
 	// to the raw plan in the order specified, and provide them all together
 	// in the same order to ApplyStackChanges.
@@ -1382,12 +1382,12 @@ type PlannedChange struct {
 	// by treating them the same way as if each description had arrived in
 	// a separate PlannedChange message. Clients should not treat the grouping
 	// or not-grouping of change description objects as meaningful information,
-	// since it's subject to change in future Terraform Core versions.
+	// since it's subject to change in future Terracina Core versions.
 	//
 	// DO NOT attempt to use this to surgically filter particular changes
 	// from a larger plan. Although external descriptions often match with
 	// the raw representations in field "raw", that is not guaranteed and
-	// Terraform Core assumes that it will always be provided with the full
+	// Terracina Core assumes that it will always be provided with the full
 	// set of raw messages -- in the same order they were emitted -- during
 	// the apply step. For example, some raw messages might omit information
 	// that is implied by earlier raw messages and would therefore be
@@ -1448,7 +1448,7 @@ type Deferred struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Reason Deferred_Reason `protobuf:"varint,1,opt,name=reason,proto3,enum=terraform1.stacks.Deferred_Reason" json:"reason,omitempty"`
+	Reason Deferred_Reason `protobuf:"varint,1,opt,name=reason,proto3,enum=terracina1.stacks.Deferred_Reason" json:"reason,omitempty"`
 }
 
 func (x *Deferred) Reset() {
@@ -1502,7 +1502,7 @@ type AppliedChange struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Terraform Core's internal representation of the change, presented as
+	// Terracina Core's internal representation of the change, presented as
 	// a sequence of modifications to the raw state data structure.
 	//
 	// For each element, in order:
@@ -1556,7 +1556,7 @@ type AppliedChange struct {
 	// DO NOT attempt to use this to surgically filter particular raw state
 	// updates from a larger plan. Although external descriptions often match
 	// with the raw representations in field "raw", that is not guaranteed and
-	// Terraform Core assumes that it will always be provided with the full
+	// Terracina Core assumes that it will always be provided with the full
 	// raw state map during the next plan step.
 	Descriptions []*AppliedChange_ChangeDescription `protobuf:"bytes,2,rep,name=descriptions,proto3" json:"descriptions,omitempty"`
 }
@@ -1785,7 +1785,7 @@ type OpenStackConfiguration_Request struct {
 	unknownFields protoimpl.UnknownFields
 
 	SourceBundleHandle int64                     `protobuf:"varint,1,opt,name=source_bundle_handle,json=sourceBundleHandle,proto3" json:"source_bundle_handle,omitempty"`
-	SourceAddress      *terraform1.SourceAddress `protobuf:"bytes,2,opt,name=source_address,json=sourceAddress,proto3" json:"source_address,omitempty"`
+	SourceAddress      *terracina1.SourceAddress `protobuf:"bytes,2,opt,name=source_address,json=sourceAddress,proto3" json:"source_address,omitempty"`
 }
 
 func (x *OpenStackConfiguration_Request) Reset() {
@@ -1827,7 +1827,7 @@ func (x *OpenStackConfiguration_Request) GetSourceBundleHandle() int64 {
 	return 0
 }
 
-func (x *OpenStackConfiguration_Request) GetSourceAddress() *terraform1.SourceAddress {
+func (x *OpenStackConfiguration_Request) GetSourceAddress() *terracina1.SourceAddress {
 	if x != nil {
 		return x.SourceAddress
 	}
@@ -1840,7 +1840,7 @@ type OpenStackConfiguration_Response struct {
 	unknownFields protoimpl.UnknownFields
 
 	StackConfigHandle int64                    `protobuf:"varint,1,opt,name=stack_config_handle,json=stackConfigHandle,proto3" json:"stack_config_handle,omitempty"`
-	Diagnostics       []*terraform1.Diagnostic `protobuf:"bytes,2,rep,name=diagnostics,proto3" json:"diagnostics,omitempty"`
+	Diagnostics       []*terracina1.Diagnostic `protobuf:"bytes,2,rep,name=diagnostics,proto3" json:"diagnostics,omitempty"`
 }
 
 func (x *OpenStackConfiguration_Response) Reset() {
@@ -1882,7 +1882,7 @@ func (x *OpenStackConfiguration_Response) GetStackConfigHandle() int64 {
 	return 0
 }
 
-func (x *OpenStackConfiguration_Response) GetDiagnostics() []*terraform1.Diagnostic {
+func (x *OpenStackConfiguration_Response) GetDiagnostics() []*terracina1.Diagnostic {
 	if x != nil {
 		return x.Diagnostics
 	}
@@ -2042,7 +2042,7 @@ type ValidateStackConfiguration_Response struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Diagnostics []*terraform1.Diagnostic `protobuf:"bytes,1,rep,name=diagnostics,proto3" json:"diagnostics,omitempty"`
+	Diagnostics []*terracina1.Diagnostic `protobuf:"bytes,1,rep,name=diagnostics,proto3" json:"diagnostics,omitempty"`
 }
 
 func (x *ValidateStackConfiguration_Response) Reset() {
@@ -2077,7 +2077,7 @@ func (*ValidateStackConfiguration_Response) Descriptor() ([]byte, []int) {
 	return file_stacks_proto_rawDescGZIP(), []int{2, 1}
 }
 
-func (x *ValidateStackConfiguration_Response) GetDiagnostics() []*terraform1.Diagnostic {
+func (x *ValidateStackConfiguration_Response) GetDiagnostics() []*terracina1.Diagnostic {
 	if x != nil {
 		return x.Diagnostics
 	}
@@ -2263,7 +2263,7 @@ type FindStackConfigurationComponents_EmbeddedStack struct {
 	unknownFields protoimpl.UnknownFields
 
 	SourceAddr string                                        `protobuf:"bytes,1,opt,name=source_addr,json=sourceAddr,proto3" json:"source_addr,omitempty"`
-	Instances  FindStackConfigurationComponents_Instances    `protobuf:"varint,2,opt,name=instances,proto3,enum=terraform1.stacks.FindStackConfigurationComponents_Instances" json:"instances,omitempty"`
+	Instances  FindStackConfigurationComponents_Instances    `protobuf:"varint,2,opt,name=instances,proto3,enum=terracina1.stacks.FindStackConfigurationComponents_Instances" json:"instances,omitempty"`
 	Config     *FindStackConfigurationComponents_StackConfig `protobuf:"bytes,3,opt,name=config,proto3" json:"config,omitempty"`
 }
 
@@ -2326,7 +2326,7 @@ type FindStackConfigurationComponents_Component struct {
 	unknownFields protoimpl.UnknownFields
 
 	SourceAddr    string                                     `protobuf:"bytes,1,opt,name=source_addr,json=sourceAddr,proto3" json:"source_addr,omitempty"`
-	Instances     FindStackConfigurationComponents_Instances `protobuf:"varint,2,opt,name=instances,proto3,enum=terraform1.stacks.FindStackConfigurationComponents_Instances" json:"instances,omitempty"`
+	Instances     FindStackConfigurationComponents_Instances `protobuf:"varint,2,opt,name=instances,proto3,enum=terracina1.stacks.FindStackConfigurationComponents_Instances" json:"instances,omitempty"`
 	ComponentAddr string                                     `protobuf:"bytes,3,opt,name=component_addr,json=componentAddr,proto3" json:"component_addr,omitempty"`
 }
 
@@ -2389,7 +2389,7 @@ type FindStackConfigurationComponents_Removed struct {
 	unknownFields protoimpl.UnknownFields
 
 	SourceAddr    string                                     `protobuf:"bytes,1,opt,name=source_addr,json=sourceAddr,proto3" json:"source_addr,omitempty"`
-	Instances     FindStackConfigurationComponents_Instances `protobuf:"varint,2,opt,name=instances,proto3,enum=terraform1.stacks.FindStackConfigurationComponents_Instances" json:"instances,omitempty"`
+	Instances     FindStackConfigurationComponents_Instances `protobuf:"varint,2,opt,name=instances,proto3,enum=terracina1.stacks.FindStackConfigurationComponents_Instances" json:"instances,omitempty"`
 	ComponentAddr string                                     `protobuf:"bytes,3,opt,name=component_addr,json=componentAddr,proto3" json:"component_addr,omitempty"`
 	Destroy       bool                                       `protobuf:"varint,4,opt,name=destroy,proto3" json:"destroy,omitempty"`
 }
@@ -2756,7 +2756,7 @@ type PlanStackChanges_Request struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	PlanMode            PlanMode `protobuf:"varint,1,opt,name=plan_mode,json=planMode,proto3,enum=terraform1.stacks.PlanMode" json:"plan_mode,omitempty"`
+	PlanMode            PlanMode `protobuf:"varint,1,opt,name=plan_mode,json=planMode,proto3,enum=terracina1.stacks.PlanMode" json:"plan_mode,omitempty"`
 	StackConfigHandle   int64    `protobuf:"varint,2,opt,name=stack_config_handle,json=stackConfigHandle,proto3" json:"stack_config_handle,omitempty"`
 	PreviousStateHandle int64    `protobuf:"varint,7,opt,name=previous_state_handle,json=previousStateHandle,proto3" json:"previous_state_handle,omitempty"`
 	// Deprecated: Marked as deprecated in stacks.proto.
@@ -2907,7 +2907,7 @@ func (x *PlanStackChanges_Event) GetPlannedChange() *PlannedChange {
 	return nil
 }
 
-func (x *PlanStackChanges_Event) GetDiagnostic() *terraform1.Diagnostic {
+func (x *PlanStackChanges_Event) GetDiagnostic() *terracina1.Diagnostic {
 	if x, ok := x.GetEvent().(*PlanStackChanges_Event_Diagnostic); ok {
 		return x.Diagnostic
 	}
@@ -2930,7 +2930,7 @@ type PlanStackChanges_Event_PlannedChange struct {
 }
 
 type PlanStackChanges_Event_Diagnostic struct {
-	Diagnostic *terraform1.Diagnostic `protobuf:"bytes,2,opt,name=diagnostic,proto3,oneof"`
+	Diagnostic *terracina1.Diagnostic `protobuf:"bytes,2,opt,name=diagnostic,proto3,oneof"`
 }
 
 type PlanStackChanges_Event_Progress struct {
@@ -3132,7 +3132,7 @@ type ApplyStackChanges_Request struct {
 	// results will be unpredictable.
 	StackConfigHandle int64 `protobuf:"varint,1,opt,name=stack_config_handle,json=stackConfigHandle,proto3" json:"stack_config_handle,omitempty"`
 	// The caller should send all of the keys present in the previous
-	// apply's description map. Terraform Core will use this for
+	// apply's description map. Terracina Core will use this for
 	// situations such as updating existing descriptions to newer
 	// formats even if no change is being made to the corresponding
 	// real objects.
@@ -3307,7 +3307,7 @@ func (x *ApplyStackChanges_Event) GetAppliedChange() *AppliedChange {
 	return nil
 }
 
-func (x *ApplyStackChanges_Event) GetDiagnostic() *terraform1.Diagnostic {
+func (x *ApplyStackChanges_Event) GetDiagnostic() *terracina1.Diagnostic {
 	if x, ok := x.GetEvent().(*ApplyStackChanges_Event_Diagnostic); ok {
 		return x.Diagnostic
 	}
@@ -3330,7 +3330,7 @@ type ApplyStackChanges_Event_AppliedChange struct {
 }
 
 type ApplyStackChanges_Event_Diagnostic struct {
-	Diagnostic *terraform1.Diagnostic `protobuf:"bytes,2,opt,name=diagnostic,proto3,oneof"`
+	Diagnostic *terracina1.Diagnostic `protobuf:"bytes,2,opt,name=diagnostic,proto3,oneof"`
 }
 
 type ApplyStackChanges_Event_Progress struct {
@@ -3428,7 +3428,7 @@ type OpenStackInspector_Response struct {
 	unknownFields protoimpl.UnknownFields
 
 	StackInspectorHandle int64                    `protobuf:"varint,1,opt,name=stack_inspector_handle,json=stackInspectorHandle,proto3" json:"stack_inspector_handle,omitempty"`
-	Diagnostics          []*terraform1.Diagnostic `protobuf:"bytes,2,rep,name=diagnostics,proto3" json:"diagnostics,omitempty"`
+	Diagnostics          []*terracina1.Diagnostic `protobuf:"bytes,2,rep,name=diagnostics,proto3" json:"diagnostics,omitempty"`
 }
 
 func (x *OpenStackInspector_Response) Reset() {
@@ -3470,7 +3470,7 @@ func (x *OpenStackInspector_Response) GetStackInspectorHandle() int64 {
 	return 0
 }
 
-func (x *OpenStackInspector_Response) GetDiagnostics() []*terraform1.Diagnostic {
+func (x *OpenStackInspector_Response) GetDiagnostics() []*terracina1.Diagnostic {
 	if x != nil {
 		return x.Diagnostics
 	}
@@ -3552,7 +3552,7 @@ type InspectExpressionResult_Response struct {
 	//
 	// Uses a MessagePack encoding with in-band type information.
 	Result      *DynamicValue            `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
-	Diagnostics []*terraform1.Diagnostic `protobuf:"bytes,2,rep,name=diagnostics,proto3" json:"diagnostics,omitempty"`
+	Diagnostics []*terracina1.Diagnostic `protobuf:"bytes,2,rep,name=diagnostics,proto3" json:"diagnostics,omitempty"`
 }
 
 func (x *InspectExpressionResult_Response) Reset() {
@@ -3594,7 +3594,7 @@ func (x *InspectExpressionResult_Response) GetResult() *DynamicValue {
 	return nil
 }
 
-func (x *InspectExpressionResult_Response) GetDiagnostics() []*terraform1.Diagnostic {
+func (x *InspectExpressionResult_Response) GetDiagnostics() []*terracina1.Diagnostic {
 	if x != nil {
 		return x.Diagnostics
 	}
@@ -3704,7 +3704,7 @@ func (*AttributePath_Step_ElementKeyInt) isAttributePath_Step_Selector() {}
 // presenting information to end users in the UI and for other subsystems
 // such as imposing policy rules on the resulting plan.
 //
-// New description types might be added in future versions of Terraform
+// New description types might be added in future versions of Terracina
 // Core, and so clients should tolerate description messages that appear
 // to have none of the oneof fields set, and should just ignore those
 // messages entirely.
@@ -3852,7 +3852,7 @@ func (*PlannedChange_ChangeDescription_InputVariablePlanned) isPlannedChange_Cha
 }
 
 // Reports the existence of a particular instance of a component,
-// once Terraform has resolved arguments such as "for_each" that
+// once Terracina has resolved arguments such as "for_each" that
 // might make the set of instances dynamic.
 type PlannedChange_ComponentInstance struct {
 	state         protoimpl.MessageState
@@ -3864,14 +3864,14 @@ type PlannedChange_ComponentInstance struct {
 	// prior state. This only considers the component instance directly,
 	// and doesn't take into account what actions are planned for any
 	// resource instances inside.
-	Actions []ChangeType `protobuf:"varint,2,rep,packed,name=actions,proto3,enum=terraform1.stacks.ChangeType" json:"actions,omitempty"`
+	Actions []ChangeType `protobuf:"varint,2,rep,packed,name=actions,proto3,enum=terracina1.stacks.ChangeType" json:"actions,omitempty"`
 	// A flag for whether applying this plan is expected to cause the
 	// desired state and actual state to become converged.
 	//
-	// If this field is false, that means Terraform expects that at least
+	// If this field is false, that means Terracina expects that at least
 	// one more plan/apply round will be needed to reach convergence.
 	//
-	// If this field is true then Terraform hopes to be able to converge
+	// If this field is true then Terracina hopes to be able to converge
 	// after this plan is applied, but callers should ideally still check
 	// anyway by running one more plan to confirm that there aren't any
 	// unexpected differences caused by such situations as contradictory
@@ -3938,16 +3938,16 @@ type PlannedChange_ResourceInstance struct {
 	unknownFields protoimpl.UnknownFields
 
 	Addr         *ResourceInstanceObjectInStackAddr       `protobuf:"bytes,1,opt,name=addr,proto3" json:"addr,omitempty"`
-	Actions      []ChangeType                             `protobuf:"varint,2,rep,packed,name=actions,proto3,enum=terraform1.stacks.ChangeType" json:"actions,omitempty"`
+	Actions      []ChangeType                             `protobuf:"varint,2,rep,packed,name=actions,proto3,enum=terracina1.stacks.ChangeType" json:"actions,omitempty"`
 	Values       *DynamicValueChange                      `protobuf:"bytes,3,opt,name=values,proto3" json:"values,omitempty"`
 	Moved        *PlannedChange_ResourceInstance_Moved    `protobuf:"bytes,4,opt,name=moved,proto3" json:"moved,omitempty"`
 	Imported     *PlannedChange_ResourceInstance_Imported `protobuf:"bytes,5,opt,name=imported,proto3" json:"imported,omitempty"`
-	ResourceMode ResourceMode                             `protobuf:"varint,6,opt,name=resource_mode,json=resourceMode,proto3,enum=terraform1.stacks.ResourceMode" json:"resource_mode,omitempty"`
+	ResourceMode ResourceMode                             `protobuf:"varint,6,opt,name=resource_mode,json=resourceMode,proto3,enum=terracina1.stacks.ResourceMode" json:"resource_mode,omitempty"`
 	ResourceType string                                   `protobuf:"bytes,7,opt,name=resource_type,json=resourceType,proto3" json:"resource_type,omitempty"`
 	ProviderAddr string                                   `protobuf:"bytes,8,opt,name=provider_addr,json=providerAddr,proto3" json:"provider_addr,omitempty"`
 	// previous_run_value is included only if it would be
 	// different from values.old, which typically means that
-	// Terraform detected some changes made outside of Terraform
+	// Terracina detected some changes made outside of Terracina
 	// since the previous run. In that case, this field is
 	// the un-refreshed (but still upgraded) value from
 	// the previous run and values.old is the refreshed version.
@@ -3955,12 +3955,12 @@ type PlannedChange_ResourceInstance struct {
 	// If this isn't set then values.old should be used as the
 	// previous run value, if needed.
 	PreviousRunValue *DynamicValue `protobuf:"bytes,9,opt,name=previous_run_value,json=previousRunValue,proto3" json:"previous_run_value,omitempty"`
-	// This flag is set if Terraform Core considers the difference
+	// This flag is set if Terracina Core considers the difference
 	// between previous_run_value and values.old to be "notable",
 	// which is a heuristic subject to change over time but is
 	// broadly intended to mean that it would be worth mentioning
 	// the difference between the two in the UI as a
-	// "change outside of Terraform". If this isn't set then the
+	// "change outside of Terracina". If this isn't set then the
 	// difference is probably not worth mentioning to the user
 	// by default, although it could still be shown behind an
 	// optional disclosure in UI contexts where such things are possible.
@@ -4118,7 +4118,7 @@ type PlannedChange_OutputValue struct {
 	unknownFields protoimpl.UnknownFields
 
 	Name    string              `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Actions []ChangeType        `protobuf:"varint,2,rep,packed,name=actions,proto3,enum=terraform1.stacks.ChangeType" json:"actions,omitempty"`
+	Actions []ChangeType        `protobuf:"varint,2,rep,packed,name=actions,proto3,enum=terracina1.stacks.ChangeType" json:"actions,omitempty"`
 	Values  *DynamicValueChange `protobuf:"bytes,3,opt,name=values,proto3" json:"values,omitempty"`
 }
 
@@ -4239,7 +4239,7 @@ type PlannedChange_InputVariable struct {
 	unknownFields protoimpl.UnknownFields
 
 	Name                string              `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Actions             []ChangeType        `protobuf:"varint,2,rep,packed,name=actions,proto3,enum=terraform1.stacks.ChangeType" json:"actions,omitempty"`
+	Actions             []ChangeType        `protobuf:"varint,2,rep,packed,name=actions,proto3,enum=terracina1.stacks.ChangeType" json:"actions,omitempty"`
 	Values              *DynamicValueChange `protobuf:"bytes,3,opt,name=values,proto3" json:"values,omitempty"`
 	RequiredDuringApply bool                `protobuf:"varint,4,opt,name=required_during_apply,json=requiredDuringApply,proto3" json:"required_during_apply,omitempty"`
 }
@@ -4679,14 +4679,14 @@ type AppliedChange_ResourceInstance struct {
 
 	Addr         *ResourceInstanceObjectInStackAddr `protobuf:"bytes,1,opt,name=addr,proto3" json:"addr,omitempty"`
 	NewValue     *DynamicValue                      `protobuf:"bytes,2,opt,name=new_value,json=newValue,proto3" json:"new_value,omitempty"`
-	ResourceMode ResourceMode                       `protobuf:"varint,4,opt,name=resource_mode,json=resourceMode,proto3,enum=terraform1.stacks.ResourceMode" json:"resource_mode,omitempty"`
+	ResourceMode ResourceMode                       `protobuf:"varint,4,opt,name=resource_mode,json=resourceMode,proto3,enum=terracina1.stacks.ResourceMode" json:"resource_mode,omitempty"`
 	ResourceType string                             `protobuf:"bytes,5,opt,name=resource_type,json=resourceType,proto3" json:"resource_type,omitempty"`
 	ProviderAddr string                             `protobuf:"bytes,6,opt,name=provider_addr,json=providerAddr,proto3" json:"provider_addr,omitempty"`
-	// Sometimes Terraform needs to make changes to a resource in
+	// Sometimes Terracina needs to make changes to a resource in
 	// multiple steps during the apply phase, with each step
 	// changing something about the state. This flag will be set
 	// for such interim updates, and left unset for whatever
-	// description Terraform Core considers to be "final", at
+	// description Terracina Core considers to be "final", at
 	// which point the new value should be converged with the
 	// desired state.
 	//
@@ -4696,7 +4696,7 @@ type AppliedChange_ResourceInstance struct {
 	// confusion by showing the not-yet-converged intermediate
 	// states.
 	//
-	// If Terraform encounters a problem during the apply phase
+	// If Terracina encounters a problem during the apply phase
 	// and needs to stop partway through then a "final" change
 	// description might never arrive. In that case, callers
 	// should save the most recent interim object as the final
@@ -4999,7 +4999,7 @@ type StackChangeProgress_ComponentInstanceStatus struct {
 	unknownFields protoimpl.UnknownFields
 
 	Addr   *ComponentInstanceInStackAddr                      `protobuf:"bytes,1,opt,name=addr,proto3" json:"addr,omitempty"`
-	Status StackChangeProgress_ComponentInstanceStatus_Status `protobuf:"varint,2,opt,name=status,proto3,enum=terraform1.stacks.StackChangeProgress_ComponentInstanceStatus_Status" json:"status,omitempty"`
+	Status StackChangeProgress_ComponentInstanceStatus_Status `protobuf:"varint,2,opt,name=status,proto3,enum=terracina1.stacks.StackChangeProgress_ComponentInstanceStatus_Status" json:"status,omitempty"`
 }
 
 func (x *StackChangeProgress_ComponentInstanceStatus) Reset() {
@@ -5056,7 +5056,7 @@ type StackChangeProgress_ResourceInstanceStatus struct {
 	unknownFields protoimpl.UnknownFields
 
 	Addr         *ResourceInstanceObjectInStackAddr                `protobuf:"bytes,1,opt,name=addr,proto3" json:"addr,omitempty"`
-	Status       StackChangeProgress_ResourceInstanceStatus_Status `protobuf:"varint,2,opt,name=status,proto3,enum=terraform1.stacks.StackChangeProgress_ResourceInstanceStatus_Status" json:"status,omitempty"`
+	Status       StackChangeProgress_ResourceInstanceStatus_Status `protobuf:"varint,2,opt,name=status,proto3,enum=terracina1.stacks.StackChangeProgress_ResourceInstanceStatus_Status" json:"status,omitempty"`
 	ProviderAddr string                                            `protobuf:"bytes,3,opt,name=provider_addr,json=providerAddr,proto3" json:"provider_addr,omitempty"`
 }
 
@@ -5124,7 +5124,7 @@ type StackChangeProgress_ResourceInstancePlannedChange struct {
 	unknownFields protoimpl.UnknownFields
 
 	Addr         *ResourceInstanceObjectInStackAddr                          `protobuf:"bytes,1,opt,name=addr,proto3" json:"addr,omitempty"`
-	Actions      []ChangeType                                                `protobuf:"varint,2,rep,packed,name=actions,proto3,enum=terraform1.stacks.ChangeType" json:"actions,omitempty"`
+	Actions      []ChangeType                                                `protobuf:"varint,2,rep,packed,name=actions,proto3,enum=terracina1.stacks.ChangeType" json:"actions,omitempty"`
 	Moved        *StackChangeProgress_ResourceInstancePlannedChange_Moved    `protobuf:"bytes,3,opt,name=moved,proto3" json:"moved,omitempty"`
 	Imported     *StackChangeProgress_ResourceInstancePlannedChange_Imported `protobuf:"bytes,4,opt,name=imported,proto3" json:"imported,omitempty"`
 	ProviderAddr string                                                      `protobuf:"bytes,5,opt,name=provider_addr,json=providerAddr,proto3" json:"provider_addr,omitempty"`
@@ -5397,7 +5397,7 @@ type StackChangeProgress_ComponentInstanceChanges struct {
 	// Clients should sum all of the other count fields they know about
 	// and compare to total. If the sum is less than total then the
 	// difference should be treated as an "other change types" category,
-	// for forward-compatibility when the Terraform Core RPC server is
+	// for forward-compatibility when the Terracina Core RPC server is
 	// using a newer version of this protocol than the client.
 	Total  int32 `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
 	Add    int32 `protobuf:"varint,3,opt,name=add,proto3" json:"add,omitempty"`
@@ -6726,248 +6726,248 @@ func file_stacks_proto_rawDescGZIP() []byte {
 var file_stacks_proto_enumTypes = make([]protoimpl.EnumInfo, 8)
 var file_stacks_proto_msgTypes = make([]protoimpl.MessageInfo, 91)
 var file_stacks_proto_goTypes = []any{
-	(ResourceMode)(0), // 0: terraform1.stacks.ResourceMode
-	(PlanMode)(0),     // 1: terraform1.stacks.PlanMode
-	(ChangeType)(0),   // 2: terraform1.stacks.ChangeType
-	(FindStackConfigurationComponents_Instances)(0),         // 3: terraform1.stacks.FindStackConfigurationComponents.Instances
-	(Deferred_Reason)(0),                                    // 4: terraform1.stacks.Deferred.Reason
-	(StackChangeProgress_ComponentInstanceStatus_Status)(0), // 5: terraform1.stacks.StackChangeProgress.ComponentInstanceStatus.Status
-	(StackChangeProgress_ResourceInstanceStatus_Status)(0),  // 6: terraform1.stacks.StackChangeProgress.ResourceInstanceStatus.Status
-	(StackChangeProgress_ProvisionerStatus_Status)(0),       // 7: terraform1.stacks.StackChangeProgress.ProvisionerStatus.Status
-	(*OpenStackConfiguration)(nil),                          // 8: terraform1.stacks.OpenStackConfiguration
-	(*CloseStackConfiguration)(nil),                         // 9: terraform1.stacks.CloseStackConfiguration
-	(*ValidateStackConfiguration)(nil),                      // 10: terraform1.stacks.ValidateStackConfiguration
-	(*FindStackConfigurationComponents)(nil),                // 11: terraform1.stacks.FindStackConfigurationComponents
-	(*OpenStackState)(nil),                                  // 12: terraform1.stacks.OpenStackState
-	(*CloseStackState)(nil),                                 // 13: terraform1.stacks.CloseStackState
-	(*PlanStackChanges)(nil),                                // 14: terraform1.stacks.PlanStackChanges
-	(*OpenStackPlan)(nil),                                   // 15: terraform1.stacks.OpenStackPlan
-	(*CloseStackPlan)(nil),                                  // 16: terraform1.stacks.CloseStackPlan
-	(*ApplyStackChanges)(nil),                               // 17: terraform1.stacks.ApplyStackChanges
-	(*OpenStackInspector)(nil),                              // 18: terraform1.stacks.OpenStackInspector
-	(*InspectExpressionResult)(nil),                         // 19: terraform1.stacks.InspectExpressionResult
-	(*DynamicValue)(nil),                                    // 20: terraform1.stacks.DynamicValue
-	(*DynamicValueChange)(nil),                              // 21: terraform1.stacks.DynamicValueChange
-	(*DynamicValueWithSource)(nil),                          // 22: terraform1.stacks.DynamicValueWithSource
-	(*AttributePath)(nil),                                   // 23: terraform1.stacks.AttributePath
-	(*ComponentInstanceInStackAddr)(nil),                    // 24: terraform1.stacks.ComponentInstanceInStackAddr
-	(*ResourceInstanceInStackAddr)(nil),                     // 25: terraform1.stacks.ResourceInstanceInStackAddr
-	(*ResourceInstanceObjectInStackAddr)(nil),               // 26: terraform1.stacks.ResourceInstanceObjectInStackAddr
-	(*PlannedChange)(nil),                                   // 27: terraform1.stacks.PlannedChange
-	(*Deferred)(nil),                                        // 28: terraform1.stacks.Deferred
-	(*AppliedChange)(nil),                                   // 29: terraform1.stacks.AppliedChange
-	(*StackChangeProgress)(nil),                             // 30: terraform1.stacks.StackChangeProgress
-	(*OpenStackConfiguration_Request)(nil),                  // 31: terraform1.stacks.OpenStackConfiguration.Request
-	(*OpenStackConfiguration_Response)(nil),                 // 32: terraform1.stacks.OpenStackConfiguration.Response
-	(*CloseStackConfiguration_Request)(nil),                 // 33: terraform1.stacks.CloseStackConfiguration.Request
-	(*CloseStackConfiguration_Response)(nil),                // 34: terraform1.stacks.CloseStackConfiguration.Response
-	(*ValidateStackConfiguration_Request)(nil),              // 35: terraform1.stacks.ValidateStackConfiguration.Request
-	(*ValidateStackConfiguration_Response)(nil),             // 36: terraform1.stacks.ValidateStackConfiguration.Response
-	(*FindStackConfigurationComponents_Request)(nil),        // 37: terraform1.stacks.FindStackConfigurationComponents.Request
-	(*FindStackConfigurationComponents_Response)(nil),       // 38: terraform1.stacks.FindStackConfigurationComponents.Response
-	(*FindStackConfigurationComponents_StackConfig)(nil),    // 39: terraform1.stacks.FindStackConfigurationComponents.StackConfig
-	(*FindStackConfigurationComponents_EmbeddedStack)(nil),  // 40: terraform1.stacks.FindStackConfigurationComponents.EmbeddedStack
-	(*FindStackConfigurationComponents_Component)(nil),      // 41: terraform1.stacks.FindStackConfigurationComponents.Component
-	(*FindStackConfigurationComponents_Removed)(nil),        // 42: terraform1.stacks.FindStackConfigurationComponents.Removed
-	(*FindStackConfigurationComponents_InputVariable)(nil),  // 43: terraform1.stacks.FindStackConfigurationComponents.InputVariable
-	(*FindStackConfigurationComponents_OutputValue)(nil),    // 44: terraform1.stacks.FindStackConfigurationComponents.OutputValue
-	nil,                                      // 45: terraform1.stacks.FindStackConfigurationComponents.StackConfig.ComponentsEntry
-	nil,                                      // 46: terraform1.stacks.FindStackConfigurationComponents.StackConfig.EmbeddedStacksEntry
-	nil,                                      // 47: terraform1.stacks.FindStackConfigurationComponents.StackConfig.InputVariablesEntry
-	nil,                                      // 48: terraform1.stacks.FindStackConfigurationComponents.StackConfig.OutputValuesEntry
-	nil,                                      // 49: terraform1.stacks.FindStackConfigurationComponents.StackConfig.RemovedEntry
-	(*OpenStackState_RequestItem)(nil),       // 50: terraform1.stacks.OpenStackState.RequestItem
-	(*OpenStackState_Response)(nil),          // 51: terraform1.stacks.OpenStackState.Response
-	(*CloseStackState_Request)(nil),          // 52: terraform1.stacks.CloseStackState.Request
-	(*CloseStackState_Response)(nil),         // 53: terraform1.stacks.CloseStackState.Response
-	(*PlanStackChanges_Request)(nil),         // 54: terraform1.stacks.PlanStackChanges.Request
-	(*PlanStackChanges_Event)(nil),           // 55: terraform1.stacks.PlanStackChanges.Event
-	nil,                                      // 56: terraform1.stacks.PlanStackChanges.Request.PreviousStateEntry
-	nil,                                      // 57: terraform1.stacks.PlanStackChanges.Request.InputValuesEntry
-	(*OpenStackPlan_RequestItem)(nil),        // 58: terraform1.stacks.OpenStackPlan.RequestItem
-	(*OpenStackPlan_Response)(nil),           // 59: terraform1.stacks.OpenStackPlan.Response
-	(*CloseStackPlan_Request)(nil),           // 60: terraform1.stacks.CloseStackPlan.Request
-	(*CloseStackPlan_Response)(nil),          // 61: terraform1.stacks.CloseStackPlan.Response
-	(*ApplyStackChanges_Request)(nil),        // 62: terraform1.stacks.ApplyStackChanges.Request
-	(*ApplyStackChanges_Event)(nil),          // 63: terraform1.stacks.ApplyStackChanges.Event
-	nil,                                      // 64: terraform1.stacks.ApplyStackChanges.Request.InputValuesEntry
-	(*OpenStackInspector_Request)(nil),       // 65: terraform1.stacks.OpenStackInspector.Request
-	(*OpenStackInspector_Response)(nil),      // 66: terraform1.stacks.OpenStackInspector.Response
-	nil,                                      // 67: terraform1.stacks.OpenStackInspector.Request.StateEntry
-	nil,                                      // 68: terraform1.stacks.OpenStackInspector.Request.InputValuesEntry
-	(*InspectExpressionResult_Request)(nil),  // 69: terraform1.stacks.InspectExpressionResult.Request
-	(*InspectExpressionResult_Response)(nil), // 70: terraform1.stacks.InspectExpressionResult.Response
-	(*AttributePath_Step)(nil),               // 71: terraform1.stacks.AttributePath.Step
-	(*PlannedChange_ChangeDescription)(nil),  // 72: terraform1.stacks.PlannedChange.ChangeDescription
-	(*PlannedChange_ComponentInstance)(nil),  // 73: terraform1.stacks.PlannedChange.ComponentInstance
-	(*PlannedChange_ResourceInstance)(nil),   // 74: terraform1.stacks.PlannedChange.ResourceInstance
-	(*PlannedChange_OutputValue)(nil),        // 75: terraform1.stacks.PlannedChange.OutputValue
-	(*PlannedChange_ResourceInstanceDeferred)(nil),                     // 76: terraform1.stacks.PlannedChange.ResourceInstanceDeferred
-	(*PlannedChange_InputVariable)(nil),                                // 77: terraform1.stacks.PlannedChange.InputVariable
-	(*PlannedChange_ResourceInstance_Index)(nil),                       // 78: terraform1.stacks.PlannedChange.ResourceInstance.Index
-	(*PlannedChange_ResourceInstance_Moved)(nil),                       // 79: terraform1.stacks.PlannedChange.ResourceInstance.Moved
-	(*PlannedChange_ResourceInstance_Imported)(nil),                    // 80: terraform1.stacks.PlannedChange.ResourceInstance.Imported
-	(*AppliedChange_RawChange)(nil),                                    // 81: terraform1.stacks.AppliedChange.RawChange
-	(*AppliedChange_ChangeDescription)(nil),                            // 82: terraform1.stacks.AppliedChange.ChangeDescription
-	(*AppliedChange_ResourceInstance)(nil),                             // 83: terraform1.stacks.AppliedChange.ResourceInstance
-	(*AppliedChange_ComponentInstance)(nil),                            // 84: terraform1.stacks.AppliedChange.ComponentInstance
-	(*AppliedChange_OutputValue)(nil),                                  // 85: terraform1.stacks.AppliedChange.OutputValue
-	(*AppliedChange_InputVariable)(nil),                                // 86: terraform1.stacks.AppliedChange.InputVariable
-	(*AppliedChange_Nothing)(nil),                                      // 87: terraform1.stacks.AppliedChange.Nothing
-	nil,                                                                // 88: terraform1.stacks.AppliedChange.ComponentInstance.OutputValuesEntry
-	(*StackChangeProgress_ComponentInstanceStatus)(nil),                // 89: terraform1.stacks.StackChangeProgress.ComponentInstanceStatus
-	(*StackChangeProgress_ResourceInstanceStatus)(nil),                 // 90: terraform1.stacks.StackChangeProgress.ResourceInstanceStatus
-	(*StackChangeProgress_ResourceInstancePlannedChange)(nil),          // 91: terraform1.stacks.StackChangeProgress.ResourceInstancePlannedChange
-	(*StackChangeProgress_DeferredResourceInstancePlannedChange)(nil),  // 92: terraform1.stacks.StackChangeProgress.DeferredResourceInstancePlannedChange
-	(*StackChangeProgress_ProvisionerStatus)(nil),                      // 93: terraform1.stacks.StackChangeProgress.ProvisionerStatus
-	(*StackChangeProgress_ProvisionerOutput)(nil),                      // 94: terraform1.stacks.StackChangeProgress.ProvisionerOutput
-	(*StackChangeProgress_ComponentInstanceChanges)(nil),               // 95: terraform1.stacks.StackChangeProgress.ComponentInstanceChanges
-	(*StackChangeProgress_ComponentInstances)(nil),                     // 96: terraform1.stacks.StackChangeProgress.ComponentInstances
-	(*StackChangeProgress_ResourceInstancePlannedChange_Moved)(nil),    // 97: terraform1.stacks.StackChangeProgress.ResourceInstancePlannedChange.Moved
-	(*StackChangeProgress_ResourceInstancePlannedChange_Imported)(nil), // 98: terraform1.stacks.StackChangeProgress.ResourceInstancePlannedChange.Imported
-	(*terraform1.SourceRange)(nil),                                     // 99: terraform1.SourceRange
+	(ResourceMode)(0), // 0: terracina1.stacks.ResourceMode
+	(PlanMode)(0),     // 1: terracina1.stacks.PlanMode
+	(ChangeType)(0),   // 2: terracina1.stacks.ChangeType
+	(FindStackConfigurationComponents_Instances)(0),         // 3: terracina1.stacks.FindStackConfigurationComponents.Instances
+	(Deferred_Reason)(0),                                    // 4: terracina1.stacks.Deferred.Reason
+	(StackChangeProgress_ComponentInstanceStatus_Status)(0), // 5: terracina1.stacks.StackChangeProgress.ComponentInstanceStatus.Status
+	(StackChangeProgress_ResourceInstanceStatus_Status)(0),  // 6: terracina1.stacks.StackChangeProgress.ResourceInstanceStatus.Status
+	(StackChangeProgress_ProvisionerStatus_Status)(0),       // 7: terracina1.stacks.StackChangeProgress.ProvisionerStatus.Status
+	(*OpenStackConfiguration)(nil),                          // 8: terracina1.stacks.OpenStackConfiguration
+	(*CloseStackConfiguration)(nil),                         // 9: terracina1.stacks.CloseStackConfiguration
+	(*ValidateStackConfiguration)(nil),                      // 10: terracina1.stacks.ValidateStackConfiguration
+	(*FindStackConfigurationComponents)(nil),                // 11: terracina1.stacks.FindStackConfigurationComponents
+	(*OpenStackState)(nil),                                  // 12: terracina1.stacks.OpenStackState
+	(*CloseStackState)(nil),                                 // 13: terracina1.stacks.CloseStackState
+	(*PlanStackChanges)(nil),                                // 14: terracina1.stacks.PlanStackChanges
+	(*OpenStackPlan)(nil),                                   // 15: terracina1.stacks.OpenStackPlan
+	(*CloseStackPlan)(nil),                                  // 16: terracina1.stacks.CloseStackPlan
+	(*ApplyStackChanges)(nil),                               // 17: terracina1.stacks.ApplyStackChanges
+	(*OpenStackInspector)(nil),                              // 18: terracina1.stacks.OpenStackInspector
+	(*InspectExpressionResult)(nil),                         // 19: terracina1.stacks.InspectExpressionResult
+	(*DynamicValue)(nil),                                    // 20: terracina1.stacks.DynamicValue
+	(*DynamicValueChange)(nil),                              // 21: terracina1.stacks.DynamicValueChange
+	(*DynamicValueWithSource)(nil),                          // 22: terracina1.stacks.DynamicValueWithSource
+	(*AttributePath)(nil),                                   // 23: terracina1.stacks.AttributePath
+	(*ComponentInstanceInStackAddr)(nil),                    // 24: terracina1.stacks.ComponentInstanceInStackAddr
+	(*ResourceInstanceInStackAddr)(nil),                     // 25: terracina1.stacks.ResourceInstanceInStackAddr
+	(*ResourceInstanceObjectInStackAddr)(nil),               // 26: terracina1.stacks.ResourceInstanceObjectInStackAddr
+	(*PlannedChange)(nil),                                   // 27: terracina1.stacks.PlannedChange
+	(*Deferred)(nil),                                        // 28: terracina1.stacks.Deferred
+	(*AppliedChange)(nil),                                   // 29: terracina1.stacks.AppliedChange
+	(*StackChangeProgress)(nil),                             // 30: terracina1.stacks.StackChangeProgress
+	(*OpenStackConfiguration_Request)(nil),                  // 31: terracina1.stacks.OpenStackConfiguration.Request
+	(*OpenStackConfiguration_Response)(nil),                 // 32: terracina1.stacks.OpenStackConfiguration.Response
+	(*CloseStackConfiguration_Request)(nil),                 // 33: terracina1.stacks.CloseStackConfiguration.Request
+	(*CloseStackConfiguration_Response)(nil),                // 34: terracina1.stacks.CloseStackConfiguration.Response
+	(*ValidateStackConfiguration_Request)(nil),              // 35: terracina1.stacks.ValidateStackConfiguration.Request
+	(*ValidateStackConfiguration_Response)(nil),             // 36: terracina1.stacks.ValidateStackConfiguration.Response
+	(*FindStackConfigurationComponents_Request)(nil),        // 37: terracina1.stacks.FindStackConfigurationComponents.Request
+	(*FindStackConfigurationComponents_Response)(nil),       // 38: terracina1.stacks.FindStackConfigurationComponents.Response
+	(*FindStackConfigurationComponents_StackConfig)(nil),    // 39: terracina1.stacks.FindStackConfigurationComponents.StackConfig
+	(*FindStackConfigurationComponents_EmbeddedStack)(nil),  // 40: terracina1.stacks.FindStackConfigurationComponents.EmbeddedStack
+	(*FindStackConfigurationComponents_Component)(nil),      // 41: terracina1.stacks.FindStackConfigurationComponents.Component
+	(*FindStackConfigurationComponents_Removed)(nil),        // 42: terracina1.stacks.FindStackConfigurationComponents.Removed
+	(*FindStackConfigurationComponents_InputVariable)(nil),  // 43: terracina1.stacks.FindStackConfigurationComponents.InputVariable
+	(*FindStackConfigurationComponents_OutputValue)(nil),    // 44: terracina1.stacks.FindStackConfigurationComponents.OutputValue
+	nil,                                      // 45: terracina1.stacks.FindStackConfigurationComponents.StackConfig.ComponentsEntry
+	nil,                                      // 46: terracina1.stacks.FindStackConfigurationComponents.StackConfig.EmbeddedStacksEntry
+	nil,                                      // 47: terracina1.stacks.FindStackConfigurationComponents.StackConfig.InputVariablesEntry
+	nil,                                      // 48: terracina1.stacks.FindStackConfigurationComponents.StackConfig.OutputValuesEntry
+	nil,                                      // 49: terracina1.stacks.FindStackConfigurationComponents.StackConfig.RemovedEntry
+	(*OpenStackState_RequestItem)(nil),       // 50: terracina1.stacks.OpenStackState.RequestItem
+	(*OpenStackState_Response)(nil),          // 51: terracina1.stacks.OpenStackState.Response
+	(*CloseStackState_Request)(nil),          // 52: terracina1.stacks.CloseStackState.Request
+	(*CloseStackState_Response)(nil),         // 53: terracina1.stacks.CloseStackState.Response
+	(*PlanStackChanges_Request)(nil),         // 54: terracina1.stacks.PlanStackChanges.Request
+	(*PlanStackChanges_Event)(nil),           // 55: terracina1.stacks.PlanStackChanges.Event
+	nil,                                      // 56: terracina1.stacks.PlanStackChanges.Request.PreviousStateEntry
+	nil,                                      // 57: terracina1.stacks.PlanStackChanges.Request.InputValuesEntry
+	(*OpenStackPlan_RequestItem)(nil),        // 58: terracina1.stacks.OpenStackPlan.RequestItem
+	(*OpenStackPlan_Response)(nil),           // 59: terracina1.stacks.OpenStackPlan.Response
+	(*CloseStackPlan_Request)(nil),           // 60: terracina1.stacks.CloseStackPlan.Request
+	(*CloseStackPlan_Response)(nil),          // 61: terracina1.stacks.CloseStackPlan.Response
+	(*ApplyStackChanges_Request)(nil),        // 62: terracina1.stacks.ApplyStackChanges.Request
+	(*ApplyStackChanges_Event)(nil),          // 63: terracina1.stacks.ApplyStackChanges.Event
+	nil,                                      // 64: terracina1.stacks.ApplyStackChanges.Request.InputValuesEntry
+	(*OpenStackInspector_Request)(nil),       // 65: terracina1.stacks.OpenStackInspector.Request
+	(*OpenStackInspector_Response)(nil),      // 66: terracina1.stacks.OpenStackInspector.Response
+	nil,                                      // 67: terracina1.stacks.OpenStackInspector.Request.StateEntry
+	nil,                                      // 68: terracina1.stacks.OpenStackInspector.Request.InputValuesEntry
+	(*InspectExpressionResult_Request)(nil),  // 69: terracina1.stacks.InspectExpressionResult.Request
+	(*InspectExpressionResult_Response)(nil), // 70: terracina1.stacks.InspectExpressionResult.Response
+	(*AttributePath_Step)(nil),               // 71: terracina1.stacks.AttributePath.Step
+	(*PlannedChange_ChangeDescription)(nil),  // 72: terracina1.stacks.PlannedChange.ChangeDescription
+	(*PlannedChange_ComponentInstance)(nil),  // 73: terracina1.stacks.PlannedChange.ComponentInstance
+	(*PlannedChange_ResourceInstance)(nil),   // 74: terracina1.stacks.PlannedChange.ResourceInstance
+	(*PlannedChange_OutputValue)(nil),        // 75: terracina1.stacks.PlannedChange.OutputValue
+	(*PlannedChange_ResourceInstanceDeferred)(nil),                     // 76: terracina1.stacks.PlannedChange.ResourceInstanceDeferred
+	(*PlannedChange_InputVariable)(nil),                                // 77: terracina1.stacks.PlannedChange.InputVariable
+	(*PlannedChange_ResourceInstance_Index)(nil),                       // 78: terracina1.stacks.PlannedChange.ResourceInstance.Index
+	(*PlannedChange_ResourceInstance_Moved)(nil),                       // 79: terracina1.stacks.PlannedChange.ResourceInstance.Moved
+	(*PlannedChange_ResourceInstance_Imported)(nil),                    // 80: terracina1.stacks.PlannedChange.ResourceInstance.Imported
+	(*AppliedChange_RawChange)(nil),                                    // 81: terracina1.stacks.AppliedChange.RawChange
+	(*AppliedChange_ChangeDescription)(nil),                            // 82: terracina1.stacks.AppliedChange.ChangeDescription
+	(*AppliedChange_ResourceInstance)(nil),                             // 83: terracina1.stacks.AppliedChange.ResourceInstance
+	(*AppliedChange_ComponentInstance)(nil),                            // 84: terracina1.stacks.AppliedChange.ComponentInstance
+	(*AppliedChange_OutputValue)(nil),                                  // 85: terracina1.stacks.AppliedChange.OutputValue
+	(*AppliedChange_InputVariable)(nil),                                // 86: terracina1.stacks.AppliedChange.InputVariable
+	(*AppliedChange_Nothing)(nil),                                      // 87: terracina1.stacks.AppliedChange.Nothing
+	nil,                                                                // 88: terracina1.stacks.AppliedChange.ComponentInstance.OutputValuesEntry
+	(*StackChangeProgress_ComponentInstanceStatus)(nil),                // 89: terracina1.stacks.StackChangeProgress.ComponentInstanceStatus
+	(*StackChangeProgress_ResourceInstanceStatus)(nil),                 // 90: terracina1.stacks.StackChangeProgress.ResourceInstanceStatus
+	(*StackChangeProgress_ResourceInstancePlannedChange)(nil),          // 91: terracina1.stacks.StackChangeProgress.ResourceInstancePlannedChange
+	(*StackChangeProgress_DeferredResourceInstancePlannedChange)(nil),  // 92: terracina1.stacks.StackChangeProgress.DeferredResourceInstancePlannedChange
+	(*StackChangeProgress_ProvisionerStatus)(nil),                      // 93: terracina1.stacks.StackChangeProgress.ProvisionerStatus
+	(*StackChangeProgress_ProvisionerOutput)(nil),                      // 94: terracina1.stacks.StackChangeProgress.ProvisionerOutput
+	(*StackChangeProgress_ComponentInstanceChanges)(nil),               // 95: terracina1.stacks.StackChangeProgress.ComponentInstanceChanges
+	(*StackChangeProgress_ComponentInstances)(nil),                     // 96: terracina1.stacks.StackChangeProgress.ComponentInstances
+	(*StackChangeProgress_ResourceInstancePlannedChange_Moved)(nil),    // 97: terracina1.stacks.StackChangeProgress.ResourceInstancePlannedChange.Moved
+	(*StackChangeProgress_ResourceInstancePlannedChange_Imported)(nil), // 98: terracina1.stacks.StackChangeProgress.ResourceInstancePlannedChange.Imported
+	(*terracina1.SourceRange)(nil),                                     // 99: terracina1.SourceRange
 	(*anypb.Any)(nil),                                                  // 100: google.protobuf.Any
-	(*terraform1.SourceAddress)(nil),                                   // 101: terraform1.SourceAddress
-	(*terraform1.Diagnostic)(nil),                                      // 102: terraform1.Diagnostic
+	(*terracina1.SourceAddress)(nil),                                   // 101: terracina1.SourceAddress
+	(*terracina1.Diagnostic)(nil),                                      // 102: terracina1.Diagnostic
 }
 var file_stacks_proto_depIdxs = []int32{
-	23,  // 0: terraform1.stacks.DynamicValue.sensitive:type_name -> terraform1.stacks.AttributePath
-	20,  // 1: terraform1.stacks.DynamicValueChange.old:type_name -> terraform1.stacks.DynamicValue
-	20,  // 2: terraform1.stacks.DynamicValueChange.new:type_name -> terraform1.stacks.DynamicValue
-	20,  // 3: terraform1.stacks.DynamicValueWithSource.value:type_name -> terraform1.stacks.DynamicValue
-	99,  // 4: terraform1.stacks.DynamicValueWithSource.source_range:type_name -> terraform1.SourceRange
-	71,  // 5: terraform1.stacks.AttributePath.steps:type_name -> terraform1.stacks.AttributePath.Step
-	100, // 6: terraform1.stacks.PlannedChange.raw:type_name -> google.protobuf.Any
-	72,  // 7: terraform1.stacks.PlannedChange.descriptions:type_name -> terraform1.stacks.PlannedChange.ChangeDescription
-	4,   // 8: terraform1.stacks.Deferred.reason:type_name -> terraform1.stacks.Deferred.Reason
-	81,  // 9: terraform1.stacks.AppliedChange.raw:type_name -> terraform1.stacks.AppliedChange.RawChange
-	82,  // 10: terraform1.stacks.AppliedChange.descriptions:type_name -> terraform1.stacks.AppliedChange.ChangeDescription
-	89,  // 11: terraform1.stacks.StackChangeProgress.component_instance_status:type_name -> terraform1.stacks.StackChangeProgress.ComponentInstanceStatus
-	90,  // 12: terraform1.stacks.StackChangeProgress.resource_instance_status:type_name -> terraform1.stacks.StackChangeProgress.ResourceInstanceStatus
-	91,  // 13: terraform1.stacks.StackChangeProgress.resource_instance_planned_change:type_name -> terraform1.stacks.StackChangeProgress.ResourceInstancePlannedChange
-	93,  // 14: terraform1.stacks.StackChangeProgress.provisioner_status:type_name -> terraform1.stacks.StackChangeProgress.ProvisionerStatus
-	94,  // 15: terraform1.stacks.StackChangeProgress.provisioner_output:type_name -> terraform1.stacks.StackChangeProgress.ProvisionerOutput
-	95,  // 16: terraform1.stacks.StackChangeProgress.component_instance_changes:type_name -> terraform1.stacks.StackChangeProgress.ComponentInstanceChanges
-	96,  // 17: terraform1.stacks.StackChangeProgress.component_instances:type_name -> terraform1.stacks.StackChangeProgress.ComponentInstances
-	92,  // 18: terraform1.stacks.StackChangeProgress.deferred_resource_instance_planned_change:type_name -> terraform1.stacks.StackChangeProgress.DeferredResourceInstancePlannedChange
-	101, // 19: terraform1.stacks.OpenStackConfiguration.Request.source_address:type_name -> terraform1.SourceAddress
-	102, // 20: terraform1.stacks.OpenStackConfiguration.Response.diagnostics:type_name -> terraform1.Diagnostic
-	102, // 21: terraform1.stacks.ValidateStackConfiguration.Response.diagnostics:type_name -> terraform1.Diagnostic
-	39,  // 22: terraform1.stacks.FindStackConfigurationComponents.Response.config:type_name -> terraform1.stacks.FindStackConfigurationComponents.StackConfig
-	45,  // 23: terraform1.stacks.FindStackConfigurationComponents.StackConfig.components:type_name -> terraform1.stacks.FindStackConfigurationComponents.StackConfig.ComponentsEntry
-	46,  // 24: terraform1.stacks.FindStackConfigurationComponents.StackConfig.embedded_stacks:type_name -> terraform1.stacks.FindStackConfigurationComponents.StackConfig.EmbeddedStacksEntry
-	47,  // 25: terraform1.stacks.FindStackConfigurationComponents.StackConfig.input_variables:type_name -> terraform1.stacks.FindStackConfigurationComponents.StackConfig.InputVariablesEntry
-	48,  // 26: terraform1.stacks.FindStackConfigurationComponents.StackConfig.output_values:type_name -> terraform1.stacks.FindStackConfigurationComponents.StackConfig.OutputValuesEntry
-	49,  // 27: terraform1.stacks.FindStackConfigurationComponents.StackConfig.removed:type_name -> terraform1.stacks.FindStackConfigurationComponents.StackConfig.RemovedEntry
-	3,   // 28: terraform1.stacks.FindStackConfigurationComponents.EmbeddedStack.instances:type_name -> terraform1.stacks.FindStackConfigurationComponents.Instances
-	39,  // 29: terraform1.stacks.FindStackConfigurationComponents.EmbeddedStack.config:type_name -> terraform1.stacks.FindStackConfigurationComponents.StackConfig
-	3,   // 30: terraform1.stacks.FindStackConfigurationComponents.Component.instances:type_name -> terraform1.stacks.FindStackConfigurationComponents.Instances
-	3,   // 31: terraform1.stacks.FindStackConfigurationComponents.Removed.instances:type_name -> terraform1.stacks.FindStackConfigurationComponents.Instances
-	41,  // 32: terraform1.stacks.FindStackConfigurationComponents.StackConfig.ComponentsEntry.value:type_name -> terraform1.stacks.FindStackConfigurationComponents.Component
-	40,  // 33: terraform1.stacks.FindStackConfigurationComponents.StackConfig.EmbeddedStacksEntry.value:type_name -> terraform1.stacks.FindStackConfigurationComponents.EmbeddedStack
-	43,  // 34: terraform1.stacks.FindStackConfigurationComponents.StackConfig.InputVariablesEntry.value:type_name -> terraform1.stacks.FindStackConfigurationComponents.InputVariable
-	44,  // 35: terraform1.stacks.FindStackConfigurationComponents.StackConfig.OutputValuesEntry.value:type_name -> terraform1.stacks.FindStackConfigurationComponents.OutputValue
-	42,  // 36: terraform1.stacks.FindStackConfigurationComponents.StackConfig.RemovedEntry.value:type_name -> terraform1.stacks.FindStackConfigurationComponents.Removed
-	81,  // 37: terraform1.stacks.OpenStackState.RequestItem.raw:type_name -> terraform1.stacks.AppliedChange.RawChange
-	1,   // 38: terraform1.stacks.PlanStackChanges.Request.plan_mode:type_name -> terraform1.stacks.PlanMode
-	56,  // 39: terraform1.stacks.PlanStackChanges.Request.previous_state:type_name -> terraform1.stacks.PlanStackChanges.Request.PreviousStateEntry
-	57,  // 40: terraform1.stacks.PlanStackChanges.Request.input_values:type_name -> terraform1.stacks.PlanStackChanges.Request.InputValuesEntry
-	27,  // 41: terraform1.stacks.PlanStackChanges.Event.planned_change:type_name -> terraform1.stacks.PlannedChange
-	102, // 42: terraform1.stacks.PlanStackChanges.Event.diagnostic:type_name -> terraform1.Diagnostic
-	30,  // 43: terraform1.stacks.PlanStackChanges.Event.progress:type_name -> terraform1.stacks.StackChangeProgress
-	100, // 44: terraform1.stacks.PlanStackChanges.Request.PreviousStateEntry.value:type_name -> google.protobuf.Any
-	22,  // 45: terraform1.stacks.PlanStackChanges.Request.InputValuesEntry.value:type_name -> terraform1.stacks.DynamicValueWithSource
-	100, // 46: terraform1.stacks.OpenStackPlan.RequestItem.raw:type_name -> google.protobuf.Any
-	100, // 47: terraform1.stacks.ApplyStackChanges.Request.planned_changes:type_name -> google.protobuf.Any
-	64,  // 48: terraform1.stacks.ApplyStackChanges.Request.input_values:type_name -> terraform1.stacks.ApplyStackChanges.Request.InputValuesEntry
-	29,  // 49: terraform1.stacks.ApplyStackChanges.Event.applied_change:type_name -> terraform1.stacks.AppliedChange
-	102, // 50: terraform1.stacks.ApplyStackChanges.Event.diagnostic:type_name -> terraform1.Diagnostic
-	30,  // 51: terraform1.stacks.ApplyStackChanges.Event.progress:type_name -> terraform1.stacks.StackChangeProgress
-	22,  // 52: terraform1.stacks.ApplyStackChanges.Request.InputValuesEntry.value:type_name -> terraform1.stacks.DynamicValueWithSource
-	67,  // 53: terraform1.stacks.OpenStackInspector.Request.state:type_name -> terraform1.stacks.OpenStackInspector.Request.StateEntry
-	68,  // 54: terraform1.stacks.OpenStackInspector.Request.input_values:type_name -> terraform1.stacks.OpenStackInspector.Request.InputValuesEntry
-	102, // 55: terraform1.stacks.OpenStackInspector.Response.diagnostics:type_name -> terraform1.Diagnostic
-	100, // 56: terraform1.stacks.OpenStackInspector.Request.StateEntry.value:type_name -> google.protobuf.Any
-	22,  // 57: terraform1.stacks.OpenStackInspector.Request.InputValuesEntry.value:type_name -> terraform1.stacks.DynamicValueWithSource
-	20,  // 58: terraform1.stacks.InspectExpressionResult.Response.result:type_name -> terraform1.stacks.DynamicValue
-	102, // 59: terraform1.stacks.InspectExpressionResult.Response.diagnostics:type_name -> terraform1.Diagnostic
-	73,  // 60: terraform1.stacks.PlannedChange.ChangeDescription.component_instance_planned:type_name -> terraform1.stacks.PlannedChange.ComponentInstance
-	74,  // 61: terraform1.stacks.PlannedChange.ChangeDescription.resource_instance_planned:type_name -> terraform1.stacks.PlannedChange.ResourceInstance
-	75,  // 62: terraform1.stacks.PlannedChange.ChangeDescription.output_value_planned:type_name -> terraform1.stacks.PlannedChange.OutputValue
-	76,  // 63: terraform1.stacks.PlannedChange.ChangeDescription.resource_instance_deferred:type_name -> terraform1.stacks.PlannedChange.ResourceInstanceDeferred
-	77,  // 64: terraform1.stacks.PlannedChange.ChangeDescription.input_variable_planned:type_name -> terraform1.stacks.PlannedChange.InputVariable
-	24,  // 65: terraform1.stacks.PlannedChange.ComponentInstance.addr:type_name -> terraform1.stacks.ComponentInstanceInStackAddr
-	2,   // 66: terraform1.stacks.PlannedChange.ComponentInstance.actions:type_name -> terraform1.stacks.ChangeType
-	26,  // 67: terraform1.stacks.PlannedChange.ResourceInstance.addr:type_name -> terraform1.stacks.ResourceInstanceObjectInStackAddr
-	2,   // 68: terraform1.stacks.PlannedChange.ResourceInstance.actions:type_name -> terraform1.stacks.ChangeType
-	21,  // 69: terraform1.stacks.PlannedChange.ResourceInstance.values:type_name -> terraform1.stacks.DynamicValueChange
-	79,  // 70: terraform1.stacks.PlannedChange.ResourceInstance.moved:type_name -> terraform1.stacks.PlannedChange.ResourceInstance.Moved
-	80,  // 71: terraform1.stacks.PlannedChange.ResourceInstance.imported:type_name -> terraform1.stacks.PlannedChange.ResourceInstance.Imported
-	0,   // 72: terraform1.stacks.PlannedChange.ResourceInstance.resource_mode:type_name -> terraform1.stacks.ResourceMode
-	20,  // 73: terraform1.stacks.PlannedChange.ResourceInstance.previous_run_value:type_name -> terraform1.stacks.DynamicValue
-	23,  // 74: terraform1.stacks.PlannedChange.ResourceInstance.replace_paths:type_name -> terraform1.stacks.AttributePath
-	78,  // 75: terraform1.stacks.PlannedChange.ResourceInstance.index:type_name -> terraform1.stacks.PlannedChange.ResourceInstance.Index
-	2,   // 76: terraform1.stacks.PlannedChange.OutputValue.actions:type_name -> terraform1.stacks.ChangeType
-	21,  // 77: terraform1.stacks.PlannedChange.OutputValue.values:type_name -> terraform1.stacks.DynamicValueChange
-	74,  // 78: terraform1.stacks.PlannedChange.ResourceInstanceDeferred.resource_instance:type_name -> terraform1.stacks.PlannedChange.ResourceInstance
-	28,  // 79: terraform1.stacks.PlannedChange.ResourceInstanceDeferred.deferred:type_name -> terraform1.stacks.Deferred
-	2,   // 80: terraform1.stacks.PlannedChange.InputVariable.actions:type_name -> terraform1.stacks.ChangeType
-	21,  // 81: terraform1.stacks.PlannedChange.InputVariable.values:type_name -> terraform1.stacks.DynamicValueChange
-	20,  // 82: terraform1.stacks.PlannedChange.ResourceInstance.Index.value:type_name -> terraform1.stacks.DynamicValue
-	25,  // 83: terraform1.stacks.PlannedChange.ResourceInstance.Moved.prev_addr:type_name -> terraform1.stacks.ResourceInstanceInStackAddr
-	100, // 84: terraform1.stacks.AppliedChange.RawChange.value:type_name -> google.protobuf.Any
-	87,  // 85: terraform1.stacks.AppliedChange.ChangeDescription.deleted:type_name -> terraform1.stacks.AppliedChange.Nothing
-	87,  // 86: terraform1.stacks.AppliedChange.ChangeDescription.moved:type_name -> terraform1.stacks.AppliedChange.Nothing
-	83,  // 87: terraform1.stacks.AppliedChange.ChangeDescription.resource_instance:type_name -> terraform1.stacks.AppliedChange.ResourceInstance
-	85,  // 88: terraform1.stacks.AppliedChange.ChangeDescription.output_value:type_name -> terraform1.stacks.AppliedChange.OutputValue
-	86,  // 89: terraform1.stacks.AppliedChange.ChangeDescription.input_variable:type_name -> terraform1.stacks.AppliedChange.InputVariable
-	84,  // 90: terraform1.stacks.AppliedChange.ChangeDescription.component_instance:type_name -> terraform1.stacks.AppliedChange.ComponentInstance
-	26,  // 91: terraform1.stacks.AppliedChange.ResourceInstance.addr:type_name -> terraform1.stacks.ResourceInstanceObjectInStackAddr
-	20,  // 92: terraform1.stacks.AppliedChange.ResourceInstance.new_value:type_name -> terraform1.stacks.DynamicValue
-	0,   // 93: terraform1.stacks.AppliedChange.ResourceInstance.resource_mode:type_name -> terraform1.stacks.ResourceMode
-	88,  // 94: terraform1.stacks.AppliedChange.ComponentInstance.output_values:type_name -> terraform1.stacks.AppliedChange.ComponentInstance.OutputValuesEntry
-	20,  // 95: terraform1.stacks.AppliedChange.OutputValue.new_value:type_name -> terraform1.stacks.DynamicValue
-	20,  // 96: terraform1.stacks.AppliedChange.InputVariable.new_value:type_name -> terraform1.stacks.DynamicValue
-	20,  // 97: terraform1.stacks.AppliedChange.ComponentInstance.OutputValuesEntry.value:type_name -> terraform1.stacks.DynamicValue
-	24,  // 98: terraform1.stacks.StackChangeProgress.ComponentInstanceStatus.addr:type_name -> terraform1.stacks.ComponentInstanceInStackAddr
-	5,   // 99: terraform1.stacks.StackChangeProgress.ComponentInstanceStatus.status:type_name -> terraform1.stacks.StackChangeProgress.ComponentInstanceStatus.Status
-	26,  // 100: terraform1.stacks.StackChangeProgress.ResourceInstanceStatus.addr:type_name -> terraform1.stacks.ResourceInstanceObjectInStackAddr
-	6,   // 101: terraform1.stacks.StackChangeProgress.ResourceInstanceStatus.status:type_name -> terraform1.stacks.StackChangeProgress.ResourceInstanceStatus.Status
-	26,  // 102: terraform1.stacks.StackChangeProgress.ResourceInstancePlannedChange.addr:type_name -> terraform1.stacks.ResourceInstanceObjectInStackAddr
-	2,   // 103: terraform1.stacks.StackChangeProgress.ResourceInstancePlannedChange.actions:type_name -> terraform1.stacks.ChangeType
-	97,  // 104: terraform1.stacks.StackChangeProgress.ResourceInstancePlannedChange.moved:type_name -> terraform1.stacks.StackChangeProgress.ResourceInstancePlannedChange.Moved
-	98,  // 105: terraform1.stacks.StackChangeProgress.ResourceInstancePlannedChange.imported:type_name -> terraform1.stacks.StackChangeProgress.ResourceInstancePlannedChange.Imported
-	28,  // 106: terraform1.stacks.StackChangeProgress.DeferredResourceInstancePlannedChange.deferred:type_name -> terraform1.stacks.Deferred
-	91,  // 107: terraform1.stacks.StackChangeProgress.DeferredResourceInstancePlannedChange.change:type_name -> terraform1.stacks.StackChangeProgress.ResourceInstancePlannedChange
-	26,  // 108: terraform1.stacks.StackChangeProgress.ProvisionerStatus.addr:type_name -> terraform1.stacks.ResourceInstanceObjectInStackAddr
-	93,  // 109: terraform1.stacks.StackChangeProgress.ProvisionerStatus.status:type_name -> terraform1.stacks.StackChangeProgress.ProvisionerStatus
-	26,  // 110: terraform1.stacks.StackChangeProgress.ProvisionerOutput.addr:type_name -> terraform1.stacks.ResourceInstanceObjectInStackAddr
-	24,  // 111: terraform1.stacks.StackChangeProgress.ComponentInstanceChanges.addr:type_name -> terraform1.stacks.ComponentInstanceInStackAddr
-	25,  // 112: terraform1.stacks.StackChangeProgress.ResourceInstancePlannedChange.Moved.prev_addr:type_name -> terraform1.stacks.ResourceInstanceInStackAddr
-	31,  // 113: terraform1.stacks.Stacks.OpenStackConfiguration:input_type -> terraform1.stacks.OpenStackConfiguration.Request
-	33,  // 114: terraform1.stacks.Stacks.CloseStackConfiguration:input_type -> terraform1.stacks.CloseStackConfiguration.Request
-	35,  // 115: terraform1.stacks.Stacks.ValidateStackConfiguration:input_type -> terraform1.stacks.ValidateStackConfiguration.Request
-	37,  // 116: terraform1.stacks.Stacks.FindStackConfigurationComponents:input_type -> terraform1.stacks.FindStackConfigurationComponents.Request
-	50,  // 117: terraform1.stacks.Stacks.OpenState:input_type -> terraform1.stacks.OpenStackState.RequestItem
-	52,  // 118: terraform1.stacks.Stacks.CloseState:input_type -> terraform1.stacks.CloseStackState.Request
-	54,  // 119: terraform1.stacks.Stacks.PlanStackChanges:input_type -> terraform1.stacks.PlanStackChanges.Request
-	58,  // 120: terraform1.stacks.Stacks.OpenPlan:input_type -> terraform1.stacks.OpenStackPlan.RequestItem
-	60,  // 121: terraform1.stacks.Stacks.ClosePlan:input_type -> terraform1.stacks.CloseStackPlan.Request
-	62,  // 122: terraform1.stacks.Stacks.ApplyStackChanges:input_type -> terraform1.stacks.ApplyStackChanges.Request
-	65,  // 123: terraform1.stacks.Stacks.OpenStackInspector:input_type -> terraform1.stacks.OpenStackInspector.Request
-	69,  // 124: terraform1.stacks.Stacks.InspectExpressionResult:input_type -> terraform1.stacks.InspectExpressionResult.Request
-	32,  // 125: terraform1.stacks.Stacks.OpenStackConfiguration:output_type -> terraform1.stacks.OpenStackConfiguration.Response
-	34,  // 126: terraform1.stacks.Stacks.CloseStackConfiguration:output_type -> terraform1.stacks.CloseStackConfiguration.Response
-	36,  // 127: terraform1.stacks.Stacks.ValidateStackConfiguration:output_type -> terraform1.stacks.ValidateStackConfiguration.Response
-	38,  // 128: terraform1.stacks.Stacks.FindStackConfigurationComponents:output_type -> terraform1.stacks.FindStackConfigurationComponents.Response
-	51,  // 129: terraform1.stacks.Stacks.OpenState:output_type -> terraform1.stacks.OpenStackState.Response
-	53,  // 130: terraform1.stacks.Stacks.CloseState:output_type -> terraform1.stacks.CloseStackState.Response
-	55,  // 131: terraform1.stacks.Stacks.PlanStackChanges:output_type -> terraform1.stacks.PlanStackChanges.Event
-	59,  // 132: terraform1.stacks.Stacks.OpenPlan:output_type -> terraform1.stacks.OpenStackPlan.Response
-	61,  // 133: terraform1.stacks.Stacks.ClosePlan:output_type -> terraform1.stacks.CloseStackPlan.Response
-	63,  // 134: terraform1.stacks.Stacks.ApplyStackChanges:output_type -> terraform1.stacks.ApplyStackChanges.Event
-	66,  // 135: terraform1.stacks.Stacks.OpenStackInspector:output_type -> terraform1.stacks.OpenStackInspector.Response
-	70,  // 136: terraform1.stacks.Stacks.InspectExpressionResult:output_type -> terraform1.stacks.InspectExpressionResult.Response
+	23,  // 0: terracina1.stacks.DynamicValue.sensitive:type_name -> terracina1.stacks.AttributePath
+	20,  // 1: terracina1.stacks.DynamicValueChange.old:type_name -> terracina1.stacks.DynamicValue
+	20,  // 2: terracina1.stacks.DynamicValueChange.new:type_name -> terracina1.stacks.DynamicValue
+	20,  // 3: terracina1.stacks.DynamicValueWithSource.value:type_name -> terracina1.stacks.DynamicValue
+	99,  // 4: terracina1.stacks.DynamicValueWithSource.source_range:type_name -> terracina1.SourceRange
+	71,  // 5: terracina1.stacks.AttributePath.steps:type_name -> terracina1.stacks.AttributePath.Step
+	100, // 6: terracina1.stacks.PlannedChange.raw:type_name -> google.protobuf.Any
+	72,  // 7: terracina1.stacks.PlannedChange.descriptions:type_name -> terracina1.stacks.PlannedChange.ChangeDescription
+	4,   // 8: terracina1.stacks.Deferred.reason:type_name -> terracina1.stacks.Deferred.Reason
+	81,  // 9: terracina1.stacks.AppliedChange.raw:type_name -> terracina1.stacks.AppliedChange.RawChange
+	82,  // 10: terracina1.stacks.AppliedChange.descriptions:type_name -> terracina1.stacks.AppliedChange.ChangeDescription
+	89,  // 11: terracina1.stacks.StackChangeProgress.component_instance_status:type_name -> terracina1.stacks.StackChangeProgress.ComponentInstanceStatus
+	90,  // 12: terracina1.stacks.StackChangeProgress.resource_instance_status:type_name -> terracina1.stacks.StackChangeProgress.ResourceInstanceStatus
+	91,  // 13: terracina1.stacks.StackChangeProgress.resource_instance_planned_change:type_name -> terracina1.stacks.StackChangeProgress.ResourceInstancePlannedChange
+	93,  // 14: terracina1.stacks.StackChangeProgress.provisioner_status:type_name -> terracina1.stacks.StackChangeProgress.ProvisionerStatus
+	94,  // 15: terracina1.stacks.StackChangeProgress.provisioner_output:type_name -> terracina1.stacks.StackChangeProgress.ProvisionerOutput
+	95,  // 16: terracina1.stacks.StackChangeProgress.component_instance_changes:type_name -> terracina1.stacks.StackChangeProgress.ComponentInstanceChanges
+	96,  // 17: terracina1.stacks.StackChangeProgress.component_instances:type_name -> terracina1.stacks.StackChangeProgress.ComponentInstances
+	92,  // 18: terracina1.stacks.StackChangeProgress.deferred_resource_instance_planned_change:type_name -> terracina1.stacks.StackChangeProgress.DeferredResourceInstancePlannedChange
+	101, // 19: terracina1.stacks.OpenStackConfiguration.Request.source_address:type_name -> terracina1.SourceAddress
+	102, // 20: terracina1.stacks.OpenStackConfiguration.Response.diagnostics:type_name -> terracina1.Diagnostic
+	102, // 21: terracina1.stacks.ValidateStackConfiguration.Response.diagnostics:type_name -> terracina1.Diagnostic
+	39,  // 22: terracina1.stacks.FindStackConfigurationComponents.Response.config:type_name -> terracina1.stacks.FindStackConfigurationComponents.StackConfig
+	45,  // 23: terracina1.stacks.FindStackConfigurationComponents.StackConfig.components:type_name -> terracina1.stacks.FindStackConfigurationComponents.StackConfig.ComponentsEntry
+	46,  // 24: terracina1.stacks.FindStackConfigurationComponents.StackConfig.embedded_stacks:type_name -> terracina1.stacks.FindStackConfigurationComponents.StackConfig.EmbeddedStacksEntry
+	47,  // 25: terracina1.stacks.FindStackConfigurationComponents.StackConfig.input_variables:type_name -> terracina1.stacks.FindStackConfigurationComponents.StackConfig.InputVariablesEntry
+	48,  // 26: terracina1.stacks.FindStackConfigurationComponents.StackConfig.output_values:type_name -> terracina1.stacks.FindStackConfigurationComponents.StackConfig.OutputValuesEntry
+	49,  // 27: terracina1.stacks.FindStackConfigurationComponents.StackConfig.removed:type_name -> terracina1.stacks.FindStackConfigurationComponents.StackConfig.RemovedEntry
+	3,   // 28: terracina1.stacks.FindStackConfigurationComponents.EmbeddedStack.instances:type_name -> terracina1.stacks.FindStackConfigurationComponents.Instances
+	39,  // 29: terracina1.stacks.FindStackConfigurationComponents.EmbeddedStack.config:type_name -> terracina1.stacks.FindStackConfigurationComponents.StackConfig
+	3,   // 30: terracina1.stacks.FindStackConfigurationComponents.Component.instances:type_name -> terracina1.stacks.FindStackConfigurationComponents.Instances
+	3,   // 31: terracina1.stacks.FindStackConfigurationComponents.Removed.instances:type_name -> terracina1.stacks.FindStackConfigurationComponents.Instances
+	41,  // 32: terracina1.stacks.FindStackConfigurationComponents.StackConfig.ComponentsEntry.value:type_name -> terracina1.stacks.FindStackConfigurationComponents.Component
+	40,  // 33: terracina1.stacks.FindStackConfigurationComponents.StackConfig.EmbeddedStacksEntry.value:type_name -> terracina1.stacks.FindStackConfigurationComponents.EmbeddedStack
+	43,  // 34: terracina1.stacks.FindStackConfigurationComponents.StackConfig.InputVariablesEntry.value:type_name -> terracina1.stacks.FindStackConfigurationComponents.InputVariable
+	44,  // 35: terracina1.stacks.FindStackConfigurationComponents.StackConfig.OutputValuesEntry.value:type_name -> terracina1.stacks.FindStackConfigurationComponents.OutputValue
+	42,  // 36: terracina1.stacks.FindStackConfigurationComponents.StackConfig.RemovedEntry.value:type_name -> terracina1.stacks.FindStackConfigurationComponents.Removed
+	81,  // 37: terracina1.stacks.OpenStackState.RequestItem.raw:type_name -> terracina1.stacks.AppliedChange.RawChange
+	1,   // 38: terracina1.stacks.PlanStackChanges.Request.plan_mode:type_name -> terracina1.stacks.PlanMode
+	56,  // 39: terracina1.stacks.PlanStackChanges.Request.previous_state:type_name -> terracina1.stacks.PlanStackChanges.Request.PreviousStateEntry
+	57,  // 40: terracina1.stacks.PlanStackChanges.Request.input_values:type_name -> terracina1.stacks.PlanStackChanges.Request.InputValuesEntry
+	27,  // 41: terracina1.stacks.PlanStackChanges.Event.planned_change:type_name -> terracina1.stacks.PlannedChange
+	102, // 42: terracina1.stacks.PlanStackChanges.Event.diagnostic:type_name -> terracina1.Diagnostic
+	30,  // 43: terracina1.stacks.PlanStackChanges.Event.progress:type_name -> terracina1.stacks.StackChangeProgress
+	100, // 44: terracina1.stacks.PlanStackChanges.Request.PreviousStateEntry.value:type_name -> google.protobuf.Any
+	22,  // 45: terracina1.stacks.PlanStackChanges.Request.InputValuesEntry.value:type_name -> terracina1.stacks.DynamicValueWithSource
+	100, // 46: terracina1.stacks.OpenStackPlan.RequestItem.raw:type_name -> google.protobuf.Any
+	100, // 47: terracina1.stacks.ApplyStackChanges.Request.planned_changes:type_name -> google.protobuf.Any
+	64,  // 48: terracina1.stacks.ApplyStackChanges.Request.input_values:type_name -> terracina1.stacks.ApplyStackChanges.Request.InputValuesEntry
+	29,  // 49: terracina1.stacks.ApplyStackChanges.Event.applied_change:type_name -> terracina1.stacks.AppliedChange
+	102, // 50: terracina1.stacks.ApplyStackChanges.Event.diagnostic:type_name -> terracina1.Diagnostic
+	30,  // 51: terracina1.stacks.ApplyStackChanges.Event.progress:type_name -> terracina1.stacks.StackChangeProgress
+	22,  // 52: terracina1.stacks.ApplyStackChanges.Request.InputValuesEntry.value:type_name -> terracina1.stacks.DynamicValueWithSource
+	67,  // 53: terracina1.stacks.OpenStackInspector.Request.state:type_name -> terracina1.stacks.OpenStackInspector.Request.StateEntry
+	68,  // 54: terracina1.stacks.OpenStackInspector.Request.input_values:type_name -> terracina1.stacks.OpenStackInspector.Request.InputValuesEntry
+	102, // 55: terracina1.stacks.OpenStackInspector.Response.diagnostics:type_name -> terracina1.Diagnostic
+	100, // 56: terracina1.stacks.OpenStackInspector.Request.StateEntry.value:type_name -> google.protobuf.Any
+	22,  // 57: terracina1.stacks.OpenStackInspector.Request.InputValuesEntry.value:type_name -> terracina1.stacks.DynamicValueWithSource
+	20,  // 58: terracina1.stacks.InspectExpressionResult.Response.result:type_name -> terracina1.stacks.DynamicValue
+	102, // 59: terracina1.stacks.InspectExpressionResult.Response.diagnostics:type_name -> terracina1.Diagnostic
+	73,  // 60: terracina1.stacks.PlannedChange.ChangeDescription.component_instance_planned:type_name -> terracina1.stacks.PlannedChange.ComponentInstance
+	74,  // 61: terracina1.stacks.PlannedChange.ChangeDescription.resource_instance_planned:type_name -> terracina1.stacks.PlannedChange.ResourceInstance
+	75,  // 62: terracina1.stacks.PlannedChange.ChangeDescription.output_value_planned:type_name -> terracina1.stacks.PlannedChange.OutputValue
+	76,  // 63: terracina1.stacks.PlannedChange.ChangeDescription.resource_instance_deferred:type_name -> terracina1.stacks.PlannedChange.ResourceInstanceDeferred
+	77,  // 64: terracina1.stacks.PlannedChange.ChangeDescription.input_variable_planned:type_name -> terracina1.stacks.PlannedChange.InputVariable
+	24,  // 65: terracina1.stacks.PlannedChange.ComponentInstance.addr:type_name -> terracina1.stacks.ComponentInstanceInStackAddr
+	2,   // 66: terracina1.stacks.PlannedChange.ComponentInstance.actions:type_name -> terracina1.stacks.ChangeType
+	26,  // 67: terracina1.stacks.PlannedChange.ResourceInstance.addr:type_name -> terracina1.stacks.ResourceInstanceObjectInStackAddr
+	2,   // 68: terracina1.stacks.PlannedChange.ResourceInstance.actions:type_name -> terracina1.stacks.ChangeType
+	21,  // 69: terracina1.stacks.PlannedChange.ResourceInstance.values:type_name -> terracina1.stacks.DynamicValueChange
+	79,  // 70: terracina1.stacks.PlannedChange.ResourceInstance.moved:type_name -> terracina1.stacks.PlannedChange.ResourceInstance.Moved
+	80,  // 71: terracina1.stacks.PlannedChange.ResourceInstance.imported:type_name -> terracina1.stacks.PlannedChange.ResourceInstance.Imported
+	0,   // 72: terracina1.stacks.PlannedChange.ResourceInstance.resource_mode:type_name -> terracina1.stacks.ResourceMode
+	20,  // 73: terracina1.stacks.PlannedChange.ResourceInstance.previous_run_value:type_name -> terracina1.stacks.DynamicValue
+	23,  // 74: terracina1.stacks.PlannedChange.ResourceInstance.replace_paths:type_name -> terracina1.stacks.AttributePath
+	78,  // 75: terracina1.stacks.PlannedChange.ResourceInstance.index:type_name -> terracina1.stacks.PlannedChange.ResourceInstance.Index
+	2,   // 76: terracina1.stacks.PlannedChange.OutputValue.actions:type_name -> terracina1.stacks.ChangeType
+	21,  // 77: terracina1.stacks.PlannedChange.OutputValue.values:type_name -> terracina1.stacks.DynamicValueChange
+	74,  // 78: terracina1.stacks.PlannedChange.ResourceInstanceDeferred.resource_instance:type_name -> terracina1.stacks.PlannedChange.ResourceInstance
+	28,  // 79: terracina1.stacks.PlannedChange.ResourceInstanceDeferred.deferred:type_name -> terracina1.stacks.Deferred
+	2,   // 80: terracina1.stacks.PlannedChange.InputVariable.actions:type_name -> terracina1.stacks.ChangeType
+	21,  // 81: terracina1.stacks.PlannedChange.InputVariable.values:type_name -> terracina1.stacks.DynamicValueChange
+	20,  // 82: terracina1.stacks.PlannedChange.ResourceInstance.Index.value:type_name -> terracina1.stacks.DynamicValue
+	25,  // 83: terracina1.stacks.PlannedChange.ResourceInstance.Moved.prev_addr:type_name -> terracina1.stacks.ResourceInstanceInStackAddr
+	100, // 84: terracina1.stacks.AppliedChange.RawChange.value:type_name -> google.protobuf.Any
+	87,  // 85: terracina1.stacks.AppliedChange.ChangeDescription.deleted:type_name -> terracina1.stacks.AppliedChange.Nothing
+	87,  // 86: terracina1.stacks.AppliedChange.ChangeDescription.moved:type_name -> terracina1.stacks.AppliedChange.Nothing
+	83,  // 87: terracina1.stacks.AppliedChange.ChangeDescription.resource_instance:type_name -> terracina1.stacks.AppliedChange.ResourceInstance
+	85,  // 88: terracina1.stacks.AppliedChange.ChangeDescription.output_value:type_name -> terracina1.stacks.AppliedChange.OutputValue
+	86,  // 89: terracina1.stacks.AppliedChange.ChangeDescription.input_variable:type_name -> terracina1.stacks.AppliedChange.InputVariable
+	84,  // 90: terracina1.stacks.AppliedChange.ChangeDescription.component_instance:type_name -> terracina1.stacks.AppliedChange.ComponentInstance
+	26,  // 91: terracina1.stacks.AppliedChange.ResourceInstance.addr:type_name -> terracina1.stacks.ResourceInstanceObjectInStackAddr
+	20,  // 92: terracina1.stacks.AppliedChange.ResourceInstance.new_value:type_name -> terracina1.stacks.DynamicValue
+	0,   // 93: terracina1.stacks.AppliedChange.ResourceInstance.resource_mode:type_name -> terracina1.stacks.ResourceMode
+	88,  // 94: terracina1.stacks.AppliedChange.ComponentInstance.output_values:type_name -> terracina1.stacks.AppliedChange.ComponentInstance.OutputValuesEntry
+	20,  // 95: terracina1.stacks.AppliedChange.OutputValue.new_value:type_name -> terracina1.stacks.DynamicValue
+	20,  // 96: terracina1.stacks.AppliedChange.InputVariable.new_value:type_name -> terracina1.stacks.DynamicValue
+	20,  // 97: terracina1.stacks.AppliedChange.ComponentInstance.OutputValuesEntry.value:type_name -> terracina1.stacks.DynamicValue
+	24,  // 98: terracina1.stacks.StackChangeProgress.ComponentInstanceStatus.addr:type_name -> terracina1.stacks.ComponentInstanceInStackAddr
+	5,   // 99: terracina1.stacks.StackChangeProgress.ComponentInstanceStatus.status:type_name -> terracina1.stacks.StackChangeProgress.ComponentInstanceStatus.Status
+	26,  // 100: terracina1.stacks.StackChangeProgress.ResourceInstanceStatus.addr:type_name -> terracina1.stacks.ResourceInstanceObjectInStackAddr
+	6,   // 101: terracina1.stacks.StackChangeProgress.ResourceInstanceStatus.status:type_name -> terracina1.stacks.StackChangeProgress.ResourceInstanceStatus.Status
+	26,  // 102: terracina1.stacks.StackChangeProgress.ResourceInstancePlannedChange.addr:type_name -> terracina1.stacks.ResourceInstanceObjectInStackAddr
+	2,   // 103: terracina1.stacks.StackChangeProgress.ResourceInstancePlannedChange.actions:type_name -> terracina1.stacks.ChangeType
+	97,  // 104: terracina1.stacks.StackChangeProgress.ResourceInstancePlannedChange.moved:type_name -> terracina1.stacks.StackChangeProgress.ResourceInstancePlannedChange.Moved
+	98,  // 105: terracina1.stacks.StackChangeProgress.ResourceInstancePlannedChange.imported:type_name -> terracina1.stacks.StackChangeProgress.ResourceInstancePlannedChange.Imported
+	28,  // 106: terracina1.stacks.StackChangeProgress.DeferredResourceInstancePlannedChange.deferred:type_name -> terracina1.stacks.Deferred
+	91,  // 107: terracina1.stacks.StackChangeProgress.DeferredResourceInstancePlannedChange.change:type_name -> terracina1.stacks.StackChangeProgress.ResourceInstancePlannedChange
+	26,  // 108: terracina1.stacks.StackChangeProgress.ProvisionerStatus.addr:type_name -> terracina1.stacks.ResourceInstanceObjectInStackAddr
+	93,  // 109: terracina1.stacks.StackChangeProgress.ProvisionerStatus.status:type_name -> terracina1.stacks.StackChangeProgress.ProvisionerStatus
+	26,  // 110: terracina1.stacks.StackChangeProgress.ProvisionerOutput.addr:type_name -> terracina1.stacks.ResourceInstanceObjectInStackAddr
+	24,  // 111: terracina1.stacks.StackChangeProgress.ComponentInstanceChanges.addr:type_name -> terracina1.stacks.ComponentInstanceInStackAddr
+	25,  // 112: terracina1.stacks.StackChangeProgress.ResourceInstancePlannedChange.Moved.prev_addr:type_name -> terracina1.stacks.ResourceInstanceInStackAddr
+	31,  // 113: terracina1.stacks.Stacks.OpenStackConfiguration:input_type -> terracina1.stacks.OpenStackConfiguration.Request
+	33,  // 114: terracina1.stacks.Stacks.CloseStackConfiguration:input_type -> terracina1.stacks.CloseStackConfiguration.Request
+	35,  // 115: terracina1.stacks.Stacks.ValidateStackConfiguration:input_type -> terracina1.stacks.ValidateStackConfiguration.Request
+	37,  // 116: terracina1.stacks.Stacks.FindStackConfigurationComponents:input_type -> terracina1.stacks.FindStackConfigurationComponents.Request
+	50,  // 117: terracina1.stacks.Stacks.OpenState:input_type -> terracina1.stacks.OpenStackState.RequestItem
+	52,  // 118: terracina1.stacks.Stacks.CloseState:input_type -> terracina1.stacks.CloseStackState.Request
+	54,  // 119: terracina1.stacks.Stacks.PlanStackChanges:input_type -> terracina1.stacks.PlanStackChanges.Request
+	58,  // 120: terracina1.stacks.Stacks.OpenPlan:input_type -> terracina1.stacks.OpenStackPlan.RequestItem
+	60,  // 121: terracina1.stacks.Stacks.ClosePlan:input_type -> terracina1.stacks.CloseStackPlan.Request
+	62,  // 122: terracina1.stacks.Stacks.ApplyStackChanges:input_type -> terracina1.stacks.ApplyStackChanges.Request
+	65,  // 123: terracina1.stacks.Stacks.OpenStackInspector:input_type -> terracina1.stacks.OpenStackInspector.Request
+	69,  // 124: terracina1.stacks.Stacks.InspectExpressionResult:input_type -> terracina1.stacks.InspectExpressionResult.Request
+	32,  // 125: terracina1.stacks.Stacks.OpenStackConfiguration:output_type -> terracina1.stacks.OpenStackConfiguration.Response
+	34,  // 126: terracina1.stacks.Stacks.CloseStackConfiguration:output_type -> terracina1.stacks.CloseStackConfiguration.Response
+	36,  // 127: terracina1.stacks.Stacks.ValidateStackConfiguration:output_type -> terracina1.stacks.ValidateStackConfiguration.Response
+	38,  // 128: terracina1.stacks.Stacks.FindStackConfigurationComponents:output_type -> terracina1.stacks.FindStackConfigurationComponents.Response
+	51,  // 129: terracina1.stacks.Stacks.OpenState:output_type -> terracina1.stacks.OpenStackState.Response
+	53,  // 130: terracina1.stacks.Stacks.CloseState:output_type -> terracina1.stacks.CloseStackState.Response
+	55,  // 131: terracina1.stacks.Stacks.PlanStackChanges:output_type -> terracina1.stacks.PlanStackChanges.Event
+	59,  // 132: terracina1.stacks.Stacks.OpenPlan:output_type -> terracina1.stacks.OpenStackPlan.Response
+	61,  // 133: terracina1.stacks.Stacks.ClosePlan:output_type -> terracina1.stacks.CloseStackPlan.Response
+	63,  // 134: terracina1.stacks.Stacks.ApplyStackChanges:output_type -> terracina1.stacks.ApplyStackChanges.Event
+	66,  // 135: terracina1.stacks.Stacks.OpenStackInspector:output_type -> terracina1.stacks.OpenStackInspector.Response
+	70,  // 136: terracina1.stacks.Stacks.InspectExpressionResult:output_type -> terracina1.stacks.InspectExpressionResult.Response
 	125, // [125:137] is the sub-list for method output_type
 	113, // [113:125] is the sub-list for method input_type
 	113, // [113:113] is the sub-list for extension type_name
@@ -8062,7 +8062,7 @@ func NewStacksClient(cc grpc.ClientConnInterface) StacksClient {
 
 func (c *stacksClient) OpenStackConfiguration(ctx context.Context, in *OpenStackConfiguration_Request, opts ...grpc.CallOption) (*OpenStackConfiguration_Response, error) {
 	out := new(OpenStackConfiguration_Response)
-	err := c.cc.Invoke(ctx, "/terraform1.stacks.Stacks/OpenStackConfiguration", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/terracina1.stacks.Stacks/OpenStackConfiguration", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -8071,7 +8071,7 @@ func (c *stacksClient) OpenStackConfiguration(ctx context.Context, in *OpenStack
 
 func (c *stacksClient) CloseStackConfiguration(ctx context.Context, in *CloseStackConfiguration_Request, opts ...grpc.CallOption) (*CloseStackConfiguration_Response, error) {
 	out := new(CloseStackConfiguration_Response)
-	err := c.cc.Invoke(ctx, "/terraform1.stacks.Stacks/CloseStackConfiguration", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/terracina1.stacks.Stacks/CloseStackConfiguration", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -8080,7 +8080,7 @@ func (c *stacksClient) CloseStackConfiguration(ctx context.Context, in *CloseSta
 
 func (c *stacksClient) ValidateStackConfiguration(ctx context.Context, in *ValidateStackConfiguration_Request, opts ...grpc.CallOption) (*ValidateStackConfiguration_Response, error) {
 	out := new(ValidateStackConfiguration_Response)
-	err := c.cc.Invoke(ctx, "/terraform1.stacks.Stacks/ValidateStackConfiguration", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/terracina1.stacks.Stacks/ValidateStackConfiguration", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -8089,7 +8089,7 @@ func (c *stacksClient) ValidateStackConfiguration(ctx context.Context, in *Valid
 
 func (c *stacksClient) FindStackConfigurationComponents(ctx context.Context, in *FindStackConfigurationComponents_Request, opts ...grpc.CallOption) (*FindStackConfigurationComponents_Response, error) {
 	out := new(FindStackConfigurationComponents_Response)
-	err := c.cc.Invoke(ctx, "/terraform1.stacks.Stacks/FindStackConfigurationComponents", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/terracina1.stacks.Stacks/FindStackConfigurationComponents", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -8097,7 +8097,7 @@ func (c *stacksClient) FindStackConfigurationComponents(ctx context.Context, in 
 }
 
 func (c *stacksClient) OpenState(ctx context.Context, opts ...grpc.CallOption) (Stacks_OpenStateClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Stacks_serviceDesc.Streams[0], "/terraform1.stacks.Stacks/OpenState", opts...)
+	stream, err := c.cc.NewStream(ctx, &_Stacks_serviceDesc.Streams[0], "/terracina1.stacks.Stacks/OpenState", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -8132,7 +8132,7 @@ func (x *stacksOpenStateClient) CloseAndRecv() (*OpenStackState_Response, error)
 
 func (c *stacksClient) CloseState(ctx context.Context, in *CloseStackState_Request, opts ...grpc.CallOption) (*CloseStackState_Response, error) {
 	out := new(CloseStackState_Response)
-	err := c.cc.Invoke(ctx, "/terraform1.stacks.Stacks/CloseState", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/terracina1.stacks.Stacks/CloseState", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -8140,7 +8140,7 @@ func (c *stacksClient) CloseState(ctx context.Context, in *CloseStackState_Reque
 }
 
 func (c *stacksClient) PlanStackChanges(ctx context.Context, in *PlanStackChanges_Request, opts ...grpc.CallOption) (Stacks_PlanStackChangesClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Stacks_serviceDesc.Streams[1], "/terraform1.stacks.Stacks/PlanStackChanges", opts...)
+	stream, err := c.cc.NewStream(ctx, &_Stacks_serviceDesc.Streams[1], "/terracina1.stacks.Stacks/PlanStackChanges", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -8172,7 +8172,7 @@ func (x *stacksPlanStackChangesClient) Recv() (*PlanStackChanges_Event, error) {
 }
 
 func (c *stacksClient) OpenPlan(ctx context.Context, opts ...grpc.CallOption) (Stacks_OpenPlanClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Stacks_serviceDesc.Streams[2], "/terraform1.stacks.Stacks/OpenPlan", opts...)
+	stream, err := c.cc.NewStream(ctx, &_Stacks_serviceDesc.Streams[2], "/terracina1.stacks.Stacks/OpenPlan", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -8207,7 +8207,7 @@ func (x *stacksOpenPlanClient) CloseAndRecv() (*OpenStackPlan_Response, error) {
 
 func (c *stacksClient) ClosePlan(ctx context.Context, in *CloseStackPlan_Request, opts ...grpc.CallOption) (*CloseStackPlan_Response, error) {
 	out := new(CloseStackPlan_Response)
-	err := c.cc.Invoke(ctx, "/terraform1.stacks.Stacks/ClosePlan", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/terracina1.stacks.Stacks/ClosePlan", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -8215,7 +8215,7 @@ func (c *stacksClient) ClosePlan(ctx context.Context, in *CloseStackPlan_Request
 }
 
 func (c *stacksClient) ApplyStackChanges(ctx context.Context, in *ApplyStackChanges_Request, opts ...grpc.CallOption) (Stacks_ApplyStackChangesClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Stacks_serviceDesc.Streams[3], "/terraform1.stacks.Stacks/ApplyStackChanges", opts...)
+	stream, err := c.cc.NewStream(ctx, &_Stacks_serviceDesc.Streams[3], "/terracina1.stacks.Stacks/ApplyStackChanges", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -8248,7 +8248,7 @@ func (x *stacksApplyStackChangesClient) Recv() (*ApplyStackChanges_Event, error)
 
 func (c *stacksClient) OpenStackInspector(ctx context.Context, in *OpenStackInspector_Request, opts ...grpc.CallOption) (*OpenStackInspector_Response, error) {
 	out := new(OpenStackInspector_Response)
-	err := c.cc.Invoke(ctx, "/terraform1.stacks.Stacks/OpenStackInspector", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/terracina1.stacks.Stacks/OpenStackInspector", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -8257,7 +8257,7 @@ func (c *stacksClient) OpenStackInspector(ctx context.Context, in *OpenStackInsp
 
 func (c *stacksClient) InspectExpressionResult(ctx context.Context, in *InspectExpressionResult_Request, opts ...grpc.CallOption) (*InspectExpressionResult_Response, error) {
 	out := new(InspectExpressionResult_Response)
-	err := c.cc.Invoke(ctx, "/terraform1.stacks.Stacks/InspectExpressionResult", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/terracina1.stacks.Stacks/InspectExpressionResult", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -8357,7 +8357,7 @@ func _Stacks_OpenStackConfiguration_Handler(srv interface{}, ctx context.Context
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/terraform1.stacks.Stacks/OpenStackConfiguration",
+		FullMethod: "/terracina1.stacks.Stacks/OpenStackConfiguration",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(StacksServer).OpenStackConfiguration(ctx, req.(*OpenStackConfiguration_Request))
@@ -8375,7 +8375,7 @@ func _Stacks_CloseStackConfiguration_Handler(srv interface{}, ctx context.Contex
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/terraform1.stacks.Stacks/CloseStackConfiguration",
+		FullMethod: "/terracina1.stacks.Stacks/CloseStackConfiguration",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(StacksServer).CloseStackConfiguration(ctx, req.(*CloseStackConfiguration_Request))
@@ -8393,7 +8393,7 @@ func _Stacks_ValidateStackConfiguration_Handler(srv interface{}, ctx context.Con
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/terraform1.stacks.Stacks/ValidateStackConfiguration",
+		FullMethod: "/terracina1.stacks.Stacks/ValidateStackConfiguration",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(StacksServer).ValidateStackConfiguration(ctx, req.(*ValidateStackConfiguration_Request))
@@ -8411,7 +8411,7 @@ func _Stacks_FindStackConfigurationComponents_Handler(srv interface{}, ctx conte
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/terraform1.stacks.Stacks/FindStackConfigurationComponents",
+		FullMethod: "/terracina1.stacks.Stacks/FindStackConfigurationComponents",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(StacksServer).FindStackConfigurationComponents(ctx, req.(*FindStackConfigurationComponents_Request))
@@ -8455,7 +8455,7 @@ func _Stacks_CloseState_Handler(srv interface{}, ctx context.Context, dec func(i
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/terraform1.stacks.Stacks/CloseState",
+		FullMethod: "/terracina1.stacks.Stacks/CloseState",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(StacksServer).CloseState(ctx, req.(*CloseStackState_Request))
@@ -8520,7 +8520,7 @@ func _Stacks_ClosePlan_Handler(srv interface{}, ctx context.Context, dec func(in
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/terraform1.stacks.Stacks/ClosePlan",
+		FullMethod: "/terracina1.stacks.Stacks/ClosePlan",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(StacksServer).ClosePlan(ctx, req.(*CloseStackPlan_Request))
@@ -8559,7 +8559,7 @@ func _Stacks_OpenStackInspector_Handler(srv interface{}, ctx context.Context, de
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/terraform1.stacks.Stacks/OpenStackInspector",
+		FullMethod: "/terracina1.stacks.Stacks/OpenStackInspector",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(StacksServer).OpenStackInspector(ctx, req.(*OpenStackInspector_Request))
@@ -8577,7 +8577,7 @@ func _Stacks_InspectExpressionResult_Handler(srv interface{}, ctx context.Contex
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/terraform1.stacks.Stacks/InspectExpressionResult",
+		FullMethod: "/terracina1.stacks.Stacks/InspectExpressionResult",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(StacksServer).InspectExpressionResult(ctx, req.(*InspectExpressionResult_Request))
@@ -8586,7 +8586,7 @@ func _Stacks_InspectExpressionResult_Handler(srv interface{}, ctx context.Contex
 }
 
 var _Stacks_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "terraform1.stacks.Stacks",
+	ServiceName: "terracina1.stacks.Stacks",
 	HandlerType: (*StacksServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

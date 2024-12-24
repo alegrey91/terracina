@@ -14,14 +14,14 @@ import (
 	"github.com/zclconf/go-cty/cty"
 	"github.com/zclconf/go-cty/cty/convert"
 
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/lang"
-	"github.com/hashicorp/terraform/internal/lang/marks"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/stacks/stackconfig"
-	"github.com/hashicorp/terraform/internal/stacks/stackconfig/stackconfigtypes"
-	"github.com/hashicorp/terraform/internal/stacks/stackconfig/typeexpr"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/lang"
+	"github.com/hashicorp/terracina/internal/lang/marks"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/stacks/stackconfig"
+	"github.com/hashicorp/terracina/internal/stacks/stackconfig/stackconfigtypes"
+	"github.com/hashicorp/terracina/internal/stacks/stackconfig/typeexpr"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 type EvalPhase rune
@@ -128,7 +128,7 @@ func evalContextForTraversals(ctx context.Context, traversals []hcl.Traversal, f
 	providerVals := make(map[string]map[string]cty.Value)
 	eachVals := make(map[string]cty.Value)
 	countVals := make(map[string]cty.Value)
-	terraformVals := make(map[string]cty.Value)
+	terracinaVals := make(map[string]cty.Value)
 	var selfVal cty.Value
 	var testOnlyGlobals map[string]cty.Value // allocated only when needed (see below)
 
@@ -158,8 +158,8 @@ func evalContextForTraversals(ctx context.Context, traversals []hcl.Traversal, f
 				countVals["index"] = val
 			case stackaddrs.Self:
 				selfVal = val
-			case stackaddrs.TerraformApplying:
-				terraformVals["applying"] = val
+			case stackaddrs.TerracinaApplying:
+				terracinaVals["applying"] = val
 			default:
 				// The above should be exhaustive for all values of this enumeration
 				panic(fmt.Sprintf("unsupported ContextualRef %#v", addr))
@@ -214,8 +214,8 @@ func evalContextForTraversals(ctx context.Context, traversals []hcl.Traversal, f
 	if len(countVals) != 0 {
 		hclCtx.Variables["count"] = cty.ObjectVal(countVals)
 	}
-	if len(terraformVals) != 0 {
-		hclCtx.Variables["terraform"] = cty.ObjectVal(terraformVals)
+	if len(terracinaVals) != 0 {
+		hclCtx.Variables["terracina"] = cty.ObjectVal(terracinaVals)
 	}
 	if selfVal != cty.NilVal {
 		hclCtx.Variables["self"] = selfVal
@@ -276,7 +276,7 @@ func EvalComponentInputVariables(ctx context.Context, decls map[string]*configs.
 	}
 
 	for _, path := range stackconfigtypes.ProviderInstancePathsInValue(v) {
-		err := path.NewErrorf("cannot send provider configuration reference to Terraform module input variable")
+		err := path.NewErrorf("cannot send provider configuration reference to Terracina module input variable")
 		diags = diags.Append(&hcl.Diagnostic{
 			Severity: hcl.DiagError,
 			Summary:  "Invalid inputs for component",

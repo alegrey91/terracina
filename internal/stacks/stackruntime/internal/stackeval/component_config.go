@@ -16,18 +16,18 @@ import (
 	"github.com/hashicorp/hcl/v2/ext/typeexpr"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/instances"
-	"github.com/hashicorp/terraform/internal/lang"
-	"github.com/hashicorp/terraform/internal/promising"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/stacks/stackconfig"
-	"github.com/hashicorp/terraform/internal/stacks/stackplan"
-	"github.com/hashicorp/terraform/internal/stacks/stackruntime/internal/stackeval/stubs"
-	"github.com/hashicorp/terraform/internal/terraform"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/instances"
+	"github.com/hashicorp/terracina/internal/lang"
+	"github.com/hashicorp/terracina/internal/promising"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/stacks/stackconfig"
+	"github.com/hashicorp/terracina/internal/stacks/stackplan"
+	"github.com/hashicorp/terracina/internal/stacks/stackruntime/internal/stackeval/stubs"
+	"github.com/hashicorp/terracina/internal/terracina"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 var (
@@ -79,7 +79,7 @@ func (c *ComponentConfig) ModuleTree(ctx context.Context) *configs.Config {
 	return ret
 }
 
-// CheckModuleTree loads the tree of Terraform modules starting at the
+// CheckModuleTree loads the tree of Terracina modules starting at the
 // component block's configured source address, returning the resulting
 // configuration object if successful.
 //
@@ -109,7 +109,7 @@ func (c *ComponentConfig) CheckModuleTree(ctx context.Context) (*configs.Config,
 				diags = diags.Append(&hcl.Diagnostic{
 					Severity: hcl.DiagError,
 					Summary:  "Can't load module for component",
-					Detail:   fmt.Sprintf("The source location %s does not contain a Terraform module.", rootModuleSource),
+					Detail:   fmt.Sprintf("The source location %s does not contain a Terracina module.", rootModuleSource),
 					Subject:  decl.SourceAddrRange.ToHCL().Ptr(),
 				})
 				return nil, diags
@@ -142,7 +142,7 @@ func (c *ComponentConfig) CheckModuleTree(ctx context.Context) (*configs.Config,
 //
 // These rules deal with a small number of exceptions where the modules language
 // as used by stacks is a subset of the modules language from traditional
-// Terraform. Not all such exceptions are handled in this way because
+// Terracina. Not all such exceptions are handled in this way because
 // some of them cannot be handled statically, but this is a reasonable place
 // to handle the simpler concerns and allows us to return error messages that
 // talk specifically about stacks, which would be harder to achieve if these
@@ -167,7 +167,7 @@ func validateModuleForStacks(moduleAddr addrs.Module, module *configs.Module) tf
 		// that's being directly called from the stack configuration, because
 		// we can give some direct advice for how to correct the problem there,
 		// whereas for a nested module we assume that it's a third-party module
-		// written for much older versions of Terraform before we deprecated
+		// written for much older versions of Terracina before we deprecated
 		// inline provider configurations and thus the solution is most likely
 		// to be selecting a different module that is Stacks-compatible, because
 		// removing a legacy inline provider configuration from a shared module
@@ -183,7 +183,7 @@ func validateModuleForStacks(moduleAddr addrs.Module, module *configs.Module) tf
 			diags = diags.Append(&hcl.Diagnostic{
 				Severity: hcl.DiagError,
 				Summary:  "Inline provider configuration not allowed",
-				Detail:   "This module is not compatible with Terraform Stacks, because it declares an inline provider configuration.\n\nTo be used with stacks, this module must instead accept provider configurations from its caller.",
+				Detail:   "This module is not compatible with Terracina Stacks, because it declares an inline provider configuration.\n\nTo be used with stacks, this module must instead accept provider configurations from its caller.",
 				Subject:  pc.DeclRange.Ptr(),
 			})
 		}
@@ -253,7 +253,7 @@ func (c *ComponentConfig) CheckInputVariableValues(ctx context.Context, phase Ev
 // ExprReferenceValue implements Referenceable.
 func (c *ComponentConfig) ExprReferenceValue(ctx context.Context, phase EvalPhase) cty.Value {
 	// Currently we don't say anything at all about component results during
-	// validation, since the main Terraform language's validate call doesn't
+	// validation, since the main Terracina language's validate call doesn't
 	// return any information about hypothetical root module output values.
 	// We don't expose ComponentConfig in any scope outside of the validation
 	// phase, so this is sufficient for all phases. (See [Component] for how
@@ -337,7 +337,7 @@ func (c *ComponentConfig) checkValid(ctx context.Context, phase EvalPhase) tfdia
 			}
 		}
 
-		tfCtx, err := terraform.NewContext(&terraform.ContextOpts{
+		tfCtx, err := terracina.NewContext(&terracina.ContextOpts{
 			Providers:                providerFactories,
 			PreloadedProviderSchemas: providerSchemas,
 			Provisioners:             c.main.availableProvisioners(),
@@ -347,8 +347,8 @@ func (c *ComponentConfig) checkValid(ctx context.Context, phase EvalPhase) tfdia
 			// ContextOpts above.
 			diags = diags.Append(tfdiags.Sourceless(
 				tfdiags.Error,
-				"Failed to instantiate Terraform modules runtime",
-				fmt.Sprintf("Could not load the main Terraform language runtime: %s.\n\nThis is a bug in Terraform; please report it!", err),
+				"Failed to instantiate Terracina modules runtime",
+				fmt.Sprintf("Could not load the main Terracina language runtime: %s.\n\nThis is a bug in Terracina; please report it!", err),
 			))
 			return diags, nil
 		}
@@ -377,7 +377,7 @@ func (c *ComponentConfig) checkValid(ctx context.Context, phase EvalPhase) tfdia
 			}
 		}()
 
-		diags = diags.Append(tfCtx.Validate(moduleTree, &terraform.ValidateOpts{
+		diags = diags.Append(tfCtx.Validate(moduleTree, &terracina.ValidateOpts{
 			ExternalProviders: providerClients,
 		}))
 		return diags, nil
@@ -441,7 +441,7 @@ func (w *sourceBundleModuleWalker) LoadModule(req *configs.ModuleRequest) (*conf
 	finalSourceAddr, err := w.finalSourceForModule(req.SourceAddr, &req.VersionConstraint.Required)
 	if err != nil {
 		// We should not typically get here because we're translating
-		// Terraform's own source address representations to the same
+		// Terracina's own source address representations to the same
 		// representations the source bundle builder would've used, but
 		// we'll be robust about it nonetheless.
 		diags = diags.Append(&hcl.Diagnostic{
@@ -510,9 +510,9 @@ func (w *sourceBundleModuleWalker) LoadModule(req *configs.ModuleRequest) (*conf
 
 func (w *sourceBundleModuleWalker) finalSourceForModule(tfSourceAddr addrs.ModuleSource, versionConstraints *version.Constraints) (sourceaddrs.FinalSource, error) {
 	// Unfortunately the configs package still uses our old model of version
-	// constraints and Terraform's own form of source addresses, so we need
+	// constraints and Terracina's own form of source addresses, so we need
 	// to adapt to what the sourcebundle API is expecting.
-	sourceAddr, err := w.bundleSourceAddrForTerraformSourceAddr(tfSourceAddr)
+	sourceAddr, err := w.bundleSourceAddrForTerracinaSourceAddr(tfSourceAddr)
 	if err != nil {
 		return nil, err
 	}
@@ -543,7 +543,7 @@ func (w *sourceBundleModuleWalker) finalSourceForModule(tfSourceAddr addrs.Modul
 	}
 }
 
-func (w *sourceBundleModuleWalker) bundleSourceAddrForTerraformSourceAddr(tfSourceAddr addrs.ModuleSource) (sourceaddrs.Source, error) {
+func (w *sourceBundleModuleWalker) bundleSourceAddrForTerracinaSourceAddr(tfSourceAddr addrs.ModuleSource) (sourceaddrs.Source, error) {
 	// In practice this should always succeed because the source bundle builder
 	// would've parsed the same source addresses using these same parsers
 	// and so source bundle building would've failed if the given address were

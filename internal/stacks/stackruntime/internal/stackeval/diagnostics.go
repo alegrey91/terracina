@@ -9,8 +9,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/hashicorp/terraform/internal/promising"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/promising"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 	"github.com/zclconf/go-cty/cty"
 )
 
@@ -283,7 +283,7 @@ func (diag taskSelfDependencyDiagnostic) Description() tfdiags.Description {
 			// that bug.
 			return tfdiags.Description{
 				Summary: diagSummary,
-				Detail:  "One of the items in your configuration refers to its own results, but Terraform was not able to detect which one. The fact that Terraform cannot name the item is a bug; please report it!",
+				Detail:  "One of the items in your configuration refers to its own results, but Terracina was not able to detect which one. The fact that Terracina cannot name the item is a bug; please report it!",
 			}
 		}
 		return tfdiags.Description{
@@ -331,7 +331,7 @@ func (diag taskSelfDependencyDiagnostic) Description() tfdiags.Description {
 		return tfdiags.Description{
 			Summary: "Self-dependent items in configuration",
 			Detail: fmt.Sprintf(
-				"The following items in your configuration form a circular dependency chain through their references:%s\n\nTerraform uses references to decide a suitable order for performing operations, so configuration items may not refer to their own results either directly or indirectly.",
+				"The following items in your configuration form a circular dependency chain through their references:%s\n\nTerracina uses references to decide a suitable order for performing operations, so configuration items may not refer to their own results either directly or indirectly.",
 				nameList.String(),
 			),
 		}

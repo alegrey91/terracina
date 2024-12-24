@@ -1,4 +1,4 @@
-terraform {
+terracina {
 	backend "local" {
 		path = "imported.tfstate"
 	}

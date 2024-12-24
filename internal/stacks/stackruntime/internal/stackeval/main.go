@@ -15,20 +15,20 @@ import (
 	"github.com/zclconf/go-cty/cty"
 	"github.com/zclconf/go-cty/cty/function"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	fileProvisioner "github.com/hashicorp/terraform/internal/builtin/provisioners/file"
-	remoteExecProvisioner "github.com/hashicorp/terraform/internal/builtin/provisioners/remote-exec"
-	"github.com/hashicorp/terraform/internal/depsfile"
-	"github.com/hashicorp/terraform/internal/lang"
-	"github.com/hashicorp/terraform/internal/promising"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/provisioners"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/stacks/stackconfig"
-	"github.com/hashicorp/terraform/internal/stacks/stackplan"
-	"github.com/hashicorp/terraform/internal/stacks/stackruntime/internal/stackeval/stubs"
-	"github.com/hashicorp/terraform/internal/stacks/stackstate"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	fileProvisioner "github.com/hashicorp/terracina/internal/builtin/provisioners/file"
+	remoteExecProvisioner "github.com/hashicorp/terracina/internal/builtin/provisioners/remote-exec"
+	"github.com/hashicorp/terracina/internal/depsfile"
+	"github.com/hashicorp/terracina/internal/lang"
+	"github.com/hashicorp/terracina/internal/promising"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/provisioners"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/stacks/stackconfig"
+	"github.com/hashicorp/terracina/internal/stacks/stackplan"
+	"github.com/hashicorp/terracina/internal/stacks/stackruntime/internal/stackeval/stubs"
+	"github.com/hashicorp/terracina/internal/stacks/stackstate"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // Main is the central node of all data required for performing the major
@@ -398,7 +398,7 @@ func (m *Main) ProviderFunctions(ctx context.Context, config *StackConfig) (lang
 			diags = diags.Append(&hcl.Diagnostic{
 				Severity: hcl.DiagError,
 				Summary:  "Failed to retrieve provider schema",
-				Detail:   fmt.Sprintf("Failed to retrieve schema for provider %s while gathering provider functions: %s. This is a bug in Terraform, please report it!", addr, err),
+				Detail:   fmt.Sprintf("Failed to retrieve schema for provider %s while gathering provider functions: %s. This is a bug in Terracina, please report it!", addr, err),
 			})
 			continue // just skip this provider and keep going
 		}
@@ -594,7 +594,7 @@ func (m *Main) DoCleanup(ctx context.Context) tfdiags.Diagnostics {
 // mustStackConfig is like [Main.StackConfig] except that it panics if it
 // does not find a stack configuration object matching the given address,
 // for situations where the absense of a stack config represents a bug
-// somewhere in Terraform, rather than incorrect user input.
+// somewhere in Terracina, rather than incorrect user input.
 func (m *Main) mustStackConfig(ctx context.Context, addr stackaddrs.Stack) *StackConfig {
 	ret := m.StackConfig(ctx, addr)
 	if ret == nil {

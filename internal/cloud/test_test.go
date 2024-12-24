@@ -10,12 +10,12 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/go-tfe"
 
-	"github.com/hashicorp/terraform/internal/command/arguments"
-	"github.com/hashicorp/terraform/internal/command/jsonformat"
-	"github.com/hashicorp/terraform/internal/command/views"
-	"github.com/hashicorp/terraform/internal/configs/configload"
-	"github.com/hashicorp/terraform/internal/terminal"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/command/arguments"
+	"github.com/hashicorp/terracina/internal/command/jsonformat"
+	"github.com/hashicorp/terracina/internal/command/views"
+	"github.com/hashicorp/terracina/internal/configs/configload"
+	"github.com/hashicorp/terracina/internal/terminal"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 func TestTest(t *testing.T) {
@@ -43,7 +43,7 @@ func TestTest(t *testing.T) {
 	if _, err := client.RegistryModules.Create(context.Background(), "organisation", tfe.RegistryModuleCreateOptions{
 		Name:         tfe.String("name"),
 		Provider:     tfe.String("provider"),
-		RegistryName: "app.terraform.io",
+		RegistryName: "app.terracina.io",
 		Namespace:    "organisation",
 	}); err != nil {
 		t.Fatalf("failed to create registry module: %v", err)
@@ -54,7 +54,7 @@ func TestTest(t *testing.T) {
 		ConfigDirectory:  "testdata/test",
 		TestingDirectory: "tests",
 		Config:           nil, // We don't need this for this test.
-		Source:           "app.terraform.io/organisation/name/provider",
+		Source:           "app.terracina.io/organisation/name/provider",
 
 		// Cancellation controls, we won't be doing any cancellations in this
 		// test.
@@ -128,7 +128,7 @@ func TestTest_JSON(t *testing.T) {
 	if _, err := client.RegistryModules.Create(context.Background(), "organisation", tfe.RegistryModuleCreateOptions{
 		Name:         tfe.String("name"),
 		Provider:     tfe.String("provider"),
-		RegistryName: "app.terraform.io",
+		RegistryName: "app.terracina.io",
 		Namespace:    "organisation",
 	}); err != nil {
 		t.Fatalf("failed to create registry module: %v", err)
@@ -139,7 +139,7 @@ func TestTest_JSON(t *testing.T) {
 		ConfigDirectory:  "testdata/test",
 		TestingDirectory: "tests",
 		Config:           nil, // We don't need this for this test.
-		Source:           "app.terraform.io/organisation/name/provider",
+		Source:           "app.terracina.io/organisation/name/provider",
 
 		// Cancellation controls, we won't be doing any cancellations in this
 		// test.
@@ -170,14 +170,14 @@ func TestTest_JSON(t *testing.T) {
 
 	output := done(t)
 	actual := output.All()
-	expected := `{"@level":"info","@message":"Terraform 1.6.0-dev","@module":"terraform.ui","@timestamp":"2023-09-12T08:29:27.257413+02:00","terraform":"1.6.0-dev","type":"version","ui":"1.2"}
-{"@level":"info","@message":"Found 1 file and 2 run blocks","@module":"terraform.ui","@timestamp":"2023-09-12T08:29:27.268731+02:00","test_abstract":{"main.tftest.hcl":["defaults","overrides"]},"type":"test_abstract"}
-{"@level":"info","@message":"main.tftest.hcl... in progress","@module":"terraform.ui","@testfile":"main.tftest.hcl","@timestamp":"2023-09-12T08:29:27.268889+02:00","test_file":{"path":"main.tftest.hcl","progress":"starting"},"type":"test_file"}
-{"@level":"info","@message":"  \"defaults\"... pass","@module":"terraform.ui","@testfile":"main.tftest.hcl","@testrun":"defaults","@timestamp":"2023-09-12T08:29:27.710541+02:00","test_run":{"path":"main.tftest.hcl","run":"defaults","progress":"complete","status":"pass"},"type":"test_run"}
-{"@level":"info","@message":"  \"overrides\"... pass","@module":"terraform.ui","@testfile":"main.tftest.hcl","@testrun":"overrides","@timestamp":"2023-09-12T08:29:27.833351+02:00","test_run":{"path":"main.tftest.hcl","run":"overrides","progress":"complete","status":"pass"},"type":"test_run"}
-{"@level":"info","@message":"main.tftest.hcl... tearing down","@module":"terraform.ui","@testfile":"main.tftest.hcl","@timestamp":"2023-09-12T08:29:27.833375+02:00","test_file":{"path":"main.tftest.hcl","progress":"teardown"},"type":"test_file"}
-{"@level":"info","@message":"main.tftest.hcl... pass","@module":"terraform.ui","@testfile":"main.tftest.hcl","@timestamp":"2023-09-12T08:29:27.956488+02:00","test_file":{"path":"main.tftest.hcl","progress":"complete","status":"pass"},"type":"test_file"}
-{"@level":"info","@message":"Success! 2 passed, 0 failed.","@module":"terraform.ui","@timestamp":"2023-09-12T08:29:27.956510+02:00","test_summary":{"status":"pass","passed":2,"failed":0,"errored":0,"skipped":0},"type":"test_summary"}
+	expected := `{"@level":"info","@message":"Terracina 1.6.0-dev","@module":"terracina.ui","@timestamp":"2023-09-12T08:29:27.257413+02:00","terracina":"1.6.0-dev","type":"version","ui":"1.2"}
+{"@level":"info","@message":"Found 1 file and 2 run blocks","@module":"terracina.ui","@timestamp":"2023-09-12T08:29:27.268731+02:00","test_abstract":{"main.tftest.hcl":["defaults","overrides"]},"type":"test_abstract"}
+{"@level":"info","@message":"main.tftest.hcl... in progress","@module":"terracina.ui","@testfile":"main.tftest.hcl","@timestamp":"2023-09-12T08:29:27.268889+02:00","test_file":{"path":"main.tftest.hcl","progress":"starting"},"type":"test_file"}
+{"@level":"info","@message":"  \"defaults\"... pass","@module":"terracina.ui","@testfile":"main.tftest.hcl","@testrun":"defaults","@timestamp":"2023-09-12T08:29:27.710541+02:00","test_run":{"path":"main.tftest.hcl","run":"defaults","progress":"complete","status":"pass"},"type":"test_run"}
+{"@level":"info","@message":"  \"overrides\"... pass","@module":"terracina.ui","@testfile":"main.tftest.hcl","@testrun":"overrides","@timestamp":"2023-09-12T08:29:27.833351+02:00","test_run":{"path":"main.tftest.hcl","run":"overrides","progress":"complete","status":"pass"},"type":"test_run"}
+{"@level":"info","@message":"main.tftest.hcl... tearing down","@module":"terracina.ui","@testfile":"main.tftest.hcl","@timestamp":"2023-09-12T08:29:27.833375+02:00","test_file":{"path":"main.tftest.hcl","progress":"teardown"},"type":"test_file"}
+{"@level":"info","@message":"main.tftest.hcl... pass","@module":"terracina.ui","@testfile":"main.tftest.hcl","@timestamp":"2023-09-12T08:29:27.956488+02:00","test_file":{"path":"main.tftest.hcl","progress":"complete","status":"pass"},"type":"test_file"}
+{"@level":"info","@message":"Success! 2 passed, 0 failed.","@module":"terracina.ui","@timestamp":"2023-09-12T08:29:27.956510+02:00","test_summary":{"status":"pass","passed":2,"failed":0,"errored":0,"skipped":0},"type":"test_summary"}
 `
 
 	if diff := cmp.Diff(expected, actual); len(diff) > 0 {
@@ -220,7 +220,7 @@ func TestTest_Verbose(t *testing.T) {
 	if _, err := client.RegistryModules.Create(context.Background(), "organisation", tfe.RegistryModuleCreateOptions{
 		Name:         tfe.String("name"),
 		Provider:     tfe.String("provider"),
-		RegistryName: "app.terraform.io",
+		RegistryName: "app.terracina.io",
 		Namespace:    "organisation",
 	}); err != nil {
 		t.Fatalf("failed to create registry module: %v", err)
@@ -231,7 +231,7 @@ func TestTest_Verbose(t *testing.T) {
 		ConfigDirectory:  directory,
 		TestingDirectory: "tests",
 		Config:           config,
-		Source:           "app.terraform.io/organisation/name/provider",
+		Source:           "app.terracina.io/organisation/name/provider",
 
 		// Cancellation controls, we won't be doing any cancellations in this
 		// test.
@@ -273,7 +273,7 @@ func TestTest_Verbose(t *testing.T) {
 Changes to Outputs:
   + input = "Hello, world!"
 
-You can apply this plan to save these new output values to the Terraform
+You can apply this plan to save these new output values to the Terracina
 state, without changing any real infrastructure.
 ╷
 │ Warning: Deprecated
@@ -373,7 +373,7 @@ func TestTest_Cancel(t *testing.T) {
 	module, err := client.RegistryModules.Create(context.Background(), "organisation", tfe.RegistryModuleCreateOptions{
 		Name:         tfe.String("name"),
 		Provider:     tfe.String("provider"),
-		RegistryName: "app.terraform.io",
+		RegistryName: "app.terracina.io",
 		Namespace:    "organisation",
 	})
 	if err != nil {
@@ -388,7 +388,7 @@ func TestTest_Cancel(t *testing.T) {
 		ConfigDirectory:  "testdata/test-cancel",
 		TestingDirectory: "tests",
 		Config:           nil, // We don't need this for this test.
-		Source:           "app.terraform.io/organisation/name/provider",
+		Source:           "app.terracina.io/organisation/name/provider",
 
 		// Cancellation controls, we won't be doing any cancellations in this
 		// test.
@@ -440,7 +440,7 @@ func TestTest_Cancel(t *testing.T) {
 	expected := `main.tftest.hcl... in progress
 
 Interrupt received.
-Please wait for Terraform to exit or data loss may occur.
+Please wait for Terracina to exit or data loss may occur.
 Gracefully shutting down...
 
   defaults... pass
@@ -494,7 +494,7 @@ func TestTest_DelayedCancel(t *testing.T) {
 	module, err := client.RegistryModules.Create(context.Background(), "organisation", tfe.RegistryModuleCreateOptions{
 		Name:         tfe.String("name"),
 		Provider:     tfe.String("provider"),
-		RegistryName: "app.terraform.io",
+		RegistryName: "app.terracina.io",
 		Namespace:    "organisation",
 	})
 	if err != nil {
@@ -515,7 +515,7 @@ func TestTest_DelayedCancel(t *testing.T) {
 		ConfigDirectory:  "testdata/test-cancel",
 		TestingDirectory: "tests",
 		Config:           nil, // We don't need this for this test.
-		Source:           "app.terraform.io/organisation/name/provider",
+		Source:           "app.terracina.io/organisation/name/provider",
 
 		// Cancellation controls, we won't be doing any cancellations in this
 		// test.
@@ -561,7 +561,7 @@ func TestTest_DelayedCancel(t *testing.T) {
 	expected := `main.tftest.hcl... in progress
 
 Interrupt received.
-Please wait for Terraform to exit or data loss may occur.
+Please wait for Terracina to exit or data loss may occur.
 Gracefully shutting down...
 
   defaults... pass
@@ -617,7 +617,7 @@ func TestTest_ForceCancel(t *testing.T) {
 	module, err := client.RegistryModules.Create(context.Background(), "organisation", tfe.RegistryModuleCreateOptions{
 		Name:         tfe.String("name"),
 		Provider:     tfe.String("provider"),
-		RegistryName: "app.terraform.io",
+		RegistryName: "app.terracina.io",
 		Namespace:    "organisation",
 	})
 	if err != nil {
@@ -633,7 +633,7 @@ func TestTest_ForceCancel(t *testing.T) {
 		ConfigDirectory:  "testdata/test-force-cancel",
 		TestingDirectory: "tests",
 		Config:           config,
-		Source:           "app.terraform.io/organisation/name/provider",
+		Source:           "app.terracina.io/organisation/name/provider",
 
 		// Cancellation controls, we won't be doing any cancellations in this
 		// test.
@@ -683,10 +683,10 @@ func TestTest_ForceCancel(t *testing.T) {
 
 	output := outputFn(t)
 
-	expectedErr := `Terraform was interrupted during test execution, and may not have performed
+	expectedErr := `Terracina was interrupted during test execution, and may not have performed
 the expected cleanup operations.
 
-Terraform was in the process of creating the following resources for
+Terracina was in the process of creating the following resources for
 "overrides" from the module under test, and they may not have been destroyed:
   - time_sleep.wait_5_seconds
   - tfcoremock_simple_resource.resource
@@ -701,7 +701,7 @@ Terraform was in the process of creating the following resources for
   defaults... pass
 
 Interrupt received.
-Please wait for Terraform to exit or data loss may occur.
+Please wait for Terracina to exit or data loss may occur.
 Gracefully shutting down...
 
 
@@ -779,7 +779,7 @@ func TestTest_LongRunningTest(t *testing.T) {
 	if _, err := client.RegistryModules.Create(context.Background(), "organisation", tfe.RegistryModuleCreateOptions{
 		Name:         tfe.String("name"),
 		Provider:     tfe.String("provider"),
-		RegistryName: "app.terraform.io",
+		RegistryName: "app.terracina.io",
 		Namespace:    "organisation",
 	}); err != nil {
 		t.Fatalf("failed to create registry module: %v", err)
@@ -790,7 +790,7 @@ func TestTest_LongRunningTest(t *testing.T) {
 		ConfigDirectory:  "testdata/test-long-running",
 		TestingDirectory: "tests",
 		Config:           nil, // We don't need this for this test.
-		Source:           "app.terraform.io/organisation/name/provider",
+		Source:           "app.terracina.io/organisation/name/provider",
 
 		// Cancellation controls, we won't be doing any cancellations in this
 		// test.
@@ -867,7 +867,7 @@ func TestTest_LongRunningTestJSON(t *testing.T) {
 	if _, err := client.RegistryModules.Create(context.Background(), "organisation", tfe.RegistryModuleCreateOptions{
 		Name:         tfe.String("name"),
 		Provider:     tfe.String("provider"),
-		RegistryName: "app.terraform.io",
+		RegistryName: "app.terracina.io",
 		Namespace:    "organisation",
 	}); err != nil {
 		t.Fatalf("failed to create registry module: %v", err)
@@ -878,7 +878,7 @@ func TestTest_LongRunningTestJSON(t *testing.T) {
 		ConfigDirectory:  "testdata/test-long-running",
 		TestingDirectory: "tests",
 		Config:           nil, // We don't need this for this test.
-		Source:           "app.terraform.io/organisation/name/provider",
+		Source:           "app.terracina.io/organisation/name/provider",
 
 		// Cancellation controls, we won't be doing any cancellations in this
 		// test.
@@ -913,18 +913,18 @@ func TestTest_LongRunningTestJSON(t *testing.T) {
 	// This test should still include the progress updates as we're doing the
 	// JSON output.
 
-	expected := `{"@level":"info","@message":"Terraform 1.7.0-dev","@module":"terraform.ui","@timestamp":"2023-09-28T14:57:09.175210+02:00","terraform":"1.7.0-dev","type":"version","ui":"1.2"}
-{"@level":"info","@message":"Found 1 file and 1 run block","@module":"terraform.ui","@timestamp":"2023-09-28T14:57:09.189212+02:00","test_abstract":{"main.tftest.hcl":["just_go"]},"type":"test_abstract"}
-{"@level":"info","@message":"main.tftest.hcl... in progress","@module":"terraform.ui","@testfile":"main.tftest.hcl","@timestamp":"2023-09-28T14:57:09.189386+02:00","test_file":{"path":"main.tftest.hcl","progress":"starting"},"type":"test_file"}
-{"@level":"info","@message":"  \"just_go\"... in progress","@module":"terraform.ui","@testfile":"main.tftest.hcl","@testrun":"just_go","@timestamp":"2023-09-28T14:57:09.189429+02:00","test_run":{"path":"main.tftest.hcl","run":"just_go","progress":"starting","elapsed":0},"type":"test_run"}
-{"@level":"info","@message":"  \"just_go\"... in progress","@module":"terraform.ui","@testfile":"main.tftest.hcl","@testrun":"just_go","@timestamp":"2023-09-28T14:57:11.341278+02:00","test_run":{"path":"main.tftest.hcl","run":"just_go","progress":"running","elapsed":2152},"type":"test_run"}
-{"@level":"info","@message":"  \"just_go\"... in progress","@module":"terraform.ui","@testfile":"main.tftest.hcl","@testrun":"just_go","@timestamp":"2023-09-28T14:57:13.343465+02:00","test_run":{"path":"main.tftest.hcl","run":"just_go","progress":"running","elapsed":4154},"type":"test_run"}
-{"@level":"info","@message":"  \"just_go\"... pass","@module":"terraform.ui","@testfile":"main.tftest.hcl","@testrun":"just_go","@timestamp":"2023-09-28T14:57:14.381552+02:00","test_run":{"path":"main.tftest.hcl","run":"just_go","progress":"complete","status":"pass"},"type":"test_run"}
-{"@level":"info","@message":"main.tftest.hcl... tearing down","@module":"terraform.ui","@testfile":"main.tftest.hcl","@timestamp":"2023-09-28T14:57:14.381655+02:00","test_file":{"path":"main.tftest.hcl","progress":"teardown"},"type":"test_file"}
-{"@level":"info","@message":"  \"just_go\"... tearing down","@module":"terraform.ui","@testfile":"main.tftest.hcl","@testrun":"just_go","@timestamp":"2023-09-28T14:57:14.381712+02:00","test_run":{"path":"main.tftest.hcl","run":"just_go","progress":"teardown","elapsed":0},"type":"test_run"}
-{"@level":"info","@message":"  \"just_go\"... tearing down","@module":"terraform.ui","@testfile":"main.tftest.hcl","@testrun":"just_go","@timestamp":"2023-09-28T14:57:16.477705+02:00","test_run":{"path":"main.tftest.hcl","run":"just_go","progress":"teardown","elapsed":2096},"type":"test_run"}
-{"@level":"info","@message":"main.tftest.hcl... pass","@module":"terraform.ui","@testfile":"main.tftest.hcl","@timestamp":"2023-09-28T14:57:17.517309+02:00","test_file":{"path":"main.tftest.hcl","progress":"complete","status":"pass"},"type":"test_file"}
-{"@level":"info","@message":"Success! 1 passed, 0 failed.","@module":"terraform.ui","@timestamp":"2023-09-28T14:57:17.517494+02:00","test_summary":{"status":"pass","passed":1,"failed":0,"errored":0,"skipped":0},"type":"test_summary"}
+	expected := `{"@level":"info","@message":"Terracina 1.7.0-dev","@module":"terracina.ui","@timestamp":"2023-09-28T14:57:09.175210+02:00","terracina":"1.7.0-dev","type":"version","ui":"1.2"}
+{"@level":"info","@message":"Found 1 file and 1 run block","@module":"terracina.ui","@timestamp":"2023-09-28T14:57:09.189212+02:00","test_abstract":{"main.tftest.hcl":["just_go"]},"type":"test_abstract"}
+{"@level":"info","@message":"main.tftest.hcl... in progress","@module":"terracina.ui","@testfile":"main.tftest.hcl","@timestamp":"2023-09-28T14:57:09.189386+02:00","test_file":{"path":"main.tftest.hcl","progress":"starting"},"type":"test_file"}
+{"@level":"info","@message":"  \"just_go\"... in progress","@module":"terracina.ui","@testfile":"main.tftest.hcl","@testrun":"just_go","@timestamp":"2023-09-28T14:57:09.189429+02:00","test_run":{"path":"main.tftest.hcl","run":"just_go","progress":"starting","elapsed":0},"type":"test_run"}
+{"@level":"info","@message":"  \"just_go\"... in progress","@module":"terracina.ui","@testfile":"main.tftest.hcl","@testrun":"just_go","@timestamp":"2023-09-28T14:57:11.341278+02:00","test_run":{"path":"main.tftest.hcl","run":"just_go","progress":"running","elapsed":2152},"type":"test_run"}
+{"@level":"info","@message":"  \"just_go\"... in progress","@module":"terracina.ui","@testfile":"main.tftest.hcl","@testrun":"just_go","@timestamp":"2023-09-28T14:57:13.343465+02:00","test_run":{"path":"main.tftest.hcl","run":"just_go","progress":"running","elapsed":4154},"type":"test_run"}
+{"@level":"info","@message":"  \"just_go\"... pass","@module":"terracina.ui","@testfile":"main.tftest.hcl","@testrun":"just_go","@timestamp":"2023-09-28T14:57:14.381552+02:00","test_run":{"path":"main.tftest.hcl","run":"just_go","progress":"complete","status":"pass"},"type":"test_run"}
+{"@level":"info","@message":"main.tftest.hcl... tearing down","@module":"terracina.ui","@testfile":"main.tftest.hcl","@timestamp":"2023-09-28T14:57:14.381655+02:00","test_file":{"path":"main.tftest.hcl","progress":"teardown"},"type":"test_file"}
+{"@level":"info","@message":"  \"just_go\"... tearing down","@module":"terracina.ui","@testfile":"main.tftest.hcl","@testrun":"just_go","@timestamp":"2023-09-28T14:57:14.381712+02:00","test_run":{"path":"main.tftest.hcl","run":"just_go","progress":"teardown","elapsed":0},"type":"test_run"}
+{"@level":"info","@message":"  \"just_go\"... tearing down","@module":"terracina.ui","@testfile":"main.tftest.hcl","@testrun":"just_go","@timestamp":"2023-09-28T14:57:16.477705+02:00","test_run":{"path":"main.tftest.hcl","run":"just_go","progress":"teardown","elapsed":2096},"type":"test_run"}
+{"@level":"info","@message":"main.tftest.hcl... pass","@module":"terracina.ui","@testfile":"main.tftest.hcl","@timestamp":"2023-09-28T14:57:17.517309+02:00","test_file":{"path":"main.tftest.hcl","progress":"complete","status":"pass"},"type":"test_file"}
+{"@level":"info","@message":"Success! 1 passed, 0 failed.","@module":"terracina.ui","@timestamp":"2023-09-28T14:57:17.517494+02:00","test_summary":{"status":"pass","passed":1,"failed":0,"errored":0,"skipped":0},"type":"test_summary"}
 `
 
 	if diff := cmp.Diff(expected, actual); len(diff) > 0 {

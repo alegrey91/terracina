@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/hashicorp/terraform/internal/addrs"
+	"github.com/hashicorp/terracina/internal/addrs"
 )
 
 func TestMultiSourceAvailableVersions(t *testing.T) {
@@ -177,7 +177,7 @@ func TestMultiSourceAvailableVersions(t *testing.T) {
 			t.Fatal("expected error, got success")
 		}
 
-		wantErr := `provider registry registry.terraform.io does not have a provider named registry.terraform.io/hashicorp/foo`
+		wantErr := `provider registry registry.terracina.io does not have a provider named registry.terracina.io/hashicorp/foo`
 
 		if err.Error() != wantErr {
 			t.Fatalf("wrong error.\ngot:  %s\nwant: %s\n", err, wantErr)
@@ -442,15 +442,15 @@ func TestMultiSourceSelector(t *testing.T) {
 				Source:  emptySource,
 				Include: mustParseMultiSourceMatchingPatterns("*/*"),
 			},
-			// Doesn't match because builtin providers are in "terraform.io",
-			// but a pattern with no hostname is for registry.terraform.io.
+			// Doesn't match because builtin providers are in "terracina.io",
+			// but a pattern with no hostname is for registry.terracina.io.
 			addrs.NewBuiltInProvider("bar"),
 			false,
 		},
 		"built-in provider with include constraint that matches it via type wildcard": {
 			MultiSourceSelector{
 				Source:  emptySource,
-				Include: mustParseMultiSourceMatchingPatterns("terraform.io/builtin/*"),
+				Include: mustParseMultiSourceMatchingPatterns("terracina.io/builtin/*"),
 			},
 			addrs.NewBuiltInProvider("bar"),
 			true,

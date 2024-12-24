@@ -9,10 +9,10 @@ import (
 
 	"github.com/hashicorp/cli"
 
-	svchost "github.com/hashicorp/terraform-svchost"
-	svcauth "github.com/hashicorp/terraform-svchost/auth"
-	"github.com/hashicorp/terraform-svchost/disco"
-	"github.com/hashicorp/terraform/internal/command/cliconfig"
+	svchost "github.com/hashicorp/terracina-svchost"
+	svcauth "github.com/hashicorp/terracina-svchost/auth"
+	"github.com/hashicorp/terracina-svchost/disco"
+	"github.com/hashicorp/terracina/internal/command/cliconfig"
 )
 
 func TestLogout(t *testing.T) {
@@ -36,11 +36,11 @@ func TestLogout(t *testing.T) {
 		// true iff the token at hostname should be removed by the command
 		shouldRemove bool
 	}{
-		// If no command-line arguments given, should remove app.terraform.io token
-		{"app.terraform.io", []string{}, true},
+		// If no command-line arguments given, should remove app.terracina.io token
+		{"app.terracina.io", []string{}, true},
 
-		// Can still specify app.terraform.io explicitly
-		{"app.terraform.io", []string{"app.terraform.io"}, true},
+		// Can still specify app.terracina.io explicitly
+		{"app.terracina.io", []string{"app.terracina.io"}, true},
 
 		// Can remove tokens for other hostnames
 		{"tfe.example.com", []string{"tfe.example.com"}, true},

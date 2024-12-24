@@ -15,21 +15,21 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/backend/backendrun"
-	"github.com/hashicorp/terraform/internal/command/views"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/lang"
-	"github.com/hashicorp/terraform/internal/lang/langrefs"
-	"github.com/hashicorp/terraform/internal/logging"
-	"github.com/hashicorp/terraform/internal/moduletest"
-	configtest "github.com/hashicorp/terraform/internal/moduletest/config"
-	hcltest "github.com/hashicorp/terraform/internal/moduletest/hcl"
-	"github.com/hashicorp/terraform/internal/moduletest/mocking"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/terraform"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/backend/backendrun"
+	"github.com/hashicorp/terracina/internal/command/views"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/lang"
+	"github.com/hashicorp/terracina/internal/lang/langrefs"
+	"github.com/hashicorp/terracina/internal/logging"
+	"github.com/hashicorp/terracina/internal/moduletest"
+	configtest "github.com/hashicorp/terracina/internal/moduletest/config"
+	hcltest "github.com/hashicorp/terracina/internal/moduletest/hcl"
+	"github.com/hashicorp/terracina/internal/moduletest/mocking"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/terracina"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 const (
@@ -46,7 +46,7 @@ type TestSuiteRunner struct {
 	GlobalVariables     map[string]backendrun.UnparsedVariableValue
 	GlobalTestVariables map[string]backendrun.UnparsedVariableValue
 
-	Opts *terraform.ContextOpts
+	Opts *terracina.ContextOpts
 
 	View views.Test
 
@@ -61,7 +61,7 @@ type TestSuiteRunner struct {
 	Stopped   bool
 	Cancelled bool
 
-	// StoppedCtx and CancelledCtx allow in progress Terraform operations to
+	// StoppedCtx and CancelledCtx allow in progress Terracina operations to
 	// respond to external calls from the test command.
 	StoppedCtx   context.Context
 	CancelledCtx context.Context
@@ -338,7 +338,7 @@ func (runner *TestFileRunner) Test(file *moduletest.File) {
 				run.Diagnostics = run.Diagnostics.Append(&hcl.Diagnostic{
 					Severity: hcl.DiagError,
 					Summary:  "Invalid module source",
-					Detail:   fmt.Sprintf("The source for the selected module evaluated to %s which should not be possible. This is a bug in Terraform - please report it!", key),
+					Detail:   fmt.Sprintf("The source for the selected module evaluated to %s which should not be possible. This is a bug in Terracina - please report it!", key),
 					Subject:  run.Config.Module.DeclRange.Ptr(),
 				})
 
@@ -443,7 +443,7 @@ func (runner *TestFileRunner) run(run *moduletest.Run, file *moduletest.File, st
 	setVariables, testOnlyVariables, setVariableDiags := runner.FilterVariablesToModule(config, variables)
 	run.Diagnostics = run.Diagnostics.Append(setVariableDiags)
 
-	tfCtx, ctxDiags := terraform.NewContext(runner.Suite.Opts)
+	tfCtx, ctxDiags := terracina.NewContext(runner.Suite.Opts)
 	run.Diagnostics = run.Diagnostics.Append(ctxDiags)
 	if ctxDiags.HasErrors() {
 		return state, false
@@ -473,7 +473,7 @@ func (runner *TestFileRunner) run(run *moduletest.Run, file *moduletest.File, st
 				diags = diags.Append(tfdiags.Sourceless(
 					tfdiags.Warning,
 					"Failed to print verbose output",
-					fmt.Sprintf("Terraform failed to print the verbose output for %s, other diagnostics will contain more details as to why.", filepath.Join(file.Name, run.Name))))
+					fmt.Sprintf("Terracina failed to print the verbose output for %s, other diagnostics will contain more details as to why.", filepath.Join(file.Name, run.Name))))
 			} else {
 				run.Verbose = &moduletest.Verbose{
 					Plan:         plan,
@@ -555,7 +555,7 @@ func (runner *TestFileRunner) run(run *moduletest.Run, file *moduletest.File, st
 			diags = diags.Append(tfdiags.Sourceless(
 				tfdiags.Warning,
 				"Failed to print verbose output",
-				fmt.Sprintf("Terraform failed to print the verbose output for %s, other diagnostics will contain more details as to why.", filepath.Join(file.Name, run.Name))))
+				fmt.Sprintf("Terracina failed to print the verbose output for %s, other diagnostics will contain more details as to why.", filepath.Join(file.Name, run.Name))))
 		} else {
 			run.Verbose = &moduletest.Verbose{
 				Plan:         nil, // We don't have a plan to show in apply mode.
@@ -592,7 +592,7 @@ func (runner *TestFileRunner) validate(config *configs.Config, run *moduletest.R
 
 	var diags tfdiags.Diagnostics
 
-	tfCtx, ctxDiags := terraform.NewContext(runner.Suite.Opts)
+	tfCtx, ctxDiags := terracina.NewContext(runner.Suite.Opts)
 	diags = diags.Append(ctxDiags)
 	if ctxDiags.HasErrors() {
 		return diags
@@ -644,13 +644,13 @@ func (runner *TestFileRunner) destroy(config *configs.Config, state *states.Stat
 	// we care about.
 	setVariables, _, _ := runner.FilterVariablesToModule(config, variables)
 
-	planOpts := &terraform.PlanOpts{
+	planOpts := &terracina.PlanOpts{
 		Mode:         plans.DestroyMode,
 		SetVariables: setVariables,
 		Overrides:    mocking.PackageOverrides(run.Config, file.Config, config),
 	}
 
-	tfCtx, ctxDiags := terraform.NewContext(runner.Suite.Opts)
+	tfCtx, ctxDiags := terracina.NewContext(runner.Suite.Opts)
 	diags = diags.Append(ctxDiags)
 	if ctxDiags.HasErrors() {
 		return state, diags
@@ -689,7 +689,7 @@ func (runner *TestFileRunner) destroy(config *configs.Config, state *states.Stat
 	return updated, diags
 }
 
-func (runner *TestFileRunner) plan(tfCtx *terraform.Context, config *configs.Config, state *states.State, run *moduletest.Run, file *moduletest.File, variables terraform.InputValues, references []*addrs.Reference, start int64) (*lang.Scope, *plans.Plan, tfdiags.Diagnostics) {
+func (runner *TestFileRunner) plan(tfCtx *terracina.Context, config *configs.Config, state *states.State, run *moduletest.Run, file *moduletest.File, variables terracina.InputValues, references []*addrs.Reference, start int64) (*lang.Scope, *plans.Plan, tfdiags.Diagnostics) {
 	log.Printf("[TRACE] TestFileRunner: called plan for %s/%s", file.Name, run.Name)
 
 	var diags tfdiags.Diagnostics
@@ -704,7 +704,7 @@ func (runner *TestFileRunner) plan(tfCtx *terraform.Context, config *configs.Con
 		return nil, nil, diags
 	}
 
-	planOpts := &terraform.PlanOpts{
+	planOpts := &terracina.PlanOpts{
 		Mode: func() plans.Mode {
 			switch run.Config.Options.Mode {
 			case configs.RefreshOnlyTestMode:
@@ -746,7 +746,7 @@ func (runner *TestFileRunner) plan(tfCtx *terraform.Context, config *configs.Con
 	return planScope, plan, diags
 }
 
-func (runner *TestFileRunner) apply(tfCtx *terraform.Context, plan *plans.Plan, state *states.State, config *configs.Config, run *moduletest.Run, file *moduletest.File, progress moduletest.Progress, start int64, variables terraform.InputValues) (*lang.Scope, *states.State, tfdiags.Diagnostics) {
+func (runner *TestFileRunner) apply(tfCtx *terracina.Context, plan *plans.Plan, state *states.State, config *configs.Config, run *moduletest.Run, file *moduletest.File, progress moduletest.Progress, start int64, variables terracina.InputValues) (*lang.Scope, *states.State, tfdiags.Diagnostics) {
 	log.Printf("[TRACE] TestFileRunner: called apply for %s/%s", file.Name, run.Name)
 
 	var diags tfdiags.Diagnostics
@@ -778,7 +778,7 @@ func (runner *TestFileRunner) apply(tfCtx *terraform.Context, plan *plans.Plan, 
 
 	// We only need to pass ephemeral variables to the apply operation, as the
 	// plan has already been evaluated with the full set of variables.
-	ephemeralVariables := make(terraform.InputValues)
+	ephemeralVariables := make(terracina.InputValues)
 	for k, v := range config.Root.Module.Variables {
 		if v.EphemeralSet {
 			if value, ok := variables[k]; ok {
@@ -787,7 +787,7 @@ func (runner *TestFileRunner) apply(tfCtx *terraform.Context, plan *plans.Plan, 
 		}
 	}
 
-	applyOpts := &terraform.ApplyOpts{
+	applyOpts := &terracina.ApplyOpts{
 		SetVariables: ephemeralVariables,
 	}
 
@@ -810,7 +810,7 @@ func (runner *TestFileRunner) apply(tfCtx *terraform.Context, plan *plans.Plan, 
 	return newScope, updated, diags
 }
 
-func (runner *TestFileRunner) wait(ctx *terraform.Context, runningCtx context.Context, run *moduletest.Run, file *moduletest.File, created []*plans.ResourceInstanceChangeSrc, progress moduletest.Progress, start int64) (diags tfdiags.Diagnostics, cancelled bool) {
+func (runner *TestFileRunner) wait(ctx *terracina.Context, runningCtx context.Context, run *moduletest.Run, file *moduletest.File, created []*plans.ResourceInstanceChangeSrc, progress moduletest.Progress, start int64) (diags tfdiags.Diagnostics, cancelled bool) {
 	var identifier string
 	if file == nil {
 		identifier = "validate"
@@ -944,7 +944,7 @@ func (runner *TestFileRunner) cleanup(file *moduletest.File) {
 			// and we can't really recover from it.
 
 			var diags tfdiags.Diagnostics
-			diags = diags.Append(tfdiags.Sourceless(tfdiags.Error, "Inconsistent state", fmt.Sprintf("Found inconsistent state while cleaning up %s. This is a bug in Terraform - please report it", file.Name)))
+			diags = diags.Append(tfdiags.Sourceless(tfdiags.Error, "Inconsistent state", fmt.Sprintf("Found inconsistent state while cleaning up %s. This is a bug in Terracina - please report it", file.Name)))
 			file.Status = moduletest.Error
 			runner.Suite.View.DestroySummary(diags, nil, file, state.State)
 			continue
@@ -1003,7 +1003,7 @@ func (runner *TestFileRunner) cleanup(file *moduletest.File) {
 	}
 }
 
-// GetVariables builds the terraform.InputValues required for the provided run
+// GetVariables builds the terracina.InputValues required for the provided run
 // block. It pulls the relevant variables (ie. the variables needed for the
 // run block) from the total pool of all available variables, and converts them
 // into input values.
@@ -1011,9 +1011,9 @@ func (runner *TestFileRunner) cleanup(file *moduletest.File) {
 // As a run block can reference variables defined within the file and are not
 // actually defined within the configuration, this function actually returns
 // more variables than are required by the config. FilterVariablesToConfig
-// should be called before trying to use these variables within a Terraform
+// should be called before trying to use these variables within a Terracina
 // plan, apply, or destroy operation.
-func (runner *TestFileRunner) GetVariables(config *configs.Config, run *moduletest.Run, references []*addrs.Reference, includeWarnings bool) (terraform.InputValues, tfdiags.Diagnostics) {
+func (runner *TestFileRunner) GetVariables(config *configs.Config, run *moduletest.Run, references []*addrs.Reference, includeWarnings bool) (terracina.InputValues, tfdiags.Diagnostics) {
 	var diags tfdiags.Diagnostics
 
 	// relevantVariables contains the variables that are of interest to this
@@ -1036,7 +1036,7 @@ func (runner *TestFileRunner) GetVariables(config *configs.Config, run *modulete
 	}
 
 	// We'll put the parsed values into this map.
-	values := make(terraform.InputValues)
+	values := make(terracina.InputValues)
 
 	// First, let's step through the expressions within the run block and work
 	// them out.
@@ -1092,9 +1092,9 @@ func (runner *TestFileRunner) GetVariables(config *configs.Config, run *modulete
 			continue // Don't add it to our final set of variables.
 		}
 
-		values[name] = &terraform.InputValue{
+		values[name] = &terracina.InputValue{
 			Value:       value,
-			SourceType:  terraform.ValueFromConfig,
+			SourceType:  terracina.ValueFromConfig,
 			SourceRange: tfdiags.SourceRangeFromHCL(expr.Range()),
 		}
 	}
@@ -1135,7 +1135,7 @@ func (runner *TestFileRunner) GetVariables(config *configs.Config, run *modulete
 		}
 
 		// Otherwise, we're going to give these variables a value. They'll be
-		// processed by the Terraform graph and provided a default value later
+		// processed by the Terracina graph and provided a default value later
 		// if they have one.
 
 		if variable.Required() {
@@ -1147,15 +1147,15 @@ func (runner *TestFileRunner) GetVariables(config *configs.Config, run *modulete
 				Subject: variable.DeclRange.Ptr(),
 			})
 
-			values[name] = &terraform.InputValue{
+			values[name] = &terracina.InputValue{
 				Value:       cty.DynamicVal,
-				SourceType:  terraform.ValueFromConfig,
+				SourceType:  terracina.ValueFromConfig,
 				SourceRange: tfdiags.SourceRangeFromHCL(variable.DeclRange),
 			}
 		} else {
-			values[name] = &terraform.InputValue{
+			values[name] = &terracina.InputValue{
 				Value:       cty.NilVal,
-				SourceType:  terraform.ValueFromConfig,
+				SourceType:  terracina.ValueFromConfig,
 				SourceRange: tfdiags.SourceRangeFromHCL(variable.DeclRange),
 			}
 		}
@@ -1175,9 +1175,9 @@ func (runner *TestFileRunner) GetVariables(config *configs.Config, run *modulete
 //
 // This function can only return warnings, and the callers can rely on this so
 // please check the callers of this function if you add any error diagnostics.
-func (runner *TestFileRunner) FilterVariablesToModule(config *configs.Config, values terraform.InputValues) (moduleVars, testOnlyVars terraform.InputValues, diags tfdiags.Diagnostics) {
-	moduleVars = make(terraform.InputValues)
-	testOnlyVars = make(terraform.InputValues)
+func (runner *TestFileRunner) FilterVariablesToModule(config *configs.Config, values terracina.InputValues) (moduleVars, testOnlyVars terracina.InputValues, diags tfdiags.Diagnostics) {
+	moduleVars = make(terracina.InputValues)
+	testOnlyVars = make(terracina.InputValues)
 	for name, value := range values {
 		_, exists := config.Module.Variables[name]
 		if !exists {
@@ -1197,7 +1197,7 @@ func (runner *TestFileRunner) FilterVariablesToModule(config *configs.Config, va
 // This function is essentially the opposite of FilterVariablesToConfig which
 // makes the variables match the config rather than the config match the
 // variables.
-func (runner *TestFileRunner) AddVariablesToConfig(config *configs.Config, variables terraform.InputValues) func() {
+func (runner *TestFileRunner) AddVariablesToConfig(config *configs.Config, variables terracina.InputValues) func() {
 
 	// If we have got variable values from the test file we need to make sure
 	// they have an equivalent entry in the configuration. We're going to do

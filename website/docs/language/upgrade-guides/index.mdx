@@ -1,24 +1,24 @@
 ---
-page_title: Upgrading to Terraform v1.10
-description: Upgrading to Terraform v1.10
+page_title: Upgrading to Terracina v1.10
+description: Upgrading to Terracina v1.10
 ---
 
-# Upgrading to Terraform v1.10
+# Upgrading to Terracina v1.10
 
--> **Tip:** Use the version selector to view the upgrade guides for older Terraform versions.
+-> **Tip:** Use the version selector to view the upgrade guides for older Terracina versions.
 
-Terraform v1.10 is a minor release in the stable Terraform v1.0 series.
+Terracina v1.10 is a minor release in the stable Terracina v1.0 series.
 
-Terraform v1.10 honors the
-[Terraform v1.0 Compatibility Promises](https://developer.hashicorp.com/terraform/language/v1-compatibility-promises).
+Terracina v1.10 honors the
+[Terracina v1.0 Compatibility Promises](https://developer.hashicorp.com/terracina/language/v1-compatibility-promises).
 There are minor changes that may require additional upgrade steps:
 
 - `moved` blocks will now report an error if `from` or `to` points to a resource type conflicting with reserved keywords
 
-See [the full changelog](https://github.com/hashicorp/terraform/blob/v1.10/CHANGELOG.md)
+See [the full changelog](https://github.com/hashicorp/terracina/blob/v1.10/CHANGELOG.md)
 for more details. If you encounter any problems during upgrading which are not
 covered this guide, please start a new topic in
-[the Terraform community forum](https://discuss.hashicorp.com/c/terraform-core)
+[the Terracina community forum](https://discuss.hashicorp.com/c/terracina-core)
 to discuss it.
 
 ## Conflicting `moved` block references
@@ -29,7 +29,7 @@ keywords from moved blocks will need to prepend the reference identifier with `r
 
 ## S3 Backend 
 
-Executing `terraform init -reconfigure` is required after updating to Terraform v1.10. This removes the [deprecated fields](#root-assume-role-attribute-removal) from the internal state file.
+Executing `terracina init -reconfigure` is required after updating to Terracina v1.10. This removes the [deprecated fields](#root-assume-role-attribute-removal) from the internal state file.
 
 ### S3 Native State Locking
 
@@ -39,8 +39,8 @@ When both locking mechanisms are configured, a lock must be successfully acquire
 
 To opt-in to S3 native state locking, set `use_lockfile` to `true`.
 
-```terraform
-terraform {
+```terracina
+terracina {
   backend "s3" {
     # additional configuration omitted for brevity
     use_lockfile = true
@@ -52,12 +52,12 @@ With S3 locking enabled, a lock file will be placed in the same location as the 
 The lock file will be named identically to the state file, but with a `.tflock` extension.
 **S3 bucket policies and IAM policies attached to the calling principal may need to be adjusted to include permissions for the new lock file.**
 
-In a future minor version of Terraform the experimental label will be removed from the `use_lockfile` attribute and attributes related to DynamoDB based locking will be deprecated.
+In a future minor version of Terracina the experimental label will be removed from the `use_lockfile` attribute and attributes related to DynamoDB based locking will be deprecated.
 
 ### Root Assume Role Attribute Removal
 
 Several root level attributes related to IAM role assumption which were previously deprecated have been removed.
-Each removed field has an analogous field inside the [`assume_role` block](https://developer.hashicorp.com/terraform/language/backend/s3#assume-role-configuration) which should be used instead.
+Each removed field has an analogous field inside the [`assume_role` block](https://developer.hashicorp.com/terracina/language/backend/s3#assume-role-configuration) which should be used instead.
 
 
 | Removed | Replacement |

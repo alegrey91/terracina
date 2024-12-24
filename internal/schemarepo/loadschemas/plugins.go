@@ -8,10 +8,10 @@ import (
 	"log"
 
 	"github.com/hashicorp/hcl/v2/hclsyntax"
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/provisioners"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/provisioners"
 )
 
 // Plugins represents a library of available plugins for which it's safe
@@ -91,32 +91,32 @@ func (cp *Plugins) NewProvisionerInstance(typ string) (provisioners.Interface, e
 //
 // ProviderSchema memoizes results by unique provider address, so it's fine
 // to repeatedly call this method with the same address if various different
-// parts of Terraform all need the same schema information.
+// parts of Terracina all need the same schema information.
 func (cp *Plugins) ProviderSchema(addr addrs.Provider) (providers.ProviderSchema, error) {
 	// Check the global schema cache first.
 	// This cache is only written by the provider client, and transparently
 	// used by GetProviderSchema, but we check it here because at this point we
 	// may be able to avoid spinning up the provider instance at all.
 	// We skip this if we have preloaded schemas because that suggests that
-	// our caller is not Terraform CLI and therefore it's probably inappropriate
+	// our caller is not Terracina CLI and therefore it's probably inappropriate
 	// to assume that provider schemas are unique process-wide.
 	//
-	// FIXME: A global cache is inappropriate when Terraform Core is being
-	// used in a non-Terraform-CLI mode where we shouldn't assume that all
+	// FIXME: A global cache is inappropriate when Terracina Core is being
+	// used in a non-Terracina-CLI mode where we shouldn't assume that all
 	// calls share the same provider implementations.
 	schemas, ok := providers.SchemaCache.Get(addr)
 	if ok {
-		log.Printf("[TRACE] terraform.contextPlugins: Schema for provider %q is in the global cache", addr)
+		log.Printf("[TRACE] terracina.contextPlugins: Schema for provider %q is in the global cache", addr)
 		return schemas, nil
 	}
 
 	// We might have a non-global preloaded copy of this provider's schema.
 	if schema, ok := cp.preloadedProviderSchemas[addr]; ok {
-		log.Printf("[TRACE] terraform.contextPlugins: Provider %q has a preloaded schema", addr)
+		log.Printf("[TRACE] terracina.contextPlugins: Provider %q has a preloaded schema", addr)
 		return schema, nil
 	}
 
-	log.Printf("[TRACE] terraform.contextPlugins: Initializing provider %q to read its schema", addr)
+	log.Printf("[TRACE] terracina.contextPlugins: Initializing provider %q to read its schema", addr)
 	provider, err := cp.NewProviderInstance(addr)
 	if err != nil {
 		return schemas, fmt.Errorf("failed to instantiate provider %q to obtain schema: %s", addr, err)
@@ -229,9 +229,9 @@ func (cp *Plugins) ResourceTypeSchema(providerAddr addrs.Provider, resourceMode 
 //
 // ProvisionerSchema memoizes results by provisioner type name, so it's fine
 // to repeatedly call this method with the same name if various different
-// parts of Terraform all need the same schema information.
+// parts of Terracina all need the same schema information.
 func (cp *Plugins) ProvisionerSchema(typ string) (*configschema.Block, error) {
-	log.Printf("[TRACE] terraform.contextPlugins: Initializing provisioner %q to read its schema", typ)
+	log.Printf("[TRACE] terracina.contextPlugins: Initializing provisioner %q to read its schema", typ)
 	provisioner, err := cp.NewProvisionerInstance(typ)
 	if err != nil {
 		return nil, fmt.Errorf("failed to instantiate provisioner %q to obtain schema: %s", typ, err)

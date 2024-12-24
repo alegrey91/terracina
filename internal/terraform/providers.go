@@ -1,17 +1,17 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"fmt"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // checkExternalProviders verifies that all of the explicitly-declared
@@ -48,7 +48,7 @@ func checkExternalProviders(rootCfg *configs.Config, plan *plans.Plan, state *st
 	// Passed-in provider configurations can only be for providers that this
 	// configuration actually contains some use of.
 	// (This is an imprecise way of rejecting undeclared provider configs;
-	// we can't be precise because Terraform permits implicit default provider
+	// we can't be precise because Terracina permits implicit default provider
 	// configurations.)
 	for cfgAddr := range got {
 		if !allowedProviders[cfgAddr.Provider] {
@@ -119,7 +119,7 @@ func checkExternalProviders(rootCfg *configs.Config, plan *plans.Plan, state *st
 // passed in by an external caller which we assume is owned by the caller
 // and pre-configured.
 //
-// This is a kinda-hacky way to deal with the fact that Terraform Core
+// This is a kinda-hacky way to deal with the fact that Terracina Core
 // logic tends to assume it is responsible for the full lifecycle of a
 // provider instance, which isn't true for externally-provided ones.
 type externalProviderWrapper struct {
@@ -129,7 +129,7 @@ type externalProviderWrapper struct {
 var _ providers.Interface = externalProviderWrapper{}
 
 // ConfigureProvider does nothing because external providers are supposed to
-// be pre-configured before passing them to Terraform Core.
+// be pre-configured before passing them to Terracina Core.
 func (pw externalProviderWrapper) ConfigureProvider(providers.ConfigureProviderRequest) providers.ConfigureProviderResponse {
 	return providers.ConfigureProviderResponse{}
 }

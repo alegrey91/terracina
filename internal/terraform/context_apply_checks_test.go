@@ -1,24 +1,24 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"testing"
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/checks"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	testing_provider "github.com/hashicorp/terraform/internal/providers/testing"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/checks"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	testing_provider "github.com/hashicorp/terracina/internal/providers/testing"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
-// This file contains 'integration' tests for the Terraform check blocks.
+// This file contains 'integration' tests for the Terracina check blocks.
 //
 // These tests could live in context_apply_test or context_apply2_test but given
 // the size of those files, it makes sense to keep these check related tests
@@ -747,7 +747,7 @@ check "error" {
 
 func TestContextChecks_DoesNotPanicOnModuleExpansion(t *testing.T) {
 	// This is a bit of a special test, we're adding it to verify that
-	// https://github.com/hashicorp/terraform/issues/34062 is fixed.
+	// https://github.com/hashicorp/terracina/issues/34062 is fixed.
 	//
 	// Essentially we make a check block in a child module that depends on a
 	// resource that has no changes. We don't care about the actual behaviour
@@ -788,7 +788,7 @@ check "check_should_not_panic" {
 				AttrsJSON: []byte(`{"test_string":"Hello, world!"}`),
 				Status:    states.ObjectReady,
 			},
-			mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+			mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 		)
 	}), DefaultPlanOpts)
 	assertNoErrors(t, diags)

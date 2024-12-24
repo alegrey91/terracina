@@ -12,13 +12,13 @@ import (
 
 	"github.com/davecgh/go-spew/spew"
 
-	"github.com/hashicorp/terraform/internal/configs/configload"
+	"github.com/hashicorp/terracina/internal/configs/configload"
 )
 
 func TestConfigSnapshotRoundtrip(t *testing.T) {
 	fixtureDir := filepath.Join("testdata", "test-config")
 	loader, err := configload.NewLoader(&configload.Config{
-		ModulesDir: filepath.Join(fixtureDir, ".terraform", "modules"),
+		ModulesDir: filepath.Join(fixtureDir, ".terracina", "modules"),
 	})
 	if err != nil {
 		t.Fatal(err)

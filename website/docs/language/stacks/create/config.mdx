@@ -11,21 +11,21 @@ Your Stack configuration file defines multiple components that share a lifecycle
 
 ## Background
 
-You declare the infrastructure that makes up your Stack in the Stack configuration file. Stack configuration files replace Terraform’s traditional root module and serve as the blueprint for what your Stack deploys.
+You declare the infrastructure that makes up your Stack in the Stack configuration file. Stack configuration files replace Terracina’s traditional root module and serve as the blueprint for what your Stack deploys.
 
-Stack configuration files use a new file type, `tfstack.hcl`, to define everything that shares your Stack’s lifecycle. After writing your Stack configuration, you can write a deployment configuration to dictate how HCP Terraform deploys your Stack’s infrastructure. 
+Stack configuration files use a new file type, `tfstack.hcl`, to define everything that shares your Stack’s lifecycle. After writing your Stack configuration, you can write a deployment configuration to dictate how HCP Terracina deploys your Stack’s infrastructure. 
 
-As with Terraform configuration files, HCP Terraform processes all of the blocks in your Stack configuration and deployment configuration files in your Stack's root directory in dependency order. You can organize your Stack configuration into multiple files as in traditional Terraform configurations.
+As with Terracina configuration files, HCP Terracina processes all of the blocks in your Stack configuration and deployment configuration files in your Stack's root directory in dependency order. You can organize your Stack configuration into multiple files as in traditional Terracina configurations.
 
 ### Requirements
 
-Before you begin writing your Stack configuration, ensure you have the `terraform-stacks-cli` for initializing and validating your Stack configurations. For installation guidance, refer to the [Stacks CLI reference](/terraform/language/stacks/reference/tfstacks-cli).
+Before you begin writing your Stack configuration, ensure you have the `terracina-stacks-cli` for initializing and validating your Stack configurations. For installation guidance, refer to the [Stacks CLI reference](/terracina/language/stacks/reference/tfstacks-cli).
 
 ## Define your Stack configuration
 
-We recommend [designing your Stack](/terraform/language/stacks/design) before you begin writing your configuration files. 
+We recommend [designing your Stack](/terracina/language/stacks/design) before you begin writing your configuration files. 
 
-All of your Stack’s configuration files must use the `.tfstack.hcl` file type. You can set up your Stack configuration into multiple files as in traditional Terraform configurations. For example, you can have `variables.tfstack.hcl`, `providers.tfstack.hcl`, and we recommend creating one root-level file for your `component` blocks, such as `components.tfstack.hcl`. 
+All of your Stack’s configuration files must use the `.tfstack.hcl` file type. You can set up your Stack configuration into multiple files as in traditional Terracina configurations. For example, you can have `variables.tfstack.hcl`, `providers.tfstack.hcl`, and we recommend creating one root-level file for your `component` blocks, such as `components.tfstack.hcl`. 
     
 The `component` block defines the pieces that make up your Stack. Add a `component` block for each top-level module you want to include in the Stack. Specify the source module, inputs, and providers for each component. 
 
@@ -50,7 +50,7 @@ component "cluster" {
 
 After establishing your top-level modules, you can use child modules without adding additional `component` blocks.
 
-The Stack configuration file type accepts most classic Terraform configuration blocks but with some key differences. For more details on declaring providers in Stacks, refer to [Declare providers](/terraform/language/stacks/create/declare-providers). For more information on the Stack configuration file type and all the blocks and attributes it accepts, refer to the [Configuration file reference](/terraform/language/stacks/reference/tfstack). 
+The Stack configuration file type accepts most classic Terracina configuration blocks but with some key differences. For more details on declaring providers in Stacks, refer to [Declare providers](/terracina/language/stacks/create/declare-providers). For more information on the Stack configuration file type and all the blocks and attributes it accepts, refer to the [Configuration file reference](/terracina/language/stacks/reference/tfstack). 
 
 The `component` block supports the `for_each` meta-argument if you need to replicate components across multiple instances. For example, the following configuration uses `for_each` to provision modules in multiple AWS regions for a given environment.
 
@@ -73,19 +73,19 @@ component "s3" {
 }
 ```
 
-After writing your Stack configuration, use the Terraform Stacks CLI to validate it.
+After writing your Stack configuration, use the Terracina Stacks CLI to validate it.
 
 ## Validate your configuration
 
-Once you have finished your Stack configuration, use the `terraform-stacks-cli` tool to validate your configuration and generate the necessary provider lock files.
+Once you have finished your Stack configuration, use the `terracina-stacks-cli` tool to validate your configuration and generate the necessary provider lock files.
 
 ```shell-session
 $ tfstacks init
 $ tfstacks validate
 ```
 
-For installation guidance and more details, refer to the [Stacks CLI](/terraform/language/stacks/reference/tfstacks-cli).
+For installation guidance and more details, refer to the [Stacks CLI](/terracina/language/stacks/reference/tfstacks-cli).
 
 ## Next steps
 
-If you have not yet defined the providers for your Stack, proceed to [Declare providers](/terraform/language/stacks/create/declare-providers). You can also learn how to [Authenticate your Stack](/terraform/language/stacks/deploy/authenticate) to ensure your providers are properly set up.  
+If you have not yet defined the providers for your Stack, proceed to [Declare providers](/terracina/language/stacks/create/declare-providers). You can also learn how to [Authenticate your Stack](/terracina/language/stacks/deploy/authenticate) to ensure your providers are properly set up.  

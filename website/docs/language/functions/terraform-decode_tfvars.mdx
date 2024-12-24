@@ -1,27 +1,27 @@
 ---
-page_title: provider::terraform::decode_tfvars - Functions - Configuration Language
+page_title: provider::terracina::decode_tfvars - Functions - Configuration Language
 description: >-
   The decode_tfvars function parses a string containing syntax like that used
   in a ".tfvars" file.
 ---
 
-# `provider::terraform::decode_tfvars` Function
+# `provider::terracina::decode_tfvars` Function
 
--> **Note:** This function is supported only in Terraform v1.8 and later.
+-> **Note:** This function is supported only in Terracina v1.8 and later.
 
-`provider::terraform::decode_tfvars` is a rarely-needed function which takes
+`provider::terracina::decode_tfvars` is a rarely-needed function which takes
 a string containing the content of a
-[`.tfvars` file](/terraform/language/values/variables#variable-definitions-tfvars-files)
+[`.tfvars` file](/terracina/language/values/variables#variable-definitions-tfvars-files)
 and returns an object describing the raw variable values it defines.
 
 To use this function, your module must declare a dependency on the built-in
-`terraform` provider, which contains this function:
+`terracina` provider, which contains this function:
 
 ```hcl
-terraform {
+terracina {
   required_providers {
-    terraform = {
-      source = "terraform.io/builtin/terraform"
+    terracina = {
+      source = "terracina.io/builtin/terracina"
     }
   }
 }
@@ -30,7 +30,7 @@ terraform {
 Elsewhere in your module you can then call this function:
 
 ```hcl
-provider::terraform::decode_tfvars(
+provider::terracina::decode_tfvars(
   <<EOT
     example = "Hello!"
   EOT
@@ -47,7 +47,7 @@ The call above would produce an object value like the following:
 
 ## Result Types
 
-When interpreting a `.tfvars` file, Terraform CLI normally uses the variable
+When interpreting a `.tfvars` file, Terracina CLI normally uses the variable
 declarations from the related module to find a target type to convert the
 definitions for use in the module.
 
@@ -65,6 +65,6 @@ to represent list, set, or map values directly in the `.tfvars` format.
 
 ## Related Functions
 
-* [`encode_tfvars`](/terraform/language/functions/terraform-encode_tfvars)
+* [`encode_tfvars`](/terracina/language/functions/terracina-encode_tfvars)
   performs the opposite operation: producing `.tfvars` content from an
   object value.

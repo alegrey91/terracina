@@ -9,9 +9,9 @@ import (
 	"testing"
 
 	"github.com/hashicorp/cli"
-	"github.com/hashicorp/terraform/internal/backend"
-	"github.com/hashicorp/terraform/internal/backend/remote-state/inmem"
-	"github.com/hashicorp/terraform/internal/states"
+	"github.com/hashicorp/terracina/internal/backend"
+	"github.com/hashicorp/terracina/internal/backend/remote-state/inmem"
+	"github.com/hashicorp/terracina/internal/states"
 )
 
 func TestStatePush_empty(t *testing.T) {

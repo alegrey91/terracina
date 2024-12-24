@@ -17,11 +17,11 @@ import (
 	version "github.com/hashicorp/go-version"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/backend"
-	"github.com/hashicorp/terraform/internal/backend/backendrun"
-	backendLocal "github.com/hashicorp/terraform/internal/backend/local"
-	"github.com/hashicorp/terraform/internal/tfdiags"
-	tfversion "github.com/hashicorp/terraform/version"
+	"github.com/hashicorp/terracina/internal/backend"
+	"github.com/hashicorp/terracina/internal/backend/backendrun"
+	backendLocal "github.com/hashicorp/terracina/internal/backend/local"
+	"github.com/hashicorp/terracina/internal/tfdiags"
+	tfversion "github.com/hashicorp/terracina/version"
 )
 
 func TestCloud(t *testing.T) {
@@ -373,7 +373,7 @@ func TestCloud_configWithEnvVars(t *testing.T) {
 			vars: map[string]string{
 				"TF_WORKSPACE": "i-dont-exist-in-org",
 			},
-			expectedErr: `Invalid workspace selection: Terraform failed to find workspace "i-dont-exist-in-org" in organization hashicorp`,
+			expectedErr: `Invalid workspace selection: Terracina failed to find workspace "i-dont-exist-in-org" in organization hashicorp`,
 		},
 		"workspaces and env var specified": {
 			config: cty.ObjectVal(map[string]cty.Value{
@@ -416,7 +416,7 @@ func TestCloud_configWithEnvVars(t *testing.T) {
 			vars: map[string]string{
 				"TF_WORKSPACE": "shire",
 			},
-			expectedErr: "Terraform failed to find workspace \"shire\" with the tags specified in your configuration:\n[cloud]",
+			expectedErr: "Terracina failed to find workspace \"shire\" with the tags specified in your configuration:\n[cloud]",
 		},
 		"env var workspace has specified tag": {
 			setup: func(b *Cloud) {
@@ -528,7 +528,7 @@ func TestCloud_configWithEnvVars(t *testing.T) {
 			expectedProjectName: "my-project",
 			// No error is raised, and workspace is still in its original
 			// project, but the configured project for any future workspaces
-			// created with `terraform workspace new` is unaffected.
+			// created with `terracina workspace new` is unaffected.
 		},
 		"with everything set as env vars": {
 			config: cty.ObjectVal(map[string]cty.Value{
@@ -630,7 +630,7 @@ func TestCloud_config(t *testing.T) {
 					"project": cty.NullVal(cty.String),
 				}),
 			}),
-			confErr: "terraform login localhost",
+			confErr: "terracina login localhost",
 		},
 		"with_tags": {
 			config: cty.ObjectVal(map[string]cty.Value{
@@ -803,7 +803,7 @@ func TestCloud_configVerifyMinimumTFEVersion(t *testing.T) {
 		t.Fatalf("expected configure to error")
 	}
 
-	expected := `The 'cloud' option is not supported with this version of Terraform Enterprise.`
+	expected := `The 'cloud' option is not supported with this version of Terracina Enterprise.`
 	if !strings.Contains(confDiags.Err().Error(), expected) {
 		t.Fatalf("expected configure to error with %q, got %q", expected, confDiags.Err().Error())
 	}
@@ -841,18 +841,18 @@ func TestCloud_configVerifyMinimumTFEVersionInAutomation(t *testing.T) {
 		t.Fatalf("expected configure to error")
 	}
 
-	expected := `This version of HCP Terraform does not support the state mechanism
+	expected := `This version of HCP Terracina does not support the state mechanism
 attempting to be used by the platform. This should never happen.`
 	if !strings.Contains(confDiags.Err().Error(), expected) {
 		t.Fatalf("expected configure to error with %q, got %q", expected, confDiags.Err().Error())
 	}
 }
 
-func TestCloud_setUnavailableTerraformVersion(t *testing.T) {
-	// go-tfe returns an error IRL if you try to set a Terraform version that's
-	// not available in your HCP Terraform instance. To test this, tfe_client_mock errors if
-	// you try to set any Terraform version for this specific workspace name.
-	workspaceName := "unavailable-terraform-version"
+func TestCloud_setUnavailableTerracinaVersion(t *testing.T) {
+	// go-tfe returns an error IRL if you try to set a Terracina version that's
+	// not available in your HCP Terracina instance. To test this, tfe_client_mock errors if
+	// you try to set any Terracina version for this specific workspace name.
+	workspaceName := "unavailable-terracina-version"
 
 	config := cty.ObjectVal(map[string]cty.Value{
 		"hostname":     cty.NullVal(cty.String),
@@ -883,7 +883,7 @@ func TestCloud_setUnavailableTerraformVersion(t *testing.T) {
 
 	_, err = b.StateMgr(workspaceName)
 	if err != nil {
-		t.Fatalf("expected no error from StateMgr, despite not being able to set remote Terraform version: %#v", err)
+		t.Fatalf("expected no error from StateMgr, despite not being able to set remote Terracina version: %#v", err)
 	}
 	// Make sure the workspace was created:
 	workspace, err := b.client.Workspaces.Read(context.Background(), b.Organization, workspaceName)
@@ -894,10 +894,10 @@ func TestCloud_setUnavailableTerraformVersion(t *testing.T) {
 	_, err = b.client.Workspaces.UpdateByID(
 		context.Background(),
 		workspace.ID,
-		tfe.WorkspaceUpdateOptions{TerraformVersion: tfe.String("1.1.0")},
+		tfe.WorkspaceUpdateOptions{TerracinaVersion: tfe.String("1.1.0")},
 	)
 	if err == nil {
-		t.Fatalf("the mocks aren't emulating a nonexistent remote Terraform version correctly, so this test isn't trustworthy anymore")
+		t.Fatalf("the mocks aren't emulating a nonexistent remote Terracina version correctly, so this test isn't trustworthy anymore")
 	}
 }
 
@@ -910,7 +910,7 @@ func TestCloud_resolveCloudConfig(t *testing.T) {
 	}{
 		"hostname/org/name/token/project all set": {
 			config: cty.ObjectVal(map[string]cty.Value{
-				"hostname":     cty.StringVal("app.staging.terraform.io"),
+				"hostname":     cty.StringVal("app.staging.terracina.io"),
 				"organization": cty.StringVal("examplecorp"),
 				"token":        cty.StringVal("password123"),
 				"workspaces": cty.ObjectVal(map[string]cty.Value{
@@ -920,7 +920,7 @@ func TestCloud_resolveCloudConfig(t *testing.T) {
 				}),
 			}),
 			expectedResult: cloudConfig{
-				hostname:     "app.staging.terraform.io",
+				hostname:     "app.staging.terracina.io",
 				organization: "examplecorp",
 				token:        "password123",
 				workspaceMapping: WorkspaceMapping{
@@ -941,13 +941,13 @@ func TestCloud_resolveCloudConfig(t *testing.T) {
 				})),
 			}),
 			vars: map[string]string{
-				"TF_CLOUD_HOSTNAME":     "app.staging.terraform.io",
+				"TF_CLOUD_HOSTNAME":     "app.staging.terracina.io",
 				"TF_CLOUD_ORGANIZATION": "examplecorp",
 				"TF_WORKSPACE":          "prod",
 				"TF_CLOUD_PROJECT":      "networking",
 			},
 			expectedResult: cloudConfig{
-				hostname:     "app.staging.terraform.io",
+				hostname:     "app.staging.terracina.io",
 				organization: "examplecorp",
 				token:        "",
 				workspaceMapping: WorkspaceMapping{
@@ -1343,19 +1343,19 @@ func TestCloud_StateMgr_versionCheck(t *testing.T) {
 		tfversion.SemVer = s
 	}()
 
-	// For this test, the local Terraform version is set to 0.14.0
+	// For this test, the local Terracina version is set to 0.14.0
 	tfversion.Prerelease = ""
 	tfversion.Version = v0140.String()
 	tfversion.SemVer = v0140
 
-	// Update the mock remote workspace Terraform version to match the local
-	// Terraform version
+	// Update the mock remote workspace Terracina version to match the local
+	// Terracina version
 	if _, err := b.client.Workspaces.Update(
 		context.Background(),
 		b.Organization,
 		b.WorkspaceMapping.Name,
 		tfe.WorkspaceUpdateOptions{
-			TerraformVersion: tfe.String(v0140.String()),
+			TerracinaVersion: tfe.String(v0140.String()),
 		},
 	); err != nil {
 		t.Fatalf("error: %v", err)
@@ -1366,20 +1366,20 @@ func TestCloud_StateMgr_versionCheck(t *testing.T) {
 		t.Fatalf("expected no error, got %v", err)
 	}
 
-	// Now change the remote workspace to a different Terraform version
+	// Now change the remote workspace to a different Terracina version
 	if _, err := b.client.Workspaces.Update(
 		context.Background(),
 		b.Organization,
 		b.WorkspaceMapping.Name,
 		tfe.WorkspaceUpdateOptions{
-			TerraformVersion: tfe.String(v0135.String()),
+			TerracinaVersion: tfe.String(v0135.String()),
 		},
 	); err != nil {
 		t.Fatalf("error: %v", err)
 	}
 
 	// This should fail
-	want := `Remote workspace Terraform version "0.13.5" does not match local Terraform version "0.14.0"`
+	want := `Remote workspace Terracina version "0.13.5" does not match local Terracina version "0.14.0"`
 	if _, err := b.StateMgr(testBackendSingleWorkspaceName); err.Error() != want {
 		t.Fatalf("wrong error\n got: %v\nwant: %v", err.Error(), want)
 	}
@@ -1401,7 +1401,7 @@ func TestCloud_StateMgr_versionCheckLatest(t *testing.T) {
 		tfversion.SemVer = s
 	}()
 
-	// For this test, the local Terraform version is set to 0.14.0
+	// For this test, the local Terracina version is set to 0.14.0
 	tfversion.Prerelease = ""
 	tfversion.Version = v0140.String()
 	tfversion.SemVer = v0140
@@ -1412,7 +1412,7 @@ func TestCloud_StateMgr_versionCheckLatest(t *testing.T) {
 		b.Organization,
 		b.WorkspaceMapping.Name,
 		tfe.WorkspaceUpdateOptions{
-			TerraformVersion: tfe.String("latest"),
+			TerracinaVersion: tfe.String("latest"),
 		},
 	); err != nil {
 		t.Fatalf("error: %v", err)
@@ -1424,7 +1424,7 @@ func TestCloud_StateMgr_versionCheckLatest(t *testing.T) {
 	}
 }
 
-func TestCloud_VerifyWorkspaceTerraformVersion(t *testing.T) {
+func TestCloud_VerifyWorkspaceTerracinaVersion(t *testing.T) {
 	testCases := []struct {
 		local         string
 		remote        string
@@ -1474,7 +1474,7 @@ func TestCloud_VerifyWorkspaceTerraformVersion(t *testing.T) {
 			tfversion.Version = local.String()
 			tfversion.SemVer = local
 
-			// Update the mock remote workspace Terraform version to the
+			// Update the mock remote workspace Terracina version to the
 			// specified remote version
 			if _, err := b.client.Workspaces.Update(
 				context.Background(),
@@ -1482,18 +1482,18 @@ func TestCloud_VerifyWorkspaceTerraformVersion(t *testing.T) {
 				b.WorkspaceMapping.Name,
 				tfe.WorkspaceUpdateOptions{
 					ExecutionMode:    &tc.executionMode,
-					TerraformVersion: tfe.String(tc.remote),
+					TerracinaVersion: tfe.String(tc.remote),
 				},
 			); err != nil {
 				t.Fatalf("error: %v", err)
 			}
 
-			diags := b.VerifyWorkspaceTerraformVersion(backend.DefaultStateName)
+			diags := b.VerifyWorkspaceTerracinaVersion(backend.DefaultStateName)
 			if tc.wantErr {
 				if len(diags) != 1 {
 					t.Fatal("expected diag, but none returned")
 				}
-				if got := diags.Err().Error(); !strings.Contains(got, "Incompatible Terraform version") {
+				if got := diags.Err().Error(); !strings.Contains(got, "Incompatible Terracina version") {
 					t.Fatalf("unexpected error: %s", got)
 				}
 			} else {
@@ -1505,20 +1505,20 @@ func TestCloud_VerifyWorkspaceTerraformVersion(t *testing.T) {
 	}
 }
 
-func TestCloud_VerifyWorkspaceTerraformVersion_workspaceErrors(t *testing.T) {
+func TestCloud_VerifyWorkspaceTerracinaVersion_workspaceErrors(t *testing.T) {
 	b, bCleanup := testBackendWithName(t)
 	defer bCleanup()
 
 	// Attempting to check the version against a workspace which doesn't exist
 	// should result in no errors
-	diags := b.VerifyWorkspaceTerraformVersion("invalid-workspace")
+	diags := b.VerifyWorkspaceTerracinaVersion("invalid-workspace")
 	if len(diags) != 0 {
 		t.Fatalf("unexpected error: %s", diags.Err())
 	}
 
 	// Use a special workspace ID to trigger a 500 error, which should result
 	// in a failed check
-	diags = b.VerifyWorkspaceTerraformVersion("network-error")
+	diags = b.VerifyWorkspaceTerracinaVersion("network-error")
 	if len(diags) != 1 {
 		t.Fatal("expected diag, but none returned")
 	}
@@ -1526,28 +1526,28 @@ func TestCloud_VerifyWorkspaceTerraformVersion_workspaceErrors(t *testing.T) {
 		t.Fatalf("unexpected error: %s", got)
 	}
 
-	// Update the mock remote workspace Terraform version to an invalid version
+	// Update the mock remote workspace Terracina version to an invalid version
 	if _, err := b.client.Workspaces.Update(
 		context.Background(),
 		b.Organization,
 		b.WorkspaceMapping.Name,
 		tfe.WorkspaceUpdateOptions{
-			TerraformVersion: tfe.String("1.0.cheetarah"),
+			TerracinaVersion: tfe.String("1.0.cheetarah"),
 		},
 	); err != nil {
 		t.Fatalf("error: %v", err)
 	}
-	diags = b.VerifyWorkspaceTerraformVersion(backend.DefaultStateName)
+	diags = b.VerifyWorkspaceTerracinaVersion(backend.DefaultStateName)
 
 	if len(diags) != 1 {
 		t.Fatal("expected diag, but none returned")
 	}
-	if got := diags.Err().Error(); !strings.Contains(got, "Incompatible Terraform version: The remote workspace specified") {
+	if got := diags.Err().Error(); !strings.Contains(got, "Incompatible Terracina version: The remote workspace specified") {
 		t.Fatalf("unexpected error: %s", got)
 	}
 }
 
-func TestCloud_VerifyWorkspaceTerraformVersion_ignoreFlagSet(t *testing.T) {
+func TestCloud_VerifyWorkspaceTerracinaVersion_ignoreFlagSet(t *testing.T) {
 	b, bCleanup := testBackendWithName(t)
 	defer bCleanup()
 
@@ -1573,20 +1573,20 @@ func TestCloud_VerifyWorkspaceTerraformVersion_ignoreFlagSet(t *testing.T) {
 	tfversion.Version = local.String()
 	tfversion.SemVer = local
 
-	// Update the mock remote workspace Terraform version to the
+	// Update the mock remote workspace Terracina version to the
 	// specified remote version
 	if _, err := b.client.Workspaces.Update(
 		context.Background(),
 		b.Organization,
 		b.WorkspaceMapping.Name,
 		tfe.WorkspaceUpdateOptions{
-			TerraformVersion: tfe.String(remote.String()),
+			TerracinaVersion: tfe.String(remote.String()),
 		},
 	); err != nil {
 		t.Fatalf("error: %v", err)
 	}
 
-	diags := b.VerifyWorkspaceTerraformVersion(backend.DefaultStateName)
+	diags := b.VerifyWorkspaceTerracinaVersion(backend.DefaultStateName)
 	if len(diags) != 1 {
 		t.Fatal("expected diag, but none returned")
 	}
@@ -1594,10 +1594,10 @@ func TestCloud_VerifyWorkspaceTerraformVersion_ignoreFlagSet(t *testing.T) {
 	if got, want := diags[0].Severity(), tfdiags.Warning; got != want {
 		t.Errorf("wrong severity: got %#v, want %#v", got, want)
 	}
-	if got, want := diags[0].Description().Summary, "Incompatible Terraform version"; got != want {
+	if got, want := diags[0].Description().Summary, "Incompatible Terracina version"; got != want {
 		t.Errorf("wrong summary: got %s, want %s", got, want)
 	}
-	wantDetail := "The local Terraform version (0.14.0) does not meet the version requirements for remote workspace hashicorp/app-prod (0.13.5)."
+	wantDetail := "The local Terracina version (0.14.0) does not meet the version requirements for remote workspace hashicorp/app-prod (0.13.5)."
 	if got := diags[0].Description().Detail; got != wantDetail {
 		t.Errorf("wrong summary: got %s, want %s", got, wantDetail)
 	}

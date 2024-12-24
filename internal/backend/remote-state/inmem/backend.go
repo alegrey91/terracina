@@ -12,13 +12,13 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/backend"
-	"github.com/hashicorp/terraform/internal/backend/backendbase"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	statespkg "github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/states/remote"
-	"github.com/hashicorp/terraform/internal/states/statemgr"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/backend"
+	"github.com/hashicorp/terracina/internal/backend/backendbase"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	statespkg "github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/states/remote"
+	"github.com/hashicorp/terracina/internal/states/statemgr"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // we keep the states and locks in package-level variables, so that they can be

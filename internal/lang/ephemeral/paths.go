@@ -6,7 +6,7 @@ package ephemeral
 import (
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/lang/marks"
+	"github.com/hashicorp/terracina/internal/lang/marks"
 )
 
 // EphemeralValuePaths returns the paths within the given value that are

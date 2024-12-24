@@ -10,19 +10,19 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/mitchellh/colorstring"
 
-	"github.com/hashicorp/terraform/internal/command/jsonprovider"
-	"github.com/hashicorp/terraform/internal/command/jsonstate"
-	testing_provider "github.com/hashicorp/terraform/internal/providers/testing"
-	"github.com/hashicorp/terraform/internal/states/statefile"
-	"github.com/hashicorp/terraform/internal/terminal"
+	"github.com/hashicorp/terracina/internal/command/jsonprovider"
+	"github.com/hashicorp/terracina/internal/command/jsonstate"
+	testing_provider "github.com/hashicorp/terracina/internal/providers/testing"
+	"github.com/hashicorp/terracina/internal/states/statefile"
+	"github.com/hashicorp/terracina/internal/terminal"
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/terraform"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/terracina"
 )
 
 func TestState(t *testing.T) {
@@ -30,12 +30,12 @@ func TestState(t *testing.T) {
 
 	tests := []struct {
 		State   *states.State
-		Schemas *terraform.Schemas
+		Schemas *terracina.Schemas
 		Want    string
 	}{
 		0: {
 			State:   &states.State{},
-			Schemas: &terraform.Schemas{},
+			Schemas: &terracina.Schemas{},
 			Want:    "The state file is empty. No resources are represented.\n",
 		},
 		1: {
@@ -154,9 +154,9 @@ func testProviderSchema() *providers.GetProviderSchemaResponse {
 	}
 }
 
-func testSchemas() *terraform.Schemas {
+func testSchemas() *terracina.Schemas {
 	provider := testProvider()
-	return &terraform.Schemas{
+	return &terracina.Schemas{
 		Providers: map[addrs.Provider]providers.ProviderSchema{
 			addrs.NewDefaultProvider("test"): provider.GetProviderSchema(),
 		},

@@ -9,19 +9,19 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/collections"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/states"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/collections"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/states"
 )
 
 // Component is a container for a set of changes that all belong to the same
 // component instance as declared in a stack configuration.
 //
 // Each instance of component essentially maps to one call into the main
-// Terraform language runtime to apply all of the described changes together as
+// Terracina language runtime to apply all of the described changes together as
 // a single operation.
 type Component struct {
 	PlannedAction plans.Action
@@ -31,7 +31,7 @@ type Component struct {
 	// field respectively. See the docs for those fields for more information.
 	PlanApplyable, PlanComplete bool
 
-	// ResourceInstancePlanned describes the changes that Terraform is proposing
+	// ResourceInstancePlanned describes the changes that Terracina is proposing
 	// to make to try to converge the real system state with the desired state
 	// as described by the configuration.
 	ResourceInstancePlanned addrs.Map[addrs.AbsResourceInstanceObject, *plans.ResourceInstanceChangeSrc]
@@ -52,7 +52,7 @@ type Component struct {
 	// that have changes that are deferred to a later plan and apply cycle.
 	DeferredResourceInstanceChanges addrs.Map[addrs.AbsResourceInstanceObject, *plans.DeferredResourceInstanceChangeSrc]
 
-	// PlanTimestamp is the time Terraform Core recorded as the single "plan
+	// PlanTimestamp is the time Terracina Core recorded as the single "plan
 	// timestamp", which is used only for the result of the "plantimestamp"
 	// function during apply and must not be used for any other purpose.
 	PlanTimestamp time.Time
@@ -72,7 +72,7 @@ type Component struct {
 	PlannedFunctionResults []providers.FunctionHash
 
 	// PlannedInputValues and PlannedInputValueMarks are the values that
-	// Terraform has planned to use for input variables in this component.
+	// Terracina has planned to use for input variables in this component.
 	PlannedInputValues     map[addrs.InputVariable]plans.DynamicValue
 	PlannedInputValueMarks map[addrs.InputVariable][]cty.PathValueMarks
 
@@ -94,7 +94,7 @@ type Component struct {
 // run state is truly the one that the plan was created from. If this method
 // returns an error then that suggests that the recieving plan is inconsistent
 // with the given previous run state, which should not happen if the caller
-// is using Terraform Core correctly.
+// is using Terracina Core correctly.
 func (c *Component) ForModulesRuntime() (*plans.Plan, error) {
 	changes := &plans.ChangesSrc{}
 	plan := &plans.Plan{

@@ -9,9 +9,9 @@ import (
 
 	"github.com/zclconf/go-cty/cty/function"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/experiments"
-	"github.com/hashicorp/terraform/internal/lang/langrefs"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/experiments"
+	"github.com/hashicorp/terracina/internal/lang/langrefs"
 )
 
 // Scope is the main type in this package, allowing dynamic evaluation of
@@ -24,7 +24,7 @@ type Scope struct {
 	// ParseRef is a function that the scope uses to extract references from
 	// a hcl.Traversal. This controls the type of references the scope currently
 	// supports. As an example, the testing scope can reference outputs directly
-	// while the main Terraform context scope can not. This means that this
+	// while the main Terracina context scope can not. This means that this
 	// function for the testing scope will happily return outputs, while the
 	// main context scope would fail if a user attempts to reference an output.
 	ParseRef langrefs.ParseRef
@@ -52,7 +52,7 @@ type Scope struct {
 	PureOnly bool
 
 	// ExternalFuncs specifies optional additional functions contributed by
-	// components outside of Terraform Core.
+	// components outside of Terracina Core.
 	//
 	// Do not modify anything this field refers to after constructing a
 	// Scope value; Scope methods may derive and cache other data from

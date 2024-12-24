@@ -1,6 +1,6 @@
 variable "foo" { default = "bar" }
 
-terraform {
+terracina {
     backend "local" {
         path = "${var.foo}"
     }

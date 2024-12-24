@@ -19,5 +19,5 @@ import (
 var tracer trace.Tracer
 
 func init() {
-	tracer = otel.Tracer("github.com/hashicorp/terraform/internal/rpcapi")
+	tracer = otel.Tracer("github.com/hashicorp/terracina/internal/rpcapi")
 }

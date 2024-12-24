@@ -1,24 +1,24 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-// loggraphdiff is a tool for interpreting changes to the Terraform graph
+// loggraphdiff is a tool for interpreting changes to the Terracina graph
 // based on the simple graph printing format used in the TF_LOG=trace log
-// output from Terraform, which looks like this:
+// output from Terracina, which looks like this:
 //
-//     aws_instance.b (destroy) - *terraform.NodeDestroyResourceInstance
-//     aws_instance.b (prepare state) - *terraform.NodeApplyableResource
-//       provider.aws - *terraform.NodeApplyableProvider
-//     aws_instance.b (prepare state) - *terraform.NodeApplyableResource
-//       provider.aws - *terraform.NodeApplyableProvider
-//     module.child.aws_instance.a (destroy) - *terraform.NodeDestroyResourceInstance
-//       module.child.aws_instance.a (prepare state) - *terraform.NodeApplyableResource
-//       module.child.output.a_output - *terraform.NodeApplyableOutput
-//       provider.aws - *terraform.NodeApplyableProvider
-//     module.child.aws_instance.a (prepare state) - *terraform.NodeApplyableResource
-//       provider.aws - *terraform.NodeApplyableProvider
-//     module.child.output.a_output - *terraform.NodeApplyableOutput
-//       module.child.aws_instance.a (prepare state) - *terraform.NodeApplyableResource
-//     provider.aws - *terraform.NodeApplyableProvider
+//     aws_instance.b (destroy) - *terracina.NodeDestroyResourceInstance
+//     aws_instance.b (prepare state) - *terracina.NodeApplyableResource
+//       provider.aws - *terracina.NodeApplyableProvider
+//     aws_instance.b (prepare state) - *terracina.NodeApplyableResource
+//       provider.aws - *terracina.NodeApplyableProvider
+//     module.child.aws_instance.a (destroy) - *terracina.NodeDestroyResourceInstance
+//       module.child.aws_instance.a (prepare state) - *terracina.NodeApplyableResource
+//       module.child.output.a_output - *terracina.NodeApplyableOutput
+//       provider.aws - *terracina.NodeApplyableProvider
+//     module.child.aws_instance.a (prepare state) - *terracina.NodeApplyableResource
+//       provider.aws - *terracina.NodeApplyableProvider
+//     module.child.output.a_output - *terracina.NodeApplyableOutput
+//       module.child.aws_instance.a (prepare state) - *terracina.NodeApplyableResource
+//     provider.aws - *terracina.NodeApplyableProvider
 //
 // It takes the names of two files containing this style of output and
 // produces a single graph description in graphviz format that shows the

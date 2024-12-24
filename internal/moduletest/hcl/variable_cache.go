@@ -7,12 +7,12 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/backend/backendrun"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/lang/langrefs"
-	"github.com/hashicorp/terraform/internal/terraform"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/backend/backendrun"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/lang/langrefs"
+	"github.com/hashicorp/terracina/internal/terracina"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // VariableCaches contains a mapping between test run blocks and evaluated
@@ -33,8 +33,8 @@ type VariableCaches struct {
 type VariableCache struct {
 	config *configs.Config
 
-	globals terraform.InputValues
-	files   terraform.InputValues
+	globals terracina.InputValues
+	files   terracina.InputValues
 
 	values *VariableCaches // back reference so we can access the stored values
 }
@@ -50,8 +50,8 @@ func (caches *VariableCaches) GetCache(name string, config *configs.Config) *Var
 	if !exists {
 		cache = &VariableCache{
 			config:  config,
-			globals: make(terraform.InputValues),
-			files:   make(terraform.InputValues),
+			globals: make(terracina.InputValues),
+			files:   make(terracina.InputValues),
 			values:  caches,
 		}
 		caches.caches[name] = cache
@@ -69,7 +69,7 @@ func (caches *VariableCaches) GetCache(name string, config *configs.Config) *Var
 // so the caller can continue processing the configuration. The diagnostics
 // returned will contain the error message that occurred during parsing and as
 // such should be shown to the user.
-func (cache *VariableCache) GetGlobalVariable(name string) (*terraform.InputValue, tfdiags.Diagnostics) {
+func (cache *VariableCache) GetGlobalVariable(name string) (*terracina.InputValue, tfdiags.Diagnostics) {
 	val, exists := cache.globals[name]
 	if exists {
 		return val, nil
@@ -94,7 +94,7 @@ func (cache *VariableCache) GetGlobalVariable(name string) (*terraform.InputValu
 		// return a usable value so that we don't compound errors later by
 		// claiming a variable doesn't exist when it does. We also return the
 		// diagnostics explaining the error which will be shown to the user.
-		value = &terraform.InputValue{
+		value = &terracina.InputValue{
 			Value: cty.DynamicVal,
 		}
 	}
@@ -113,7 +113,7 @@ func (cache *VariableCache) GetGlobalVariable(name string) (*terraform.InputValu
 // so the caller can continue processing the configuration. The diagnostics
 // returned will contain the error message that occurred during parsing and as
 // such should be shown to the user.
-func (cache *VariableCache) GetFileVariable(name string) (*terraform.InputValue, tfdiags.Diagnostics) {
+func (cache *VariableCache) GetFileVariable(name string) (*terracina.InputValue, tfdiags.Diagnostics) {
 	val, exists := cache.files[name]
 	if exists {
 		return val, nil
@@ -145,7 +145,7 @@ func (cache *VariableCache) GetFileVariable(name string) (*terraform.InputValue,
 		// errors later by claiming a variable doesn't exist when it does. We
 		// also return the diagnostics explaining the error which will be shown
 		// to the user.
-		cache.files[name] = &terraform.InputValue{
+		cache.files[name] = &terracina.InputValue{
 			Value: cty.DynamicVal,
 		}
 		return cache.files[name], diags
@@ -158,7 +158,7 @@ func (cache *VariableCache) GetFileVariable(name string) (*terraform.InputValue,
 		// If we couldn't build the context, we won't actually process these
 		// variables. Instead, we'll fill them with an empty value but still
 		// make a note that the user did provide them.
-		cache.files[name] = &terraform.InputValue{
+		cache.files[name] = &terracina.InputValue{
 			Value: cty.DynamicVal,
 		}
 		return cache.files[name], diags
@@ -174,9 +174,9 @@ func (cache *VariableCache) GetFileVariable(name string) (*terraform.InputValue,
 		value = cty.DynamicVal
 	}
 
-	cache.files[name] = &terraform.InputValue{
+	cache.files[name] = &terracina.InputValue{
 		Value:       value,
-		SourceType:  terraform.ValueFromConfig,
+		SourceType:  terracina.ValueFromConfig,
 		SourceRange: tfdiags.SourceRangeFromHCL(expr.Range()),
 	}
 	return cache.files[name], diags

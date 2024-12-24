@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"errors"
@@ -11,13 +11,13 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	testing_provider "github.com/hashicorp/terraform/internal/providers/testing"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	testing_provider "github.com/hashicorp/terracina/internal/providers/testing"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 func TestContext2Plan_importResourceBasic(t *testing.T) {
@@ -152,7 +152,7 @@ import {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"test_string":"foo"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 
 	diags := ctx.Validate(m, &ValidateOpts{})
@@ -1426,7 +1426,7 @@ import {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"test_string":"foo"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 
 	diags := ctx.Validate(m, &ValidateOpts{})
@@ -1716,7 +1716,7 @@ func TestContext2Plan_importDuringDestroy(t *testing.T) {
 			Status:    states.ObjectReady,
 			AttrsJSON: []byte(`{"test_string":"foo"}`),
 		},
-		mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
+		mustProviderConfig(`provider["registry.terracina.io/hashicorp/test"]`),
 	)
 
 	_, diags := ctx.Plan(m, state, &PlanOpts{
@@ -1876,7 +1876,7 @@ output "foo" {
 		t.Fatalf("expected one diag, got %d: %s", len(diags), diags.ErrWithWarnings())
 	}
 
-	// Terraform detects this case as a cycle, and the order of rendering the
+	// Terracina detects this case as a cycle, and the order of rendering the
 	// cycle if non-deterministic, so we can't do a straight string match.
 
 	got := diags.Err().Error()

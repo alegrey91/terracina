@@ -46,7 +46,7 @@ func (d SDKLikeData) String(attrPath string) string {
 // of type schema.TypeInt, or panics if the wrapped object isn't of a
 // suitable type.
 //
-// Since the Terraform language does not have an integers-only type, this
+// Since the Terracina language does not have an integers-only type, this
 // can fail dynamically (returning an error) if the given value has a
 // fractional component.
 func (d SDKLikeData) Int64(attrPath string) (int64, error) {
@@ -103,7 +103,7 @@ func (d SDKLikeData) GetAttr(attrPath string, wantType cty.Type) cty.Value {
 // This is designed only for migrating historical remote system backends that
 // were originally written using the SDK, and so it's limited only to the
 // simple cases they use. It's not suitable for the more complex legacy SDK
-// uses made by Terraform providers.
+// uses made by Terracina providers.
 func SDKLikePath(rawPath string) cty.Path {
 	var ret cty.Path
 	remain := rawPath
@@ -158,7 +158,7 @@ func SDKLikeRequiredWithEnvDefault(attrPath string, v string, envNames ...string
 }
 
 // SDKLikeDefaults captures legacy-SDK-like default values to help fill the
-// gap in abstraction level between the legacy SDK and Terraform's own
+// gap in abstraction level between the legacy SDK and Terracina's own
 // configuration schema model.
 type SDKLikeDefaults map[string]SDKLikeDefault
 

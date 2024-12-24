@@ -8,17 +8,17 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/command/arguments"
-	"github.com/hashicorp/terraform/internal/command/format"
-	"github.com/hashicorp/terraform/internal/command/jsonformat"
-	"github.com/hashicorp/terraform/internal/command/jsonplan"
-	"github.com/hashicorp/terraform/internal/command/jsonprovider"
-	"github.com/hashicorp/terraform/internal/command/views/json"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/states/statefile"
-	"github.com/hashicorp/terraform/internal/terraform"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/command/arguments"
+	"github.com/hashicorp/terracina/internal/command/format"
+	"github.com/hashicorp/terracina/internal/command/jsonformat"
+	"github.com/hashicorp/terracina/internal/command/jsonplan"
+	"github.com/hashicorp/terracina/internal/command/jsonprovider"
+	"github.com/hashicorp/terracina/internal/command/views/json"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/states/statefile"
+	"github.com/hashicorp/terracina/internal/terracina"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 type Operation interface {
@@ -30,7 +30,7 @@ type Operation interface {
 	EmergencyDumpState(stateFile *statefile.File) error
 
 	PlannedChange(change *plans.ResourceInstanceChangeSrc)
-	Plan(plan *plans.Plan, schemas *terraform.Schemas)
+	Plan(plan *plans.Plan, schemas *terracina.Schemas)
 	PlanNextStep(planPath string, genConfigPath string)
 
 	Diagnostics(diags tfdiags.Diagnostics)
@@ -52,7 +52,7 @@ type OperationHuman struct {
 	// automated system rather than directly at a command prompt.
 	//
 	// This is a hint not to produce messages that expect that a user can
-	// run a follow-up command, perhaps because Terraform is running in
+	// run a follow-up command, perhaps because Terracina is running in
 	// some sort of workflow automation tool that abstracts away the
 	// exact commands that are being run.
 	inAutomation bool
@@ -91,7 +91,7 @@ func (v *OperationHuman) EmergencyDumpState(stateFile *statefile.File) error {
 	return nil
 }
 
-func (v *OperationHuman) Plan(plan *plans.Plan, schemas *terraform.Schemas) {
+func (v *OperationHuman) Plan(plan *plans.Plan, schemas *terracina.Schemas) {
 	outputs, changed, drift, attrs, err := jsonplan.MarshalForRenderer(plan, schemas)
 	if err != nil {
 		v.view.streams.Eprintf("Failed to marshal plan to json: %s", err)
@@ -213,7 +213,7 @@ func (v *OperationJSON) EmergencyDumpState(stateFile *statefile.File) error {
 
 // Log a change summary and a series of "planned" messages for the changes in
 // the plan.
-func (v *OperationJSON) Plan(plan *plans.Plan, schemas *terraform.Schemas) {
+func (v *OperationJSON) Plan(plan *plans.Plan, schemas *terracina.Schemas) {
 	for _, dr := range plan.DriftedResources {
 		// In refresh-only mode, we output all resources marked as drifted,
 		// including those which have moved without other changes. In other plan
@@ -291,21 +291,21 @@ Two interrupts received. Exiting immediately. Note that data loss may have occur
 
 const interrupted = `
 Interrupt received.
-Please wait for Terraform to exit or data loss may occur.
+Please wait for Terracina to exit or data loss may occur.
 Gracefully shutting down...
 `
 
 const planHeaderNoOutput = `
-Note: You didn't use the -out option to save this plan, so Terraform can't guarantee to take exactly these actions if you run "terraform apply" now.
+Note: You didn't use the -out option to save this plan, so Terracina can't guarantee to take exactly these actions if you run "terracina apply" now.
 `
 
 const planHeaderYesOutput = `
 Saved the plan to: %s
 
 To perform exactly these actions, run the following command to apply:
-    terraform apply %q
+    terracina apply %q
 `
 
 const planHeaderGenConfig = `
-Terraform has generated configuration and written it to %s. Please review the configuration and edit it as necessary before adding it to version control.
+Terracina has generated configuration and written it to %s. Please review the configuration and edit it as necessary before adding it to version control.
 `

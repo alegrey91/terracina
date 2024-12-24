@@ -1,32 +1,32 @@
 ---
-page_title: terraform destroy command reference
+page_title: terracina destroy command reference
 description: >-
-  The `terraform destroy` command deprovisions all objects managed by a Terraform
+  The `terracina destroy` command deprovisions all objects managed by a Terracina
   configuration.
 ---
 
-# `terraform destroy` command
+# `terracina destroy` command
 
-The `terraform destroy` command deprovisions all objects managed by a Terraform configuration.
+The `terracina destroy` command deprovisions all objects managed by a Terracina configuration.
 
 While you will typically not want to destroy long-lived objects in a production
-environment, Terraform is sometimes used to manage ephemeral infrastructure
-for development purposes, in which case you can use `terraform destroy` to
+environment, Terracina is sometimes used to manage ephemeral infrastructure
+for development purposes, in which case you can use `terracina destroy` to
 conveniently clean up all of those temporary objects once you are finished
 with your work.
 
 ## Usage
 
-Usage: `terraform destroy [options]`
+Usage: `terracina destroy [options]`
 
 This command is just a convenience alias for the following command:
 
 ```
-terraform apply -destroy
+terracina apply -destroy
 ```
 
 For that reason, this command accepts most of the options that
-[`terraform apply`](/terraform/cli/commands/apply) accepts, although it does
+[`terracina apply`](/terracina/cli/commands/apply) accepts, although it does
 not accept a plan file argument and forces the selection of the "destroy"
 planning mode.
 
@@ -34,15 +34,15 @@ You can also create a speculative destroy plan, to see what the effect of
 destroying would be, by running the following command:
 
 ```
-terraform plan -destroy
+terracina plan -destroy
 ```
 
-This will run [`terraform plan`](/terraform/cli/commands/plan) in _destroy_ mode, showing
+This will run [`terracina plan`](/terracina/cli/commands/plan) in _destroy_ mode, showing
 you the proposed destroy changes without executing them.
 
--> **Note:** The `-destroy` option to `terraform apply` exists only in
-Terraform v0.15.2 and later. For earlier versions, you _must_ use
-`terraform destroy` to get the effect of `terraform apply -destroy`.
+-> **Note:** The `-destroy` option to `terracina apply` exists only in
+Terracina v0.15.2 and later. For earlier versions, you _must_ use
+`terracina destroy` to get the effect of `terracina apply -destroy`.
 
 ### Target a specific resource
 

@@ -2,25 +2,25 @@
 page_title: Version Constraints - Configuration Language
 description: >-
   Version constraint strings specify a range of acceptable versions for modules,
-  providers, and Terraform itself. Learn version constraint syntax and behavior.
+  providers, and Terracina itself. Learn version constraint syntax and behavior.
 ---
 
 # Version constraints
 
-This topic provides reference information about the version constraints syntax in Terraform configuration language. 
+This topic provides reference information about the version constraints syntax in Terracina configuration language. 
 
 ## Introduction
 
-Terraform lets you specify a range of acceptable versions for
-components you define in the configuration. Terraform expects a specially-formatted string to constrain the versions of the component. You can specify version constraints when configuring the following components:
+Terracina lets you specify a range of acceptable versions for
+components you define in the configuration. Terracina expects a specially-formatted string to constrain the versions of the component. You can specify version constraints when configuring the following components:
 
-- [Modules](/terraform/language/modules)
-- [Provider requirements](/terraform/language/providers/requirements)
-- [The `required_version` setting](/terraform/language/terraform#terraform-required_version) in the `terraform` block.
+- [Modules](/terracina/language/modules)
+- [Provider requirements](/terracina/language/providers/requirements)
+- [The `required_version` setting](/terracina/language/terracina#terracina-required_version) in the `terracina` block.
 
 ## Version constraint syntax
 
-A version constraint is a [string literal](/terraform/language/expressions/strings)
+A version constraint is a [string literal](/terracina/language/expressions/strings)
 containing one or more conditions separated by commas. 
 
 Each condition consists of an operator and a version number.
@@ -33,7 +33,7 @@ Use the following syntax to specify version constraints:
 version = "<operator> <version>"
 ```
 
-In the following example, Terraform installs a versions `1.2.0` and newer, as well as version older than `2.0.0`:
+In the following example, Terracina installs a versions `1.2.0` and newer, as well as version older than `2.0.0`:
 
 ```hcl
 version = ">= 1.2.0, < 2.0.0"
@@ -47,33 +47,33 @@ The following table describes the operators you can use to configure version con
 | --- | --- |
 | `=`, <br/>no operator | Allows only one exact version number. Cannot be combined with other conditions. |
 | `!=` | Excludes an exact version number. |
-| `>`,<br/> `>=`,<br/> `<`,<br/> `<=` | Compares to a specified version. Terraform allows versions that resolve to `true`. The `>` and `>=` operators request newer versions. The `<` and `<=` operators request older versions. |
-| `~>` | Allows only the right-most version component to increment. Examples: <ul><li>`~> 1.0.4`: Allows Terraform to install `1.0.5` and `1.0.10` but not `1.1.0`.</li><li>`1.1`: Allows Terraform to install `1.2` and `1.10` but not `2.0`. </li></ul>|
+| `>`,<br/> `>=`,<br/> `<`,<br/> `<=` | Compares to a specified version. Terracina allows versions that resolve to `true`. The `>` and `>=` operators request newer versions. The `<` and `<=` operators request older versions. |
+| `~>` | Allows only the right-most version component to increment. Examples: <ul><li>`~> 1.0.4`: Allows Terracina to install `1.0.5` and `1.0.10` but not `1.1.0`.</li><li>`1.1`: Allows Terracina to install `1.2` and `1.10` but not `2.0`. </li></ul>|
 
 ## Version constraint behavior
 
-Terraform uses versions that meet all applicable constraints.
+Terracina uses versions that meet all applicable constraints.
 
-Terraform consults version constraints to determine whether it has acceptable
+Terracina consults version constraints to determine whether it has acceptable
 versions of itself, any required provider plugins, and any required modules. For
-plugins and modules, Terraform uses the newest installed version that meets the
+plugins and modules, Terracina uses the newest installed version that meets the
 applicable constraints.
 
-When Terraform does not have an acceptable version of a required plugin or module,
+When Terracina does not have an acceptable version of a required plugin or module,
 it attempts to download the newest version that meets the applicable
 constraints.
 
-When Terraform is unable to obtain acceptable versions of external dependencies
+When Terracina is unable to obtain acceptable versions of external dependencies
 or if it does not have an acceptable version of itself, then it does not proceed with any
-`terraform plan`, `terraform apply`, or `terraform state` operations.
+`terracina plan`, `terracina apply`, or `terracina state` operations.
 
-The root module and any child modules can constrain the Terraform version and any provider versions the modules use. Terraform considers these constraints
+The root module and any child modules can constrain the Terracina version and any provider versions the modules use. Terracina considers these constraints
 equal, and only proceeds if all are met.
 
 ### Specify a pre-release version
 
 A pre-release version is a version number that contains a suffix introduced by
-a dash, for example `1.2.0-beta`. To configure Terraform to select a pre-release version, set the exact version number using the `=` operator. You can also omit the operator and specify the exact pre-release version. Terraform does not match pre-release versions on `>`, `>=`, `<`, `<=`, or `~>` operators.
+a dash, for example `1.2.0-beta`. To configure Terracina to select a pre-release version, set the exact version number using the `=` operator. You can also omit the operator and specify the exact pre-release version. Terracina does not match pre-release versions on `>`, `>=`, `<`, `<=`, or `~>` operators.
 
 ## Best practices
 
@@ -87,12 +87,12 @@ We recommend implementing the following best practices when configuration versio
 
 - Specify version ranges when your organization follows a well-defined release process that avoids unwanted updates.
 
-### Terraform core and provider versions
+### Terracina core and provider versions
 
 - Reusable modules should constrain only their minimum allowed versions of
-  Terraform and providers, such as `>= 0.12.0`. This helps avoid known
+  Terracina and providers, such as `>= 0.12.0`. This helps avoid known
   incompatibilities, while allowing the user of the module flexibility to
-  upgrade to newer versions of Terraform without altering the module.
+  upgrade to newer versions of Terracina without altering the module.
 
 - Root modules should use a `~>` constraint to set both a lower and upper bound
   on versions for each provider they depend on.

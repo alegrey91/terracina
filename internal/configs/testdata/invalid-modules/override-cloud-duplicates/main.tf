@@ -1,4 +1,4 @@
-terraform {
+terracina {
   cloud {
     organization = "foo"
     should_not_be_present_with_override = true

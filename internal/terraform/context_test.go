@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"bufio"
@@ -18,20 +18,20 @@ import (
 	"github.com/hashicorp/go-version"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/configs/configload"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/configs/hcl2shim"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/plans/planfile"
-	"github.com/hashicorp/terraform/internal/providers"
-	provider_testing "github.com/hashicorp/terraform/internal/providers/testing"
-	"github.com/hashicorp/terraform/internal/provisioners"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/states/statefile"
-	"github.com/hashicorp/terraform/internal/tfdiags"
-	tfversion "github.com/hashicorp/terraform/version"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/configs/configload"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/configs/hcl2shim"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/plans/planfile"
+	"github.com/hashicorp/terracina/internal/providers"
+	provider_testing "github.com/hashicorp/terracina/internal/providers/testing"
+	"github.com/hashicorp/terracina/internal/provisioners"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/states/statefile"
+	"github.com/hashicorp/terracina/internal/tfdiags"
+	tfversion "github.com/hashicorp/terracina/version"
 )
 
 var (
@@ -122,7 +122,7 @@ module "child" {
 }
 `,
 		"child/main.tf": `
-terraform {}
+terracina {}
 `,
 	})
 
@@ -178,13 +178,13 @@ func TestContext_missingPlugins(t *testing.T) {
 	assertNoDiagnostics(t, diags)
 
 	configSrc := `
-terraform {
+terracina {
 	required_providers {
 		explicit = {
 			source = "example.com/foo/beep"
 		}
 		builtin = {
-			source = "terraform.io/builtin/nonexist"
+			source = "terracina.io/builtin/nonexist"
 		}
 	}
 }
@@ -221,14 +221,14 @@ resource "implicit_thing" "b" {
 				Provider: addrs.Provider{
 					Type:      "implicit3",
 					Namespace: "hashicorp",
-					Hostname:  "registry.terraform.io",
+					Hostname:  "registry.terracina.io",
 				},
 			})
 	})
 
 	// Validate and Plan are the two entry points where we explicitly verify
 	// the available plugins match what the configuration needs. For other
-	// operations we typically fail more deeply in Terraform Core, with
+	// operations we typically fail more deeply in Terracina Core, with
 	// potentially-less-helpful error messages, because getting there would
 	// require doing some pretty weird things that aren't common enough to
 	// be worth the complexity to check for them.
@@ -248,27 +248,27 @@ resource "implicit_thing" "b" {
 				tfdiags.Sourceless(
 					tfdiags.Error,
 					"Missing required provider",
-					"This configuration requires built-in provider terraform.io/builtin/nonexist, but that provider isn't available in this Terraform version.",
+					"This configuration requires built-in provider terracina.io/builtin/nonexist, but that provider isn't available in this Terracina version.",
 				),
 				tfdiags.Sourceless(
 					tfdiags.Error,
 					"Missing required provider",
-					"This configuration requires provider example.com/foo/beep, but that provider isn't available. You may be able to install it automatically by running:\n  terraform init",
+					"This configuration requires provider example.com/foo/beep, but that provider isn't available. You may be able to install it automatically by running:\n  terracina init",
 				),
 				tfdiags.Sourceless(
 					tfdiags.Error,
 					"Missing required provider",
-					"This configuration requires provider registry.terraform.io/hashicorp/implicit, but that provider isn't available. You may be able to install it automatically by running:\n  terraform init",
+					"This configuration requires provider registry.terracina.io/hashicorp/implicit, but that provider isn't available. You may be able to install it automatically by running:\n  terracina init",
 				),
 				tfdiags.Sourceless(
 					tfdiags.Error,
 					"Missing required provider",
-					"This configuration requires provider registry.terraform.io/hashicorp/implicit2, but that provider isn't available. You may be able to install it automatically by running:\n  terraform init",
+					"This configuration requires provider registry.terracina.io/hashicorp/implicit2, but that provider isn't available. You may be able to install it automatically by running:\n  terracina init",
 				),
 				tfdiags.Sourceless(
 					tfdiags.Error,
 					"Missing required provisioner plugin",
-					`This configuration requires provisioner plugin "nonexist", which isn't available. If you're intending to use an external provisioner plugin, you must install it manually into one of the plugin search directories before running Terraform.`,
+					`This configuration requires provisioner plugin "nonexist", which isn't available. If you're intending to use an external provisioner plugin, you must install it manually into one of the plugin search directories before running Terracina.`,
 				),
 			)
 
@@ -278,7 +278,7 @@ resource "implicit_thing" "b" {
 					tfdiags.Sourceless(
 						tfdiags.Error,
 						"Missing required provider",
-						"This state requires provider registry.terraform.io/hashicorp/implicit3, but that provider isn't available. You may be able to install it automatically by running:\n  terraform init",
+						"This state requires provider registry.terracina.io/hashicorp/implicit3, but that provider isn't available. You may be able to install it automatically by running:\n  terracina init",
 					),
 				)
 			}
@@ -315,10 +315,10 @@ func TestContext_preloadedProviderSchemas(t *testing.T) {
 
 	cfg := testModuleInline(t, map[string]string{
 		"main.tf": `
-			terraform {
+			terracina {
 				required_providers {
 					blep = {
-						source = "terraform.io/builtin/blep"
+						source = "terracina.io/builtin/blep"
 					}
 				}
 			}
@@ -828,7 +828,7 @@ func contextOptsForPlanViaFile(t *testing.T, configSnap *configload.Snapshot, pl
 
 // legacyPlanComparisonString produces a string representation of the changes
 // from a plan and a given state togther, as was formerly produced by the
-// String method of terraform.Plan.
+// String method of terracina.Plan.
 //
 // This is here only for compatibility with existing tests that predate our
 // new plan and state types, and should not be used in new tests. Instead, use
@@ -844,7 +844,7 @@ func legacyPlanComparisonString(state *states.State, changes *plans.ChangesSrc) 
 
 // legacyDiffComparisonString produces a string representation of the changes
 // from a planned changes object, as was formerly produced by the String method
-// of terraform.Diff.
+// of terracina.Diff.
 //
 // This is here only for compatibility with existing tests that predate our
 // new plan types, and should not be used in new tests. Instead, use a library
@@ -1177,18 +1177,18 @@ func logDiagnostics(t *testing.T, diags tfdiags.Diagnostics) {
 const testContextRefreshModuleStr = `
 aws_instance.web: (tainted)
   ID = bar
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
 
 module.child:
   aws_instance.web:
     ID = new
-    provider = provider["registry.terraform.io/hashicorp/aws"]
+    provider = provider["registry.terracina.io/hashicorp/aws"]
 `
 
 const testContextRefreshOutputStr = `
 aws_instance.web:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
   foo = bar
 
 Outputs:
@@ -1203,5 +1203,5 @@ const testContextRefreshOutputPartialStr = `
 const testContextRefreshTaintedStr = `
 aws_instance.web: (tainted)
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/aws"]
+  provider = provider["registry.terracina.io/hashicorp/aws"]
 `

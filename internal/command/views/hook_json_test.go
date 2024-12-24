@@ -13,14 +13,14 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/terminal"
-	"github.com/hashicorp/terraform/internal/terraform"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/terminal"
+	"github.com/hashicorp/terracina/internal/terracina"
 )
 
-func testJSONHookResourceID(addr addrs.AbsResourceInstance) terraform.HookResourceIdentity {
-	return terraform.HookResourceIdentity{
+func testJSONHookResourceID(addr addrs.AbsResourceInstance) terracina.HookResourceIdentity {
+	return terracina.HookResourceIdentity{
 		Addr: addr,
 		ProviderAddr: addrs.Provider{
 			Type:      "test",
@@ -119,7 +119,7 @@ func TestJSONHook_create(t *testing.T) {
 		{
 			"@level":   "info",
 			"@message": "test_instance.boop: Creating...",
-			"@module":  "terraform.ui",
+			"@module":  "terracina.ui",
 			"type":     "apply_start",
 			"hook": map[string]interface{}{
 				"action":   string("create"),
@@ -129,7 +129,7 @@ func TestJSONHook_create(t *testing.T) {
 		{
 			"@level":   "info",
 			"@message": "test_instance.boop: Provisioning with 'local-exec'...",
-			"@module":  "terraform.ui",
+			"@module":  "terracina.ui",
 			"type":     "provision_start",
 			"hook": map[string]interface{}{
 				"provisioner": "local-exec",
@@ -139,7 +139,7 @@ func TestJSONHook_create(t *testing.T) {
 		{
 			"@level":   "info",
 			"@message": `test_instance.boop: (local-exec): Executing: ["/bin/sh" "-c" "touch /etc/motd"]`,
-			"@module":  "terraform.ui",
+			"@module":  "terracina.ui",
 			"type":     "provision_progress",
 			"hook": map[string]interface{}{
 				"output":      `Executing: ["/bin/sh" "-c" "touch /etc/motd"]`,
@@ -150,7 +150,7 @@ func TestJSONHook_create(t *testing.T) {
 		{
 			"@level":   "info",
 			"@message": "test_instance.boop: (local-exec) Provisioning complete",
-			"@module":  "terraform.ui",
+			"@module":  "terracina.ui",
 			"type":     "provision_complete",
 			"hook": map[string]interface{}{
 				"provisioner": "local-exec",
@@ -160,7 +160,7 @@ func TestJSONHook_create(t *testing.T) {
 		{
 			"@level":   "info",
 			"@message": "test_instance.boop: Still creating... [10s elapsed]",
-			"@module":  "terraform.ui",
+			"@module":  "terracina.ui",
 			"type":     "apply_progress",
 			"hook": map[string]interface{}{
 				"action":          string("create"),
@@ -171,7 +171,7 @@ func TestJSONHook_create(t *testing.T) {
 		{
 			"@level":   "info",
 			"@message": "test_instance.boop: Still creating... [20s elapsed]",
-			"@module":  "terraform.ui",
+			"@module":  "terracina.ui",
 			"type":     "apply_progress",
 			"hook": map[string]interface{}{
 				"action":          string("create"),
@@ -182,7 +182,7 @@ func TestJSONHook_create(t *testing.T) {
 		{
 			"@level":   "info",
 			"@message": "test_instance.boop: Creation complete after 22s [id=test]",
-			"@module":  "terraform.ui",
+			"@module":  "terracina.ui",
 			"type":     "apply_complete",
 			"hook": map[string]interface{}{
 				"action":          string("create"),
@@ -250,7 +250,7 @@ func TestJSONHook_errors(t *testing.T) {
 		{
 			"@level":   "info",
 			"@message": "test_instance.boop: Destroying...",
-			"@module":  "terraform.ui",
+			"@module":  "terracina.ui",
 			"type":     "apply_start",
 			"hook": map[string]interface{}{
 				"action":   string("delete"),
@@ -260,7 +260,7 @@ func TestJSONHook_errors(t *testing.T) {
 		{
 			"@level":   "info",
 			"@message": "test_instance.boop: (local-exec) Provisioning errored",
-			"@module":  "terraform.ui",
+			"@module":  "terracina.ui",
 			"type":     "provision_errored",
 			"hook": map[string]interface{}{
 				"provisioner": "local-exec",
@@ -270,7 +270,7 @@ func TestJSONHook_errors(t *testing.T) {
 		{
 			"@level":   "info",
 			"@message": "test_instance.boop: Destruction errored after 0s",
-			"@module":  "terraform.ui",
+			"@module":  "terracina.ui",
 			"type":     "apply_errored",
 			"hook": map[string]interface{}{
 				"action":          string("delete"),
@@ -318,7 +318,7 @@ func TestJSONHook_refresh(t *testing.T) {
 		{
 			"@level":   "info",
 			"@message": "data.test_data_source.beep: Refreshing state... [id=honk]",
-			"@module":  "terraform.ui",
+			"@module":  "terracina.ui",
 			"type":     "refresh_start",
 			"hook": map[string]interface{}{
 				"resource": wantResource,
@@ -329,7 +329,7 @@ func TestJSONHook_refresh(t *testing.T) {
 		{
 			"@level":   "info",
 			"@message": "data.test_data_source.beep: Refresh complete [id=honk]",
-			"@module":  "terraform.ui",
+			"@module":  "terracina.ui",
 			"type":     "refresh_complete",
 			"hook": map[string]interface{}{
 				"resource": wantResource,
@@ -362,7 +362,7 @@ func TestJSONHook_EphemeralOp(t *testing.T) {
 		{
 			"@level":   "info",
 			"@message": "test_instance.boop: Opening...",
-			"@module":  "terraform.ui",
+			"@module":  "terracina.ui",
 			"type":     "ephemeral_op_start",
 			"hook": map[string]interface{}{
 				"action": string("open"),
@@ -380,7 +380,7 @@ func TestJSONHook_EphemeralOp(t *testing.T) {
 		{
 			"@level":   "info",
 			"@message": "test_instance.boop: Opening complete after 0s",
-			"@module":  "terraform.ui",
+			"@module":  "terracina.ui",
 			"type":     "ephemeral_op_complete",
 			"hook": map[string]interface{}{
 				"action":          string("open"),
@@ -424,7 +424,7 @@ func TestJSONHook_EphemeralOp_progress(t *testing.T) {
 		{
 			"@level":   "info",
 			"@message": "test_instance.boop: Opening...",
-			"@module":  "terraform.ui",
+			"@module":  "terracina.ui",
 			"type":     "ephemeral_op_start",
 			"hook": map[string]interface{}{
 				"action": string("open"),
@@ -442,7 +442,7 @@ func TestJSONHook_EphemeralOp_progress(t *testing.T) {
 		{
 			"@level":   "info",
 			"@message": "test_instance.boop: Still opening... [1s elapsed]",
-			"@module":  "terraform.ui",
+			"@module":  "terracina.ui",
 			"type":     "ephemeral_op_progress",
 			"hook": map[string]interface{}{
 				"action":          string("open"),
@@ -461,7 +461,7 @@ func TestJSONHook_EphemeralOp_progress(t *testing.T) {
 		{
 			"@level":   "info",
 			"@message": "test_instance.boop: Still opening... [2s elapsed]",
-			"@module":  "terraform.ui",
+			"@module":  "terracina.ui",
 			"type":     "ephemeral_op_progress",
 			"hook": map[string]interface{}{
 				"action":          string("open"),
@@ -480,7 +480,7 @@ func TestJSONHook_EphemeralOp_progress(t *testing.T) {
 		{
 			"@level":   "info",
 			"@message": "test_instance.boop: Opening complete after 2s",
-			"@module":  "terraform.ui",
+			"@module":  "terracina.ui",
 			"type":     "ephemeral_op_complete",
 			"hook": map[string]interface{}{
 				"action":          string("open"),
@@ -528,7 +528,7 @@ func TestJSONHook_EphemeralOp_error(t *testing.T) {
 		{
 			"@level":   "info",
 			"@message": "test_instance.boop: Opening...",
-			"@module":  "terraform.ui",
+			"@module":  "terracina.ui",
 			"type":     "ephemeral_op_start",
 			"hook": map[string]interface{}{
 				"action": string("open"),
@@ -546,7 +546,7 @@ func TestJSONHook_EphemeralOp_error(t *testing.T) {
 		{
 			"@level":   "info",
 			"@message": "test_instance.boop: Opening errored after 0s",
-			"@module":  "terraform.ui",
+			"@module":  "terracina.ui",
 			"type":     "ephemeral_op_errored",
 			"hook": map[string]interface{}{
 				"action":          string("open"),
@@ -567,13 +567,13 @@ func TestJSONHook_EphemeralOp_error(t *testing.T) {
 	testJSONViewOutputEquals(t, done(t).Stdout(), want)
 }
 
-func testHookReturnValues(t *testing.T, action terraform.HookAction, err error) {
+func testHookReturnValues(t *testing.T, action terracina.HookAction, err error) {
 	t.Helper()
 
 	if err != nil {
 		t.Fatal(err)
 	}
-	if action != terraform.HookActionContinue {
+	if action != terracina.HookActionContinue {
 		t.Fatalf("Expected hook to continue, given: %#v", action)
 	}
 }

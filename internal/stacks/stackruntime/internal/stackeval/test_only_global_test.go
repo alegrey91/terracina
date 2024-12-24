@@ -9,7 +9,7 @@ import (
 
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
-	"github.com/hashicorp/terraform/internal/stacks/stackstate"
+	"github.com/hashicorp/terracina/internal/stacks/stackstate"
 	"github.com/zclconf/go-cty/cty"
 )
 

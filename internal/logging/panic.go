@@ -18,13 +18,13 @@ import (
 const panicOutput = `
 !!!!!!!!!!!!!!!!!!!!!!!!!!! TERRAFORM CRASH !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-Terraform crashed! This is always indicative of a bug within Terraform.
-Please report the crash with Terraform[1] so that we can fix this.
+Terracina crashed! This is always indicative of a bug within Terracina.
+Please report the crash with Terracina[1] so that we can fix this.
 
-When reporting bugs, please include your terraform version, the stack trace
+When reporting bugs, please include your terracina version, the stack trace
 shown below, and any additional information which may help replicate the issue.
 
-[1]: https://github.com/hashicorp/terraform/issues
+[1]: https://github.com/hashicorp/terracina/issues
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!! TERRAFORM CRASH !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -34,14 +34,14 @@ shown below, and any additional information which may help replicate the issue.
 // recovered by PanicHandler starts printing.
 var panicMutex sync.Mutex
 
-// PanicHandler is called to recover from an internal panic in Terraform, and
+// PanicHandler is called to recover from an internal panic in Terracina, and
 // augments the standard stack trace with a more user friendly error message.
 // PanicHandler must be called as a defered function, and must be the first
 // defer called at the start of a new goroutine.
 func PanicHandler() {
 	// Have all managed goroutines checkin here, and prevent them from exiting
 	// if there's a panic in progress. While this can't lock the entire runtime
-	// to block progress, we can prevent some cases where Terraform may return
+	// to block progress, we can prevent some cases where Terracina may return
 	// early before the panic has been printed out.
 	panicMutex.Lock()
 	defer panicMutex.Unlock()
@@ -63,13 +63,13 @@ func PanicHandler() {
 	// (At the time of writing, the go-plugin Serve function is an example
 	// of modifying the global os.Stderr, causing it to get routed over a
 	// plugin-specific stream rather than to the real process stderr. If
-	// we used os.Stderr here then panics under "terraform rpcapi" would
+	// we used os.Stderr here then panics under "terracina rpcapi" would
 	// end up in the wrong place.)
 	//
 	// The following mimics how the standard library (package os) constructs
 	// os.Stderr in the first place. Technically even this syscall.Stderr
 	// can be overridden rudely at runtime, but thankfully we've not yet
-	// encountered anything linked into Terraform that does _that_!
+	// encountered anything linked into Terracina that does _that_!
 	stderr := os.NewFile(uintptr(syscall.Stderr), "/dev/stderr")
 	if stderr == nil {
 		// os.NewFile has a few esoteric error cases where it'll return nil,

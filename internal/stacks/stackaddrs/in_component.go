@@ -9,9 +9,9 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/collections"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/collections"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // InConfigComponent represents addresses of objects that belong to the modules
@@ -66,7 +66,7 @@ func (inConfigComponentKey[T]) IsUniqueKey(InConfigComponent[T]) {}
 //
 // Although the type parameter is rather unconstrained, it doesn't make sense to
 // use this for types other than those from package addrs that represent
-// objects that can belong to Terraform modules, like
+// objects that can belong to Terracina modules, like
 // [addrs.AbsResourceInstance], etc.
 type InAbsComponentInstance[T InComponentable] struct {
 	Component AbsComponentInstance

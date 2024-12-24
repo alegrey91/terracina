@@ -1,1 +1,1 @@
-provider "terraform" {}
+provider "terracina" {}

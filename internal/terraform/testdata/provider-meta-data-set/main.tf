@@ -2,7 +2,7 @@ data "test_data_source" "foo" {
   foo = "bar"
 }
 
-terraform {
+terracina {
   provider_meta "test" {
     baz = "quux"
   }

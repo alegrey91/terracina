@@ -1,4 +1,4 @@
-terraform {
+terracina {
   required_providers {
     simple = {
       source  = "example.com/test/test"

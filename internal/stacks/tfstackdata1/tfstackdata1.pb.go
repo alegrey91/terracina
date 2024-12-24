@@ -10,7 +10,7 @@
 package tfstackdata1
 
 import (
-	planproto "github.com/hashicorp/terraform/internal/plans/planproto"
+	planproto "github.com/hashicorp/terracina/internal/plans/planproto"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	anypb "google.golang.org/protobuf/types/known/anypb"
@@ -76,20 +76,20 @@ func (StateResourceInstanceObjectV1_Status) EnumDescriptor() ([]byte, []int) {
 
 // Appears early in a raw plan sequence to capture some metadata that we need
 // to process subsequent messages, or to abort if we're being asked to decode
-// a plan created by a different version of Terraform.
+// a plan created by a different version of Terracina.
 type PlanHeader struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// The canonical version string for the version of Terraform that created
+	// The canonical version string for the version of Terracina that created
 	// the plan sequence that this message belongs to.
 	//
 	// The raw plan sequence loader will fail if it finds a message of this
-	// type with a version string that disagrees with the version of Terraform
+	// type with a version string that disagrees with the version of Terracina
 	// decoding the message, because we always expect plans to be applied by
-	// the same version of Terraform that created them.
-	TerraformVersion string `protobuf:"bytes,1,opt,name=terraform_version,json=terraformVersion,proto3" json:"terraform_version,omitempty"`
+	// the same version of Terracina that created them.
+	TerracinaVersion string `protobuf:"bytes,1,opt,name=terracina_version,json=terracinaVersion,proto3" json:"terracina_version,omitempty"`
 }
 
 func (x *PlanHeader) Reset() {
@@ -124,9 +124,9 @@ func (*PlanHeader) Descriptor() ([]byte, []int) {
 	return file_tfstackdata1_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *PlanHeader) GetTerraformVersion() string {
+func (x *PlanHeader) GetTerracinaVersion() string {
 	if x != nil {
-		return x.TerraformVersion
+		return x.TerracinaVersion
 	}
 	return ""
 }
@@ -938,7 +938,7 @@ func (x *PlanDeferredResourceInstanceChange) GetChange() *PlanResourceInstanceCh
 //
 // This situation arises if the previous state (given as input to the apply
 // phase) contains keys that are of a type unrecognized by the current
-// version of Terraform and that are marked as "discard if unrecognized",
+// version of Terracina and that are marked as "discard if unrecognized",
 // suggesting that their content is likely to become somehow invalid if
 // other parts of the state were to get updated.
 type PlanDiscardStateMapKeys struct {
@@ -1124,7 +1124,7 @@ type StateResourceInstanceObjectV1 struct {
 	// MessagePack to JSON once we decode this because we won't know the
 	// schema that the value was encoded with.
 	//
-	// This is a pragmatic exception for this particular quirk of Terraform's
+	// This is a pragmatic exception for this particular quirk of Terracina's
 	// provider API design. Other parts of this format and associated protocol
 	// should use tfplan.DynamicValue and MessagePack encoding for consistency.
 	ValueJson           []byte                               `protobuf:"bytes,1,opt,name=value_json,json=valueJson,proto3" json:"value_json,omitempty"`

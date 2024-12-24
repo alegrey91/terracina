@@ -1,4 +1,4 @@
-terraform {
+terracina {
   required_providers {
     bar = {
       source = "blorp/bar"

@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // Target describes a targeted address with source location information.
@@ -181,7 +181,7 @@ func parseResourceInstanceUnderModule(moduleAddr ModuleInstance, allowPartial bo
 		// Starting a resource address with "resource" is optional, so we'll
 		// just ignore it.
 		remain = remain[1:]
-	case "count", "each", "local", "module", "path", "self", "terraform", "var", "template", "lazy", "arg":
+	case "count", "each", "local", "module", "path", "self", "terracina", "var", "template", "lazy", "arg":
 		// These are all reserved words that are not valid as resource types.
 		diags = diags.Append(&hcl.Diagnostic{
 			Severity: hcl.DiagError,

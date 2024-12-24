@@ -1,18 +1,18 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"log"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/dag"
-	"github.com/hashicorp/terraform/internal/moduletest/mocking"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/dag"
+	"github.com/hashicorp/terracina/internal/moduletest/mocking"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // PlanGraphBuilder is a GraphBuilder implementation that builds a graph for
@@ -101,7 +101,7 @@ type PlanGraphBuilder struct {
 	// from state without destroying.
 	forgetModules []addrs.Module
 
-	// GenerateConfig tells Terraform where to write and generated config for
+	// GenerateConfig tells Terracina where to write and generated config for
 	// any import targets that do not already have configuration.
 	//
 	// If empty, then config will not be generated.

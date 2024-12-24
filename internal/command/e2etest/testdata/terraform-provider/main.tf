@@ -1,8 +1,8 @@
-provider "terraform" {
+provider "terracina" {
 
 }
 
-data "terraform_remote_state" "test" {
+data "terracina_remote_state" "test" {
   backend = "local"
   config = {
     path = "test.tfstate"

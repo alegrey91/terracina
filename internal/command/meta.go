@@ -19,27 +19,27 @@ import (
 
 	"github.com/hashicorp/cli"
 	plugin "github.com/hashicorp/go-plugin"
-	"github.com/hashicorp/terraform-svchost/disco"
+	"github.com/hashicorp/terracina-svchost/disco"
 	"github.com/mitchellh/colorstring"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/backend"
-	"github.com/hashicorp/terraform/internal/backend/backendrun"
-	"github.com/hashicorp/terraform/internal/backend/local"
-	"github.com/hashicorp/terraform/internal/command/arguments"
-	"github.com/hashicorp/terraform/internal/command/format"
-	"github.com/hashicorp/terraform/internal/command/views"
-	"github.com/hashicorp/terraform/internal/command/webbrowser"
-	"github.com/hashicorp/terraform/internal/command/workdir"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/configs/configload"
-	"github.com/hashicorp/terraform/internal/getproviders"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/provisioners"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/terminal"
-	"github.com/hashicorp/terraform/internal/terraform"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/backend"
+	"github.com/hashicorp/terracina/internal/backend/backendrun"
+	"github.com/hashicorp/terracina/internal/backend/local"
+	"github.com/hashicorp/terracina/internal/command/arguments"
+	"github.com/hashicorp/terracina/internal/command/format"
+	"github.com/hashicorp/terracina/internal/command/views"
+	"github.com/hashicorp/terracina/internal/command/webbrowser"
+	"github.com/hashicorp/terracina/internal/command/workdir"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/configs/configload"
+	"github.com/hashicorp/terracina/internal/getproviders"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/provisioners"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/terminal"
+	"github.com/hashicorp/terracina/internal/terracina"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // Meta are the meta-options that are available on all or most commands.
@@ -50,7 +50,7 @@ type Meta struct {
 
 	// WorkingDir is an object representing the "working directory" where we're
 	// running commands. In the normal case this literally refers to the
-	// working directory of the Terraform process, though this can take on
+	// working directory of the Terracina process, though this can take on
 	// a more symbolic meaning when the user has overridden default behavior
 	// to specify a different working directory or to override the special
 	// data directory where we'll persist settings that must survive between
@@ -78,7 +78,7 @@ type Meta struct {
 	Ui               cli.Ui   // Ui for output
 
 	// Services provides access to remote endpoint information for
-	// "terraform-native' services running at a specific user-facing hostname.
+	// "terracina-native' services running at a specific user-facing hostname.
 	Services *disco.Disco
 
 	// RunningInAutomation indicates that commands are being run by an
@@ -89,7 +89,7 @@ type Meta struct {
 	// commands, since the user consuming the output will not be
 	// in a position to run such commands.
 	//
-	// The intended use-case of this flag is when Terraform is running in
+	// The intended use-case of this flag is when Terracina is running in
 	// some sort of workflow orchestration tool which is abstracting away
 	// the specific commands being run.
 	RunningInAutomation bool
@@ -113,7 +113,7 @@ type Meta struct {
 	// This is an accommodation for those who currently essentially ignore the
 	// dependency lock file -- treating it only as transient working directory
 	// state -- and therefore don't care if the plugin cache dir causes the
-	// checksums inside to only be sufficient for the computer where Terraform
+	// checksums inside to only be sufficient for the computer where Terracina
 	// is currently running.
 	//
 	// We intend to remove this exception again (making the CLI configuration
@@ -152,16 +152,16 @@ type Meta struct {
 	ProviderDevOverrides map[addrs.Provider]getproviders.PackageLocalDir
 
 	// UnmanagedProviders are a set of providers that exist as processes
-	// predating Terraform, which Terraform should use but not worry about the
+	// predating Terracina, which Terracina should use but not worry about the
 	// lifecycle of.
 	//
 	// This is essentially a more extreme version of ProviderDevOverrides where
-	// Terraform doesn't even worry about how the provider server gets launched,
-	// just trusting that someone else did it before running Terraform.
+	// Terracina doesn't even worry about how the provider server gets launched,
+	// just trusting that someone else did it before running Terracina.
 	UnmanagedProviders map[addrs.Provider]*plugin.ReattachConfig
 
 	// AllowExperimentalFeatures controls whether a command that embeds this
-	// Meta is permitted to make use of experimental Terraform features.
+	// Meta is permitted to make use of experimental Terracina features.
 	//
 	// Set this field only during the initial creation of Meta. If you change
 	// this field after calling methods of type Meta then the resulting
@@ -262,7 +262,7 @@ type Meta struct {
 	compactWarnings  bool
 
 	// Used with commands which write state to allow users to write remote
-	// state even if the remote and local Terraform versions don't match.
+	// state even if the remote and local Terracina versions don't match.
 	ignoreRemoteVersion bool
 }
 
@@ -328,14 +328,14 @@ func (m *Meta) DataDir() string {
 
 const (
 	// InputModeEnvVar is the environment variable that, if set to "false" or
-	// "0", causes terraform commands to behave as if the `-input=false` flag was
+	// "0", causes terracina commands to behave as if the `-input=false` flag was
 	// specified.
 	InputModeEnvVar = "TF_INPUT"
 )
 
 // InputMode returns the type of input we should ask for in the form of
-// terraform.InputMode which is passed directly to Context.Input.
-func (m *Meta) InputMode() terraform.InputMode {
+// terracina.InputMode which is passed directly to Context.Input.
+func (m *Meta) InputMode() terracina.InputMode {
 	if test || !m.input {
 		return 0
 	}
@@ -348,14 +348,14 @@ func (m *Meta) InputMode() terraform.InputMode {
 		}
 	}
 
-	var mode terraform.InputMode
-	mode |= terraform.InputModeProvider
+	var mode terracina.InputMode
+	mode |= terracina.InputModeProvider
 
 	return mode
 }
 
 // UIInput returns a UIInput object to be used for asking for input.
-func (m *Meta) UIInput() terraform.UIInput {
+func (m *Meta) UIInput() terracina.UIInput {
 	return &UIInput{
 		Colorize: m.Colorize(),
 	}
@@ -442,7 +442,7 @@ func (m *Meta) InterruptibleContext(base context.Context) (context.Context, cont
 //
 // This method is just a substitute for passing a context directly to the
 // "Run" method of a command, which we can't do because that API is owned by
-// hashicorp/cli rather than by Terraform. Use this only in situations
+// hashicorp/cli rather than by Terracina. Use this only in situations
 // comparable to the context having been passed in as an argument to Run.
 //
 // If the caller (e.g. "package main") provided a context when it instantiated
@@ -516,15 +516,15 @@ func (m *Meta) RunOperation(b backendrun.OperationsBackend, opReq *backendrun.Op
 	return op, nil
 }
 
-// contextOpts returns the options to use to initialize a Terraform
+// contextOpts returns the options to use to initialize a Terracina
 // context with the settings from this Meta.
-func (m *Meta) contextOpts() (*terraform.ContextOpts, error) {
+func (m *Meta) contextOpts() (*terracina.ContextOpts, error) {
 	workspace, err := m.Workspace()
 	if err != nil {
 		return nil, err
 	}
 
-	var opts terraform.ContextOpts
+	var opts terracina.ContextOpts
 
 	opts.UIInput = m.UIInput()
 	opts.Parallelism = m.parallelism
@@ -542,7 +542,7 @@ func (m *Meta) contextOpts() (*terraform.ContextOpts, error) {
 		opts.Provisioners = m.provisionerFactories()
 	}
 
-	opts.Meta = &terraform.ContextMeta{
+	opts.Meta = &terracina.ContextMeta{
 		Env:                workspace,
 		OriginalWorkingDir: m.WorkingDir.OriginalWorkingDir(),
 	}
@@ -563,12 +563,12 @@ func (m *Meta) defaultFlagSet(n string) *flag.FlagSet {
 }
 
 // ignoreRemoteVersionFlagSet add the ignore-remote version flag to suppress
-// the error when the configured Terraform version on the remote workspace
-// does not match the local Terraform version.
+// the error when the configured Terracina version on the remote workspace
+// does not match the local Terracina version.
 func (m *Meta) ignoreRemoteVersionFlagSet(n string) *flag.FlagSet {
 	f := m.defaultFlagSet(n)
 
-	f.BoolVar(&m.ignoreRemoteVersion, "ignore-remote-version", false, "continue even if remote and local Terraform versions are incompatible")
+	f.BoolVar(&m.ignoreRemoteVersion, "ignore-remote-version", false, "continue even if remote and local Terracina versions are incompatible")
 
 	return f
 }
@@ -651,7 +651,7 @@ func (m *Meta) uiHook() *views.UiHook {
 }
 
 // confirm asks a yes/no confirmation.
-func (m *Meta) confirm(opts *terraform.InputOpts) (bool, error) {
+func (m *Meta) confirm(opts *terracina.InputOpts) (bool, error) {
 	if !m.Input() {
 		return false, errors.New("input is disabled")
 	}
@@ -711,7 +711,7 @@ func (m *Meta) showDiagnostics(vals ...interface{}) {
 		}
 		if useCompact {
 			msg := format.DiagnosticWarningsCompact(diags, m.Colorize())
-			msg = "\n" + msg + "\nTo see the full warning notes, run Terraform without -compact-warnings.\n"
+			msg = "\n" + msg + "\nTo see the full warning notes, run Terracina without -compact-warnings.\n"
 			m.Ui.Warn(msg)
 			return
 		}
@@ -738,12 +738,12 @@ func (m *Meta) showDiagnostics(vals ...interface{}) {
 
 const (
 	// StatePersistIntervalEnvVar is the environment variable that can be set
-	// to control the interval at which Terraform persists state. The interval
+	// to control the interval at which Terracina persists state. The interval
 	// itself defaults to 20 seconds.
 	StatePersistIntervalEnvVar = "TF_STATE_PERSIST_INTERVAL"
 )
 
-// StatePersistInterval returns the configured interval that Terraform should
+// StatePersistInterval returns the configured interval that Terracina should
 // persist statefiles to the desired backend. Backends may choose to override
 // the default value.
 func (m *Meta) StatePersistInterval() int {
@@ -759,11 +759,11 @@ func (m *Meta) StatePersistInterval() int {
 }
 
 // WorkspaceNameEnvVar is the name of the environment variable that can be used
-// to set the name of the Terraform workspace, overriding the workspace chosen
-// by `terraform workspace select`.
+// to set the name of the Terracina workspace, overriding the workspace chosen
+// by `terracina workspace select`.
 //
-// Note that this environment variable is ignored by `terraform workspace new`
-// and `terraform workspace delete`.
+// Note that this environment variable is ignored by `terracina workspace new`
+// and `terracina workspace delete`.
 const WorkspaceNameEnvVar = "TF_WORKSPACE"
 
 var errInvalidWorkspaceNameEnvVar = fmt.Errorf("Invalid workspace name set using %s", WorkspaceNameEnvVar)
@@ -855,7 +855,7 @@ func (m *Meta) checkRequiredVersion() tfdiags.Diagnostics {
 		return diags
 	}
 
-	versionDiags := terraform.CheckCoreVersionRequirements(config)
+	versionDiags := terracina.CheckCoreVersionRequirements(config)
 	if versionDiags.HasErrors() {
 		diags = diags.Append(versionDiags)
 		return diags
@@ -869,7 +869,7 @@ func (m *Meta) checkRequiredVersion() tfdiags.Diagnostics {
 // it could potentially return nil without errors. It is the
 // responsibility of the caller to handle the lack of schema
 // information accordingly
-func (c *Meta) MaybeGetSchemas(state *states.State, config *configs.Config) (*terraform.Schemas, tfdiags.Diagnostics) {
+func (c *Meta) MaybeGetSchemas(state *states.State, config *configs.Config) (*terracina.Schemas, tfdiags.Diagnostics) {
 	var diags tfdiags.Diagnostics
 
 	path, err := os.Getwd()
@@ -892,7 +892,7 @@ func (c *Meta) MaybeGetSchemas(state *states.State, config *configs.Config) (*te
 			diags = diags.Append(err)
 			return nil, diags
 		}
-		tfCtx, ctxDiags := terraform.NewContext(opts)
+		tfCtx, ctxDiags := terracina.NewContext(opts)
 		diags = diags.Append(ctxDiags)
 		if ctxDiags.HasErrors() {
 			return nil, diags

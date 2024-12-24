@@ -11,12 +11,12 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/depsfile"
-	"github.com/hashicorp/terraform/internal/getproviders/providerreqs"
-	"github.com/hashicorp/terraform/internal/providers"
-	stacks_testing_provider "github.com/hashicorp/terraform/internal/stacks/stackruntime/testing"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/depsfile"
+	"github.com/hashicorp/terracina/internal/getproviders/providerreqs"
+	"github.com/hashicorp/terracina/internal/providers"
+	stacks_testing_provider "github.com/hashicorp/terracina/internal/stacks/stackruntime/testing"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 type validateTestInput struct {
@@ -161,7 +161,7 @@ var (
 				diags = diags.Append(&hcl.Diagnostic{
 					Severity: hcl.DiagError,
 					Summary:  "Invalid provider configuration",
-					Detail:   "The provider configuration slot \"testing\" requires a configuration for provider \"registry.terraform.io/hashicorp/testing\", not for provider \"terraform.io/builtin/testing\".",
+					Detail:   "The provider configuration slot \"testing\" requires a configuration for provider \"registry.terracina.io/hashicorp/testing\", not for provider \"terracina.io/builtin/testing\".",
 					Subject: &hcl.Range{
 						Filename: mainBundleSourceAddrStr("with-single-input/invalid-provider-type/invalid-provider-type.tfstack.hcl"),
 						Start:    hcl.Pos{Line: 22, Column: 15, Byte: 378},
@@ -171,7 +171,7 @@ var (
 				diags = diags.Append(&hcl.Diagnostic{
 					Severity: hcl.DiagError,
 					Summary:  "Invalid provider configuration",
-					Detail:   "The provider configuration slot \"testing\" requires a configuration for provider \"registry.terraform.io/hashicorp/testing\", not for provider \"terraform.io/builtin/testing\".",
+					Detail:   "The provider configuration slot \"testing\" requires a configuration for provider \"registry.terracina.io/hashicorp/testing\", not for provider \"terracina.io/builtin/testing\".",
 					Subject: &hcl.Range{
 						Filename: mainBundleSourceAddrStr("with-single-input/invalid-provider-type/invalid-provider-type.tfstack.hcl"),
 						Start:    hcl.Pos{Line: 37, Column: 15, Byte: 614},
@@ -308,7 +308,7 @@ var (
 					Severity: hcl.DiagWarning,
 					Summary:  "Non-valid depends_on target",
 					Detail: "The depends_on argument should refer directly to an embedded stack or component in configuration, but this reference is too deep.\n\n" +
-						"Terraform Stacks has simplified the reference to the nearest valid target, \"component.first\". To remove this warning, update the configuration to the same target.",
+						"Terracina Stacks has simplified the reference to the nearest valid target, \"component.first\". To remove this warning, update the configuration to the same target.",
 					Subject: &hcl.Range{
 						Filename: mainBundleSourceAddrStr("with-single-input/depends-on-invalid/depends-on-invalid.tfstack.hcl"),
 						Start:    hcl.Pos{Line: 52, Column: 17, Byte: 722},
@@ -355,7 +355,7 @@ func TestValidate_valid(t *testing.T) {
 				config: loadMainBundleConfigForTest(t, name),
 				providers: map[addrs.Provider]providers.Factory{
 					// We support both hashicorp/testing and
-					// terraform.io/builtin/testing as providers. This lets us
+					// terracina.io/builtin/testing as providers. This lets us
 					// test the provider aliasing feature. Both providers
 					// support the same set of resources and data sources.
 					addrs.NewDefaultProvider("testing"): func() (providers.Interface, error) {
@@ -406,7 +406,7 @@ func TestValidate_invalid(t *testing.T) {
 				config: loadMainBundleConfigForTest(t, name),
 				providers: map[addrs.Provider]providers.Factory{
 					// We support both hashicorp/testing and
-					// terraform.io/builtin/testing as providers. This lets us
+					// terracina.io/builtin/testing as providers. This lets us
 					// test the provider aliasing feature. Both providers
 					// support the same set of resources and data sources.
 					addrs.NewDefaultProvider("testing"): func() (providers.Interface, error) {
@@ -448,7 +448,7 @@ func TestValidate(t *testing.T) {
   - stack.a.output.a value
   - stack.a inputs
 
-Terraform uses references to decide a suitable order for performing operations, so configuration items may not refer to their own results either directly or indirectly.`,
+Terracina uses references to decide a suitable order for performing operations, so configuration items may not refer to their own results either directly or indirectly.`,
 				))
 			}),
 		},
@@ -464,7 +464,7 @@ Terraform uses references to decide a suitable order for performing operations, 
 				return diags.Append(&hcl.Diagnostic{
 					Severity: hcl.DiagError,
 					Summary:  "Provider missing from lockfile",
-					Detail:   "Provider \"registry.terraform.io/hashicorp/testing\" is not in the lockfile. This provider must be in the lockfile to be used in the configuration. Please run `tfstacks providers lock` to update the lockfile and run this operation again with an updated configuration.",
+					Detail:   "Provider \"registry.terracina.io/hashicorp/testing\" is not in the lockfile. This provider must be in the lockfile to be used in the configuration. Please run `tfstacks providers lock` to update the lockfile and run this operation again with an updated configuration.",
 					Subject: &hcl.Range{
 						Filename: "git::https://example.com/test.git//with-single-input/input-from-component/input-from-component.tfstack.hcl",
 						Start:    hcl.Pos{Line: 8, Column: 1, Byte: 98},
@@ -492,8 +492,8 @@ Terraform uses references to decide a suitable order for performing operations, 
 				return diags.Append(&hcl.Diagnostic{
 					Severity: hcl.DiagError,
 					Summary:  "Invalid provider configuration",
-					Detail: "The provider configuration slot \"testing\" requires a configuration for provider \"registry.terraform.io/hashicorp/testing\", not for provider \"registry.terraform.io/other/testing\"." +
-						"\n\nThe module does not declare a source address for \"testing\" in its required_providers block, so Terraform assumed \"hashicorp/testing\" for backward-compatibility with older versions of Terraform",
+					Detail: "The provider configuration slot \"testing\" requires a configuration for provider \"registry.terracina.io/hashicorp/testing\", not for provider \"registry.terracina.io/other/testing\"." +
+						"\n\nThe module does not declare a source address for \"testing\" in its required_providers block, so Terracina assumed \"hashicorp/testing\" for backward-compatibility with older versions of Terracina",
 					Subject: &hcl.Range{
 						Filename: mainBundleSourceAddrStr("legacy-module/with-non-hashicorp-provider/with-non-hashicorp-provider.tfstack.hcl"),
 						Start:    hcl.Pos{Line: 21, Column: 15, Byte: 447},

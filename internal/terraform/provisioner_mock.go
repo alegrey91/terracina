@@ -1,12 +1,12 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"sync"
 
-	"github.com/hashicorp/terraform/internal/provisioners"
+	"github.com/hashicorp/terracina/internal/provisioners"
 )
 
 var _ provisioners.Interface = (*MockProvisioner)(nil)

@@ -20,27 +20,27 @@ import (
 	"github.com/zclconf/go-cty-debug/ctydebug"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/checks"
-	"github.com/hashicorp/terraform/internal/depsfile"
-	"github.com/hashicorp/terraform/internal/getproviders/providerreqs"
-	"github.com/hashicorp/terraform/internal/stacks/stackruntime/hooks"
+	"github.com/hashicorp/terracina/internal/checks"
+	"github.com/hashicorp/terracina/internal/depsfile"
+	"github.com/hashicorp/terracina/internal/getproviders/providerreqs"
+	"github.com/hashicorp/terracina/internal/stacks/stackruntime/hooks"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	terraformProvider "github.com/hashicorp/terraform/internal/builtin/providers/terraform"
-	"github.com/hashicorp/terraform/internal/collections"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/lang/marks"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	default_testing_provider "github.com/hashicorp/terraform/internal/providers/testing"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/stacks/stackplan"
-	"github.com/hashicorp/terraform/internal/stacks/stackruntime/internal/stackeval"
-	stacks_testing_provider "github.com/hashicorp/terraform/internal/stacks/stackruntime/testing"
-	"github.com/hashicorp/terraform/internal/stacks/stackstate"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/tfdiags"
-	"github.com/hashicorp/terraform/version"
+	"github.com/hashicorp/terracina/internal/addrs"
+	terracinaProvider "github.com/hashicorp/terracina/internal/builtin/providers/terracina"
+	"github.com/hashicorp/terracina/internal/collections"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/lang/marks"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	default_testing_provider "github.com/hashicorp/terracina/internal/providers/testing"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/stacks/stackplan"
+	"github.com/hashicorp/terracina/internal/stacks/stackruntime/internal/stackeval"
+	stacks_testing_provider "github.com/hashicorp/terracina/internal/stacks/stackruntime/testing"
+	"github.com/hashicorp/terracina/internal/stacks/stackstate"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/tfdiags"
+	"github.com/hashicorp/terracina/version"
 )
 
 // TestPlan_valid runs the same set of configurations as TestValidate_valid.
@@ -83,7 +83,7 @@ func TestPlan_valid(t *testing.T) {
 				config: loadMainBundleConfigForTest(t, name),
 				providers: map[addrs.Provider]providers.Factory{
 					// We support both hashicorp/testing and
-					// terraform.io/builtin/testing as providers. This lets us
+					// terracina.io/builtin/testing as providers. This lets us
 					// test the provider aliasing feature. Both providers
 					// support the same set of resources and data sources.
 					addrs.NewDefaultProvider("testing"): func() (providers.Interface, error) {
@@ -150,7 +150,7 @@ func TestPlan_invalid(t *testing.T) {
 				config: loadMainBundleConfigForTest(t, name),
 				providers: map[addrs.Provider]providers.Factory{
 					// We support both hashicorp/testing and
-					// terraform.io/builtin/testing as providers. This lets us
+					// terracina.io/builtin/testing as providers. This lets us
 					// test the provider aliasing feature. Both providers
 					// support the same set of resources and data sources.
 					addrs.NewDefaultProvider("testing"): func() (providers.Interface, error) {
@@ -227,7 +227,7 @@ func TestPlan(t *testing.T) {
 						PlanTimestamp: fakePlanTimestamp,
 					},
 					&stackplan.PlannedChangeHeader{
-						TerraformVersion: version.SemVer,
+						TerracinaVersion: version.SemVer,
 					},
 					&stackplan.PlannedChangePlannedTimestamp{
 						PlannedTimestamp: fakePlanTimestamp,
@@ -395,7 +395,7 @@ func TestPlan(t *testing.T) {
 						DeferredReason: providers.DeferredReasonProviderConfigUnknown,
 					},
 					&stackplan.PlannedChangeHeader{
-						TerraformVersion: version.SemVer,
+						TerracinaVersion: version.SemVer,
 					},
 					&stackplan.PlannedChangePlannedTimestamp{
 						PlannedTimestamp: fakePlanTimestamp,
@@ -457,8 +457,8 @@ func TestPlanWithMissingInputVariable(t *testing.T) {
 	req := PlanRequest{
 		Config: cfg,
 		ProviderFactories: map[addrs.Provider]providers.Factory{
-			addrs.NewBuiltInProvider("terraform"): func() (providers.Interface, error) {
-				return terraformProvider.NewProvider(), nil
+			addrs.NewBuiltInProvider("terracina"): func() (providers.Interface, error) {
+				return terracinaProvider.NewProvider(), nil
 			},
 		},
 
@@ -508,8 +508,8 @@ func TestPlanWithNoValueForRequiredVariable(t *testing.T) {
 	req := PlanRequest{
 		Config: cfg,
 		ProviderFactories: map[addrs.Provider]providers.Factory{
-			addrs.NewBuiltInProvider("terraform"): func() (providers.Interface, error) {
-				return terraformProvider.NewProvider(), nil
+			addrs.NewBuiltInProvider("terracina"): func() (providers.Interface, error) {
+				return terracinaProvider.NewProvider(), nil
 			},
 		},
 
@@ -598,7 +598,7 @@ func TestPlanWithVariableDefaults(t *testing.T) {
 					Applyable: true,
 				},
 				&stackplan.PlannedChangeHeader{
-					TerraformVersion: version.SemVer,
+					TerracinaVersion: version.SemVer,
 				},
 				&stackplan.PlannedChangeOutputValue{
 					Addr:   stackaddrs.OutputValue{Name: "beep"},
@@ -795,7 +795,7 @@ func TestPlanWithComplexVariableDefaults(t *testing.T) {
 			Schema: stacks_testing_provider.TestingResourceSchema,
 		},
 		&stackplan.PlannedChangeHeader{
-			TerraformVersion: version.SemVer,
+			TerracinaVersion: version.SemVer,
 		},
 		&stackplan.PlannedChangePlannedTimestamp{
 			PlannedTimestamp: fakePlanTimestamp,
@@ -950,8 +950,8 @@ func TestPlanWithSingleResource(t *testing.T) {
 	req := PlanRequest{
 		Config: cfg,
 		ProviderFactories: map[addrs.Provider]providers.Factory{
-			addrs.NewBuiltInProvider("terraform"): func() (providers.Interface, error) {
-				return terraformProvider.NewProvider(), nil
+			addrs.NewBuiltInProvider("terracina"): func() (providers.Interface, error) {
+				return terracinaProvider.NewProvider(), nil
 			},
 		},
 
@@ -1002,7 +1002,7 @@ func TestPlanWithSingleResource(t *testing.T) {
 			PlanTimestamp: fakePlanTimestamp,
 		},
 		&stackplan.PlannedChangeHeader{
-			TerraformVersion: version.SemVer,
+			TerracinaVersion: version.SemVer,
 		},
 		&stackplan.PlannedChangeOutputValue{
 			Addr:   stackaddrs.OutputValue{Name: "obj"},
@@ -1027,40 +1027,40 @@ func TestPlanWithSingleResource(t *testing.T) {
 				Item: addrs.AbsResourceInstanceObject{
 					ResourceInstance: addrs.Resource{
 						Mode: addrs.ManagedResourceMode,
-						Type: "terraform_data",
+						Type: "terracina_data",
 						Name: "main",
 					}.Instance(addrs.NoKey).Absolute(addrs.RootModuleInstance),
 				},
 			},
 			ProviderConfigAddr: addrs.AbsProviderConfig{
 				Module:   addrs.RootModule,
-				Provider: addrs.MustParseProviderSourceString("terraform.io/builtin/terraform"),
+				Provider: addrs.MustParseProviderSourceString("terracina.io/builtin/terracina"),
 			},
 			ChangeSrc: &plans.ResourceInstanceChangeSrc{
 				Addr: addrs.Resource{
 					Mode: addrs.ManagedResourceMode,
-					Type: "terraform_data",
+					Type: "terracina_data",
 					Name: "main",
 				}.Instance(addrs.NoKey).Absolute(addrs.RootModuleInstance),
 				PrevRunAddr: addrs.Resource{
 					Mode: addrs.ManagedResourceMode,
-					Type: "terraform_data",
+					Type: "terracina_data",
 					Name: "main",
 				}.Instance(addrs.NoKey).Absolute(addrs.RootModuleInstance),
 				ProviderAddr: addrs.AbsProviderConfig{
 					Module:   addrs.RootModule,
-					Provider: addrs.NewBuiltInProvider("terraform"),
+					Provider: addrs.NewBuiltInProvider("terracina"),
 				},
 				ChangeSrc: plans.ChangeSrc{
 					Action: plans.Create,
 					Before: mustPlanDynamicValue(cty.NullVal(cty.DynamicPseudoType)),
 					After: plans.DynamicValue{
-						// This is an object conforming to the terraform_data
+						// This is an object conforming to the terracina_data
 						// resource type's schema.
 						//
 						// FIXME: Should write this a different way that is
 						// scrutable and won't break each time something gets
-						// added to the terraform_data schema. (We can't use
+						// added to the terracina_data schema. (We can't use
 						// mustPlanDynamicValue here because the resource type
 						// uses DynamicPseudoType attributes, which require
 						// explicitly-typed encoding.)
@@ -1077,8 +1077,8 @@ func TestPlanWithSingleResource(t *testing.T) {
 				},
 			},
 
-			// The following is schema for the real terraform_data resource
-			// type from the real terraform.io/builtin/terraform provider
+			// The following is schema for the real terracina_data resource
+			// type from the real terracina.io/builtin/terracina provider
 			// maintained elsewhere in this codebase. If that schema changes
 			// in future then this should change to match it.
 			Schema: &configschema.Block{
@@ -1134,7 +1134,7 @@ func TestPlanWithEphemeralInputVariables(t *testing.T) {
 				Applyable: true,
 			},
 			&stackplan.PlannedChangeHeader{
-				TerraformVersion: version.SemVer,
+				TerracinaVersion: version.SemVer,
 			},
 			&stackplan.PlannedChangePlannedTimestamp{
 				PlannedTimestamp: fakePlanTimestamp,
@@ -1197,7 +1197,7 @@ func TestPlanWithEphemeralInputVariables(t *testing.T) {
 				Applyable: true,
 			},
 			&stackplan.PlannedChangeHeader{
-				TerraformVersion: version.SemVer,
+				TerracinaVersion: version.SemVer,
 			},
 			&stackplan.PlannedChangePlannedTimestamp{
 				PlannedTimestamp: fakePlanTimestamp,
@@ -1261,7 +1261,7 @@ func TestPlanVariableOutputRoundtripNested(t *testing.T) {
 			Applyable: true,
 		},
 		&stackplan.PlannedChangeHeader{
-			TerraformVersion: version.SemVer,
+			TerracinaVersion: version.SemVer,
 		},
 		&stackplan.PlannedChangeOutputValue{
 			Addr:   stackaddrs.OutputValue{Name: "msg"},
@@ -1339,7 +1339,7 @@ func TestPlanSensitiveOutput(t *testing.T) {
 			PlanTimestamp: fakePlanTimestamp,
 		},
 		&stackplan.PlannedChangeHeader{
-			TerraformVersion: version.SemVer,
+			TerracinaVersion: version.SemVer,
 		},
 		&stackplan.PlannedChangeOutputValue{
 			Addr:   stackaddrs.OutputValue{Name: "result"},
@@ -1392,7 +1392,7 @@ func TestPlanSensitiveOutputNested(t *testing.T) {
 			Applyable: true,
 		},
 		&stackplan.PlannedChangeHeader{
-			TerraformVersion: version.SemVer,
+			TerracinaVersion: version.SemVer,
 		},
 		&stackplan.PlannedChangeOutputValue{
 			Addr:   stackaddrs.OutputValue{Name: "result"},
@@ -1491,7 +1491,7 @@ func TestPlanSensitiveOutputAsInput(t *testing.T) {
 			PlanTimestamp: fakePlanTimestamp,
 		},
 		&stackplan.PlannedChangeHeader{
-			TerraformVersion: version.SemVer,
+			TerracinaVersion: version.SemVer,
 		},
 		&stackplan.PlannedChangeOutputValue{
 			Addr:   stackaddrs.OutputValue{Name: "result"},
@@ -1653,8 +1653,8 @@ func TestPlanWithRemovedResource(t *testing.T) {
 			req := PlanRequest{
 				Config: cfg,
 				ProviderFactories: map[addrs.Provider]providers.Factory{
-					addrs.NewBuiltInProvider("terraform"): func() (providers.Interface, error) {
-						return terraformProvider.NewProvider(), nil
+					addrs.NewBuiltInProvider("terracina"): func() (providers.Interface, error) {
+						return terracinaProvider.NewProvider(), nil
 					},
 				},
 
@@ -1681,7 +1681,7 @@ func TestPlanWithRemovedResource(t *testing.T) {
 									Resource: addrs.ResourceInstance{
 										Resource: addrs.Resource{
 											Mode: addrs.ManagedResourceMode,
-											Type: "terraform_data",
+											Type: "terracina_data",
 											Name: "main",
 										},
 										Key: addrs.NoKey,
@@ -1697,7 +1697,7 @@ func TestPlanWithRemovedResource(t *testing.T) {
 						}).
 						SetProviderAddr(addrs.AbsProviderConfig{
 							Module:   addrs.RootModule,
-							Provider: addrs.MustParseProviderSourceString("terraform.io/builtin/terraform"),
+							Provider: addrs.MustParseProviderSourceString("terracina.io/builtin/terracina"),
 						})).
 					Build(),
 			}
@@ -1869,7 +1869,7 @@ func TestPlanWithSensitivePropagation(t *testing.T) {
 			PlanTimestamp: fakePlanTimestamp,
 		},
 		&stackplan.PlannedChangeHeader{
-			TerraformVersion: version.SemVer,
+			TerracinaVersion: version.SemVer,
 		},
 		&stackplan.PlannedChangePlannedTimestamp{
 			PlannedTimestamp: fakePlanTimestamp,
@@ -2015,7 +2015,7 @@ func TestPlanWithSensitivePropagationNested(t *testing.T) {
 			Schema: stacks_testing_provider.TestingResourceSchema,
 		},
 		&stackplan.PlannedChangeHeader{
-			TerraformVersion: version.SemVer,
+			TerracinaVersion: version.SemVer,
 		},
 		&stackplan.PlannedChangePlannedTimestamp{
 			PlannedTimestamp: fakePlanTimestamp,
@@ -2278,7 +2278,7 @@ func TestPlanWithCheckableObjects(t *testing.T) {
 			PlanTimestamp: fakePlanTimestamp,
 		},
 		&stackplan.PlannedChangeHeader{
-			TerraformVersion: version.SemVer,
+			TerracinaVersion: version.SemVer,
 		},
 		&stackplan.PlannedChangePlannedTimestamp{
 			PlannedTimestamp: fakePlanTimestamp,
@@ -2467,7 +2467,7 @@ func TestPlanWithDeferredResource(t *testing.T) {
 			DeferredReason: providers.DeferredReasonResourceConfigUnknown,
 		},
 		&stackplan.PlannedChangeHeader{
-			TerraformVersion: version.SemVer,
+			TerracinaVersion: version.SemVer,
 		},
 		&stackplan.PlannedChangePlannedTimestamp{
 			PlannedTimestamp: fakePlanTimestamp,
@@ -2712,7 +2712,7 @@ func TestPlanWithDeferredComponentForEach(t *testing.T) {
 			},
 		},
 		&stackplan.PlannedChangeHeader{
-			TerraformVersion: version.SemVer,
+			TerracinaVersion: version.SemVer,
 		},
 		&stackplan.PlannedChangePlannedTimestamp{
 			PlannedTimestamp: fakePlanTimestamp,
@@ -2964,7 +2964,7 @@ func TestPlanWithDeferredComponentReferences(t *testing.T) {
 			Schema: stacks_testing_provider.TestingResourceSchema,
 		},
 		&stackplan.PlannedChangeHeader{
-			TerraformVersion: version.SemVer,
+			TerracinaVersion: version.SemVer,
 		},
 		&stackplan.PlannedChangePlannedTimestamp{
 			PlannedTimestamp: fakePlanTimestamp,
@@ -3046,7 +3046,7 @@ func TestPlanWithDeferredEmbeddedStackForEach(t *testing.T) {
 			Applyable: true,
 		},
 		&stackplan.PlannedChangeHeader{
-			TerraformVersion: version.SemVer,
+			TerracinaVersion: version.SemVer,
 		},
 		&stackplan.PlannedChangePlannedTimestamp{
 			PlannedTimestamp: fakePlanTimestamp,
@@ -3194,7 +3194,7 @@ func TestPlanWithDeferredEmbeddedStackAndComponentForEach(t *testing.T) {
 			Applyable: true,
 		},
 		&stackplan.PlannedChangeHeader{
-			TerraformVersion: version.SemVer,
+			TerracinaVersion: version.SemVer,
 		},
 		&stackplan.PlannedChangePlannedTimestamp{
 			PlannedTimestamp: fakePlanTimestamp,
@@ -3545,7 +3545,7 @@ func TestPlanWithDeferredProviderForEach(t *testing.T) {
 			DeferredReason: providers.DeferredReasonProviderConfigUnknown,
 		},
 		&stackplan.PlannedChangeHeader{
-			TerraformVersion: version.SemVer,
+			TerracinaVersion: version.SemVer,
 		},
 		&stackplan.PlannedChangePlannedTimestamp{
 			PlannedTimestamp: fakePlanTimestamp,
@@ -3623,7 +3623,7 @@ func TestPlanInvalidProvidersFailGracefully(t *testing.T) {
 			PlannedCheckResults: &states.CheckResults{},
 		},
 		&stackplan.PlannedChangeHeader{
-			TerraformVersion: version.SemVer,
+			TerracinaVersion: version.SemVer,
 		},
 		&stackplan.PlannedChangePlannedTimestamp{
 			PlannedTimestamp: fakePlanTimestamp,
@@ -3720,7 +3720,7 @@ func TestPlanWithStateManipulation(t *testing.T) {
 					Schema:             stacks_testing_provider.TestingResourceSchema,
 				},
 				&stackplan.PlannedChangeHeader{
-					TerraformVersion: version.SemVer,
+					TerracinaVersion: version.SemVer,
 				},
 				&stackplan.PlannedChangePlannedTimestamp{
 					PlannedTimestamp: fakePlanTimestamp,
@@ -3802,7 +3802,7 @@ func TestPlanWithStateManipulation(t *testing.T) {
 					Schema:             stacks_testing_provider.DeferredResourceSchema,
 				},
 				&stackplan.PlannedChangeHeader{
-					TerraformVersion: version.SemVer,
+					TerracinaVersion: version.SemVer,
 				},
 				&stackplan.PlannedChangePlannedTimestamp{
 					PlannedTimestamp: fakePlanTimestamp,
@@ -3884,7 +3884,7 @@ func TestPlanWithStateManipulation(t *testing.T) {
 					Schema:             stacks_testing_provider.TestingResourceSchema,
 				},
 				&stackplan.PlannedChangeHeader{
-					TerraformVersion: version.SemVer,
+					TerracinaVersion: version.SemVer,
 				},
 				&stackplan.PlannedChangePlannedTimestamp{
 					PlannedTimestamp: fakePlanTimestamp,
@@ -3973,7 +3973,7 @@ func TestPlanWithStateManipulation(t *testing.T) {
 					Schema:             stacks_testing_provider.TestingResourceSchema,
 				},
 				&stackplan.PlannedChangeHeader{
-					TerraformVersion: version.SemVer,
+					TerracinaVersion: version.SemVer,
 				},
 				&stackplan.PlannedChangePlannedTimestamp{
 					PlannedTimestamp: fakePlanTimestamp,
@@ -3987,7 +3987,7 @@ func TestPlanWithStateManipulation(t *testing.T) {
 						Forget: 1,
 					},
 				}),
-			expectedWarnings: []string{"Some objects will no longer be managed by Terraform"},
+			expectedWarnings: []string{"Some objects will no longer be managed by Terracina"},
 		},
 	}
 
@@ -4092,7 +4092,7 @@ func TestPlan_plantimestamp_force_timestamp(t *testing.T) {
 		Config: cfg,
 		ProviderFactories: map[addrs.Provider]providers.Factory{
 			// We support both hashicorp/testing and
-			// terraform.io/builtin/testing as providers. This lets us
+			// terracina.io/builtin/testing as providers. This lets us
 			// test the provider aliasing feature. Both providers
 			// support the same set of resources and data sources.
 			addrs.NewDefaultProvider("testing"): func() (providers.Interface, error) {
@@ -4182,7 +4182,7 @@ func TestPlan_plantimestamp_force_timestamp(t *testing.T) {
 			PlanTimestamp: fakePlanTimestamp,
 		},
 		&stackplan.PlannedChangeHeader{
-			TerraformVersion: version.SemVer,
+			TerracinaVersion: version.SemVer,
 		},
 		&stackplan.PlannedChangeOutputValue{
 			Addr:   stackaddrs.OutputValue{Name: "plantimestamp"},
@@ -4214,7 +4214,7 @@ func TestPlan_plantimestamp_later_than_when_writing_this_test(t *testing.T) {
 		Config: cfg,
 		ProviderFactories: map[addrs.Provider]providers.Factory{
 			// We support both hashicorp/testing and
-			// terraform.io/builtin/testing as providers. This lets us
+			// terracina.io/builtin/testing as providers. This lets us
 			// test the provider aliasing feature. Both providers
 			// support the same set of resources and data sources.
 			addrs.NewDefaultProvider("testing"): func() (providers.Interface, error) {
@@ -4399,7 +4399,7 @@ func TestPlan_DependsOnUpdatesRequirements(t *testing.T) {
 			Schema:             stacks_testing_provider.TestingResourceSchema,
 		},
 		&stackplan.PlannedChangeHeader{
-			TerraformVersion: version.SemVer,
+			TerracinaVersion: version.SemVer,
 		},
 		&stackplan.PlannedChangePlannedTimestamp{
 			PlannedTimestamp: fakePlanTimestamp,
@@ -4610,7 +4610,7 @@ func TestPlan_RemovedBlocks(t *testing.T) {
 					Schema:             stacks_testing_provider.TestingResourceSchema,
 				},
 				&stackplan.PlannedChangeHeader{
-					TerraformVersion: version.SemVer,
+					TerracinaVersion: version.SemVer,
 				},
 				&stackplan.PlannedChangePlannedTimestamp{
 					PlannedTimestamp: fakePlanTimestamp,
@@ -4714,7 +4714,7 @@ func TestPlan_RemovedBlocks(t *testing.T) {
 					DeferredReason: providers.DeferredReasonDeferredPrereq,
 				},
 				&stackplan.PlannedChangeHeader{
-					TerraformVersion: version.SemVer,
+					TerracinaVersion: version.SemVer,
 				},
 				&stackplan.PlannedChangePlannedTimestamp{
 					PlannedTimestamp: fakePlanTimestamp,
@@ -4878,7 +4878,7 @@ func TestPlan_RemovedBlocks(t *testing.T) {
 					Schema:             stacks_testing_provider.TestingResourceSchema,
 				},
 				&stackplan.PlannedChangeHeader{
-					TerraformVersion: version.SemVer,
+					TerracinaVersion: version.SemVer,
 				},
 				&stackplan.PlannedChangePlannedTimestamp{
 					PlannedTimestamp: fakePlanTimestamp,
@@ -4978,7 +4978,7 @@ func TestPlan_RemovedBlocks(t *testing.T) {
 					DeferredReason: providers.DeferredReasonDeferredPrereq,
 				},
 				&stackplan.PlannedChangeHeader{
-					TerraformVersion: version.SemVer,
+					TerracinaVersion: version.SemVer,
 				},
 				&stackplan.PlannedChangePlannedTimestamp{
 					PlannedTimestamp: fakePlanTimestamp,
@@ -5004,7 +5004,7 @@ func TestPlan_RemovedBlocks(t *testing.T) {
 					Applyable: true,
 				},
 				&stackplan.PlannedChangeHeader{
-					TerraformVersion: version.SemVer,
+					TerracinaVersion: version.SemVer,
 				},
 				&stackplan.PlannedChangePlannedTimestamp{
 					PlannedTimestamp: fakePlanTimestamp,
@@ -5097,7 +5097,7 @@ func TestPlan_RemovedBlocks(t *testing.T) {
 					Addr: mustAbsComponentInstance("component.self[\"removed\"]"),
 				},
 				&stackplan.PlannedChangeHeader{
-					TerraformVersion: version.SemVer,
+					TerracinaVersion: version.SemVer,
 				},
 				&stackplan.PlannedChangePlannedTimestamp{
 					PlannedTimestamp: fakePlanTimestamp,
@@ -5259,7 +5259,7 @@ func TestPlan_RemovedBlocks(t *testing.T) {
 					Schema:             stacks_testing_provider.TestingResourceSchema,
 				},
 				&stackplan.PlannedChangeHeader{
-					TerraformVersion: version.SemVer,
+					TerracinaVersion: version.SemVer,
 				},
 				&stackplan.PlannedChangePlannedTimestamp{
 					PlannedTimestamp: fakePlanTimestamp,
@@ -5371,7 +5371,7 @@ func TestPlan_RemovedBlocks(t *testing.T) {
 					Schema:             stacks_testing_provider.TestingResourceSchema,
 				},
 				&stackplan.PlannedChangeHeader{
-					TerraformVersion: version.SemVer,
+					TerracinaVersion: version.SemVer,
 				},
 				&stackplan.PlannedChangePlannedTimestamp{
 					PlannedTimestamp: fakePlanTimestamp,

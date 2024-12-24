@@ -7,8 +7,8 @@ import (
 	"context"
 	"sync"
 
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/stacks/stackruntime/hooks"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/stacks/stackruntime/hooks"
 )
 
 // Hooks is an optional API for external callers to be notified about various
@@ -110,7 +110,7 @@ type Hooks struct {
 
 	// ReportResourceInstanceDrift is called after a component instance's plan
 	// determines that a resource instance has experienced changes outside of
-	// Terraform. It should be called inside a tracing context established by
+	// Terracina. It should be called inside a tracing context established by
 	// [Hooks.BeginComponentInstancePlan].
 	ReportResourceInstanceDrift hooks.MoreFunc[*hooks.ResourceInstanceChange]
 

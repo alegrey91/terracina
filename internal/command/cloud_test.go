@@ -17,14 +17,14 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/cli"
-	svchost "github.com/hashicorp/terraform-svchost"
-	"github.com/hashicorp/terraform-svchost/auth"
-	"github.com/hashicorp/terraform-svchost/disco"
-	"github.com/hashicorp/terraform/internal/backend"
-	backendInit "github.com/hashicorp/terraform/internal/backend/init"
-	backendCloud "github.com/hashicorp/terraform/internal/cloud"
-	"github.com/hashicorp/terraform/internal/httpclient"
-	"github.com/hashicorp/terraform/version"
+	svchost "github.com/hashicorp/terracina-svchost"
+	"github.com/hashicorp/terracina-svchost/auth"
+	"github.com/hashicorp/terracina-svchost/disco"
+	"github.com/hashicorp/terracina/internal/backend"
+	backendInit "github.com/hashicorp/terracina/internal/backend/init"
+	backendCloud "github.com/hashicorp/terracina/internal/cloud"
+	"github.com/hashicorp/terracina/internal/httpclient"
+	"github.com/hashicorp/terracina/version"
 	"google.golang.org/grpc/metadata"
 )
 
@@ -45,7 +45,7 @@ func newCloudPluginManifestHTTPTestServer(t *testing.T) *httptest.Server {
 		w.Header().Set("Content-Type", "application/json")
 		io.WriteString(w, fmt.Sprintf(`{
   "service": "%s",
-  "product": "terraform",
+  "product": "terracina",
   "minimum": "0.1.0",
   "maximum": "10.0.0"
 }`, path.Base(r.URL.Path)))
@@ -84,7 +84,7 @@ func newCloudPluginManifestHTTPTestServer(t *testing.T) *httptest.Server {
     "type": "workspaces",
     "attributes": {
 			"name": "test",
-      "terraform-version": "1.5.4"
+      "terracina-version": "1.5.4"
     }
   }
 }`)
@@ -93,11 +93,11 @@ func newCloudPluginManifestHTTPTestServer(t *testing.T) *httptest.Server {
 	return httptest.NewServer(mux)
 }
 
-// testDisco returns a *disco.Disco mapping app.terraform.io and
+// testDisco returns a *disco.Disco mapping app.terracina.io and
 // localhost to a local test server.
 func testDisco(s *httptest.Server) *disco.Disco {
 	host, _ := url.Parse(s.URL)
-	defaultHostname := "app.terraform.io"
+	defaultHostname := "app.terracina.io"
 	tfeHost := svchost.Hostname(defaultHostname)
 	services := map[string]interface{}{
 		"cloudplugin.v1": fmt.Sprintf("%s/api/cloudplugin/v1/", s.URL),
@@ -109,7 +109,7 @@ func testDisco(s *httptest.Server) *disco.Disco {
 	})
 
 	d := disco.NewWithCredentialsSource(credsSrc)
-	d.SetUserAgent(httpclient.TerraformUserAgent(version.String()))
+	d.SetUserAgent(httpclient.TerracinaUserAgent(version.String()))
 	d.ForceHostServices(tfeHost, services)
 	d.ForceHostServices(svchost.Hostname(host.Host), services)
 
@@ -143,7 +143,7 @@ func TestCloud_withBackendConfig(t *testing.T) {
 		},
 	}
 
-	log.Print("[TRACE] TestCloud_withBackendConfig running: terraform init")
+	log.Print("[TRACE] TestCloud_withBackendConfig running: terracina init")
 	if code := ic.Run([]string{}); code != 0 {
 		t.Fatalf("init failed\n%s", ui.ErrorWriter)
 	}
@@ -165,7 +165,7 @@ func TestCloud_withBackendConfig(t *testing.T) {
 	}
 
 	output := ui.OutputWriter.String()
-	expected := "HCP Terraform Plugin v0.1.0\n\n"
+	expected := "HCP Terracina Plugin v0.1.0\n\n"
 	if output != expected {
 		t.Fatalf("the output did not equal the expected string:\n%s", cmp.Diff(expected, output))
 	}
@@ -202,7 +202,7 @@ func TestCloud_withENVConfig(t *testing.T) {
 	}
 
 	output := ui.OutputWriter.String()
-	expected := "HCP Terraform Plugin v0.1.0\n\n"
+	expected := "HCP Terracina Plugin v0.1.0\n\n"
 	if output != expected {
 		t.Fatalf("the output did not equal the expected string:\n%s", cmp.Diff(expected, output))
 	}
@@ -210,15 +210,15 @@ func TestCloud_withENVConfig(t *testing.T) {
 
 func TestCloudPluginConfig_ToMetadata(t *testing.T) {
 	expected := metadata.Pairs(
-		"tfc-address", "https://app.staging.terraform.io",
+		"tfc-address", "https://app.staging.terracina.io",
 		"tfc-base-path", "/api/v2/",
-		"tfc-display-hostname", "app.staging.terraform.io",
+		"tfc-display-hostname", "app.staging.terracina.io",
 		"tfc-token", "not-a-legit-token",
 		"tfc-organization", "example-corp",
 		"tfc-current-workspace", "example-space",
 		"tfc-workspace-name", "example-space",
 		// Actually combining -name and -tags is an invalid scenario from
-		// Terraform's point of view, but here we're just testing that every
+		// Terracina's point of view, but here we're just testing that every
 		// field makes the trip safely if sent.
 		"tfc-workspace-tags", "networking",
 		// Duplicate is on purpose.
@@ -226,9 +226,9 @@ func TestCloudPluginConfig_ToMetadata(t *testing.T) {
 		"tfc-default-project-name", "production-services",
 	)
 	inputStruct := CloudPluginConfig{
-		Address:            "https://app.staging.terraform.io",
+		Address:            "https://app.staging.terracina.io",
 		BasePath:           "/api/v2/",
-		DisplayHostname:    "app.staging.terraform.io",
+		DisplayHostname:    "app.staging.terracina.io",
 		Token:              "not-a-legit-token",
 		Organization:       "example-corp",
 		CurrentWorkspace:   "example-space",

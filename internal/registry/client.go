@@ -18,18 +18,18 @@ import (
 	"time"
 
 	"github.com/hashicorp/go-retryablehttp"
-	svchost "github.com/hashicorp/terraform-svchost"
-	"github.com/hashicorp/terraform-svchost/disco"
-	"github.com/hashicorp/terraform/internal/httpclient"
-	"github.com/hashicorp/terraform/internal/logging"
-	"github.com/hashicorp/terraform/internal/registry/regsrc"
-	"github.com/hashicorp/terraform/internal/registry/response"
-	"github.com/hashicorp/terraform/version"
+	svchost "github.com/hashicorp/terracina-svchost"
+	"github.com/hashicorp/terracina-svchost/disco"
+	"github.com/hashicorp/terracina/internal/httpclient"
+	"github.com/hashicorp/terracina/internal/logging"
+	"github.com/hashicorp/terracina/internal/registry/regsrc"
+	"github.com/hashicorp/terracina/internal/registry/response"
+	"github.com/hashicorp/terracina/version"
 )
 
 const (
-	xTerraformGet      = "X-Terraform-Get"
-	xTerraformVersion  = "X-Terraform-Version"
+	xTerracinaGet      = "X-Terracina-Get"
+	xTerracinaVersion  = "X-Terracina-Version"
 	modulesServiceID   = "modules.v1"
 	providersServiceID = "providers.v1"
 
@@ -61,7 +61,7 @@ func init() {
 	configureRequestTimeout()
 }
 
-// Client provides methods to query Terraform Registries.
+// Client provides methods to query Terracina Registries.
 type Client struct {
 	// this is the client to be used for all requests.
 	client *retryablehttp.Client
@@ -92,7 +92,7 @@ func NewClient(services *disco.Disco, client *http.Client) *Client {
 
 	services.Transport = retryableClient.HTTPClient.Transport
 
-	services.SetUserAgent(httpclient.TerraformUserAgent(version.String()))
+	services.SetUserAgent(httpclient.TerracinaUserAgent(version.String()))
 
 	return &Client{
 		client:   retryableClient,
@@ -140,7 +140,7 @@ func (c *Client) ModuleVersions(ctx context.Context, module *regsrc.Module) (*re
 	req = req.WithContext(ctx)
 
 	c.addRequestCreds(host, req.Request)
-	req.Header.Set(xTerraformVersion, tfVersion)
+	req.Header.Set(xTerracinaVersion, tfVersion)
 
 	resp, err := c.client.Do(req)
 	if err != nil {
@@ -219,7 +219,7 @@ func (c *Client) ModuleLocation(ctx context.Context, module *regsrc.Module, vers
 	req = req.WithContext(ctx)
 
 	c.addRequestCreds(host, req.Request)
-	req.Header.Set(xTerraformVersion, tfVersion)
+	req.Header.Set(xTerracinaVersion, tfVersion)
 
 	resp, err := c.client.Do(req)
 	if err != nil {
@@ -243,8 +243,8 @@ func (c *Client) ModuleLocation(ctx context.Context, module *regsrc.Module, vers
 		return "", fmt.Errorf("error getting download location for %q: %s resp:%s", module, resp.Status, body)
 	}
 
-	// the download location is in the X-Terraform-Get header
-	location := resp.Header.Get(xTerraformGet)
+	// the download location is in the X-Terracina-Get header
+	location := resp.Header.Get(xTerracinaGet)
 	if location == "" {
 		return "", fmt.Errorf("failed to get download URL for %q: %s resp:%s", module, resp.Status, body)
 	}
@@ -252,7 +252,7 @@ func (c *Client) ModuleLocation(ctx context.Context, module *regsrc.Module, vers
 	// If location looks like it's trying to be a relative URL, treat it as
 	// one.
 	//
-	// We don't do this for just _any_ location, since the X-Terraform-Get
+	// We don't do this for just _any_ location, since the X-Terracina-Get
 	// header is a go-getter location rather than a URL, and so not all
 	// possible values will parse reasonably as URLs.)
 	//

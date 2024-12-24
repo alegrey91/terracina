@@ -10,16 +10,16 @@ import (
 	"github.com/mitchellh/colorstring"
 	ctyjson "github.com/zclconf/go-cty/cty/json"
 
-	"github.com/hashicorp/terraform/internal/command/format"
-	"github.com/hashicorp/terraform/internal/command/jsonformat/computed"
-	"github.com/hashicorp/terraform/internal/command/jsonformat/differ"
-	"github.com/hashicorp/terraform/internal/command/jsonformat/structured"
-	"github.com/hashicorp/terraform/internal/command/jsonplan"
-	"github.com/hashicorp/terraform/internal/command/jsonprovider"
-	"github.com/hashicorp/terraform/internal/command/jsonstate"
-	viewsjson "github.com/hashicorp/terraform/internal/command/views/json"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/terminal"
+	"github.com/hashicorp/terracina/internal/command/format"
+	"github.com/hashicorp/terracina/internal/command/jsonformat/computed"
+	"github.com/hashicorp/terracina/internal/command/jsonformat/differ"
+	"github.com/hashicorp/terracina/internal/command/jsonformat/structured"
+	"github.com/hashicorp/terracina/internal/command/jsonplan"
+	"github.com/hashicorp/terracina/internal/command/jsonprovider"
+	"github.com/hashicorp/terracina/internal/command/jsonstate"
+	viewsjson "github.com/hashicorp/terracina/internal/command/views/json"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/terminal"
 )
 
 type JSONLogType string
@@ -115,7 +115,7 @@ type Renderer struct {
 func (renderer Renderer) RenderHumanPlan(plan Plan, mode plans.Mode, opts ...plans.Quality) {
 	if incompatibleVersions(jsonplan.FormatVersion, plan.PlanFormatVersion) || incompatibleVersions(jsonprovider.FormatVersion, plan.ProviderFormatVersion) {
 		renderer.Streams.Println(format.WordWrap(
-			renderer.Colorize.Color("\n[bold][red]Warning:[reset][bold] This plan was generated using a different version of Terraform, the diff presented here may be missing representations of recent features."),
+			renderer.Colorize.Color("\n[bold][red]Warning:[reset][bold] This plan was generated using a different version of Terracina, the diff presented here may be missing representations of recent features."),
 			renderer.Streams.Stdout.Columns()))
 	}
 
@@ -125,7 +125,7 @@ func (renderer Renderer) RenderHumanPlan(plan Plan, mode plans.Mode, opts ...pla
 func (renderer Renderer) RenderHumanState(state State) {
 	if incompatibleVersions(jsonstate.FormatVersion, state.StateFormatVersion) || incompatibleVersions(jsonprovider.FormatVersion, state.ProviderFormatVersion) {
 		renderer.Streams.Println(format.WordWrap(
-			renderer.Colorize.Color("\n[bold][red]Warning:[reset][bold] This state was retrieved using a different version of Terraform, the state presented here maybe missing representations of recent features."),
+			renderer.Colorize.Color("\n[bold][red]Warning:[reset][bold] This state was retrieved using a different version of Terracina, the state presented here maybe missing representations of recent features."),
 			renderer.Streams.Stdout.Columns()))
 	}
 

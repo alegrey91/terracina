@@ -13,28 +13,28 @@ import (
 	"sync"
 	"time"
 
-	"github.com/hashicorp/terraform/internal/command/views"
-	"github.com/hashicorp/terraform/internal/helper/slowmessage"
-	"github.com/hashicorp/terraform/internal/states/statemgr"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/command/views"
+	"github.com/hashicorp/terracina/internal/helper/slowmessage"
+	"github.com/hashicorp/terracina/internal/states/statemgr"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 const (
 	LockThreshold    = 400 * time.Millisecond
 	LockErrorMessage = `Error message: %s
 
-Terraform acquires a state lock to protect the state from being written
+Terracina acquires a state lock to protect the state from being written
 by multiple users at the same time. Please resolve the issue above and try
 again. For most commands, you can disable locking with the "-lock=false"
 flag, but this is not recommended.`
 
 	UnlockErrorMessage = `Error message: %s
 
-Terraform acquires a lock when accessing your state to prevent others
-running Terraform to potentially modify the state at the same time. An
+Terracina acquires a lock when accessing your state to prevent others
+running Terracina to potentially modify the state at the same time. An
 error occurred while releasing this lock. This could mean that the lock
 did or did not release properly. If the lock didn't release properly,
-Terraform may not be able to run future commands since it'll appear as if
+Terracina may not be able to run future commands since it'll appear as if
 the lock is held.
 
 In this scenario, please call the "force-unlock" command to unlock the

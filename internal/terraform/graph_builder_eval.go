@@ -1,22 +1,22 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/dag"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/dag"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // EvalGraphBuilder implements GraphBuilder and constructs a graph suitable
 // for evaluating in-memory values (input variables, local values, output
 // values) in the state without any other side-effects.
 //
-// This graph is used only in weird cases, such as the "terraform console"
+// This graph is used only in weird cases, such as the "terracina console"
 // CLI command, where we need to evaluate expressions against the state
 // without taking any other actions.
 //

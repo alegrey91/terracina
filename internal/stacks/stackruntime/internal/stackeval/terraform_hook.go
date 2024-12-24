@@ -7,24 +7,24 @@ import (
 	"context"
 	"sync"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/stacks/stackruntime/hooks"
-	"github.com/hashicorp/terraform/internal/terraform"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/stacks/stackruntime/hooks"
+	"github.com/hashicorp/terracina/internal/terracina"
 	"github.com/zclconf/go-cty/cty"
 )
 
-// componentInstanceTerraformHook implements terraform.Hook for plan and apply
+// componentInstanceTerracinaHook implements terracina.Hook for plan and apply
 // operations on a specified component instance. It connects the standard
-// terraform.Hook callbacks to the given stackruntime.Hooks callbacks.
+// terracina.Hook callbacks to the given stackruntime.Hooks callbacks.
 //
 // We unfortunately must embed a context.Context in this type, as the existing
-// Terraform core hook interface does not support threading a context through.
+// Terracina core hook interface does not support threading a context through.
 // The lifetime of this hook instance is strictly smaller than its surrounding
 // context, but we should migrate away from this for clarity when possible.
-type componentInstanceTerraformHook struct {
-	terraform.NilHook
+type componentInstanceTerracinaHook struct {
+	terracina.NilHook
 
 	ctx   context.Context
 	seq   *hookSeq
@@ -44,9 +44,9 @@ type componentInstanceTerraformHook struct {
 	resourceInstanceObjectApplySuccess addrs.Set[addrs.AbsResourceInstanceObject]
 }
 
-var _ terraform.Hook = (*componentInstanceTerraformHook)(nil)
+var _ terracina.Hook = (*componentInstanceTerracinaHook)(nil)
 
-func (h *componentInstanceTerraformHook) resourceInstanceObjectAddr(riAddr addrs.AbsResourceInstance, dk addrs.DeposedKey) stackaddrs.AbsResourceInstanceObject {
+func (h *componentInstanceTerracinaHook) resourceInstanceObjectAddr(riAddr addrs.AbsResourceInstance, dk addrs.DeposedKey) stackaddrs.AbsResourceInstanceObject {
 	return stackaddrs.AbsResourceInstanceObject{
 		Component: h.addr,
 		Item: addrs.AbsResourceInstanceObject{
@@ -56,25 +56,25 @@ func (h *componentInstanceTerraformHook) resourceInstanceObjectAddr(riAddr addrs
 	}
 }
 
-func (h *componentInstanceTerraformHook) PreDiff(id terraform.HookResourceIdentity, dk addrs.DeposedKey, priorState, proposedNewState cty.Value) (terraform.HookAction, error) {
+func (h *componentInstanceTerracinaHook) PreDiff(id terracina.HookResourceIdentity, dk addrs.DeposedKey, priorState, proposedNewState cty.Value) (terracina.HookAction, error) {
 	hookMore(h.ctx, h.seq, h.hooks.ReportResourceInstanceStatus, &hooks.ResourceInstanceStatusHookData{
 		Addr:         h.resourceInstanceObjectAddr(id.Addr, dk),
 		ProviderAddr: id.ProviderAddr,
 		Status:       hooks.ResourceInstancePlanning,
 	})
-	return terraform.HookActionContinue, nil
+	return terracina.HookActionContinue, nil
 }
 
-func (h *componentInstanceTerraformHook) PostDiff(id terraform.HookResourceIdentity, dk addrs.DeposedKey, action plans.Action, priorState, plannedNewState cty.Value) (terraform.HookAction, error) {
+func (h *componentInstanceTerracinaHook) PostDiff(id terracina.HookResourceIdentity, dk addrs.DeposedKey, action plans.Action, priorState, plannedNewState cty.Value) (terracina.HookAction, error) {
 	hookMore(h.ctx, h.seq, h.hooks.ReportResourceInstanceStatus, &hooks.ResourceInstanceStatusHookData{
 		Addr:         h.resourceInstanceObjectAddr(id.Addr, dk),
 		ProviderAddr: id.ProviderAddr,
 		Status:       hooks.ResourceInstancePlanned,
 	})
-	return terraform.HookActionContinue, nil
+	return terracina.HookActionContinue, nil
 }
 
-func (h *componentInstanceTerraformHook) PreApply(id terraform.HookResourceIdentity, dk addrs.DeposedKey, action plans.Action, priorState, plannedNewState cty.Value) (terraform.HookAction, error) {
+func (h *componentInstanceTerracinaHook) PreApply(id terracina.HookResourceIdentity, dk addrs.DeposedKey, action plans.Action, priorState, plannedNewState cty.Value) (terracina.HookAction, error) {
 	if action != plans.NoOp {
 		hookMore(h.ctx, h.seq, h.hooks.ReportResourceInstanceStatus, &hooks.ResourceInstanceStatusHookData{
 			Addr:         h.resourceInstanceObjectAddr(id.Addr, dk),
@@ -106,10 +106,10 @@ func (h *componentInstanceTerraformHook) PreApply(id terraform.HookResourceIdent
 	h.resourceInstanceObjectApplyAction.Put(localObjAddr, action)
 	h.mu.Unlock()
 
-	return terraform.HookActionContinue, nil
+	return terracina.HookActionContinue, nil
 }
 
-func (h *componentInstanceTerraformHook) PostApply(id terraform.HookResourceIdentity, dk addrs.DeposedKey, newState cty.Value, err error) (terraform.HookAction, error) {
+func (h *componentInstanceTerracinaHook) PostApply(id terracina.HookResourceIdentity, dk addrs.DeposedKey, newState cty.Value, err error) (terracina.HookAction, error) {
 	objAddr := h.resourceInstanceObjectAddr(id.Addr, dk)
 	localObjAddr := id.Addr.DeposedObject(dk)
 
@@ -118,13 +118,13 @@ func (h *componentInstanceTerraformHook) PostApply(id terraform.HookResourceIden
 	h.mu.Unlock()
 	if !ok {
 		// Weird, but we'll just tolerate it to be robust.
-		return terraform.HookActionContinue, nil
+		return terracina.HookActionContinue, nil
 	}
 
 	if action == plans.NoOp {
 		// We don't emit starting hooks for no-op changes and so we shouldn't
 		// emit ending hooks for them either.
-		return terraform.HookActionContinue, nil
+		return terracina.HookActionContinue, nil
 	}
 
 	status := hooks.ResourceInstanceApplied
@@ -144,10 +144,10 @@ func (h *componentInstanceTerraformHook) PostApply(id terraform.HookResourceIden
 		ProviderAddr: id.ProviderAddr,
 		Status:       status,
 	})
-	return terraform.HookActionContinue, nil
+	return terracina.HookActionContinue, nil
 }
 
-func (h *componentInstanceTerraformHook) PreProvisionInstanceStep(id terraform.HookResourceIdentity, typeName string) (terraform.HookAction, error) {
+func (h *componentInstanceTerracinaHook) PreProvisionInstanceStep(id terracina.HookResourceIdentity, typeName string) (terracina.HookAction, error) {
 	// NOTE: We assume provisioner events are always about the "current"
 	// object for the given resource instance, because the hook API does
 	// not include a DeposedKey argument in this case.
@@ -156,10 +156,10 @@ func (h *componentInstanceTerraformHook) PreProvisionInstanceStep(id terraform.H
 		Name:   typeName,
 		Status: hooks.ProvisionerProvisioning,
 	})
-	return terraform.HookActionContinue, nil
+	return terracina.HookActionContinue, nil
 }
 
-func (h *componentInstanceTerraformHook) ProvisionOutput(id terraform.HookResourceIdentity, typeName string, msg string) {
+func (h *componentInstanceTerracinaHook) ProvisionOutput(id terracina.HookResourceIdentity, typeName string, msg string) {
 	// TODO: determine whether we should continue line splitting as we do with jsonHook
 
 	// NOTE: We assume provisioner events are always about the "current"
@@ -174,7 +174,7 @@ func (h *componentInstanceTerraformHook) ProvisionOutput(id terraform.HookResour
 	})
 }
 
-func (h *componentInstanceTerraformHook) PostProvisionInstanceStep(id terraform.HookResourceIdentity, typeName string, err error) (terraform.HookAction, error) {
+func (h *componentInstanceTerracinaHook) PostProvisionInstanceStep(id terracina.HookResourceIdentity, typeName string, err error) (terracina.HookAction, error) {
 	// NOTE: We assume provisioner events are always about the "current"
 	// object for the given resource instance, because the hook API does
 	// not include a DeposedKey argument in this case.
@@ -187,10 +187,10 @@ func (h *componentInstanceTerraformHook) PostProvisionInstanceStep(id terraform.
 		Name:   typeName,
 		Status: status,
 	})
-	return terraform.HookActionContinue, nil
+	return terracina.HookActionContinue, nil
 }
 
-func (h *componentInstanceTerraformHook) ResourceInstanceObjectAppliedAction(addr addrs.AbsResourceInstanceObject) plans.Action {
+func (h *componentInstanceTerracinaHook) ResourceInstanceObjectAppliedAction(addr addrs.AbsResourceInstanceObject) plans.Action {
 	h.mu.Lock()
 	ret, ok := h.resourceInstanceObjectApplyAction.GetOk(addr)
 	h.mu.Unlock()
@@ -200,6 +200,6 @@ func (h *componentInstanceTerraformHook) ResourceInstanceObjectAppliedAction(add
 	return ret
 }
 
-func (h *componentInstanceTerraformHook) ResourceInstanceObjectsSuccessfullyApplied() addrs.Set[addrs.AbsResourceInstanceObject] {
+func (h *componentInstanceTerracinaHook) ResourceInstanceObjectsSuccessfullyApplied() addrs.Set[addrs.AbsResourceInstanceObject] {
 	return h.resourceInstanceObjectApplySuccess
 }

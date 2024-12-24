@@ -18,27 +18,27 @@ var testManifest = `{
 		{
 			"arch": "amd64",
 			"os": "darwin",
-			"url": "/archives/terraform-cloudplugin_0.1.0_darwin_amd64.zip"
+			"url": "/archives/terracina-cloudplugin_0.1.0_darwin_amd64.zip"
 		}
 	],
 	"is_prerelease": true,
 	"license_class": "ent",
-	"name": "terraform-cloudplugin",
+	"name": "terracina-cloudplugin",
 	"status": {
 		"state": "supported",
 		"timestamp_updated": "2023-07-31T15:18:20.243Z"
 	},
 	"timestamp_created": "2023-07-31T15:18:20.243Z",
 	"timestamp_updated": "2023-07-31T15:18:20.243Z",
-	"url_changelog": "https://github.com/hashicorp/terraform-cloudplugin/blob/main/CHANGELOG.md",
-	"url_license": "https://github.com/hashicorp/terraform-cloudplugin/blob/main/LICENSE",
-	"url_project_website": "https://www.terraform.io/",
-	"url_shasums": "/archives/terraform-cloudplugin_0.1.0_SHA256SUMS",
+	"url_changelog": "https://github.com/hashicorp/terracina-cloudplugin/blob/main/CHANGELOG.md",
+	"url_license": "https://github.com/hashicorp/terracina-cloudplugin/blob/main/LICENSE",
+	"url_project_website": "https://www.terracina.io/",
+	"url_shasums": "/archives/terracina-cloudplugin_0.1.0_SHA256SUMS",
 	"url_shasums_signatures": [
-		"/archives/terraform-cloudplugin_0.1.0_SHA256SUMS.sig",
-		"/archives/terraform-cloudplugin_0.1.0_SHA256SUMS.72D7468F.sig"
+		"/archives/terracina-cloudplugin_0.1.0_SHA256SUMS.sig",
+		"/archives/terracina-cloudplugin_0.1.0_SHA256SUMS.72D7468F.sig"
 	],
-	"url_source_repository": "https://github.com/hashicorp/terraform-cloudplugin",
+	"url_source_repository": "https://github.com/hashicorp/terracina-cloudplugin",
 	"version": "0.1.0"
 }`
 

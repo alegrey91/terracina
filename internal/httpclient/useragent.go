@@ -10,13 +10,13 @@ import (
 	"os"
 	"strings"
 
-	"github.com/hashicorp/terraform/version"
+	"github.com/hashicorp/terracina/version"
 )
 
-const userAgentFormat = "Terraform/%s"
+const userAgentFormat = "Terracina/%s"
 const uaEnvVar = "TF_APPEND_USER_AGENT"
 
-// Deprecated: Use TerraformUserAgent(version) instead
+// Deprecated: Use TerracinaUserAgent(version) instead
 func UserAgentString() string {
 	ua := fmt.Sprintf(userAgentFormat, version.Version)
 
@@ -44,8 +44,8 @@ func (rt *userAgentRoundTripper) RoundTrip(req *http.Request) (*http.Response, e
 	return rt.inner.RoundTrip(req)
 }
 
-func TerraformUserAgent(version string) string {
-	ua := fmt.Sprintf("HashiCorp Terraform/%s (+https://www.terraform.io)", version)
+func TerracinaUserAgent(version string) string {
+	ua := fmt.Sprintf("HashiCorp Terracina/%s (+https://www.terracina.io)", version)
 
 	if add := os.Getenv(uaEnvVar); add != "" {
 		add = strings.TrimSpace(add)

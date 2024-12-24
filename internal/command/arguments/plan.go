@@ -4,7 +4,7 @@
 package arguments
 
 import (
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // Plan represents the command-line arguments for the plan command.
@@ -25,7 +25,7 @@ type Plan struct {
 	// OutPath contains an optional path to store the plan file
 	OutPath string
 
-	// GenerateConfigPath tells Terraform that config should be generated for
+	// GenerateConfigPath tells Terracina that config should be generated for
 	// unmatched import target paths and which path the generated file should
 	// be written to.
 	GenerateConfigPath string
@@ -66,7 +66,7 @@ func ParsePlan(args []string) (*Plan, tfdiags.Diagnostics) {
 		diags = diags.Append(tfdiags.Sourceless(
 			tfdiags.Warning,
 			"Deprecated flag: -state",
-			"Use `path` attribute within the `local` backend instead: https://developer.hashicorp.com/terraform/language/v1.10.x/settings/backends/local#path",
+			"Use `path` attribute within the `local` backend instead: https://developer.hashicorp.com/terracina/language/v1.10.x/settings/backends/local#path",
 		))
 	}
 

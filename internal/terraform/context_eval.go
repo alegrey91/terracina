@@ -1,17 +1,17 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"log"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/lang"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/lang"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 type EvalOpts struct {
@@ -41,7 +41,7 @@ type EvalOpts struct {
 // to attempt expression evaluation or other analysis, but some expressions
 // may not behave as expected.
 func (c *Context) Eval(config *configs.Config, state *states.State, moduleAddr addrs.ModuleInstance, opts *EvalOpts) (*lang.Scope, tfdiags.Diagnostics) {
-	// This is intended for external callers such as the "terraform console"
+	// This is intended for external callers such as the "terracina console"
 	// command. Internally, we create an evaluator in c.walk before walking
 	// the graph, and create scopes in ContextGraphWalker.
 

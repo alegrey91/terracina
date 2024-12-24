@@ -10,13 +10,13 @@ import (
 	"strings"
 
 	"github.com/hashicorp/cli"
-	"github.com/hashicorp/terraform/internal/command/arguments"
-	"github.com/hashicorp/terraform/internal/command/clistate"
-	"github.com/hashicorp/terraform/internal/command/views"
-	"github.com/hashicorp/terraform/internal/states/statefile"
-	"github.com/hashicorp/terraform/internal/states/statemgr"
-	"github.com/hashicorp/terraform/internal/terraform"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/command/arguments"
+	"github.com/hashicorp/terracina/internal/command/clistate"
+	"github.com/hashicorp/terracina/internal/command/views"
+	"github.com/hashicorp/terracina/internal/states/statefile"
+	"github.com/hashicorp/terracina/internal/states/statemgr"
+	"github.com/hashicorp/terracina/internal/terracina"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // StatePushCommand is a Command implementation that shows a single resource.
@@ -89,7 +89,7 @@ func (c *StatePushCommand) Run(args []string) int {
 		return 1
 	}
 
-	// Check remote Terraform version is compatible
+	// Check remote Terracina version is compatible
 	remoteVersionDiags := c.remoteVersionCheck(b, workspace)
 	c.showDiagnostics(remoteVersionDiags)
 	if remoteVersionDiags.HasErrors() {
@@ -133,7 +133,7 @@ func (c *StatePushCommand) Run(args []string) int {
 	}
 
 	// Get schemas, if possible, before writing state
-	var schemas *terraform.Schemas
+	var schemas *terracina.Schemas
 	var diags tfdiags.Diagnostics
 	if isCloudMode(b) {
 		schemas, diags = c.MaybeGetSchemas(srcStateFile.State, nil)
@@ -154,7 +154,7 @@ func (c *StatePushCommand) Run(args []string) int {
 
 func (c *StatePushCommand) Help() string {
 	helpText := `
-Usage: terraform [global options] state push [options] PATH
+Usage: terracina [global options] state push [options] PATH
 
   Update remote state from a local state file at PATH.
 

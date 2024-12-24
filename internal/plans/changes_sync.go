@@ -6,7 +6,7 @@ package plans
 import (
 	"sync"
 
-	"github.com/hashicorp/terraform/internal/addrs"
+	"github.com/hashicorp/terracina/internal/addrs"
 )
 
 // ChangesSync is a wrapper around a Changes that provides a concurrency-safe

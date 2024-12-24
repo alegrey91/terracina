@@ -8,16 +8,16 @@ import (
 	"sync"
 	"time"
 
-	"github.com/hashicorp/terraform/internal/schemarepo"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/states/statemgr"
-	"github.com/hashicorp/terraform/internal/terraform"
+	"github.com/hashicorp/terracina/internal/schemarepo"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/states/statemgr"
+	"github.com/hashicorp/terracina/internal/terracina"
 )
 
 // StateHook is a hook that continuously updates the state by calling
 // WriteState on a statemgr.Full.
 type StateHook struct {
-	terraform.NilHook
+	terracina.NilHook
 	sync.Mutex
 
 	StateMgr statemgr.Writer
@@ -37,9 +37,9 @@ type StateHook struct {
 	intermediatePersist statemgr.IntermediateStatePersistInfo
 }
 
-var _ terraform.Hook = (*StateHook)(nil)
+var _ terracina.Hook = (*StateHook)(nil)
 
-func (h *StateHook) PostStateUpdate(new *states.State) (terraform.HookAction, error) {
+func (h *StateHook) PostStateUpdate(new *states.State) (terracina.HookAction, error) {
 	h.Lock()
 	defer h.Unlock()
 
@@ -53,13 +53,13 @@ func (h *StateHook) PostStateUpdate(new *states.State) (terraform.HookAction, er
 
 	if h.StateMgr != nil {
 		if err := h.StateMgr.WriteState(new); err != nil {
-			return terraform.HookActionHalt, err
+			return terracina.HookActionHalt, err
 		}
 		if mgrPersist, ok := h.StateMgr.(statemgr.Persister); ok && h.PersistInterval != 0 && h.Schemas != nil {
 			if h.shouldPersist() {
 				err := mgrPersist.PersistState(h.Schemas)
 				if err != nil {
-					return terraform.HookActionHalt, err
+					return terracina.HookActionHalt, err
 				}
 				h.intermediatePersist.LastPersist = time.Now()
 			} else {
@@ -68,24 +68,24 @@ func (h *StateHook) PostStateUpdate(new *states.State) (terraform.HookAction, er
 		}
 	}
 
-	return terraform.HookActionContinue, nil
+	return terracina.HookActionContinue, nil
 }
 
 func (h *StateHook) Stopping() {
 	h.Lock()
 	defer h.Unlock()
 
-	// If Terraform has been asked to stop then that might mean that a hard
-	// kill signal will follow shortly in case Terraform doesn't stop
+	// If Terracina has been asked to stop then that might mean that a hard
+	// kill signal will follow shortly in case Terracina doesn't stop
 	// quickly enough, and so we'll try to persist the latest state
 	// snapshot in the hope that it'll give the user less recovery work to
-	// do if they _do_ subsequently hard-kill Terraform during an apply.
+	// do if they _do_ subsequently hard-kill Terracina during an apply.
 
 	if mgrPersist, ok := h.StateMgr.(statemgr.Persister); ok && h.Schemas != nil {
 		// While we're in the stopping phase we'll try to persist every
 		// new state update to maximize every opportunity we get to avoid
 		// losing track of objects that have been created or updated.
-		// Terraform Core won't start any new operations after it's been
+		// Terracina Core won't start any new operations after it's been
 		// stopped, so at most we should see one more PostStateUpdate
 		// call per already-active request.
 		h.intermediatePersist.ForcePersist = true
@@ -93,7 +93,7 @@ func (h *StateHook) Stopping() {
 		if h.shouldPersist() {
 			err := mgrPersist.PersistState(h.Schemas)
 			if err != nil {
-				// This hook can't affect Terraform Core's ongoing behavior,
+				// This hook can't affect Terracina Core's ongoing behavior,
 				// but it's a best effort thing anyway so we'll just emit a
 				// log to aid with debugging.
 				log.Printf("[ERROR] Failed to persist state after interruption: %s", err)

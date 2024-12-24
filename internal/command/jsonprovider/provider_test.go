@@ -12,8 +12,8 @@ import (
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/providers"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/providers"
 )
 
 var cmpOpts = cmpopts.IgnoreUnexported(Provider{})

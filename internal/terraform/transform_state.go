@@ -1,12 +1,12 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"log"
 
-	"github.com/hashicorp/terraform/internal/states"
+	"github.com/hashicorp/terracina/internal/states"
 )
 
 // StateTransformer is a GraphTransformer that adds the elements of

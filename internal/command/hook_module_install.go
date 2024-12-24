@@ -8,7 +8,7 @@ import (
 
 	"github.com/hashicorp/cli"
 	version "github.com/hashicorp/go-version"
-	"github.com/hashicorp/terraform/internal/initwd"
+	"github.com/hashicorp/terracina/internal/initwd"
 )
 
 type view interface {

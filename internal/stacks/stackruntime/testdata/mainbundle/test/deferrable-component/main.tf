@@ -1,5 +1,5 @@
 
-terraform {
+terracina {
   required_providers {
     testing = {
       source  = "hashicorp/testing"

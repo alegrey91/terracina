@@ -1,6 +1,6 @@
 required_providers {
   testing = {
-    source  = "terraform.io/builtin/testing"
+    source  = "terracina.io/builtin/testing"
   }
   external = {
     source  = "hashicorp/testing"

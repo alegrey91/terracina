@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"fmt"
@@ -9,11 +9,11 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/instances"
-	"github.com/hashicorp/terraform/internal/lang/langrefs"
-	"github.com/hashicorp/terraform/internal/lang/marks"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/instances"
+	"github.com/hashicorp/terracina/internal/lang/langrefs"
+	"github.com/hashicorp/terracina/internal/lang/marks"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // evaluateForEachExpression differs from evaluateForEachExpressionValue by
@@ -101,7 +101,7 @@ func (ev *forEachEvaluator) ResourceValue() (map[string]cty.Value, bool, tfdiags
 		// likely that we've added a new kind of mark that validateResource
 		// doesn't know about yet, and so we'll need to decide how for_each
 		// should react to that new mark.
-		diags = diags.Append(fmt.Errorf("for_each value is marked with %#v despite earlier validation; this is a bug in Terraform", marks))
+		diags = diags.Append(fmt.Errorf("for_each value is marked with %#v despite earlier validation; this is a bug in Terracina", marks))
 		return res, false, diags
 	}
 	res = forEachVal.AsValueMap()
@@ -204,7 +204,7 @@ func (ev *forEachEvaluator) ensureKnownForImport(forEachVal cty.Value) tfdiags.D
 		diags = diags.Append(&hcl.Diagnostic{
 			Severity:    hcl.DiagError,
 			Summary:     "Invalid for_each argument",
-			Detail:      "The \"for_each\" expression includes values derived from other resource attributes that cannot be determined until apply, and so Terraform cannot determine the full set of values that might be used to import this resource.",
+			Detail:      "The \"for_each\" expression includes values derived from other resource attributes that cannot be determined until apply, and so Terracina cannot determine the full set of values that might be used to import this resource.",
 			Subject:     ev.expr.Range().Ptr(),
 			Expression:  ev.expr,
 			EvalContext: ev.hclCtx,
@@ -219,8 +219,8 @@ func (ev *forEachEvaluator) ensureKnownForImport(forEachVal cty.Value) tfdiags.D
 func (ev *forEachEvaluator) ensureKnownForResource(forEachVal cty.Value) tfdiags.Diagnostics {
 	var diags tfdiags.Diagnostics
 	ty := forEachVal.Type()
-	const errInvalidUnknownDetailMap = "The \"for_each\" map includes keys derived from resource attributes that cannot be determined until apply, and so Terraform cannot determine the full set of keys that will identify the instances of this resource.\n\nWhen working with unknown values in for_each, it's better to define the map keys statically in your configuration and place apply-time results only in the map values.\n\nAlternatively, you could use the -target planning option to first apply only the resources that the for_each value depends on, and then apply a second time to fully converge."
-	const errInvalidUnknownDetailSet = "The \"for_each\" set includes values derived from resource attributes that cannot be determined until apply, and so Terraform cannot determine the full set of keys that will identify the instances of this resource.\n\nWhen working with unknown values in for_each, it's better to use a map value where the keys are defined statically in your configuration and where only the values contain apply-time results.\n\nAlternatively, you could use the -target planning option to first apply only the resources that the for_each value depends on, and then apply a second time to fully converge."
+	const errInvalidUnknownDetailMap = "The \"for_each\" map includes keys derived from resource attributes that cannot be determined until apply, and so Terracina cannot determine the full set of keys that will identify the instances of this resource.\n\nWhen working with unknown values in for_each, it's better to define the map keys statically in your configuration and place apply-time results only in the map values.\n\nAlternatively, you could use the -target planning option to first apply only the resources that the for_each value depends on, and then apply a second time to fully converge."
+	const errInvalidUnknownDetailSet = "The \"for_each\" set includes values derived from resource attributes that cannot be determined until apply, and so Terracina cannot determine the full set of keys that will identify the instances of this resource.\n\nWhen working with unknown values in for_each, it's better to use a map value where the keys are defined statically in your configuration and where only the values contain apply-time results.\n\nAlternatively, you could use the -target planning option to first apply only the resources that the for_each value depends on, and then apply a second time to fully converge."
 
 	if !forEachVal.IsKnown() {
 		var detailMsg string
@@ -267,7 +267,7 @@ func (ev *forEachEvaluator) ensureNotEphemeral(forEachVal cty.Value) tfdiags.Dia
 		diags = diags.Append(&hcl.Diagnostic{
 			Severity:    hcl.DiagError,
 			Summary:     "Invalid for_each argument",
-			Detail:      `The given "for_each" value is derived from an ephemeral value, which means that Terraform cannot persist it between plan/apply rounds. Use only non-ephemeral values to specify a resource's instance keys.`,
+			Detail:      `The given "for_each" value is derived from an ephemeral value, which means that Terracina cannot persist it between plan/apply rounds. Use only non-ephemeral values to specify a resource's instance keys.`,
 			Subject:     ev.expr.Range().Ptr(),
 			Expression:  ev.expr,
 			EvalContext: ev.hclCtx,

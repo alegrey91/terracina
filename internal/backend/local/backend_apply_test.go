@@ -14,20 +14,20 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/backend/backendrun"
-	"github.com/hashicorp/terraform/internal/command/arguments"
-	"github.com/hashicorp/terraform/internal/command/clistate"
-	"github.com/hashicorp/terraform/internal/command/views"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/depsfile"
-	"github.com/hashicorp/terraform/internal/initwd"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/states/statemgr"
-	"github.com/hashicorp/terraform/internal/terminal"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/backend/backendrun"
+	"github.com/hashicorp/terracina/internal/command/arguments"
+	"github.com/hashicorp/terracina/internal/command/clistate"
+	"github.com/hashicorp/terracina/internal/command/views"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/depsfile"
+	"github.com/hashicorp/terracina/internal/initwd"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/states/statemgr"
+	"github.com/hashicorp/terracina/internal/terminal"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 func TestLocal_applyBasic(t *testing.T) {
@@ -66,7 +66,7 @@ func TestLocal_applyBasic(t *testing.T) {
 	checkState(t, b.StateOutPath, `
 test_instance.foo:
   ID = yes
-  provider = provider["registry.terraform.io/hashicorp/test"]
+  provider = provider["registry.terracina.io/hashicorp/test"]
   ami = bar
 `)
 
@@ -241,7 +241,7 @@ func TestLocal_applyError(t *testing.T) {
 	checkState(t, b.StateOutPath, `
 test_instance.foo:
   ID = foo
-  provider = provider["registry.terraform.io/hashicorp/test"]
+  provider = provider["registry.terracina.io/hashicorp/test"]
   ami = bar
 	`)
 
@@ -308,7 +308,7 @@ func TestLocal_applyBackendFail(t *testing.T) {
 	checkState(t, "errored.tfstate", `
 test_instance.foo: (tainted)
   ID = yes
-  provider = provider["registry.terraform.io/hashicorp/test"]
+  provider = provider["registry.terracina.io/hashicorp/test"]
   ami = bar
 	`)
 
@@ -372,7 +372,7 @@ func testOperationApply(t *testing.T, configDir string) (*backendrun.Operation, 
 	// Many of our tests use an overridden "test" provider that's just in-memory
 	// inside the test process, not a separate plugin on disk.
 	depLocks := depsfile.NewLocks()
-	depLocks.SetProviderOverridden(addrs.MustParseProviderSourceString("registry.terraform.io/hashicorp/test"))
+	depLocks.SetProviderOverridden(addrs.MustParseProviderSourceString("registry.terracina.io/hashicorp/test"))
 
 	return &backendrun.Operation{
 		Type:            backendrun.OperationTypeApply,

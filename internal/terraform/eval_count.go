@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"fmt"
@@ -10,8 +10,8 @@ import (
 	"github.com/zclconf/go-cty/cty/gocty"
 
 	"github.com/hashicorp/hcl/v2"
-	"github.com/hashicorp/terraform/internal/lang/marks"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/lang/marks"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // evaluateCountExpression is our standard mechanism for interpreting an
@@ -40,7 +40,7 @@ func evaluateCountExpression(expr hcl.Expression, ctx EvalContext, allowUnknown 
 		diags = diags.Append(&hcl.Diagnostic{
 			Severity: hcl.DiagError,
 			Summary:  "Invalid count argument",
-			Detail:   `The "count" value depends on resource attributes that cannot be determined until apply, so Terraform cannot predict how many instances will be created. To work around this, use the -target argument to first apply only the resources that the count depends on.`,
+			Detail:   `The "count" value depends on resource attributes that cannot be determined until apply, so Terracina cannot predict how many instances will be created. To work around this, use the -target argument to first apply only the resources that the count depends on.`,
 			Subject:  expr.Range().Ptr(),
 
 			// TODO: Also populate Expression and EvalContext in here, but
@@ -56,7 +56,7 @@ func evaluateCountExpression(expr hcl.Expression, ctx EvalContext, allowUnknown 
 		diags = diags.Append(&hcl.Diagnostic{
 			Severity: hcl.DiagError,
 			Summary:  "Invalid count argument",
-			Detail:   `The given "count" value is derived from an ephemeral value, which means that Terraform cannot persist it between plan/apply rounds. Use only non-ephemeral values here.`,
+			Detail:   `The given "count" value is derived from an ephemeral value, which means that Terracina cannot persist it between plan/apply rounds. Use only non-ephemeral values here.`,
 			Subject:  expr.Range().Ptr(),
 			Extra:    DiagnosticCausedByEphemeral(true),
 		})
@@ -91,7 +91,7 @@ func evaluateCountExpressionValue(expr hcl.Expression, ctx EvalContext) (cty.Val
 		diags = diags.Append(&hcl.Diagnostic{
 			Severity: hcl.DiagError,
 			Summary:  "Invalid count argument",
-			Detail:   `The given "count" is derived from an ephemeral value, which means that Terraform cannot persist it between plan/apply rounds. Use only non-ephemeral values to specify the number of resource instances.`,
+			Detail:   `The given "count" is derived from an ephemeral value, which means that Terracina cannot persist it between plan/apply rounds. Use only non-ephemeral values to specify the number of resource instances.`,
 			Subject:  expr.Range().Ptr(),
 
 			// TODO: Also populate Expression and EvalContext in here, but

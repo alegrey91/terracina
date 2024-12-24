@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/configs/configtesting"
+	"github.com/hashicorp/terracina/internal/configs/configtesting"
 )
 
 // exprIsNativeQuotedString determines whether the given expression looks like

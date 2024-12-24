@@ -13,14 +13,14 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/backend/backendrun"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/configs/configload"
-	"github.com/hashicorp/terraform/internal/lang"
-	"github.com/hashicorp/terraform/internal/plans/planfile"
-	"github.com/hashicorp/terraform/internal/states/statemgr"
-	"github.com/hashicorp/terraform/internal/terraform"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/backend/backendrun"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/configs/configload"
+	"github.com/hashicorp/terracina/internal/lang"
+	"github.com/hashicorp/terracina/internal/plans/planfile"
+	"github.com/hashicorp/terracina/internal/states/statemgr"
+	"github.com/hashicorp/terracina/internal/terracina"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // backendrun.Local implementation.
@@ -71,7 +71,7 @@ func (b *Local) localRun(op *backendrun.Operation) (*backendrun.LocalRun, *confi
 	ret := &backendrun.LocalRun{}
 
 	// Initialize our context options
-	var coreOpts terraform.ContextOpts
+	var coreOpts terracina.ContextOpts
 	if v := b.ContextOpts; v != nil {
 		coreOpts = *v
 	}
@@ -81,7 +81,7 @@ func (b *Local) localRun(op *backendrun.Operation) (*backendrun.LocalRun, *confi
 	var ctxDiags tfdiags.Diagnostics
 	var configSnap *configload.Snapshot
 	if op.PlanFile.IsCloud() {
-		diags = diags.Append(fmt.Errorf("error: using a saved cloud plan when executing Terraform locally is not supported"))
+		diags = diags.Append(fmt.Errorf("error: using a saved cloud plan when executing Terracina locally is not supported"))
 		return nil, nil, nil, diags
 	}
 
@@ -118,7 +118,7 @@ func (b *Local) localRun(op *backendrun.Operation) (*backendrun.LocalRun, *confi
 	if op.Type != backendrun.OperationTypeInvalid {
 		// If input asking is enabled, then do that
 		if op.PlanFile == nil && b.OpInput {
-			mode := terraform.InputModeProvider
+			mode := terracina.InputModeProvider
 
 			log.Printf("[TRACE] backend/local: requesting interactive input, if necessary")
 			inputDiags := ret.Core.Input(ret.Config, mode)
@@ -139,7 +139,7 @@ func (b *Local) localRun(op *backendrun.Operation) (*backendrun.LocalRun, *confi
 	return ret, configSnap, s, diags
 }
 
-func (b *Local) localRunDirect(op *backendrun.Operation, run *backendrun.LocalRun, coreOpts *terraform.ContextOpts, s statemgr.Full) (*backendrun.LocalRun, *configload.Snapshot, tfdiags.Diagnostics) {
+func (b *Local) localRunDirect(op *backendrun.Operation, run *backendrun.LocalRun, coreOpts *terracina.ContextOpts, s statemgr.Full) (*backendrun.LocalRun, *configload.Snapshot, tfdiags.Diagnostics) {
 	var diags tfdiags.Diagnostics
 
 	// Load the configuration using the caller-provided configuration loader.
@@ -160,11 +160,11 @@ func (b *Local) localRunDirect(op *backendrun.Operation, run *backendrun.LocalRu
 		case op.DependencyLocks == nil:
 			// If we get here then it suggests that there's a caller that we
 			// didn't yet update to populate DependencyLocks, which is a bug.
-			suggestion = "This run has no dependency lock information provided at all, which is a bug in Terraform; please report it!"
+			suggestion = "This run has no dependency lock information provided at all, which is a bug in Terracina; please report it!"
 		case op.DependencyLocks.Empty():
-			suggestion = "To make the initial dependency selections that will initialize the dependency lock file, run:\n  terraform init"
+			suggestion = "To make the initial dependency selections that will initialize the dependency lock file, run:\n  terracina init"
 		default:
-			suggestion = "To update the locked dependency selections to match a changed configuration, run:\n  terraform init -upgrade"
+			suggestion = "To update the locked dependency selections to match a changed configuration, run:\n  terracina init -upgrade"
 		}
 		diags = diags.Append(tfdiags.Sourceless(
 			tfdiags.Error,
@@ -197,7 +197,7 @@ func (b *Local) localRunDirect(op *backendrun.Operation, run *backendrun.LocalRu
 		return nil, nil, diags
 	}
 
-	planOpts := &terraform.PlanOpts{
+	planOpts := &terracina.PlanOpts{
 		Mode:               op.PlanMode,
 		Targets:            op.Targets,
 		ForceReplace:       op.ForceReplace,
@@ -212,7 +212,7 @@ func (b *Local) localRunDirect(op *backendrun.Operation, run *backendrun.LocalRu
 	// snapshot, from the previous run.
 	run.InputState = s.State()
 
-	tfCtx, moreDiags := terraform.NewContext(coreOpts)
+	tfCtx, moreDiags := terracina.NewContext(coreOpts)
 	diags = diags.Append(moreDiags)
 	if moreDiags.HasErrors() {
 		return nil, nil, diags
@@ -221,7 +221,7 @@ func (b *Local) localRunDirect(op *backendrun.Operation, run *backendrun.LocalRu
 	return run, configSnap, diags
 }
 
-func (b *Local) localRunForPlanFile(op *backendrun.Operation, pf *planfile.Reader, run *backendrun.LocalRun, coreOpts *terraform.ContextOpts, currentStateMeta *statemgr.SnapshotMeta) (*backendrun.LocalRun, *configload.Snapshot, tfdiags.Diagnostics) {
+func (b *Local) localRunForPlanFile(op *backendrun.Operation, pf *planfile.Reader, run *backendrun.LocalRun, coreOpts *terracina.ContextOpts, currentStateMeta *statemgr.SnapshotMeta) (*backendrun.LocalRun, *configload.Snapshot, tfdiags.Diagnostics) {
 	var diags tfdiags.Diagnostics
 
 	const errSummary = "Invalid plan file"
@@ -347,7 +347,7 @@ func (b *Local) localRunForPlanFile(op *backendrun.Operation, pf *planfile.Reade
 	// we need to apply the plan.
 	run.Plan = plan
 
-	tfCtx, moreDiags := terraform.NewContext(coreOpts)
+	tfCtx, moreDiags := terracina.NewContext(coreOpts)
 	diags = diags.Append(moreDiags)
 	if moreDiags.HasErrors() {
 		return nil, nil, diags
@@ -371,12 +371,12 @@ func (b *Local) localRunForPlanFile(op *backendrun.Operation, pf *planfile.Reade
 // additional elements as appropriate.
 //
 // Interactive prompting is a "best effort" thing for first-time user UX and
-// not something we expect folks to be relying on for routine use. Terraform
+// not something we expect folks to be relying on for routine use. Terracina
 // is primarily a non-interactive tool and so we prefer to report in error
 // messages that variables are not set rather than reporting that input failed:
 // the primary resolution to missing variables is to provide them by some other
 // means.
-func (b *Local) interactiveCollectVariables(ctx context.Context, existing map[string]backendrun.UnparsedVariableValue, vcs map[string]*configs.Variable, uiInput terraform.UIInput) map[string]backendrun.UnparsedVariableValue {
+func (b *Local) interactiveCollectVariables(ctx context.Context, existing map[string]backendrun.UnparsedVariableValue, vcs map[string]*configs.Variable, uiInput terracina.UIInput) map[string]backendrun.UnparsedVariableValue {
 	var needed []string
 	if b.OpInput && uiInput != nil {
 		for name, vc := range vcs {
@@ -409,7 +409,7 @@ func (b *Local) interactiveCollectVariables(ctx context.Context, existing map[st
 		if vc.Ephemeral {
 			query += " (ephemeral)"
 		}
-		rawValue, err := uiInput.Input(ctx, &terraform.InputOpts{
+		rawValue, err := uiInput.Input(ctx, &terracina.InputOpts{
 			Id:          fmt.Sprintf("var.%s", name),
 			Query:       query,
 			Description: vc.Description,
@@ -444,8 +444,8 @@ func (b *Local) interactiveCollectVariables(ctx context.Context, existing map[st
 //
 // This function should be used only in situations where variables values
 // will not be directly used and the variables map is being constructed only
-// to produce a complete Terraform context for some ancillary functionality
-// like "terraform console", "terraform state ...", etc.
+// to produce a complete Terracina context for some ancillary functionality
+// like "terracina console", "terracina state ...", etc.
 //
 // This function is guaranteed not to modify the given map, but it may return
 // the given map unchanged if no additions are required. If additions are
@@ -487,16 +487,16 @@ type unparsedInteractiveVariableValue struct {
 
 var _ backendrun.UnparsedVariableValue = unparsedInteractiveVariableValue{}
 
-func (v unparsedInteractiveVariableValue) ParseVariableValue(mode configs.VariableParsingMode) (*terraform.InputValue, tfdiags.Diagnostics) {
+func (v unparsedInteractiveVariableValue) ParseVariableValue(mode configs.VariableParsingMode) (*terracina.InputValue, tfdiags.Diagnostics) {
 	var diags tfdiags.Diagnostics
 	val, valDiags := mode.Parse(v.Name, v.RawValue)
 	diags = diags.Append(valDiags)
 	if diags.HasErrors() {
 		return nil, diags
 	}
-	return &terraform.InputValue{
+	return &terracina.InputValue{
 		Value:      val,
-		SourceType: terraform.ValueFromInput,
+		SourceType: terracina.ValueFromInput,
 	}, diags
 }
 
@@ -507,10 +507,10 @@ type unparsedUnknownVariableValue struct {
 
 var _ backendrun.UnparsedVariableValue = unparsedUnknownVariableValue{}
 
-func (v unparsedUnknownVariableValue) ParseVariableValue(mode configs.VariableParsingMode) (*terraform.InputValue, tfdiags.Diagnostics) {
-	return &terraform.InputValue{
+func (v unparsedUnknownVariableValue) ParseVariableValue(mode configs.VariableParsingMode) (*terracina.InputValue, tfdiags.Diagnostics) {
+	return &terracina.InputValue{
 		Value:      cty.UnknownVal(v.WantType),
-		SourceType: terraform.ValueFromInput,
+		SourceType: terracina.ValueFromInput,
 	}, nil
 }
 
@@ -520,7 +520,7 @@ type unparsedTestVariableValue struct {
 
 var _ backendrun.UnparsedVariableValue = unparsedTestVariableValue{}
 
-func (v unparsedTestVariableValue) ParseVariableValue(mode configs.VariableParsingMode) (*terraform.InputValue, tfdiags.Diagnostics) {
+func (v unparsedTestVariableValue) ParseVariableValue(mode configs.VariableParsingMode) (*terracina.InputValue, tfdiags.Diagnostics) {
 	var diags tfdiags.Diagnostics
 
 	value, valueDiags := v.Expr.Value(&hcl.EvalContext{
@@ -531,9 +531,9 @@ func (v unparsedTestVariableValue) ParseVariableValue(mode configs.VariableParsi
 		return nil, diags
 	}
 
-	return &terraform.InputValue{
+	return &terracina.InputValue{
 		Value:       value,
-		SourceType:  terraform.ValueFromConfig,
+		SourceType:  terracina.ValueFromConfig,
 		SourceRange: tfdiags.SourceRangeFromHCL(v.Expr.Range()),
 	}, diags
 }

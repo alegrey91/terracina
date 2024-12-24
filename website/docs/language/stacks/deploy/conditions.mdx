@@ -11,7 +11,7 @@ Orchestration rules allow you to automate aspects of your Stack deployments, suc
 
 Add `orchestrate` blocks to define rules for handling deployment plans in your deployment configuration file (`tfdeploy.hcl`).
 
-The `orchestrate` block uses a `check` block to determine if a condition has passed or not, and every condition must pass for the `orchestrate` rule to take effect. For details on the syntax of an `orchestrate` block, refer to the [Deployment configuration file reference](/terraform/language/stacks/reference/tfdeploy).
+The `orchestrate` block uses a `check` block to determine if a condition has passed or not, and every condition must pass for the `orchestrate` rule to take effect. For details on the syntax of an `orchestrate` block, refer to the [Deployment configuration file reference](/terracina/language/stacks/reference/tfdeploy).
 
 ### Orchestrate rule types
 
@@ -61,7 +61,7 @@ orchestrate "replan" "replan_prod_for_errors" {
 }
 ```
 
-The above `orchestrate` block triggers a replan if the production development of a Stack errors out and if HCP Terraform hasn't already attempted to replan.
+The above `orchestrate` block triggers a replan if the production development of a Stack errors out and if HCP Terracina hasn't already attempted to replan.
 
 ### Leverage orchestration context
 
@@ -100,8 +100,8 @@ orchestrate "auto_approve" "safe_plans" {
 }
 ```
 
-For more information on the information available in the context variable, refer to the [Deployment configuration file reference](/terraform/language/stacks/reference/tfdeploy).
+For more information on the information available in the context variable, refer to the [Deployment configuration file reference](/terracina/language/stacks/reference/tfdeploy).
  
 ## Next steps
 
-With your Stack and deployment configurations complete, your Stack is ready to be deployed by HCP Terraform. To learn more about creating a Stack in HCP Terraform, refer to [Create a Stack](/terraform/cloud-docs/stacks/create).
+With your Stack and deployment configurations complete, your Stack is ready to be deployed by HCP Terracina. To learn more about creating a Stack in HCP Terracina, refer to [Create a Stack](/terracina/cloud-docs/stacks/create).

@@ -5,7 +5,7 @@
 // requirements.
 //
 // This is separated from the parent directory package getproviders because
-// lots of Terraform packages need to talk about provider requirements but
+// lots of Terracina packages need to talk about provider requirements but
 // very few actually need to perform provider plugin installation, and so
 // this separate package avoids the need for every package that talks about
 // provider requirements to also indirectly depend on all of the external
@@ -20,7 +20,7 @@ import (
 	"github.com/apparentlymart/go-versions/versions"
 	"github.com/apparentlymart/go-versions/versions/constraints"
 
-	"github.com/hashicorp/terraform/internal/addrs"
+	"github.com/hashicorp/terracina/internal/addrs"
 )
 
 // Version represents a particular single version of a provider.
@@ -124,7 +124,7 @@ func MeetingConstraints(vc VersionConstraints) VersionSet {
 func VersionConstraintsString(spec VersionConstraints) string {
 	// (we have our own function for this because the upstream versions
 	// library prefers to use npm/cargo-style constraint syntax, but
-	// Terraform prefers Ruby-like. Maybe we can upstream a "RubyLikeString")
+	// Terracina prefers Ruby-like. Maybe we can upstream a "RubyLikeString")
 	// function to do this later, but having this in here avoids blocking on
 	// that and this is the sort of thing that is unlikely to need ongoing
 	// maintenance because the version constraint syntax is unlikely to change.)

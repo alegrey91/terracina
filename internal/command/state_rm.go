@@ -8,12 +8,12 @@ import (
 	"strings"
 
 	"github.com/hashicorp/cli"
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/command/arguments"
-	"github.com/hashicorp/terraform/internal/command/clistate"
-	"github.com/hashicorp/terraform/internal/command/views"
-	"github.com/hashicorp/terraform/internal/terraform"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/command/arguments"
+	"github.com/hashicorp/terracina/internal/command/clistate"
+	"github.com/hashicorp/terracina/internal/command/views"
+	"github.com/hashicorp/terracina/internal/terracina"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // StateRmCommand is a Command implementation that shows a single resource.
@@ -122,7 +122,7 @@ func (c *StateRmCommand) Run(args []string) int {
 	}
 
 	// Get schemas, if possible, before writing state
-	var schemas *terraform.Schemas
+	var schemas *terracina.Schemas
 	if isCloudMode(b) {
 		var schemaDiags tfdiags.Diagnostics
 		schemas, schemaDiags = c.MaybeGetSchemas(state, nil)
@@ -146,7 +146,7 @@ func (c *StateRmCommand) Run(args []string) int {
 		diags = diags.Append(tfdiags.Sourceless(
 			tfdiags.Error,
 			"Invalid target address",
-			"No matching objects found. To view the available instances, use \"terraform state list\". Please modify the address to reference a specific instance.",
+			"No matching objects found. To view the available instances, use \"terracina state list\". Please modify the address to reference a specific instance.",
 		))
 		c.showDiagnostics(diags)
 		return 1
@@ -158,14 +158,14 @@ func (c *StateRmCommand) Run(args []string) int {
 
 func (c *StateRmCommand) Help() string {
 	helpText := `
-Usage: terraform [global options] state rm [options] ADDRESS...
+Usage: terracina [global options] state rm [options] ADDRESS...
 
-  Remove one or more items from the Terraform state, causing Terraform to
+  Remove one or more items from the Terracina state, causing Terracina to
   "forget" those items without first destroying them in the remote system.
 
-  This command removes one or more resource instances from the Terraform state
+  This command removes one or more resource instances from the Terracina state
   based on the addresses given. You can view and list the available instances
-  with "terraform state list".
+  with "terracina state list".
 
   If you give the address of an entire module then all of the instances in
   that module and any of its child modules will be removed from the state.
@@ -178,7 +178,7 @@ Options:
   -dry-run                If set, prints out what would've been removed but
                           doesn't actually remove anything.
 
-  -backup=PATH            Path where Terraform should write the backup
+  -backup=PATH            Path where Terracina should write the backup
                           state.
 
   -lock=false             Don't hold a state lock during the operation. This is
@@ -190,7 +190,7 @@ Options:
   -state=PATH             Path to the state file to update. Defaults to the
                           current workspace state.
 
-  -ignore-remote-version  Continue even if remote and local Terraform versions
+  -ignore-remote-version  Continue even if remote and local Terracina versions
                           are incompatible. This may result in an unusable
                           workspace, and should be used with extreme caution.
 

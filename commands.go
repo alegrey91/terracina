@@ -10,27 +10,27 @@ import (
 
 	"github.com/hashicorp/cli"
 	"github.com/hashicorp/go-plugin"
-	svchost "github.com/hashicorp/terraform-svchost"
-	"github.com/hashicorp/terraform-svchost/auth"
-	"github.com/hashicorp/terraform-svchost/disco"
+	svchost "github.com/hashicorp/terracina-svchost"
+	"github.com/hashicorp/terracina-svchost/auth"
+	"github.com/hashicorp/terracina-svchost/disco"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/command"
-	"github.com/hashicorp/terraform/internal/command/cliconfig"
-	"github.com/hashicorp/terraform/internal/command/views"
-	"github.com/hashicorp/terraform/internal/command/webbrowser"
-	"github.com/hashicorp/terraform/internal/getproviders"
-	pluginDiscovery "github.com/hashicorp/terraform/internal/plugin/discovery"
-	"github.com/hashicorp/terraform/internal/rpcapi"
-	"github.com/hashicorp/terraform/internal/terminal"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/command"
+	"github.com/hashicorp/terracina/internal/command/cliconfig"
+	"github.com/hashicorp/terracina/internal/command/views"
+	"github.com/hashicorp/terracina/internal/command/webbrowser"
+	"github.com/hashicorp/terracina/internal/getproviders"
+	pluginDiscovery "github.com/hashicorp/terracina/internal/plugin/discovery"
+	"github.com/hashicorp/terracina/internal/rpcapi"
+	"github.com/hashicorp/terracina/internal/terminal"
 )
 
 // runningInAutomationEnvName gives the name of an environment variable that
 // can be set to any non-empty value in order to suppress certain messages
-// that assume that Terraform is being run from a command prompt.
+// that assume that Terracina is being run from a command prompt.
 const runningInAutomationEnvName = "TF_IN_AUTOMATION"
 
-// Commands is the mapping of all the available Terraform commands.
+// Commands is the mapping of all the available Terracina commands.
 var Commands map[string]cli.CommandFactory
 
 // PrimaryCommands is an ordered sequence of the top-level commands (not
@@ -113,7 +113,7 @@ func initCommands(
 		AllowExperimentalFeatures: ExperimentsAllowed(),
 	}
 
-	// The command list is included in the terraform -help
+	// The command list is included in the terracina -help
 	// output, which is in turn included in the docs at
 	// website/docs/cli/commands/index.html.markdown; if you
 	// add, remove or reclassify commands then consider updating
@@ -430,7 +430,7 @@ func initCommands(
 
 		// "rpcapi" is handled a bit differently because the whole point of
 		// this interface is to bypass the CLI layer so wrapping automation can
-		// get as-direct-as-possible access to Terraform Core functionality,
+		// get as-direct-as-possible access to Terracina Core functionality,
 		// without interference from behaviors that are intended for CLI
 		// end-user convenience. We bypass the "command" package entirely
 		// for this command in particular.

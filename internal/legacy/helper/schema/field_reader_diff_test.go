@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/hashicorp/terraform/internal/legacy/terraform"
+	"github.com/hashicorp/terracina/internal/legacy/terracina"
 )
 
 func TestDiffFieldReader_impl(t *testing.T) {
@@ -61,14 +61,14 @@ func TestDiffFieldReader_NestedSetUpdate(t *testing.T) {
 
 	r := &DiffFieldReader{
 		Schema: schema,
-		Diff: &terraform.InstanceDiff{
-			Attributes: map[string]*terraform.ResourceAttrDiff{
-				"list_of_sets_1.0.nested_set.1.val": &terraform.ResourceAttrDiff{
+		Diff: &terracina.InstanceDiff{
+			Attributes: map[string]*terracina.ResourceAttrDiff{
+				"list_of_sets_1.0.nested_set.1.val": &terracina.ResourceAttrDiff{
 					Old:        "1",
 					New:        "0",
 					NewRemoved: true,
 				},
-				"list_of_sets_1.0.nested_set.2.val": &terraform.ResourceAttrDiff{
+				"list_of_sets_1.0.nested_set.2.val": &terracina.ResourceAttrDiff{
 					New: "2",
 				},
 			},
@@ -112,7 +112,7 @@ func TestDiffFieldReader_NestedSetUpdate(t *testing.T) {
 	}
 }
 
-// https://github.com/hashicorp/terraform/issues/914
+// https://github.com/hashicorp/terracina/issues/914
 func TestDiffFieldReader_MapHandling(t *testing.T) {
 	schema := map[string]*Schema{
 		"tags": &Schema{
@@ -121,13 +121,13 @@ func TestDiffFieldReader_MapHandling(t *testing.T) {
 	}
 	r := &DiffFieldReader{
 		Schema: schema,
-		Diff: &terraform.InstanceDiff{
-			Attributes: map[string]*terraform.ResourceAttrDiff{
-				"tags.%": &terraform.ResourceAttrDiff{
+		Diff: &terracina.InstanceDiff{
+			Attributes: map[string]*terracina.ResourceAttrDiff{
+				"tags.%": &terracina.ResourceAttrDiff{
 					Old: "1",
 					New: "2",
 				},
-				"tags.baz": &terraform.ResourceAttrDiff{
+				"tags.baz": &terracina.ResourceAttrDiff{
 					Old: "",
 					New: "qux",
 				},
@@ -217,28 +217,28 @@ func TestDiffFieldReader_extra(t *testing.T) {
 
 	r := &DiffFieldReader{
 		Schema: schema,
-		Diff: &terraform.InstanceDiff{
-			Attributes: map[string]*terraform.ResourceAttrDiff{
-				"stringComputed": &terraform.ResourceAttrDiff{
+		Diff: &terracina.InstanceDiff{
+			Attributes: map[string]*terracina.ResourceAttrDiff{
+				"stringComputed": &terracina.ResourceAttrDiff{
 					Old:         "foo",
 					New:         "bar",
 					NewComputed: true,
 				},
 
-				"listMap.0.bar": &terraform.ResourceAttrDiff{
+				"listMap.0.bar": &terracina.ResourceAttrDiff{
 					NewRemoved: true,
 				},
 
-				"mapRemove.bar": &terraform.ResourceAttrDiff{
+				"mapRemove.bar": &terracina.ResourceAttrDiff{
 					NewRemoved: true,
 				},
 
-				"setChange.10.value": &terraform.ResourceAttrDiff{
+				"setChange.10.value": &terracina.ResourceAttrDiff{
 					Old: "50",
 					New: "80",
 				},
 
-				"setEmpty.#": &terraform.ResourceAttrDiff{
+				"setEmpty.#": &terracina.ResourceAttrDiff{
 					Old: "2",
 					New: "0",
 				},
@@ -355,158 +355,158 @@ func TestDiffFieldReader(t *testing.T) {
 	testFieldReader(t, func(s map[string]*Schema) FieldReader {
 		return &DiffFieldReader{
 			Schema: s,
-			Diff: &terraform.InstanceDiff{
-				Attributes: map[string]*terraform.ResourceAttrDiff{
-					"bool": &terraform.ResourceAttrDiff{
+			Diff: &terracina.InstanceDiff{
+				Attributes: map[string]*terracina.ResourceAttrDiff{
+					"bool": &terracina.ResourceAttrDiff{
 						Old: "",
 						New: "true",
 					},
 
-					"int": &terraform.ResourceAttrDiff{
+					"int": &terracina.ResourceAttrDiff{
 						Old: "",
 						New: "42",
 					},
 
-					"float": &terraform.ResourceAttrDiff{
+					"float": &terracina.ResourceAttrDiff{
 						Old: "",
 						New: "3.1415",
 					},
 
-					"string": &terraform.ResourceAttrDiff{
+					"string": &terracina.ResourceAttrDiff{
 						Old: "",
 						New: "string",
 					},
 
-					"stringComputed": &terraform.ResourceAttrDiff{
+					"stringComputed": &terracina.ResourceAttrDiff{
 						Old:         "foo",
 						New:         "bar",
 						NewComputed: true,
 					},
 
-					"list.#": &terraform.ResourceAttrDiff{
+					"list.#": &terracina.ResourceAttrDiff{
 						Old: "0",
 						New: "2",
 					},
 
-					"list.0": &terraform.ResourceAttrDiff{
+					"list.0": &terracina.ResourceAttrDiff{
 						Old: "",
 						New: "foo",
 					},
 
-					"list.1": &terraform.ResourceAttrDiff{
+					"list.1": &terracina.ResourceAttrDiff{
 						Old: "",
 						New: "bar",
 					},
 
-					"listInt.#": &terraform.ResourceAttrDiff{
+					"listInt.#": &terracina.ResourceAttrDiff{
 						Old: "0",
 						New: "2",
 					},
 
-					"listInt.0": &terraform.ResourceAttrDiff{
+					"listInt.0": &terracina.ResourceAttrDiff{
 						Old: "",
 						New: "21",
 					},
 
-					"listInt.1": &terraform.ResourceAttrDiff{
+					"listInt.1": &terracina.ResourceAttrDiff{
 						Old: "",
 						New: "42",
 					},
 
-					"map.foo": &terraform.ResourceAttrDiff{
+					"map.foo": &terracina.ResourceAttrDiff{
 						Old: "",
 						New: "bar",
 					},
 
-					"map.bar": &terraform.ResourceAttrDiff{
+					"map.bar": &terracina.ResourceAttrDiff{
 						Old: "",
 						New: "baz",
 					},
 
-					"mapInt.%": &terraform.ResourceAttrDiff{
+					"mapInt.%": &terracina.ResourceAttrDiff{
 						Old: "",
 						New: "2",
 					},
-					"mapInt.one": &terraform.ResourceAttrDiff{
+					"mapInt.one": &terracina.ResourceAttrDiff{
 						Old: "",
 						New: "1",
 					},
-					"mapInt.two": &terraform.ResourceAttrDiff{
+					"mapInt.two": &terracina.ResourceAttrDiff{
 						Old: "",
 						New: "2",
 					},
 
-					"mapIntNestedSchema.%": &terraform.ResourceAttrDiff{
+					"mapIntNestedSchema.%": &terracina.ResourceAttrDiff{
 						Old: "",
 						New: "2",
 					},
-					"mapIntNestedSchema.one": &terraform.ResourceAttrDiff{
+					"mapIntNestedSchema.one": &terracina.ResourceAttrDiff{
 						Old: "",
 						New: "1",
 					},
-					"mapIntNestedSchema.two": &terraform.ResourceAttrDiff{
+					"mapIntNestedSchema.two": &terracina.ResourceAttrDiff{
 						Old: "",
 						New: "2",
 					},
 
-					"mapFloat.%": &terraform.ResourceAttrDiff{
+					"mapFloat.%": &terracina.ResourceAttrDiff{
 						Old: "",
 						New: "1",
 					},
-					"mapFloat.oneDotTwo": &terraform.ResourceAttrDiff{
+					"mapFloat.oneDotTwo": &terracina.ResourceAttrDiff{
 						Old: "",
 						New: "1.2",
 					},
 
-					"mapBool.%": &terraform.ResourceAttrDiff{
+					"mapBool.%": &terracina.ResourceAttrDiff{
 						Old: "",
 						New: "2",
 					},
-					"mapBool.True": &terraform.ResourceAttrDiff{
+					"mapBool.True": &terracina.ResourceAttrDiff{
 						Old: "",
 						New: "true",
 					},
-					"mapBool.False": &terraform.ResourceAttrDiff{
+					"mapBool.False": &terracina.ResourceAttrDiff{
 						Old: "",
 						New: "false",
 					},
 
-					"set.#": &terraform.ResourceAttrDiff{
+					"set.#": &terracina.ResourceAttrDiff{
 						Old: "0",
 						New: "2",
 					},
 
-					"set.10": &terraform.ResourceAttrDiff{
+					"set.10": &terracina.ResourceAttrDiff{
 						Old: "",
 						New: "10",
 					},
 
-					"set.50": &terraform.ResourceAttrDiff{
+					"set.50": &terracina.ResourceAttrDiff{
 						Old: "",
 						New: "50",
 					},
 
-					"setDeep.#": &terraform.ResourceAttrDiff{
+					"setDeep.#": &terracina.ResourceAttrDiff{
 						Old: "0",
 						New: "2",
 					},
 
-					"setDeep.10.index": &terraform.ResourceAttrDiff{
+					"setDeep.10.index": &terracina.ResourceAttrDiff{
 						Old: "",
 						New: "10",
 					},
 
-					"setDeep.10.value": &terraform.ResourceAttrDiff{
+					"setDeep.10.value": &terracina.ResourceAttrDiff{
 						Old: "",
 						New: "foo",
 					},
 
-					"setDeep.50.index": &terraform.ResourceAttrDiff{
+					"setDeep.50.index": &terracina.ResourceAttrDiff{
 						Old: "",
 						New: "50",
 					},
 
-					"setDeep.50.value": &terraform.ResourceAttrDiff{
+					"setDeep.50.value": &terracina.ResourceAttrDiff{
 						Old: "",
 						New: "bar",
 					},

@@ -6,14 +6,14 @@ package cloud
 import (
 	"github.com/hashicorp/hcl/v2/hclwrite"
 
-	"github.com/hashicorp/terraform/internal/backend/backendrun"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/terraform"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/backend/backendrun"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/terracina"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
-func allowedSourceType(source terraform.ValueSourceType) bool {
-	return source == terraform.ValueFromNamedFile || source == terraform.ValueFromCLIArg || source == terraform.ValueFromEnvVar
+func allowedSourceType(source terracina.ValueSourceType) bool {
+	return source == terracina.ValueFromNamedFile || source == terracina.ValueFromCLIArg || source == terracina.ValueFromEnvVar
 }
 
 // ParseCloudRunVariables accepts a mapping of unparsed values and a mapping of variable

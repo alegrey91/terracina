@@ -17,12 +17,12 @@ import (
 	"time"
 
 	"github.com/hashicorp/go-getter"
-	svchost "github.com/hashicorp/terraform-svchost"
-	"github.com/hashicorp/terraform/internal/releaseauth"
+	svchost "github.com/hashicorp/terracina-svchost"
+	"github.com/hashicorp/terracina/internal/releaseauth"
 )
 
 // BinaryManager downloads, caches, and returns information about the
-// terraform-cloudplugin binary downloaded from the specified backend.
+// terracina-cloudplugin binary downloaded from the specified backend.
 type BinaryManager struct {
 	signingKey         string
 	binaryName         string
@@ -51,7 +51,7 @@ const (
 
 // BinaryManager initializes a new BinaryManager to broker data between the
 // specified directory location containing cloudplugin package data and a
-// HCP Terraform backend URL.
+// HCP Terracina backend URL.
 func NewBinaryManager(ctx context.Context, cloudPluginDataDir, overridePath string, serviceURL *url.URL, goos, arch string) (*BinaryManager, error) {
 	client, err := NewCloudPluginClient(ctx, serviceURL)
 	if err != nil {
@@ -63,7 +63,7 @@ func NewBinaryManager(ctx context.Context, cloudPluginDataDir, overridePath stri
 		overridePath:       overridePath,
 		host:               svchost.Hostname(serviceURL.Host),
 		client:             client,
-		binaryName:         "terraform-cloudplugin",
+		binaryName:         "terracina-cloudplugin",
 		goos:               goos,
 		arch:               arch,
 		ctx:                ctx,
@@ -129,7 +129,7 @@ func (v BinaryManager) resolveRelease() (*Binary, error) {
 	}
 
 	// Download the archive
-	t, err := os.CreateTemp(os.TempDir(), "terraform-cloudplugin")
+	t, err := os.CreateTemp(os.TempDir(), "terracina-cloudplugin")
 	if err != nil {
 		return nil, fmt.Errorf("failed to create temp file for download: %w", err)
 	}

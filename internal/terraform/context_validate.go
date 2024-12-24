@@ -1,30 +1,30 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"log"
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
-// ValidateOpts are the various options the affect the details of how Terraform
+// ValidateOpts are the various options the affect the details of how Terracina
 // will validate a configuration.
 type ValidateOpts struct {
 	// ExternalProviders are clients for pre-configured providers that are
 	// treated as being passed into the root module from the caller. This
 	// is equivalent to writing a "providers" argument inside a "module"
-	// block in the Terraform language, but for the root module the caller
-	// is written in Go rather than the Terraform language.
+	// block in the Terracina language, but for the root module the caller
+	// is written in Go rather than the Terracina language.
 	//
-	// Note, that while Terraform Core will not call ValidateProviderConfig or
+	// Note, that while Terracina Core will not call ValidateProviderConfig or
 	// ConfigureProvider on any providers in this map, as with the other context
 	// functions, the Validate function never calls ConfigureProvider anyway.
 	//

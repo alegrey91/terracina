@@ -15,11 +15,11 @@ import (
 	"github.com/hashicorp/cli"
 	"github.com/zclconf/go-cty/cty"
 
-	testing_command "github.com/hashicorp/terraform/internal/command/testing"
-	"github.com/hashicorp/terraform/internal/command/views"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/terminal"
+	testing_command "github.com/hashicorp/terracina/internal/command/testing"
+	"github.com/hashicorp/terracina/internal/command/views"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/terminal"
 )
 
 func setupTest(t *testing.T, fixturepath string, args ...string) (*terminal.TestOutput, int) {

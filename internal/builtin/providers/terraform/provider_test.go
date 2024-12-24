@@ -1,13 +1,13 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"testing"
 
-	backendInit "github.com/hashicorp/terraform/internal/backend/init"
-	"github.com/hashicorp/terraform/internal/providers"
+	backendInit "github.com/hashicorp/terracina/internal/backend/init"
+	"github.com/hashicorp/terracina/internal/providers"
 	"github.com/zclconf/go-cty/cty"
 	ctyjson "github.com/zclconf/go-cty/cty/json"
 )
@@ -31,10 +31,10 @@ func TestMoveResourceState_DataStore(t *testing.T) {
 
 	provider := &Provider{}
 	req := providers.MoveResourceStateRequest{
-		SourceProviderAddress: "registry.terraform.io/hashicorp/null",
+		SourceProviderAddress: "registry.terracina.io/hashicorp/null",
 		SourceStateJSON:       nullResourceStateJSON,
 		SourceTypeName:        "null_resource",
-		TargetTypeName:        "terraform_data",
+		TargetTypeName:        "terracina_data",
 	}
 	resp := provider.MoveResourceState(req)
 

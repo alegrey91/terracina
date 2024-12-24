@@ -1,4 +1,4 @@
-terraform {
+terracina {
   required_providers {
     your-aws = {
       source = "hashicorp/aws"

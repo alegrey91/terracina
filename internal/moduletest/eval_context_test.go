@@ -18,18 +18,18 @@ import (
 	ctyjson "github.com/zclconf/go-cty/cty/json"
 	ctymsgpack "github.com/zclconf/go-cty/cty/msgpack"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/configs/configload"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/initwd"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	testing_provider "github.com/hashicorp/terraform/internal/providers/testing"
-	"github.com/hashicorp/terraform/internal/registry"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/terraform"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/configs/configload"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/initwd"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	testing_provider "github.com/hashicorp/terracina/internal/providers/testing"
+	"github.com/hashicorp/terracina/internal/registry"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/terracina"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 func TestEvalContext_Evaluate(t *testing.T) {
@@ -37,8 +37,8 @@ func TestEvalContext_Evaluate(t *testing.T) {
 		configs      map[string]string
 		state        *states.State
 		plan         *plans.Plan
-		variables    terraform.InputValues
-		testOnlyVars terraform.InputValues
+		variables    terracina.InputValues
+		testOnlyVars terracina.InputValues
 		provider     *testing_provider.MockProvider
 		priorOutputs map[string]cty.Value
 
@@ -147,7 +147,7 @@ func TestEvalContext_Evaluate(t *testing.T) {
 						Provider: addrs.NewDefaultProvider("test"),
 					})
 			}),
-			variables: terraform.InputValues{
+			variables: terracina.InputValues{
 				"value": {
 					Value: cty.StringVal("Hello, world!"),
 				},
@@ -329,10 +329,10 @@ func TestEvalContext_Evaluate(t *testing.T) {
 				Changes: plans.NewChangesSrc(),
 			},
 			state: states.NewState(),
-			variables: terraform.InputValues{
-				"input": &terraform.InputValue{
+			variables: terracina.InputValues{
+				"input": &terracina.InputValue{
 					Value:      cty.StringVal("Hello, world!"),
-					SourceType: terraform.ValueFromConfig,
+					SourceType: terracina.ValueFromConfig,
 					SourceRange: tfdiags.SourceRange{
 						Filename: "main.tftest.hcl",
 						Start:    tfdiags.SourcePos{Line: 3, Column: 13, Byte: 12},
@@ -370,10 +370,10 @@ func TestEvalContext_Evaluate(t *testing.T) {
 				Changes: plans.NewChangesSrc(),
 			},
 			state: states.NewState(),
-			variables: terraform.InputValues{
-				"input": &terraform.InputValue{
+			variables: terracina.InputValues{
+				"input": &terracina.InputValue{
 					Value:      cty.StringVal("Hello, world!"),
-					SourceType: terraform.ValueFromConfig,
+					SourceType: terracina.ValueFromConfig,
 					SourceRange: tfdiags.SourceRange{
 						Filename: "main.tftest.hcl",
 						Start:    tfdiags.SourcePos{Line: 3, Column: 13, Byte: 12},
@@ -387,7 +387,7 @@ func TestEvalContext_Evaluate(t *testing.T) {
 			expectedDiags: []tfdiags.Description{
 				{
 					Summary: "Error message refers to sensitive values",
-					Detail:  "The error expression used to explain this condition refers to sensitive values, so Terraform will not display the resulting message.\n\nYou can correct this by removing references to sensitive values, or by carefully using the nonsensitive() function if the expression will not reveal the sensitive data.",
+					Detail:  "The error expression used to explain this condition refers to sensitive values, so Terracina will not display the resulting message.\n\nYou can correct this by removing references to sensitive values, or by carefully using the nonsensitive() function if the expression will not reveal the sensitive data.",
 				},
 				{
 					Summary: "Test assertion failed",
@@ -649,7 +649,7 @@ func TestEvalContext_Evaluate(t *testing.T) {
 		"provider_functions": {
 			configs: map[string]string{
 				"main.tf": `
-				    terraform {
+				    terracina {
                       required_providers {
 						test = {
 						  source = "hashicorp/test"
@@ -702,19 +702,19 @@ func TestEvalContext_Evaluate(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			config := testModuleInline(t, test.configs)
 
-			tfCtx, diags := terraform.NewContext(&terraform.ContextOpts{
+			tfCtx, diags := terracina.NewContext(&terracina.ContextOpts{
 				Providers: map[addrs.Provider]providers.Factory{
 					addrs.NewDefaultProvider("test"): providers.FactoryFixed(test.provider),
 				},
 			})
 			if diags.HasErrors() {
-				t.Fatalf("unexpected errors from terraform.NewContext\n%s", diags.Err().Error())
+				t.Fatalf("unexpected errors from terracina.NewContext\n%s", diags.Err().Error())
 			}
 
 			// We just need a vaguely-realistic scope here, so we'll make
 			// a plan against the given config and state and use its
 			// resulting scope.
-			_, planScope, diags := tfCtx.PlanAndEval(config, test.state, &terraform.PlanOpts{
+			_, planScope, diags := tfCtx.PlanAndEval(config, test.state, &terracina.PlanOpts{
 				Mode:         plans.NormalMode,
 				SetVariables: test.variables,
 			})

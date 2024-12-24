@@ -11,15 +11,15 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/instances"
-	"github.com/hashicorp/terraform/internal/lang"
-	"github.com/hashicorp/terraform/internal/promising"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/stacks/stackconfig"
-	"github.com/hashicorp/terraform/internal/stacks/stackplan"
-	"github.com/hashicorp/terraform/internal/terraform"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/instances"
+	"github.com/hashicorp/terracina/internal/lang"
+	"github.com/hashicorp/terracina/internal/promising"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/stacks/stackconfig"
+	"github.com/hashicorp/terracina/internal/stacks/stackplan"
+	"github.com/hashicorp/terracina/internal/terracina"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 var (
@@ -96,7 +96,7 @@ func (r *RemovedConfig) CheckModuleTree(ctx context.Context) (*configs.Config, t
 			diags = diags.Append(&hcl.Diagnostic{
 				Severity: hcl.DiagError,
 				Summary:  "Can't load module for removed component",
-				Detail:   fmt.Sprintf("The source location %s does not contain a Terraform module.", rootModuleSource),
+				Detail:   fmt.Sprintf("The source location %s does not contain a Terracina module.", rootModuleSource),
 				Subject:  decl.SourceAddrRange.ToHCL().Ptr(),
 			})
 			return nil, diags
@@ -150,7 +150,7 @@ func (r *RemovedConfig) CheckValid(ctx context.Context, phase EvalPhase) tfdiags
 			return diags, nil
 		}
 
-		tfCtx, err := terraform.NewContext(&terraform.ContextOpts{
+		tfCtx, err := terracina.NewContext(&terracina.ContextOpts{
 			PreloadedProviderSchemas: providerSchemas,
 			Provisioners:             r.main.availableProvisioners(),
 		})
@@ -159,8 +159,8 @@ func (r *RemovedConfig) CheckValid(ctx context.Context, phase EvalPhase) tfdiags
 			// ContextOpts above.
 			diags = diags.Append(tfdiags.Sourceless(
 				tfdiags.Error,
-				"Failed to instantiate Terraform modules runtime",
-				fmt.Sprintf("Could not load the main Terraform language runtime: %s.\n\nThis is a bug in Terraform; please report it!", err),
+				"Failed to instantiate Terracina modules runtime",
+				fmt.Sprintf("Could not load the main Terracina language runtime: %s.\n\nThis is a bug in Terracina; please report it!", err),
 			))
 			return diags, nil
 		}
@@ -196,7 +196,7 @@ func (r *RemovedConfig) CheckValid(ctx context.Context, phase EvalPhase) tfdiags
 			}
 		}()
 
-		diags = diags.Append(tfCtx.Validate(moduleTree, &terraform.ValidateOpts{
+		diags = diags.Append(tfCtx.Validate(moduleTree, &terracina.ValidateOpts{
 			ExternalProviders: providerClients,
 		}))
 		return diags, nil

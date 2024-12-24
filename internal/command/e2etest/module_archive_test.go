@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform/internal/e2e"
+	"github.com/hashicorp/terracina/internal/e2e"
 )
 
 func TestInitModuleArchive(t *testing.T) {
@@ -18,7 +18,7 @@ func TestInitModuleArchive(t *testing.T) {
 	skipIfCannotAccessNetwork(t)
 
 	fixturePath := filepath.Join("testdata", "module-archive")
-	tf := e2e.NewBinary(t, terraformBin, fixturePath)
+	tf := e2e.NewBinary(t, terracinaBin, fixturePath)
 
 	stdout, stderr, err := tf.Run("init")
 	if err != nil {
@@ -29,7 +29,7 @@ func TestInitModuleArchive(t *testing.T) {
 		t.Errorf("unexpected stderr output:\n%s", stderr)
 	}
 
-	if !strings.Contains(stdout, "Terraform has been successfully initialized!") {
+	if !strings.Contains(stdout, "Terracina has been successfully initialized!") {
 		t.Errorf("success message is missing from output:\n%s", stdout)
 	}
 }

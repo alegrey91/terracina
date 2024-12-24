@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"fmt"
@@ -11,19 +11,19 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/didyoumean"
-	"github.com/hashicorp/terraform/internal/instances"
-	"github.com/hashicorp/terraform/internal/lang"
-	"github.com/hashicorp/terraform/internal/lang/marks"
-	"github.com/hashicorp/terraform/internal/namedvals"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/plans/deferring"
-	"github.com/hashicorp/terraform/internal/resources/ephemeral"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/didyoumean"
+	"github.com/hashicorp/terracina/internal/instances"
+	"github.com/hashicorp/terracina/internal/lang"
+	"github.com/hashicorp/terracina/internal/lang/marks"
+	"github.com/hashicorp/terracina/internal/namedvals"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/plans/deferring"
+	"github.com/hashicorp/terracina/internal/resources/ephemeral"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // Evaluator provides the necessary contextual data for evaluating expressions
@@ -275,7 +275,7 @@ func (d *evaluationStateData) GetInputVariable(addr addrs.InputVariable, rng tfd
 	// be complicated to accommodate all possible inputs, whereas returning
 	// unknown here allows for simpler patterns like using input values as
 	// guards to broadly enable/disable resources, avoid processing things
-	// that are disabled, etc. Terraform's static validation leans towards
+	// that are disabled, etc. Terracina's static validation leans towards
 	// being liberal in what it accepts because the subsequent plan walk has
 	// more information available and so can be more conservative.
 	if d.Operation == walkValidate {
@@ -484,7 +484,7 @@ func (d *evaluationStateData) GetModule(addr addrs.ModuleCall, rng tfdiags.Sourc
 			Severity: hcl.DiagError,
 			Summary:  `Unsupported instance key type`,
 			Detail: fmt.Sprintf(
-				`Module call %s has instance key type %#v, which is not supported by the expression evaluator. This is a bug in Terraform.`,
+				`Module call %s has instance key type %#v, which is not supported by the expression evaluator. This is a bug in Terracina.`,
 				absAddr, instKeyType,
 			),
 			Subject: rng.ToHCL().Ptr(),
@@ -522,7 +522,7 @@ func (d *evaluationStateData) GetResource(addr addrs.Resource, rng tfdiags.Sourc
 	//
 	// Currently, unknown instance keys are only possible when planning with
 	// DeferralAllowed set to true in the PlanOpts, which should only be the
-	// case in the stacks runtime (not the "normal terraform" modules runtime).
+	// case in the stacks runtime (not the "normal terracina" modules runtime).
 	// Thus, we have some amount of duplicated code remaining, to be more
 	// certain that stacks-specific behaviors won't leak out into the standard
 	// runtime.
@@ -562,7 +562,7 @@ func (d *evaluationStateData) GetResource(addr addrs.Resource, rng tfdiags.Sourc
 		diags = diags.Append(&hcl.Diagnostic{
 			Severity: hcl.DiagError,
 			Summary:  `Missing resource type schema`,
-			Detail:   fmt.Sprintf("No schema is available for %s in %s. This is a bug in Terraform and should be reported.", addr, config.Provider),
+			Detail:   fmt.Sprintf("No schema is available for %s in %s. This is a bug in Terracina and should be reported.", addr, config.Provider),
 			Subject:  rng.ToHCL().Ptr(),
 		})
 		return cty.DynamicVal, diags
@@ -848,7 +848,7 @@ func (d *evaluationStateData) getEphemeralResource(addr addrs.Resource, rng tfdi
 				Severity: hcl.DiagError,
 				Summary:  "Ephemeral resource instance has expired",
 				Detail: fmt.Sprintf(
-					"The remote object for %s is no longer available due to a renewal error, so Terraform cannot evaluate this expression.",
+					"The remote object for %s is no longer available due to a renewal error, so Terracina cannot evaluate this expression.",
 					addr,
 				),
 				Subject: rng.ToHCL().Ptr(),
@@ -949,7 +949,7 @@ func (d *evaluationStateData) GetOutput(addr addrs.OutputValue, rng tfdiags.Sour
 			Sensitive: config.Sensitive,
 		}
 	} else if output.Value == cty.NilVal || output.Value.IsNull() {
-		// Then we did get a value but Terraform itself thought it was NilVal
+		// Then we did get a value but Terracina itself thought it was NilVal
 		// so we treat this as if the value isn't yet known.
 		output.Value = cty.DynamicVal
 	}

@@ -17,8 +17,8 @@ import (
 	configtesting "github.com/hashicorp/aws-sdk-go-base/v2/configtesting"
 	"github.com/hashicorp/aws-sdk-go-base/v2/mockdata"
 	"github.com/hashicorp/aws-sdk-go-base/v2/servicemocks"
-	"github.com/hashicorp/terraform/internal/configs/hcl2shim"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/configs/hcl2shim"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 	"github.com/zclconf/go-cty/cty"
 )
 

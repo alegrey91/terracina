@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"testing"
@@ -11,12 +11,12 @@ import (
 	"github.com/hashicorp/hcl/v2/hcltest"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	testing_provider "github.com/hashicorp/terraform/internal/providers/testing"
-	"github.com/hashicorp/terraform/internal/states"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	testing_provider "github.com/hashicorp/terracina/internal/providers/testing"
+	"github.com/hashicorp/terracina/internal/states"
 )
 
 func TestContextEval(t *testing.T) {
@@ -69,7 +69,7 @@ func TestContextEval(t *testing.T) {
 		t.Fatalf("Eval errors: %s", diags.Err())
 	}
 
-	// Since we're testing 'eval' (used by terraform console), impure functions
+	// Since we're testing 'eval' (used by terracina console), impure functions
 	// should be allowed by the scope.
 	if scope.PureOnly == true {
 		t.Fatal("wrong result: eval should allow impure funcs")

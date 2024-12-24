@@ -26,8 +26,8 @@ import (
 	"github.com/hashicorp/go-hclog"
 	uuid "github.com/hashicorp/go-uuid"
 
-	"github.com/hashicorp/terraform/internal/states/remote"
-	"github.com/hashicorp/terraform/internal/states/statemgr"
+	"github.com/hashicorp/terracina/internal/states/remote"
+	"github.com/hashicorp/terracina/internal/states/statemgr"
 )
 
 const (
@@ -344,7 +344,7 @@ func (c *RemoteClient) Lock(info *statemgr.LockInfo) (string, error) {
 // This method is used when the S3 native locking mechanism is in use. It uploads a lock file (JSON)
 // to an S3 bucket to establish a lock on the state file. If the lock file does not already
 // exist, the operation will succeed, acquiring the lock. If the lock file already exists, the operation
-// will fail due to a conditional write, indicating that the lock is already held by another Terraform client.
+// will fail due to a conditional write, indicating that the lock is already held by another Terracina client.
 func (c *RemoteClient) lockWithFile(ctx context.Context, info *statemgr.LockInfo, log hclog.Logger) error {
 	lockFileJson, err := json.Marshal(info)
 	if err != nil {
@@ -500,7 +500,7 @@ func (c *RemoteClient) Unlock(id string) error {
 //
 // This method is used when the S3 native locking mechanism is in use, which uses a `.tflock` file
 // to manage state locking. The function deletes the lock file to release the lock, allowing other
-// Terraform clients to acquire the lock on the same state file.
+// Terracina clients to acquire the lock on the same state file.
 func (c *RemoteClient) unlockWithFile(ctx context.Context, id string, lockErr *statemgr.LockError, log hclog.Logger) error {
 	getInput := &s3.GetObjectInput{
 		Bucket: aws.String(c.bucketName),

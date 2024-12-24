@@ -1,4 +1,4 @@
-terraform {
+terracina {
   required_providers {
     tls = {
       source  = "hashicorp/tls"
@@ -12,9 +12,9 @@ terraform {
 resource "implied_foo" "bar" {
 }
 
-# There is no provider in required_providers called "terraform", but for
-# this name in particular we imply terraform.io/builtin/terraform instead,
+# There is no provider in required_providers called "terracina", but for
+# this name in particular we imply terracina.io/builtin/terracina instead,
 # to avoid selecting the now-unmaintained
-# registry.terraform.io/hashicorp/terraform.
-data "terraform_remote_state" "bar" {
+# registry.terracina.io/hashicorp/terracina.
+data "terracina_remote_state" "bar" {
 }

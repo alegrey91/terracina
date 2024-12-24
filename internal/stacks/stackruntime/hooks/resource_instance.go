@@ -4,15 +4,15 @@
 package hooks
 
 import (
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/rpcapi/terraform1/stacks"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/rpcapi/terracina1/stacks"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
 )
 
 // ResourceInstanceStatus is a UI-focused description of the overall status
-// for a given resource instance undergoing a Terraform plan or apply
+// for a given resource instance undergoing a Terracina plan or apply
 // operation. The "pending" and "errored" status are used for both operation
 // types, and the others will be used only for one of plan or apply.
 type ResourceInstanceStatus rune
@@ -56,7 +56,7 @@ func (s ResourceInstanceStatus) ForProtobuf() stacks.StackChangeProgress_Resourc
 }
 
 // ProvisionerStatus is a UI-focused description of the progress of a given
-// resource instance's provisioner during a Terraform apply operation. Each
+// resource instance's provisioner during a Terracina apply operation. Each
 // specified provisioner will start in "provisioning" state, and progress to
 // either "provisioned" or "errored".
 type ProvisionerStatus rune

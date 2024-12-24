@@ -1,4 +1,4 @@
 import {
   id = "bar"
-  to = terraform_data.foo
+  to = terracina_data.foo
 }

@@ -9,9 +9,9 @@ import (
 	"github.com/zclconf/go-cty-debug/ctydebug"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/lang/marks"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/lang/marks"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 func TestAssertPlanValid(t *testing.T) {
@@ -1881,7 +1881,7 @@ func TestAssertPlanValid(t *testing.T) {
 			// cannot preserve the not-null refinement that the uuid function
 			// generates.
 			//
-			// https://github.com/hashicorp/terraform/issues/33385
+			// https://github.com/hashicorp/terracina/issues/33385
 			&configschema.Block{
 				Attributes: map[string]*configschema.Attribute{
 					"m": {

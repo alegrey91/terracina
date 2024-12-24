@@ -12,13 +12,13 @@ import (
 
 	"github.com/hashicorp/cli"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/backend"
-	"github.com/hashicorp/terraform/internal/backend/local"
-	"github.com/hashicorp/terraform/internal/backend/remote-state/inmem"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/states/statefile"
-	"github.com/hashicorp/terraform/internal/states/statemgr"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/backend"
+	"github.com/hashicorp/terracina/internal/backend/local"
+	"github.com/hashicorp/terracina/internal/backend/remote-state/inmem"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/states/statefile"
+	"github.com/hashicorp/terracina/internal/states/statemgr"
 )
 
 func TestWorkspace_createAndChange(t *testing.T) {
@@ -410,7 +410,7 @@ func TestWorkspace_deleteWithState(t *testing.T) {
 		State:   originalState,
 	}
 
-	f, err := os.Create(filepath.Join(local.DefaultWorkspaceDir, "test", "terraform.tfstate"))
+	f, err := os.Create(filepath.Join(local.DefaultWorkspaceDir, "test", "terracina.tfstate"))
 	if err != nil {
 		t.Fatal(err)
 	}

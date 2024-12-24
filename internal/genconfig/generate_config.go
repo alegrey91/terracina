@@ -15,16 +15,16 @@ import (
 	"github.com/zclconf/go-cty/cty"
 	ctyjson "github.com/zclconf/go-cty/cty/json"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // GenerateResourceContents generates HCL configuration code for the provided
 // resource and state value.
 //
-// If you want to generate actual valid Terraform code you should follow this
-// call up with a call to WrapResourceContents, which will place a Terraform
+// If you want to generate actual valid Terracina code you should follow this
+// call up with a call to WrapResourceContents, which will place a Terracina
 // resource header around the attributes and blocks returned by this function.
 func GenerateResourceContents(addr addrs.AbsResourceInstance,
 	schema *configschema.Block,
@@ -166,7 +166,7 @@ func writeConfigAttributesFromExisting(addr addrs.AbsResourceInstance, buf *stri
 			if attrS.Sensitive || val.IsMarked() {
 				buf.WriteString("null # sensitive")
 			} else {
-				// If the value is a string storing a JSON value we want to represent it in a terraform native way
+				// If the value is a string storing a JSON value we want to represent it in a terracina native way
 				// and encapsulate it in `jsonencode` as it is the idiomatic representation
 				if val.IsKnown() && !val.IsNull() && val.Type() == cty.String && json.Valid([]byte(val.AsString())) {
 					var ctyValue ctyjson.SimpleJSONValue
@@ -175,7 +175,7 @@ func writeConfigAttributesFromExisting(addr addrs.AbsResourceInstance, buf *stri
 						diags = diags.Append(&hcl.Diagnostic{
 							Severity: hcl.DiagWarning,
 							Summary:  "Failed to parse JSON",
-							Detail:   fmt.Sprintf("Could not parse JSON value of attribute %s in %s when generating import configuration. The plan will likely report the missing attribute as being deleted. This is most likely a bug in Terraform, please report it.", name, addr),
+							Detail:   fmt.Sprintf("Could not parse JSON value of attribute %s in %s when generating import configuration. The plan will likely report the missing attribute as being deleted. This is most likely a bug in Terracina, please report it.", name, addr),
 							Extra:    err,
 						})
 						continue

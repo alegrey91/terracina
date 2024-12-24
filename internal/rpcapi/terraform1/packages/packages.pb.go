@@ -11,7 +11,7 @@ package packages
 
 import (
 	context "context"
-	terraform1 "github.com/hashicorp/terraform/internal/rpcapi/terraform1"
+	terracina1 "github.com/hashicorp/terracina/internal/rpcapi/terracina1"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -271,7 +271,7 @@ type ProviderPackageVersions_Response struct {
 	unknownFields protoimpl.UnknownFields
 
 	Versions    []string                 `protobuf:"bytes,1,rep,name=versions,proto3" json:"versions,omitempty"`
-	Diagnostics []*terraform1.Diagnostic `protobuf:"bytes,2,rep,name=diagnostics,proto3" json:"diagnostics,omitempty"`
+	Diagnostics []*terracina1.Diagnostic `protobuf:"bytes,2,rep,name=diagnostics,proto3" json:"diagnostics,omitempty"`
 }
 
 func (x *ProviderPackageVersions_Response) Reset() {
@@ -313,7 +313,7 @@ func (x *ProviderPackageVersions_Response) GetVersions() []string {
 	return nil
 }
 
-func (x *ProviderPackageVersions_Response) GetDiagnostics() []*terraform1.Diagnostic {
+func (x *ProviderPackageVersions_Response) GetDiagnostics() []*terracina1.Diagnostic {
 	if x != nil {
 		return x.Diagnostics
 	}
@@ -410,7 +410,7 @@ type FetchProviderPackage_Response struct {
 	// there will still be an entry in the results with diagnostics
 	// explaining why.
 	Results     []*FetchProviderPackage_PlatformResult `protobuf:"bytes,1,rep,name=results,proto3" json:"results,omitempty"`
-	Diagnostics []*terraform1.Diagnostic               `protobuf:"bytes,2,rep,name=diagnostics,proto3" json:"diagnostics,omitempty"`
+	Diagnostics []*terracina1.Diagnostic               `protobuf:"bytes,2,rep,name=diagnostics,proto3" json:"diagnostics,omitempty"`
 }
 
 func (x *FetchProviderPackage_Response) Reset() {
@@ -452,7 +452,7 @@ func (x *FetchProviderPackage_Response) GetResults() []*FetchProviderPackage_Pla
 	return nil
 }
 
-func (x *FetchProviderPackage_Response) GetDiagnostics() []*terraform1.Diagnostic {
+func (x *FetchProviderPackage_Response) GetDiagnostics() []*terracina1.Diagnostic {
 	if x != nil {
 		return x.Diagnostics
 	}
@@ -464,8 +464,8 @@ type FetchProviderPackage_PlatformResult struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Provider    *terraform1.ProviderPackage `protobuf:"bytes,1,opt,name=provider,proto3" json:"provider,omitempty"`
-	Diagnostics []*terraform1.Diagnostic    `protobuf:"bytes,2,rep,name=diagnostics,proto3" json:"diagnostics,omitempty"`
+	Provider    *terracina1.ProviderPackage `protobuf:"bytes,1,opt,name=provider,proto3" json:"provider,omitempty"`
+	Diagnostics []*terracina1.Diagnostic    `protobuf:"bytes,2,rep,name=diagnostics,proto3" json:"diagnostics,omitempty"`
 }
 
 func (x *FetchProviderPackage_PlatformResult) Reset() {
@@ -500,14 +500,14 @@ func (*FetchProviderPackage_PlatformResult) Descriptor() ([]byte, []int) {
 	return file_packages_proto_rawDescGZIP(), []int{1, 2}
 }
 
-func (x *FetchProviderPackage_PlatformResult) GetProvider() *terraform1.ProviderPackage {
+func (x *FetchProviderPackage_PlatformResult) GetProvider() *terracina1.ProviderPackage {
 	if x != nil {
 		return x.Provider
 	}
 	return nil
 }
 
-func (x *FetchProviderPackage_PlatformResult) GetDiagnostics() []*terraform1.Diagnostic {
+func (x *FetchProviderPackage_PlatformResult) GetDiagnostics() []*terracina1.Diagnostic {
 	if x != nil {
 		return x.Diagnostics
 	}
@@ -567,7 +567,7 @@ type ModulePackageVersions_Response struct {
 	unknownFields protoimpl.UnknownFields
 
 	Versions    []string                 `protobuf:"bytes,1,rep,name=versions,proto3" json:"versions,omitempty"`
-	Diagnostics []*terraform1.Diagnostic `protobuf:"bytes,2,rep,name=diagnostics,proto3" json:"diagnostics,omitempty"`
+	Diagnostics []*terracina1.Diagnostic `protobuf:"bytes,2,rep,name=diagnostics,proto3" json:"diagnostics,omitempty"`
 }
 
 func (x *ModulePackageVersions_Response) Reset() {
@@ -609,7 +609,7 @@ func (x *ModulePackageVersions_Response) GetVersions() []string {
 	return nil
 }
 
-func (x *ModulePackageVersions_Response) GetDiagnostics() []*terraform1.Diagnostic {
+func (x *ModulePackageVersions_Response) GetDiagnostics() []*terracina1.Diagnostic {
 	if x != nil {
 		return x.Diagnostics
 	}
@@ -677,7 +677,7 @@ type ModulePackageSourceAddr_Response struct {
 	unknownFields protoimpl.UnknownFields
 
 	Url         string                   `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
-	Diagnostics []*terraform1.Diagnostic `protobuf:"bytes,2,rep,name=diagnostics,proto3" json:"diagnostics,omitempty"`
+	Diagnostics []*terracina1.Diagnostic `protobuf:"bytes,2,rep,name=diagnostics,proto3" json:"diagnostics,omitempty"`
 }
 
 func (x *ModulePackageSourceAddr_Response) Reset() {
@@ -719,7 +719,7 @@ func (x *ModulePackageSourceAddr_Response) GetUrl() string {
 	return ""
 }
 
-func (x *ModulePackageSourceAddr_Response) GetDiagnostics() []*terraform1.Diagnostic {
+func (x *ModulePackageSourceAddr_Response) GetDiagnostics() []*terracina1.Diagnostic {
 	if x != nil {
 		return x.Diagnostics
 	}
@@ -786,7 +786,7 @@ type FetchModulePackage_Response struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Diagnostics []*terraform1.Diagnostic `protobuf:"bytes,1,rep,name=diagnostics,proto3" json:"diagnostics,omitempty"`
+	Diagnostics []*terracina1.Diagnostic `protobuf:"bytes,1,rep,name=diagnostics,proto3" json:"diagnostics,omitempty"`
 }
 
 func (x *FetchModulePackage_Response) Reset() {
@@ -821,7 +821,7 @@ func (*FetchModulePackage_Response) Descriptor() ([]byte, []int) {
 	return file_packages_proto_rawDescGZIP(), []int{4, 1}
 }
 
-func (x *FetchModulePackage_Response) GetDiagnostics() []*terraform1.Diagnostic {
+func (x *FetchModulePackage_Response) GetDiagnostics() []*terracina1.Diagnostic {
 	if x != nil {
 		return x.Diagnostics
 	}
@@ -964,44 +964,44 @@ func file_packages_proto_rawDescGZIP() []byte {
 
 var file_packages_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_packages_proto_goTypes = []any{
-	(*ProviderPackageVersions)(nil),             // 0: terraform1.packages.ProviderPackageVersions
-	(*FetchProviderPackage)(nil),                // 1: terraform1.packages.FetchProviderPackage
-	(*ModulePackageVersions)(nil),               // 2: terraform1.packages.ModulePackageVersions
-	(*ModulePackageSourceAddr)(nil),             // 3: terraform1.packages.ModulePackageSourceAddr
-	(*FetchModulePackage)(nil),                  // 4: terraform1.packages.FetchModulePackage
-	(*ProviderPackageVersions_Request)(nil),     // 5: terraform1.packages.ProviderPackageVersions.Request
-	(*ProviderPackageVersions_Response)(nil),    // 6: terraform1.packages.ProviderPackageVersions.Response
-	(*FetchProviderPackage_Request)(nil),        // 7: terraform1.packages.FetchProviderPackage.Request
-	(*FetchProviderPackage_Response)(nil),       // 8: terraform1.packages.FetchProviderPackage.Response
-	(*FetchProviderPackage_PlatformResult)(nil), // 9: terraform1.packages.FetchProviderPackage.PlatformResult
-	(*ModulePackageVersions_Request)(nil),       // 10: terraform1.packages.ModulePackageVersions.Request
-	(*ModulePackageVersions_Response)(nil),      // 11: terraform1.packages.ModulePackageVersions.Response
-	(*ModulePackageSourceAddr_Request)(nil),     // 12: terraform1.packages.ModulePackageSourceAddr.Request
-	(*ModulePackageSourceAddr_Response)(nil),    // 13: terraform1.packages.ModulePackageSourceAddr.Response
-	(*FetchModulePackage_Request)(nil),          // 14: terraform1.packages.FetchModulePackage.Request
-	(*FetchModulePackage_Response)(nil),         // 15: terraform1.packages.FetchModulePackage.Response
-	(*terraform1.Diagnostic)(nil),               // 16: terraform1.Diagnostic
-	(*terraform1.ProviderPackage)(nil),          // 17: terraform1.ProviderPackage
+	(*ProviderPackageVersions)(nil),             // 0: terracina1.packages.ProviderPackageVersions
+	(*FetchProviderPackage)(nil),                // 1: terracina1.packages.FetchProviderPackage
+	(*ModulePackageVersions)(nil),               // 2: terracina1.packages.ModulePackageVersions
+	(*ModulePackageSourceAddr)(nil),             // 3: terracina1.packages.ModulePackageSourceAddr
+	(*FetchModulePackage)(nil),                  // 4: terracina1.packages.FetchModulePackage
+	(*ProviderPackageVersions_Request)(nil),     // 5: terracina1.packages.ProviderPackageVersions.Request
+	(*ProviderPackageVersions_Response)(nil),    // 6: terracina1.packages.ProviderPackageVersions.Response
+	(*FetchProviderPackage_Request)(nil),        // 7: terracina1.packages.FetchProviderPackage.Request
+	(*FetchProviderPackage_Response)(nil),       // 8: terracina1.packages.FetchProviderPackage.Response
+	(*FetchProviderPackage_PlatformResult)(nil), // 9: terracina1.packages.FetchProviderPackage.PlatformResult
+	(*ModulePackageVersions_Request)(nil),       // 10: terracina1.packages.ModulePackageVersions.Request
+	(*ModulePackageVersions_Response)(nil),      // 11: terracina1.packages.ModulePackageVersions.Response
+	(*ModulePackageSourceAddr_Request)(nil),     // 12: terracina1.packages.ModulePackageSourceAddr.Request
+	(*ModulePackageSourceAddr_Response)(nil),    // 13: terracina1.packages.ModulePackageSourceAddr.Response
+	(*FetchModulePackage_Request)(nil),          // 14: terracina1.packages.FetchModulePackage.Request
+	(*FetchModulePackage_Response)(nil),         // 15: terracina1.packages.FetchModulePackage.Response
+	(*terracina1.Diagnostic)(nil),               // 16: terracina1.Diagnostic
+	(*terracina1.ProviderPackage)(nil),          // 17: terracina1.ProviderPackage
 }
 var file_packages_proto_depIdxs = []int32{
-	16, // 0: terraform1.packages.ProviderPackageVersions.Response.diagnostics:type_name -> terraform1.Diagnostic
-	9,  // 1: terraform1.packages.FetchProviderPackage.Response.results:type_name -> terraform1.packages.FetchProviderPackage.PlatformResult
-	16, // 2: terraform1.packages.FetchProviderPackage.Response.diagnostics:type_name -> terraform1.Diagnostic
-	17, // 3: terraform1.packages.FetchProviderPackage.PlatformResult.provider:type_name -> terraform1.ProviderPackage
-	16, // 4: terraform1.packages.FetchProviderPackage.PlatformResult.diagnostics:type_name -> terraform1.Diagnostic
-	16, // 5: terraform1.packages.ModulePackageVersions.Response.diagnostics:type_name -> terraform1.Diagnostic
-	16, // 6: terraform1.packages.ModulePackageSourceAddr.Response.diagnostics:type_name -> terraform1.Diagnostic
-	16, // 7: terraform1.packages.FetchModulePackage.Response.diagnostics:type_name -> terraform1.Diagnostic
-	5,  // 8: terraform1.packages.Packages.ProviderPackageVersions:input_type -> terraform1.packages.ProviderPackageVersions.Request
-	7,  // 9: terraform1.packages.Packages.FetchProviderPackage:input_type -> terraform1.packages.FetchProviderPackage.Request
-	10, // 10: terraform1.packages.Packages.ModulePackageVersions:input_type -> terraform1.packages.ModulePackageVersions.Request
-	12, // 11: terraform1.packages.Packages.ModulePackageSourceAddr:input_type -> terraform1.packages.ModulePackageSourceAddr.Request
-	14, // 12: terraform1.packages.Packages.FetchModulePackage:input_type -> terraform1.packages.FetchModulePackage.Request
-	6,  // 13: terraform1.packages.Packages.ProviderPackageVersions:output_type -> terraform1.packages.ProviderPackageVersions.Response
-	8,  // 14: terraform1.packages.Packages.FetchProviderPackage:output_type -> terraform1.packages.FetchProviderPackage.Response
-	11, // 15: terraform1.packages.Packages.ModulePackageVersions:output_type -> terraform1.packages.ModulePackageVersions.Response
-	13, // 16: terraform1.packages.Packages.ModulePackageSourceAddr:output_type -> terraform1.packages.ModulePackageSourceAddr.Response
-	15, // 17: terraform1.packages.Packages.FetchModulePackage:output_type -> terraform1.packages.FetchModulePackage.Response
+	16, // 0: terracina1.packages.ProviderPackageVersions.Response.diagnostics:type_name -> terracina1.Diagnostic
+	9,  // 1: terracina1.packages.FetchProviderPackage.Response.results:type_name -> terracina1.packages.FetchProviderPackage.PlatformResult
+	16, // 2: terracina1.packages.FetchProviderPackage.Response.diagnostics:type_name -> terracina1.Diagnostic
+	17, // 3: terracina1.packages.FetchProviderPackage.PlatformResult.provider:type_name -> terracina1.ProviderPackage
+	16, // 4: terracina1.packages.FetchProviderPackage.PlatformResult.diagnostics:type_name -> terracina1.Diagnostic
+	16, // 5: terracina1.packages.ModulePackageVersions.Response.diagnostics:type_name -> terracina1.Diagnostic
+	16, // 6: terracina1.packages.ModulePackageSourceAddr.Response.diagnostics:type_name -> terracina1.Diagnostic
+	16, // 7: terracina1.packages.FetchModulePackage.Response.diagnostics:type_name -> terracina1.Diagnostic
+	5,  // 8: terracina1.packages.Packages.ProviderPackageVersions:input_type -> terracina1.packages.ProviderPackageVersions.Request
+	7,  // 9: terracina1.packages.Packages.FetchProviderPackage:input_type -> terracina1.packages.FetchProviderPackage.Request
+	10, // 10: terracina1.packages.Packages.ModulePackageVersions:input_type -> terracina1.packages.ModulePackageVersions.Request
+	12, // 11: terracina1.packages.Packages.ModulePackageSourceAddr:input_type -> terracina1.packages.ModulePackageSourceAddr.Request
+	14, // 12: terracina1.packages.Packages.FetchModulePackage:input_type -> terracina1.packages.FetchModulePackage.Request
+	6,  // 13: terracina1.packages.Packages.ProviderPackageVersions:output_type -> terracina1.packages.ProviderPackageVersions.Response
+	8,  // 14: terracina1.packages.Packages.FetchProviderPackage:output_type -> terracina1.packages.FetchProviderPackage.Response
+	11, // 15: terracina1.packages.Packages.ModulePackageVersions:output_type -> terracina1.packages.ModulePackageVersions.Response
+	13, // 16: terracina1.packages.Packages.ModulePackageSourceAddr:output_type -> terracina1.packages.ModulePackageSourceAddr.Response
+	15, // 17: terracina1.packages.Packages.FetchModulePackage:output_type -> terracina1.packages.FetchModulePackage.Response
 	13, // [13:18] is the sub-list for method output_type
 	8,  // [8:13] is the sub-list for method input_type
 	8,  // [8:8] is the sub-list for extension type_name
@@ -1257,7 +1257,7 @@ func NewPackagesClient(cc grpc.ClientConnInterface) PackagesClient {
 
 func (c *packagesClient) ProviderPackageVersions(ctx context.Context, in *ProviderPackageVersions_Request, opts ...grpc.CallOption) (*ProviderPackageVersions_Response, error) {
 	out := new(ProviderPackageVersions_Response)
-	err := c.cc.Invoke(ctx, "/terraform1.packages.Packages/ProviderPackageVersions", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/terracina1.packages.Packages/ProviderPackageVersions", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1266,7 +1266,7 @@ func (c *packagesClient) ProviderPackageVersions(ctx context.Context, in *Provid
 
 func (c *packagesClient) FetchProviderPackage(ctx context.Context, in *FetchProviderPackage_Request, opts ...grpc.CallOption) (*FetchProviderPackage_Response, error) {
 	out := new(FetchProviderPackage_Response)
-	err := c.cc.Invoke(ctx, "/terraform1.packages.Packages/FetchProviderPackage", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/terracina1.packages.Packages/FetchProviderPackage", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1275,7 +1275,7 @@ func (c *packagesClient) FetchProviderPackage(ctx context.Context, in *FetchProv
 
 func (c *packagesClient) ModulePackageVersions(ctx context.Context, in *ModulePackageVersions_Request, opts ...grpc.CallOption) (*ModulePackageVersions_Response, error) {
 	out := new(ModulePackageVersions_Response)
-	err := c.cc.Invoke(ctx, "/terraform1.packages.Packages/ModulePackageVersions", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/terracina1.packages.Packages/ModulePackageVersions", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1284,7 +1284,7 @@ func (c *packagesClient) ModulePackageVersions(ctx context.Context, in *ModulePa
 
 func (c *packagesClient) ModulePackageSourceAddr(ctx context.Context, in *ModulePackageSourceAddr_Request, opts ...grpc.CallOption) (*ModulePackageSourceAddr_Response, error) {
 	out := new(ModulePackageSourceAddr_Response)
-	err := c.cc.Invoke(ctx, "/terraform1.packages.Packages/ModulePackageSourceAddr", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/terracina1.packages.Packages/ModulePackageSourceAddr", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1293,7 +1293,7 @@ func (c *packagesClient) ModulePackageSourceAddr(ctx context.Context, in *Module
 
 func (c *packagesClient) FetchModulePackage(ctx context.Context, in *FetchModulePackage_Request, opts ...grpc.CallOption) (*FetchModulePackage_Response, error) {
 	out := new(FetchModulePackage_Response)
-	err := c.cc.Invoke(ctx, "/terraform1.packages.Packages/FetchModulePackage", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/terracina1.packages.Packages/FetchModulePackage", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1343,7 +1343,7 @@ func _Packages_ProviderPackageVersions_Handler(srv interface{}, ctx context.Cont
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/terraform1.packages.Packages/ProviderPackageVersions",
+		FullMethod: "/terracina1.packages.Packages/ProviderPackageVersions",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PackagesServer).ProviderPackageVersions(ctx, req.(*ProviderPackageVersions_Request))
@@ -1361,7 +1361,7 @@ func _Packages_FetchProviderPackage_Handler(srv interface{}, ctx context.Context
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/terraform1.packages.Packages/FetchProviderPackage",
+		FullMethod: "/terracina1.packages.Packages/FetchProviderPackage",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PackagesServer).FetchProviderPackage(ctx, req.(*FetchProviderPackage_Request))
@@ -1379,7 +1379,7 @@ func _Packages_ModulePackageVersions_Handler(srv interface{}, ctx context.Contex
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/terraform1.packages.Packages/ModulePackageVersions",
+		FullMethod: "/terracina1.packages.Packages/ModulePackageVersions",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PackagesServer).ModulePackageVersions(ctx, req.(*ModulePackageVersions_Request))
@@ -1397,7 +1397,7 @@ func _Packages_ModulePackageSourceAddr_Handler(srv interface{}, ctx context.Cont
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/terraform1.packages.Packages/ModulePackageSourceAddr",
+		FullMethod: "/terracina1.packages.Packages/ModulePackageSourceAddr",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PackagesServer).ModulePackageSourceAddr(ctx, req.(*ModulePackageSourceAddr_Request))
@@ -1415,7 +1415,7 @@ func _Packages_FetchModulePackage_Handler(srv interface{}, ctx context.Context, 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/terraform1.packages.Packages/FetchModulePackage",
+		FullMethod: "/terracina1.packages.Packages/FetchModulePackage",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PackagesServer).FetchModulePackage(ctx, req.(*FetchModulePackage_Request))
@@ -1424,7 +1424,7 @@ func _Packages_FetchModulePackage_Handler(srv interface{}, ctx context.Context, 
 }
 
 var _Packages_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "terraform1.packages.Packages",
+	ServiceName: "terracina1.packages.Packages",
 	HandlerType: (*PackagesServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

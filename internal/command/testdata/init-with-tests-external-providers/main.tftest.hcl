@@ -1,6 +1,6 @@
 
 // configure is not a "hashicorp" provider, so it won't be able to load
-// this using the default behaviour. Terraform will need to look into the setup
+// this using the default behaviour. Terracina will need to look into the setup
 // module to find the provider configuration.
 provider "configure" {}
 

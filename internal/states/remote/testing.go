@@ -7,8 +7,8 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/hashicorp/terraform/internal/states/statefile"
-	"github.com/hashicorp/terraform/internal/states/statemgr"
+	"github.com/hashicorp/terracina/internal/states/statefile"
+	"github.com/hashicorp/terracina/internal/states/statemgr"
 )
 
 // TestClient is a generic function to test any client.

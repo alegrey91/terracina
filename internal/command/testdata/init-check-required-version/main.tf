@@ -1,7 +1,7 @@
-terraform {
+terracina {
     required_version = "~> 0.9.0"
 }
 
-terraform {
+terracina {
     required_version = ">= 0.13.0"
 }

@@ -10,10 +10,10 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/hcl/v2"
-	"github.com/hashicorp/terraform/internal/command/arguments"
-	"github.com/hashicorp/terraform/internal/terminal"
-	"github.com/hashicorp/terraform/internal/tfdiags"
-	tfversion "github.com/hashicorp/terraform/version"
+	"github.com/hashicorp/terracina/internal/command/arguments"
+	"github.com/hashicorp/terracina/internal/terminal"
+	"github.com/hashicorp/terracina/internal/tfdiags"
+	tfversion "github.com/hashicorp/terracina/version"
 )
 
 func TestNewInit_jsonViewDiagnostics(t *testing.T) {
@@ -31,16 +31,16 @@ func TestNewInit_jsonViewDiagnostics(t *testing.T) {
 	want := []map[string]interface{}{
 		{
 			"@level":    "info",
-			"@message":  fmt.Sprintf("Terraform %s", version),
-			"@module":   "terraform.ui",
-			"terraform": version,
+			"@message":  fmt.Sprintf("Terracina %s", version),
+			"@module":   "terracina.ui",
+			"terracina": version,
 			"type":      "version",
 			"ui":        JSON_UI_VERSION,
 		},
 		{
 			"@level":   "error",
 			"@message": "Error: Error selecting workspace",
-			"@module":  "terraform.ui",
+			"@module":  "terracina.ui",
 			"diagnostic": map[string]interface{}{
 				"severity": "error",
 				"summary":  "Error selecting workspace",
@@ -51,7 +51,7 @@ func TestNewInit_jsonViewDiagnostics(t *testing.T) {
 		{
 			"@level":   "error",
 			"@message": "Error: Unsupported backend type",
-			"@module":  "terraform.ui",
+			"@module":  "terracina.ui",
 			"diagnostic": map[string]interface{}{
 				"severity": "error",
 				"summary":  "Unsupported backend type",
@@ -135,9 +135,9 @@ func TestNewInit_jsonViewOutput(t *testing.T) {
 		want := []map[string]interface{}{
 			{
 				"@level":    "info",
-				"@message":  fmt.Sprintf("Terraform %s", version),
-				"@module":   "terraform.ui",
-				"terraform": version,
+				"@message":  fmt.Sprintf("Terracina %s", version),
+				"@module":   "terracina.ui",
+				"terracina": version,
 				"type":      "version",
 				"ui":        JSON_UI_VERSION,
 			},
@@ -145,7 +145,7 @@ func TestNewInit_jsonViewOutput(t *testing.T) {
 				"@level":       "info",
 				"@message":     "Initializing provider plugins...",
 				"message_code": "initializing_provider_plugin_message",
-				"@module":      "terraform.ui",
+				"@module":      "terracina.ui",
 				"type":         "init_output",
 			},
 		}
@@ -169,16 +169,16 @@ func TestNewInit_jsonViewOutput(t *testing.T) {
 		want := []map[string]interface{}{
 			{
 				"@level":    "info",
-				"@message":  fmt.Sprintf("Terraform %s", version),
-				"@module":   "terraform.ui",
-				"terraform": version,
+				"@message":  fmt.Sprintf("Terracina %s", version),
+				"@module":   "terracina.ui",
+				"terracina": version,
 				"type":      "version",
 				"ui":        JSON_UI_VERSION,
 			},
 			{
 				"@level":       "info",
 				"@message":     fmt.Sprintf("%s: Finding latest version...", packageName),
-				"@module":      "terraform.ui",
+				"@module":      "terracina.ui",
 				"message_code": "finding_latest_version_message",
 				"type":         "init_output",
 			},
@@ -203,16 +203,16 @@ func TestNewInit_jsonViewOutput(t *testing.T) {
 		want := []map[string]interface{}{
 			{
 				"@level":    "info",
-				"@message":  fmt.Sprintf("Terraform %s", version),
-				"@module":   "terraform.ui",
-				"terraform": version,
+				"@message":  fmt.Sprintf("Terracina %s", version),
+				"@module":   "terracina.ui",
+				"terracina": version,
 				"type":      "version",
 				"ui":        JSON_UI_VERSION,
 			},
 			{
 				"@level":       "info",
 				"@message":     fmt.Sprintf("%s v%s: Using previously-installed provider version", packageName, packageVersion),
-				"@module":      "terraform.ui",
+				"@module":      "terracina.ui",
 				"message_code": "provider_already_installed_message",
 				"type":         "init_output",
 			},
@@ -237,16 +237,16 @@ func TestNewInit_jsonViewLog(t *testing.T) {
 	want := []map[string]interface{}{
 		{
 			"@level":    "info",
-			"@message":  fmt.Sprintf("Terraform %s", version),
-			"@module":   "terraform.ui",
-			"terraform": version,
+			"@message":  fmt.Sprintf("Terracina %s", version),
+			"@module":   "terracina.ui",
+			"terracina": version,
 			"type":      "version",
 			"ui":        JSON_UI_VERSION,
 		},
 		{
 			"@level":   "info",
 			"@message": "Initializing provider plugins...",
-			"@module":  "terraform.ui",
+			"@module":  "terracina.ui",
 			"type":     "log",
 		},
 	}

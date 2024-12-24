@@ -12,13 +12,13 @@ import (
 	"github.com/zclconf/go-cty/cty"
 	"github.com/zclconf/go-cty/cty/convert"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/didyoumean"
-	"github.com/hashicorp/terraform/internal/lang"
-	"github.com/hashicorp/terraform/internal/lang/langrefs"
-	"github.com/hashicorp/terraform/internal/terraform"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/didyoumean"
+	"github.com/hashicorp/terracina/internal/lang"
+	"github.com/hashicorp/terracina/internal/lang/langrefs"
+	"github.com/hashicorp/terracina/internal/terracina"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // EvalContext is a container for context relating to the evaluation of a
@@ -43,7 +43,7 @@ type EvalContext struct {
 // variables that were defined only for use in the test suite. Any variable
 // not defined in extraVariableVals will be evaluated through resultScope
 // instead.
-func NewEvalContext(run *Run, module *configs.Module, resultScope *lang.Scope, extraVariableVals terraform.InputValues, priorOutputs map[addrs.Run]cty.Value) *EvalContext {
+func NewEvalContext(run *Run, module *configs.Module, resultScope *lang.Scope, extraVariableVals terracina.InputValues, priorOutputs map[addrs.Run]cty.Value) *EvalContext {
 	// We need a derived evaluation scope that also supports referring to
 	// the prior run output values using the "run.NAME" syntax.
 	evalData := &evaluationData{
@@ -180,7 +180,7 @@ func (ec *EvalContext) Evaluate() (Status, cty.Value, tfdiags.Diagnostics) {
 				Expression:  rule.Condition,
 				EvalContext: hclCtx,
 				// Make the ephemerality visible
-				Extra: terraform.DiagnosticCausedByEphemeral(true),
+				Extra: terracina.DiagnosticCausedByEphemeral(true),
 			})
 			continue
 		} else {
@@ -224,13 +224,13 @@ func diagsForEphemeralResources(refs []*addrs.Reference) (diags tfdiags.Diagnost
 }
 
 // evaluationData augments an underlying lang.Data -- presumably resulting
-// from a terraform.Context.PlanAndEval or terraform.Context.ApplyAndEval call --
+// from a terracina.Context.PlanAndEval or terracina.Context.ApplyAndEval call --
 // with results from prior runs that should therefore be available when
 // evaluating expressions written inside a "run" block.
 type evaluationData struct {
 	module    *configs.Module
 	current   lang.Data
-	extraVars terraform.InputValues
+	extraVars terracina.InputValues
 	priorVals map[addrs.Run]cty.Value
 }
 
@@ -311,9 +311,9 @@ func (d *evaluationData) GetRunBlock(addr addrs.Run, rng tfdiags.SourceRange) (c
 	return ret, diags
 }
 
-// GetTerraformAttr implements lang.Data.
-func (d *evaluationData) GetTerraformAttr(addr addrs.TerraformAttr, rng tfdiags.SourceRange) (cty.Value, tfdiags.Diagnostics) {
-	return d.current.GetTerraformAttr(addr, rng)
+// GetTerracinaAttr implements lang.Data.
+func (d *evaluationData) GetTerracinaAttr(addr addrs.TerracinaAttr, rng tfdiags.SourceRange) (cty.Value, tfdiags.Diagnostics) {
+	return d.current.GetTerracinaAttr(addr, rng)
 }
 
 // StaticValidateReferences implements lang.Data.

@@ -18,11 +18,11 @@ import (
 	"google.golang.org/api/impersonate"
 	"google.golang.org/api/option"
 
-	"github.com/hashicorp/terraform/internal/backend"
-	"github.com/hashicorp/terraform/internal/backend/backendbase"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/httpclient"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/backend"
+	"github.com/hashicorp/terracina/internal/backend/backendbase"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/httpclient"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // Backend implements "backend".Backend for GCS.

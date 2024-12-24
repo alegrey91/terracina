@@ -11,14 +11,14 @@ import (
 
 	"github.com/hashicorp/cli"
 
-	"github.com/hashicorp/terraform/internal/backend/backendrun"
-	"github.com/hashicorp/terraform/internal/command/arguments"
-	"github.com/hashicorp/terraform/internal/command/clistate"
-	"github.com/hashicorp/terraform/internal/command/views"
-	"github.com/hashicorp/terraform/internal/initwd"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/states/statemgr"
-	"github.com/hashicorp/terraform/internal/terminal"
+	"github.com/hashicorp/terracina/internal/backend/backendrun"
+	"github.com/hashicorp/terracina/internal/command/arguments"
+	"github.com/hashicorp/terracina/internal/command/clistate"
+	"github.com/hashicorp/terracina/internal/command/views"
+	"github.com/hashicorp/terracina/internal/initwd"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/states/statemgr"
+	"github.com/hashicorp/terracina/internal/terminal"
 )
 
 func testOperationRefresh(t *testing.T, configDir string) (*backendrun.Operation, func(), func(*testing.T) *terminal.TestOutput) {
@@ -71,8 +71,8 @@ func TestCloud_refreshBasicActuallyRunsApplyRefresh(t *testing.T) {
 	}
 
 	output := b.CLI.(*cli.MockUi).OutputWriter.String()
-	if !strings.Contains(output, "Proceeding with 'terraform apply -refresh-only -auto-approve'") {
-		t.Fatalf("expected HCP Terraform header in output: %s", output)
+	if !strings.Contains(output, "Proceeding with 'terracina apply -refresh-only -auto-approve'") {
+		t.Fatalf("expected HCP Terracina header in output: %s", output)
 	}
 
 	stateMgr, _ := b.StateMgr(testBackendSingleWorkspaceName)

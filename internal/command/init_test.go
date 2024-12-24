@@ -18,18 +18,18 @@ import (
 	version "github.com/hashicorp/go-version"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/command/arguments"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/depsfile"
-	"github.com/hashicorp/terraform/internal/getproviders"
-	"github.com/hashicorp/terraform/internal/providercache"
-	"github.com/hashicorp/terraform/internal/providers"
-	testing_provider "github.com/hashicorp/terraform/internal/providers/testing"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/states/statefile"
-	"github.com/hashicorp/terraform/internal/states/statemgr"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/command/arguments"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/depsfile"
+	"github.com/hashicorp/terracina/internal/getproviders"
+	"github.com/hashicorp/terracina/internal/providercache"
+	"github.com/hashicorp/terracina/internal/providers"
+	testing_provider "github.com/hashicorp/terracina/internal/providers/testing"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/states/statefile"
+	"github.com/hashicorp/terracina/internal/states/statemgr"
 )
 
 func TestInit_empty(t *testing.T) {
@@ -137,7 +137,7 @@ func TestInit_fromModule_cwdDest(t *testing.T) {
 	}
 }
 
-// https://github.com/hashicorp/terraform/issues/518
+// https://github.com/hashicorp/terracina/issues/518
 func TestInit_fromModule_dstInSrc(t *testing.T) {
 	dir := t.TempDir()
 	if err := os.MkdirAll(dir, 0755); err != nil {
@@ -398,7 +398,7 @@ func TestInit_backendConfigFile(t *testing.T) {
 		}
 	})
 
-	// the backend config file must not be a full terraform block
+	// the backend config file must not be a full terracina block
 	t.Run("full-backend-config-file", func(t *testing.T) {
 		ui := new(cli.MockUi)
 		view, done := testView(t)
@@ -958,7 +958,7 @@ func TestInit_backendReinitConfigToExtra(t *testing.T) {
 	backendHash := state.Backend.Hash
 
 	// init again but remove the path option from the config
-	cfg := "terraform {\n  backend \"local\" {}\n}\n"
+	cfg := "terracina {\n  backend \"local\" {}\n}\n"
 	if err := ioutil.WriteFile("main.tf", []byte(cfg), 0644); err != nil {
 		t.Fatal(err)
 	}
@@ -988,8 +988,8 @@ func TestInit_backendReinitConfigToExtra(t *testing.T) {
 }
 
 func TestInit_backendCloudInvalidOptions(t *testing.T) {
-	// There are various "terraform init" options that are only for
-	// traditional backends and not applicable to HCP Terraform mode.
+	// There are various "terracina init" options that are only for
+	// traditional backends and not applicable to HCP Terracina mode.
 	// For those, we want to return an explicit error rather than
 	// just silently ignoring them, so that users will be aware that
 	// Cloud mode has more of an expected "happy path" than the
@@ -1022,7 +1022,7 @@ func TestInit_backendCloudInvalidOptions(t *testing.T) {
 	fakeStateFile := &statefile.File{
 		Lineage:          "boop",
 		Serial:           4,
-		TerraformVersion: version.Must(version.NewVersion("1.0.0")),
+		TerracinaVersion: version.Must(version.NewVersion("1.0.0")),
 		State:            fakeState,
 	}
 	var fakeStateBuf bytes.Buffer
@@ -1037,9 +1037,9 @@ func TestInit_backendCloudInvalidOptions(t *testing.T) {
 
 		// We have -backend-config as a pragmatic way to dynamically set
 		// certain settings of backends that tend to vary depending on
-		// where Terraform is running, such as AWS authentication profiles
-		// that are naturally local only to the machine where Terraform is
-		// running. Those needs don't apply to HCP Terraform, because
+		// where Terracina is running, such as AWS authentication profiles
+		// that are naturally local only to the machine where Terracina is
+		// running. Those needs don't apply to HCP Terracina, because
 		// the remote workspace encapsulates all of the details of how
 		// operations and state work in that case, and so the Cloud
 		// configuration is only about which workspaces we'll be working
@@ -1062,7 +1062,7 @@ func TestInit_backendCloudInvalidOptions(t *testing.T) {
 Error: Invalid command-line option
 
 The -backend-config=... command line option is only for state backends, and
-is not applicable to HCP Terraform-based configurations.
+is not applicable to HCP Terracina-based configurations.
 
 To change the set of workspaces associated with this configuration, edit the
 Cloud configuration block in the root module.
@@ -1078,7 +1078,7 @@ Cloud configuration block in the root module.
 		// skipping state migration when migrating between backends, but it
 		// has a historical flaw that it doesn't work properly when the
 		// initial situation is the implicit local backend with a state file
-		// present. The HCP Terraform migration path has some additional
+		// present. The HCP Terracina migration path has some additional
 		// steps to take care of more details automatically, and so
 		// -reconfigure doesn't really make sense in that context, particularly
 		// with its design bug with the handling of the implicit local backend.
@@ -1100,9 +1100,9 @@ Cloud configuration block in the root module.
 Error: Invalid command-line option
 
 The -reconfigure option is for in-place reconfiguration of state backends
-only, and is not needed when changing HCP Terraform settings.
+only, and is not needed when changing HCP Terracina settings.
 
-When using HCP Terraform, initialization automatically activates any new
+When using HCP Terracina, initialization automatically activates any new
 Cloud configuration settings.
 `
 		if diff := cmp.Diff(wantStderr, gotStderr); diff != "" {
@@ -1113,10 +1113,10 @@ Cloud configuration settings.
 		defer setupTempDir(t)()
 
 		// We have a slightly different error message for the case where we
-		// seem to be trying to migrate to HCP Terraform with existing
+		// seem to be trying to migrate to HCP Terracina with existing
 		// state or explicit backend already present.
 
-		if err := os.WriteFile("terraform.tfstate", fakeStateBytes, 0644); err != nil {
+		if err := os.WriteFile("terracina.tfstate", fakeStateBytes, 0644); err != nil {
 			t.Fatal(err)
 		}
 
@@ -1137,8 +1137,8 @@ Cloud configuration settings.
 		wantStderr := `
 Error: Invalid command-line option
 
-The -reconfigure option is unsupported when migrating to HCP Terraform,
-because activating HCP Terraform involves some additional steps.
+The -reconfigure option is unsupported when migrating to HCP Terracina,
+because activating HCP Terracina involves some additional steps.
 `
 		if diff := cmp.Diff(wantStderr, gotStderr); diff != "" {
 			t.Errorf("wrong error output\n%s", diff)
@@ -1168,9 +1168,9 @@ because activating HCP Terraform involves some additional steps.
 Error: Invalid command-line option
 
 The -migrate-state option is for migration between state backends only, and
-is not applicable when using HCP Terraform.
+is not applicable when using HCP Terracina.
 
-State storage is handled automatically by HCP Terraform and so the state
+State storage is handled automatically by HCP Terracina and so the state
 storage location is not configurable.
 `
 		if diff := cmp.Diff(wantStderr, gotStderr); diff != "" {
@@ -1181,10 +1181,10 @@ storage location is not configurable.
 		defer setupTempDir(t)()
 
 		// We have a slightly different error message for the case where we
-		// seem to be trying to migrate to HCP Terraform with existing
+		// seem to be trying to migrate to HCP Terracina with existing
 		// state or explicit backend already present.
 
-		if err := os.WriteFile("terraform.tfstate", fakeStateBytes, 0644); err != nil {
+		if err := os.WriteFile("terracina.tfstate", fakeStateBytes, 0644); err != nil {
 			t.Fatal(err)
 		}
 
@@ -1206,9 +1206,9 @@ storage location is not configurable.
 Error: Invalid command-line option
 
 The -migrate-state option is for migration between state backends only, and
-is not applicable when using HCP Terraform.
+is not applicable when using HCP Terracina.
 
-HCP Terraform migrations have additional steps, configured by interactive
+HCP Terracina migrations have additional steps, configured by interactive
 prompts.
 `
 		if diff := cmp.Diff(wantStderr, gotStderr); diff != "" {
@@ -1239,9 +1239,9 @@ prompts.
 Error: Invalid command-line option
 
 The -force-copy option is for migration between state backends only, and is
-not applicable when using HCP Terraform.
+not applicable when using HCP Terracina.
 
-State storage is handled automatically by HCP Terraform and so the state
+State storage is handled automatically by HCP Terracina and so the state
 storage location is not configurable.
 `
 		if diff := cmp.Diff(wantStderr, gotStderr); diff != "" {
@@ -1252,10 +1252,10 @@ storage location is not configurable.
 		defer setupTempDir(t)()
 
 		// We have a slightly different error message for the case where we
-		// seem to be trying to migrate to HCP Terraform with existing
+		// seem to be trying to migrate to HCP Terracina with existing
 		// state or explicit backend already present.
 
-		if err := os.WriteFile("terraform.tfstate", fakeStateBytes, 0644); err != nil {
+		if err := os.WriteFile("terracina.tfstate", fakeStateBytes, 0644); err != nil {
 			t.Fatal(err)
 		}
 
@@ -1279,9 +1279,9 @@ storage location is not configurable.
 Error: Invalid command-line option
 
 The -force-copy option is for migration between state backends only, and is
-not applicable when using HCP Terraform.
+not applicable when using HCP Terracina.
 
-HCP Terraform migrations have additional steps, configured by interactive
+HCP Terracina migrations have additional steps, configured by interactive
 prompts.
 `
 		if diff := cmp.Diff(wantStderr, gotStderr); diff != "" {
@@ -1406,22 +1406,22 @@ func TestInit_getProvider(t *testing.T) {
 	}
 
 	// check that we got the providers for our config
-	exactPath := fmt.Sprintf(".terraform/providers/registry.terraform.io/hashicorp/exact/1.2.3/%s", getproviders.CurrentPlatform)
+	exactPath := fmt.Sprintf(".terracina/providers/registry.terracina.io/hashicorp/exact/1.2.3/%s", getproviders.CurrentPlatform)
 	if _, err := os.Stat(exactPath); os.IsNotExist(err) {
 		t.Fatal("provider 'exact' not downloaded")
 	}
-	greaterThanPath := fmt.Sprintf(".terraform/providers/registry.terraform.io/hashicorp/greater-than/2.3.4/%s", getproviders.CurrentPlatform)
+	greaterThanPath := fmt.Sprintf(".terracina/providers/registry.terracina.io/hashicorp/greater-than/2.3.4/%s", getproviders.CurrentPlatform)
 	if _, err := os.Stat(greaterThanPath); os.IsNotExist(err) {
 		t.Fatal("provider 'greater-than' not downloaded")
 	}
-	betweenPath := fmt.Sprintf(".terraform/providers/registry.terraform.io/hashicorp/between/2.3.4/%s", getproviders.CurrentPlatform)
+	betweenPath := fmt.Sprintf(".terracina/providers/registry.terracina.io/hashicorp/between/2.3.4/%s", getproviders.CurrentPlatform)
 	if _, err := os.Stat(betweenPath); os.IsNotExist(err) {
 		t.Fatal("provider 'between' not downloaded")
 	}
 
 	t.Run("future-state", func(t *testing.T) {
 		// getting providers should fail if a state from a newer version of
-		// terraform exists, since InitCommand.getProviders needs to inspect that
+		// terracina exists, since InitCommand.getProviders needs to inspect that
 		// state.
 
 		f, err := os.Create(DefaultStateFilename)
@@ -1434,14 +1434,14 @@ func TestInit_getProvider(t *testing.T) {
 		type FutureState struct {
 			Version          uint                     `json:"version"`
 			Lineage          string                   `json:"lineage"`
-			TerraformVersion string                   `json:"terraform_version"`
+			TerracinaVersion string                   `json:"terracina_version"`
 			Outputs          map[string]interface{}   `json:"outputs"`
 			Resources        []map[string]interface{} `json:"resources"`
 		}
 		fs := &FutureState{
 			Version:          999,
 			Lineage:          "123-456-789",
-			TerraformVersion: "999.0.0",
+			TerracinaVersion: "999.0.0",
 			Outputs:          make(map[string]interface{}),
 			Resources:        make([]map[string]interface{}, 0),
 		}
@@ -1512,15 +1512,15 @@ func TestInit_getProviderSource(t *testing.T) {
 	}
 
 	// check that we got the providers for our config
-	exactPath := fmt.Sprintf(".terraform/providers/registry.terraform.io/acme/alpha/1.2.3/%s", getproviders.CurrentPlatform)
+	exactPath := fmt.Sprintf(".terracina/providers/registry.terracina.io/acme/alpha/1.2.3/%s", getproviders.CurrentPlatform)
 	if _, err := os.Stat(exactPath); os.IsNotExist(err) {
 		t.Error("provider 'alpha' not downloaded")
 	}
-	greaterThanPath := fmt.Sprintf(".terraform/providers/registry.example.com/acme/beta/1.0.0/%s", getproviders.CurrentPlatform)
+	greaterThanPath := fmt.Sprintf(".terracina/providers/registry.example.com/acme/beta/1.0.0/%s", getproviders.CurrentPlatform)
 	if _, err := os.Stat(greaterThanPath); os.IsNotExist(err) {
 		t.Error("provider 'beta' not downloaded")
 	}
-	betweenPath := fmt.Sprintf(".terraform/providers/registry.terraform.io/hashicorp/gamma/2.0.0/%s", getproviders.CurrentPlatform)
+	betweenPath := fmt.Sprintf(".terracina/providers/registry.terracina.io/hashicorp/gamma/2.0.0/%s", getproviders.CurrentPlatform)
 	if _, err := os.Stat(betweenPath); os.IsNotExist(err) {
 		t.Error("provider 'gamma' not downloaded")
 	}
@@ -1558,7 +1558,7 @@ func TestInit_getProviderLegacyFromState(t *testing.T) {
 	// Expect this diagnostic output
 	wants := []string{
 		"Invalid legacy provider address",
-		"You must complete the Terraform 0.13 upgrade process",
+		"You must complete the Terracina 0.13 upgrade process",
 	}
 	got := testOutput.All()
 	for _, want := range wants {
@@ -1586,7 +1586,7 @@ func TestInit_getProviderInvalidPackage(t *testing.T) {
 		version,
 		getproviders.VersionList{getproviders.MustParseVersion("5.0")},
 		getproviders.CurrentPlatform,
-		"terraform-package", // should be "terraform-provider-package"
+		"terracina-package", // should be "terracina-provider-package"
 	)
 	defer close()
 	if err != nil {
@@ -1615,14 +1615,14 @@ func TestInit_getProviderInvalidPackage(t *testing.T) {
 	}
 
 	// invalid provider should be installed
-	packagePath := fmt.Sprintf(".terraform/providers/registry.terraform.io/invalid/package/1.0.0/%s/terraform-package", getproviders.CurrentPlatform)
+	packagePath := fmt.Sprintf(".terracina/providers/registry.terracina.io/invalid/package/1.0.0/%s/terracina-package", getproviders.CurrentPlatform)
 	if _, err := os.Stat(packagePath); os.IsNotExist(err) {
 		t.Fatal("provider 'invalid/package' not downloaded")
 	}
 
 	wantErrors := []string{
 		"Failed to install provider",
-		"could not find executable file starting with terraform-provider-package",
+		"could not find executable file starting with terracina-provider-package",
 	}
 	got := testOutput.All()
 	for _, wantError := range wantErrors {
@@ -1644,7 +1644,7 @@ func TestInit_getProviderDetectedLegacy(t *testing.T) {
 	// appropriate namespace if possible.
 	providerSource, psClose := newMockProviderSource(t, map[string][]string{
 		"hashicorp/foo":           {"1.2.3"},
-		"terraform-providers/baz": {"2.3.4"}, // this will not be installed
+		"terracina-providers/baz": {"2.3.4"}, // this will not be installed
 	})
 	defer psClose()
 	registrySource, rsClose := testRegistrySource(t)
@@ -1676,12 +1676,12 @@ func TestInit_getProviderDetectedLegacy(t *testing.T) {
 	}
 
 	// foo should be installed
-	fooPath := fmt.Sprintf(".terraform/providers/registry.terraform.io/hashicorp/foo/1.2.3/%s", getproviders.CurrentPlatform)
+	fooPath := fmt.Sprintf(".terracina/providers/registry.terracina.io/hashicorp/foo/1.2.3/%s", getproviders.CurrentPlatform)
 	if _, err := os.Stat(fooPath); os.IsNotExist(err) {
 		t.Error("provider 'foo' not installed")
 	}
 	// baz should not be installed
-	bazPath := fmt.Sprintf(".terraform/providers/registry.terraform.io/terraform-providers/baz/2.3.4/%s", getproviders.CurrentPlatform)
+	bazPath := fmt.Sprintf(".terracina/providers/registry.terracina.io/terracina-providers/baz/2.3.4/%s", getproviders.CurrentPlatform)
 	if _, err := os.Stat(bazPath); !os.IsNotExist(err) {
 		t.Error("provider 'baz' installed, but should not be")
 	}
@@ -1691,8 +1691,8 @@ func TestInit_getProviderDetectedLegacy(t *testing.T) {
 	errors := []string{
 		"Failed to query available provider packages",
 		"Could not retrieve the list of available versions",
-		"registry.terraform.io/hashicorp/baz",
-		"registry.terraform.io/hashicorp/frob",
+		"registry.terracina.io/hashicorp/baz",
+		"registry.terracina.io/hashicorp/frob",
 	}
 	for _, want := range errors {
 		if !strings.Contains(errOutput, want) {
@@ -1733,7 +1733,7 @@ func TestInit_providerSource(t *testing.T) {
 	if code != 0 {
 		t.Fatalf("bad: \n%s", testOutput.All())
 	}
-	if strings.Contains(testOutput.Stdout(), "Terraform has initialized, but configuration upgrades may be needed") {
+	if strings.Contains(testOutput.Stdout(), "Terracina has initialized, but configuration upgrades may be needed") {
 		t.Fatalf("unexpected \"configuration upgrade\" warning in output")
 	}
 
@@ -1811,7 +1811,7 @@ func TestInit_providerSource(t *testing.T) {
 }
 
 func TestInit_cancelModules(t *testing.T) {
-	// This test runs `terraform init` as if SIGINT (or similar on other
+	// This test runs `terracina init` as if SIGINT (or similar on other
 	// platforms) were sent to it, testing that it is interruptible.
 
 	td := t.TempDir()
@@ -1849,7 +1849,7 @@ func TestInit_cancelModules(t *testing.T) {
 }
 
 func TestInit_cancelProviders(t *testing.T) {
-	// This test runs `terraform init` as if SIGINT (or similar on other
+	// This test runs `terracina init` as if SIGINT (or similar on other
 	// platforms) were sent to it, testing that it is interruptible.
 
 	td := t.TempDir()
@@ -2113,7 +2113,7 @@ func TestInit_checkRequiredVersionFirst(t *testing.T) {
 			t.Fatalf("got exit status %d; want 1\nstderr:\n%s\n\nstdout:\n%s", code, done(t).Stderr(), done(t).Stdout())
 		}
 		errStr := done(t).All()
-		if !strings.Contains(errStr, `Unsupported Terraform Core version`) {
+		if !strings.Contains(errStr, `Unsupported Terracina Core version`) {
 			t.Fatalf("output should point to unmet version constraint, but is:\n\n%s", errStr)
 		}
 	})
@@ -2137,7 +2137,7 @@ func TestInit_checkRequiredVersionFirst(t *testing.T) {
 			t.Fatalf("got exit status %d; want 1\nstderr:\n%s\n\nstdout:\n%s", code, done(t).Stderr(), done(t).Stdout())
 		}
 		errStr := done(t).All()
-		if !strings.Contains(errStr, `Unsupported Terraform Core version`) {
+		if !strings.Contains(errStr, `Unsupported Terracina Core version`) {
 			t.Fatalf("output should point to unmet version constraint, but is:\n\n%s", errStr)
 		}
 	})
@@ -2174,7 +2174,7 @@ func TestInit_providerLockFile(t *testing.T) {
 		t.Fatalf("bad: \n%s", done(t).Stderr())
 	}
 
-	lockFile := ".terraform.lock.hcl"
+	lockFile := ".terracina.lock.hcl"
 	buf, err := ioutil.ReadFile(lockFile)
 	if err != nil {
 		t.Fatalf("failed to read dependency lock file %s: %s", lockFile, err)
@@ -2183,10 +2183,10 @@ func TestInit_providerLockFile(t *testing.T) {
 	// The hash in here is for the fake package that newMockProviderSource produces
 	// (so it'll change if newMockProviderSource starts producing different contents)
 	wantLockFile := strings.TrimSpace(`
-# This file is maintained automatically by "terraform init".
+# This file is maintained automatically by "terracina init".
 # Manual edits may be lost in future updates.
 
-provider "registry.terraform.io/hashicorp/test" {
+provider "registry.terracina.io/hashicorp/test" {
   version     = "1.2.3"
   constraints = "1.2.3"
   hashes = [
@@ -2210,10 +2210,10 @@ func TestInit_providerLockFileReadonly(t *testing.T) {
 	// The hash in here is for the fake package that newMockProviderSource produces
 	// (so it'll change if newMockProviderSource starts producing different contents)
 	inputLockFile := strings.TrimSpace(`
-# This file is maintained automatically by "terraform init".
+# This file is maintained automatically by "terracina init".
 # Manual edits may be lost in future updates.
 
-provider "registry.terraform.io/hashicorp/test" {
+provider "registry.terracina.io/hashicorp/test" {
   version     = "1.2.3"
   constraints = "1.2.3"
   hashes = [
@@ -2223,10 +2223,10 @@ provider "registry.terraform.io/hashicorp/test" {
 `)
 
 	badLockFile := strings.TrimSpace(`
-# This file is maintained automatically by "terraform init".
+# This file is maintained automatically by "terracina init".
 # Manual edits may be lost in future updates.
 
-provider "registry.terraform.io/hashicorp/test" {
+provider "registry.terracina.io/hashicorp/test" {
   version     = "1.2.3"
   constraints = "1.2.3"
   hashes = [
@@ -2236,10 +2236,10 @@ provider "registry.terraform.io/hashicorp/test" {
 `)
 
 	updatedLockFile := strings.TrimSpace(`
-# This file is maintained automatically by "terraform init".
+# This file is maintained automatically by "terracina init".
 # Manual edits may be lost in future updates.
 
-provider "registry.terraform.io/hashicorp/test" {
+provider "registry.terracina.io/hashicorp/test" {
   version     = "1.2.3"
   constraints = "1.2.3"
   hashes = [
@@ -2250,7 +2250,7 @@ provider "registry.terraform.io/hashicorp/test" {
 `)
 
 	emptyUpdatedLockFile := strings.TrimSpace(`
-# This file is maintained automatically by "terraform init".
+# This file is maintained automatically by "terracina init".
 # Manual edits may be lost in future updates.
 `)
 
@@ -2355,7 +2355,7 @@ provider "registry.terraform.io/hashicorp/test" {
 			}
 
 			// write input lockfile
-			lockFile := ".terraform.lock.hcl"
+			lockFile := ".terracina.lock.hcl"
 			if err := ioutil.WriteFile(lockFile, []byte(tc.input), 0644); err != nil {
 				t.Fatalf("failed to write input lockfile: %s", err)
 			}
@@ -2656,16 +2656,16 @@ func TestInit_pluginDirWithBuiltIn(t *testing.T) {
 	}
 
 	outputStr := testOutput.Stdout()
-	if subStr := "terraform.io/builtin/terraform is built in to Terraform"; !strings.Contains(outputStr, subStr) {
-		t.Errorf("output should mention the terraform provider\nwant substr: %s\ngot:\n%s", subStr, outputStr)
+	if subStr := "terracina.io/builtin/terracina is built in to Terracina"; !strings.Contains(outputStr, subStr) {
+		t.Errorf("output should mention the terracina provider\nwant substr: %s\ngot:\n%s", subStr, outputStr)
 	}
 }
 
 func TestInit_invalidBuiltInProviders(t *testing.T) {
 	// This test fixture includes two invalid provider dependencies:
-	// - an implied dependency on terraform.io/builtin/terraform with an
+	// - an implied dependency on terracina.io/builtin/terracina with an
 	//   explicit version number, which is not allowed because it's builtin.
-	// - an explicit dependency on terraform.io/builtin/nonexist, which does
+	// - an explicit dependency on terracina.io/builtin/nonexist, which does
 	//   not exist at all.
 	td := t.TempDir()
 	testCopyDir(t, testFixturePath("init-internal-invalid"), td)
@@ -2695,10 +2695,10 @@ func TestInit_invalidBuiltInProviders(t *testing.T) {
 	}
 
 	errStr := testOutput.Stderr()
-	if subStr := "Cannot use terraform.io/builtin/terraform: built-in"; !strings.Contains(errStr, subStr) {
-		t.Errorf("error output should mention the terraform provider\nwant substr: %s\ngot:\n%s", subStr, errStr)
+	if subStr := "Cannot use terracina.io/builtin/terracina: built-in"; !strings.Contains(errStr, subStr) {
+		t.Errorf("error output should mention the terracina provider\nwant substr: %s\ngot:\n%s", subStr, errStr)
 	}
-	if subStr := "Cannot use terraform.io/builtin/nonexist: this Terraform release"; !strings.Contains(errStr, subStr) {
+	if subStr := "Cannot use terracina.io/builtin/nonexist: this Terracina release"; !strings.Contains(errStr, subStr) {
 		t.Errorf("error output should mention the 'nonexist' provider\nwant substr: %s\ngot:\n%s", subStr, errStr)
 	}
 }
@@ -2726,7 +2726,7 @@ func TestInit_invalidSyntaxNoBackend(t *testing.T) {
 	}
 
 	errStr := testOutput.Stderr()
-	if subStr := "Terraform encountered problems during initialisation, including problems\nwith the configuration, described below."; !strings.Contains(errStr, subStr) {
+	if subStr := "Terracina encountered problems during initialisation, including problems\nwith the configuration, described below."; !strings.Contains(errStr, subStr) {
 		t.Errorf("Error output should include preamble\nwant substr: %s\ngot:\n%s", subStr, errStr)
 	}
 	if subStr := "Error: Unsupported block type"; !strings.Contains(errStr, subStr) {
@@ -2757,7 +2757,7 @@ func TestInit_invalidSyntaxWithBackend(t *testing.T) {
 	}
 
 	errStr := testOutput.Stderr()
-	if subStr := "Terraform encountered problems during initialisation, including problems\nwith the configuration, described below."; !strings.Contains(errStr, subStr) {
+	if subStr := "Terracina encountered problems during initialisation, including problems\nwith the configuration, described below."; !strings.Contains(errStr, subStr) {
 		t.Errorf("Error output should include preamble\nwant substr: %s\ngot:\n%s", subStr, errStr)
 	}
 	if subStr := "Error: Unsupported block type"; !strings.Contains(errStr, subStr) {
@@ -2788,7 +2788,7 @@ func TestInit_invalidSyntaxInvalidBackend(t *testing.T) {
 	}
 
 	errStr := testOutput.Stderr()
-	if subStr := "Terraform encountered problems during initialisation, including problems\nwith the configuration, described below."; !strings.Contains(errStr, subStr) {
+	if subStr := "Terracina encountered problems during initialisation, including problems\nwith the configuration, described below."; !strings.Contains(errStr, subStr) {
 		t.Errorf("Error output should include preamble\nwant substr: %s\ngot:\n%s", subStr, errStr)
 	}
 	if subStr := "Error: Unsupported block type"; !strings.Contains(errStr, subStr) {
@@ -2822,7 +2822,7 @@ func TestInit_invalidSyntaxBackendAttribute(t *testing.T) {
 	}
 
 	errStr := testOutput.All()
-	if subStr := "Terraform encountered problems during initialisation, including problems\nwith the configuration, described below."; !strings.Contains(errStr, subStr) {
+	if subStr := "Terracina encountered problems during initialisation, including problems\nwith the configuration, described below."; !strings.Contains(errStr, subStr) {
 		t.Errorf("Error output should include preamble\nwant substr: %s\ngot:\n%s", subStr, errStr)
 	}
 	if subStr := "Error: Invalid character"; !strings.Contains(errStr, subStr) {
@@ -2942,7 +2942,7 @@ hashicorp/test: no available releases match the given constraints 1.0.1,
 
 To see which modules are currently depending on hashicorp/test and what
 versions are specified, run the following command:
-    terraform providers
+    terracina providers
 `
 	if diff := cmp.Diff(got, want); len(diff) > 0 {
 		t.Fatalf("wrong error message: \ngot:\n%s\nwant:\n%s\ndiff:\n%s", got, want, diff)
@@ -3057,7 +3057,7 @@ func TestInit_testsWithModule(t *testing.T) {
 //
 // Provider addresses must be valid source strings, and passing only the
 // provider name will be interpreted as a "default" provider under
-// registry.terraform.io/hashicorp. If you need more control over the
+// registry.terracina.io/hashicorp. If you need more control over the
 // provider addresses, pass a full provider source string.
 //
 // This function also registers providers as belonging to the current platform,
@@ -3174,15 +3174,15 @@ func installFakeProviderPackagesElsewhere(t *testing.T, cacheDir *providercache.
 // with how the getproviders and providercache packages build paths.
 func expectedPackageInstallPath(name, version string, exe bool) string {
 	platform := getproviders.CurrentPlatform
-	baseDir := ".terraform/providers"
+	baseDir := ".terracina/providers"
 	if exe {
-		p := fmt.Sprintf("registry.terraform.io/hashicorp/%s/%s/%s/terraform-provider-%s_%s", name, version, platform, name, version)
+		p := fmt.Sprintf("registry.terracina.io/hashicorp/%s/%s/%s/terracina-provider-%s_%s", name, version, platform, name, version)
 		if platform.OS == "windows" {
 			p += ".exe"
 		}
 		return filepath.ToSlash(filepath.Join(baseDir, p))
 	}
 	return filepath.ToSlash(filepath.Join(
-		baseDir, fmt.Sprintf("registry.terraform.io/hashicorp/%s/%s/%s", name, version, platform),
+		baseDir, fmt.Sprintf("registry.terracina.io/hashicorp/%s/%s/%s", name, version, platform),
 	))
 }

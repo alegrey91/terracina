@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/hashicorp/terraform/internal/legacy/terraform"
+	"github.com/hashicorp/terracina/internal/legacy/terracina"
 	"github.com/mitchellh/mapstructure"
 )
 
@@ -29,7 +29,7 @@ import (
 // It cannot be determined whether a retrieved value is composed of
 // diff elements.
 type DiffFieldReader struct {
-	Diff   *terraform.InstanceDiff
+	Diff   *terracina.InstanceDiff
 	Source FieldReader
 	Schema map[string]*Schema
 

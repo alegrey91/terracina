@@ -1,24 +1,24 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"testing"
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/moduletest/mocking"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	testing_provider "github.com/hashicorp/terraform/internal/providers/testing"
-	"github.com/hashicorp/terraform/internal/states"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/moduletest/mocking"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	testing_provider "github.com/hashicorp/terracina/internal/providers/testing"
+	"github.com/hashicorp/terracina/internal/states"
 )
 
-// This file contains 'integration' tests for the Terraform test overrides
+// This file contains 'integration' tests for the Terracina test overrides
 // functionality.
 //
 // These tests could live in context_apply_test or context_apply2_test but given
@@ -358,7 +358,7 @@ output "id" {
 	value = module.mod.id
 }`,
 				"mod/main.tf": `
-terraform {
+terracina {
   required_providers {
     replaced = {
       source = "hashicorp/test"
@@ -469,7 +469,7 @@ output "id" {
 		},
 		// This test is designed to fail as documentation that we do not support
 		// config generation during tests. It's actually impossible in normal
-		// usage to do this since `terraform test` never triggers config
+		// usage to do this since `terracina test` never triggers config
 		// generation.
 		"imports_config_gen": {
 			configs: map[string]string{
@@ -516,7 +516,7 @@ output "id" {
 	value = module.mod.*.id
 }`,
 				"mod/main.tf": `
-terraform {
+terracina {
   required_providers {
     replaced = {
       source = "hashicorp/test"

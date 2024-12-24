@@ -10,15 +10,15 @@ import (
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/anypb"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/collections"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/rpcapi/terraform1/stacks"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/stacks/stackstate/statekeys"
-	"github.com/hashicorp/terraform/internal/stacks/stackutils"
-	"github.com/hashicorp/terraform/internal/stacks/tfstackdata1"
-	"github.com/hashicorp/terraform/internal/states"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/collections"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/rpcapi/terracina1/stacks"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/stacks/stackstate/statekeys"
+	"github.com/hashicorp/terracina/internal/stacks/stackutils"
+	"github.com/hashicorp/terracina/internal/stacks/tfstackdata1"
+	"github.com/hashicorp/terracina/internal/states"
 )
 
 // AppliedChange represents a single isolated change, emitted as
@@ -142,7 +142,7 @@ func (ac *AppliedChangeResourceInstanceObject) protosForObject() ([]*stacks.Appl
 
 	// TRICKY: For historical reasons, a states.ResourceInstance
 	// contains pre-JSON-encoded dynamic data ready to be
-	// inserted verbatim into Terraform CLI's traditional
+	// inserted verbatim into Terracina CLI's traditional
 	// JSON-based state file format. However, our RPC API
 	// exclusively uses MessagePack encoding for dynamic
 	// values, and so we will need to use the ac.Schema to
@@ -297,14 +297,14 @@ func (ac *AppliedChangeComponentInstance) AppliedChangeProto() (*stacks.AppliedC
 		OutputValues: func() map[string]*tfstackdata1.DynamicValue {
 			outputs := make(map[string]*tfstackdata1.DynamicValue, len(outputDescs))
 			for name, value := range outputDescs {
-				outputs[name] = tfstackdata1.Terraform1ToStackDataDynamicValue(value)
+				outputs[name] = tfstackdata1.Terracina1ToStackDataDynamicValue(value)
 			}
 			return outputs
 		}(),
 		InputVariables: func() map[string]*tfstackdata1.DynamicValue {
 			inputs := make(map[string]*tfstackdata1.DynamicValue, len(inputDescs))
 			for name, value := range inputDescs {
-				inputs[name] = tfstackdata1.Terraform1ToStackDataDynamicValue(value)
+				inputs[name] = tfstackdata1.Terracina1ToStackDataDynamicValue(value)
 			}
 			return inputs
 		}(),
@@ -390,7 +390,7 @@ func (ac *AppliedChangeInputVariable) AppliedChangeProto() (*stacks.AppliedChang
 		return nil, fmt.Errorf("encoding new state for %s in preparation for saving it: %w", ac.Addr, err)
 	}
 	description.NewValue = value
-	if err := anypb.MarshalFrom(&raw, tfstackdata1.Terraform1ToStackDataDynamicValue(value), proto.MarshalOptions{}); err != nil {
+	if err := anypb.MarshalFrom(&raw, tfstackdata1.Terracina1ToStackDataDynamicValue(value), proto.MarshalOptions{}); err != nil {
 		return nil, fmt.Errorf("encoding raw state for %s: %w", ac.Addr, err)
 	}
 
@@ -450,7 +450,7 @@ func (ac *AppliedChangeOutputValue) AppliedChangeProto() (*stacks.AppliedChange,
 	}
 
 	var raw anypb.Any
-	if err := anypb.MarshalFrom(&raw, tfstackdata1.Terraform1ToStackDataDynamicValue(value), proto.MarshalOptions{}); err != nil {
+	if err := anypb.MarshalFrom(&raw, tfstackdata1.Terracina1ToStackDataDynamicValue(value), proto.MarshalOptions{}); err != nil {
 		return nil, fmt.Errorf("encoding raw state for %s: %w", ac.Addr, err)
 	}
 

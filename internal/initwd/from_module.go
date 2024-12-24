@@ -14,16 +14,16 @@ import (
 	"strings"
 
 	"github.com/hashicorp/hcl/v2"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/configs/configload"
-	"github.com/hashicorp/terraform/internal/copy"
-	"github.com/hashicorp/terraform/internal/getmodules"
-	"github.com/hashicorp/terraform/internal/getmodules/moduleaddrs"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/configs/configload"
+	"github.com/hashicorp/terracina/internal/copy"
+	"github.com/hashicorp/terracina/internal/getmodules"
+	"github.com/hashicorp/terracina/internal/getmodules/moduleaddrs"
 
 	version "github.com/hashicorp/go-version"
-	"github.com/hashicorp/terraform/internal/modsdir"
-	"github.com/hashicorp/terraform/internal/registry"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/modsdir"
+	"github.com/hashicorp/terracina/internal/registry"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 const initFromModuleRootCallName = "root"
@@ -78,7 +78,7 @@ func DirFromModule(ctx context.Context, loader *configload.Loader, rootDir, modu
 		}
 		haveEntries := false
 		for _, entry := range entries {
-			if entry.Name() == "." || entry.Name() == ".." || entry.Name() == ".terraform" {
+			if entry.Name() == "." || entry.Name() == ".." || entry.Name() == ".terracina" {
 				continue
 			}
 			haveEntries = true
@@ -93,7 +93,7 @@ func DirFromModule(ctx context.Context, loader *configload.Loader, rootDir, modu
 		}
 	}
 
-	instDir := filepath.Join(rootDir, ".terraform/init-from-module")
+	instDir := filepath.Join(rootDir, ".terracina/init-from-module")
 	inst := NewModuleInstaller(instDir, loader, reg)
 	log.Printf("[DEBUG] installing modules in %s to initialize working directory from %q", instDir, sourceAddrStr)
 	os.RemoveAll(instDir) // if this fails then we'll fail on MkdirAll below too

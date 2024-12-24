@@ -7,9 +7,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/hashicorp/terraform-svchost/disco"
-	"github.com/hashicorp/terraform/internal/modsdir"
-	"github.com/hashicorp/terraform/internal/registry"
+	"github.com/hashicorp/terracina-svchost/disco"
+	"github.com/hashicorp/terracina/internal/modsdir"
+	"github.com/hashicorp/terracina/internal/registry"
 	"github.com/spf13/afero"
 )
 

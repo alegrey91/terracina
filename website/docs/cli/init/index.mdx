@@ -1,41 +1,41 @@
 ---
-page_title: Initialize the Terraform working directory
+page_title: Initialize the Terracina working directory
 description: >-
-  Learn how to initialize the working directory with the terraform init command, which installs plugins and modules defined in the configuration and retrieves state data.  
+  Learn how to initialize the working directory with the terracina init command, which installs plugins and modules defined in the configuration and retrieves state data.  
 ---
 
 # Initialize the Working Directory
 
-Terraform expects to be invoked from a working directory that contains
+Terracina expects to be invoked from a working directory that contains
 configuration files written in
-[the Terraform language](/terraform/language). Terraform uses
+[the Terracina language](/terracina/language). Terracina uses
 configuration content from this directory, and also uses the directory to store
 settings, cached plugins and modules, and sometimes state data.
 
-A working directory must be initialized before Terraform can perform any
+A working directory must be initialized before Terracina can perform any
 operations in it (like provisioning infrastructure or modifying state).
 
 ## Working Directory Contents
 
-A Terraform working directory typically contains:
+A Terracina working directory typically contains:
 
-- A Terraform configuration describing resources Terraform should manage. This
+- A Terracina configuration describing resources Terracina should manage. This
   configuration is expected to change over time.
-- A hidden `.terraform` directory, which Terraform uses to manage cached
+- A hidden `.terracina` directory, which Terracina uses to manage cached
   provider plugins and modules, record which
-  [workspace](/terraform/cli/workspaces) is currently active, and
+  [workspace](/terracina/cli/workspaces) is currently active, and
   record the last known backend configuration in case it needs to migrate state
-  on the next run. This directory is automatically managed by Terraform, and is
+  on the next run. This directory is automatically managed by Terracina, and is
   created during initialization.
-- State data when the configuration uses the default `local` backend. Terraform manages state in a `terraform.tfstate` file when the directory only uses
-  the default workspace or a `terraform.tfstate.d` directory when the directory
+- State data when the configuration uses the default `local` backend. Terracina manages state in a `terracina.tfstate` file when the directory only uses
+  the default workspace or a `terracina.tfstate.d` directory when the directory
   uses multiple workspaces.
 
 ## Initialization
 
-Run the `terraform init` command to initialize a working directory that contains
-a Terraform configuration. After initialization, you will be able to perform
-other commands, like `terraform plan` and `terraform apply`.
+Run the `terracina init` command to initialize a working directory that contains
+a Terracina configuration. After initialization, you will be able to perform
+other commands, like `terracina plan` and `terracina apply`.
 
 If you try to run a command that relies on initialization without first
 initializing, the command will fail with an error and explain that you need to
@@ -47,16 +47,16 @@ plugins, and downloading modules. Under some conditions (usually when changing
 from one backend to another), it might ask the user for guidance or
 confirmation.
 
-For details, see [the `terraform init` command](/terraform/cli/commands/init).
+For details, see [the `terracina init` command](/terracina/cli/commands/init).
 
 ## Reinitialization
 
-Certain types of changes to a Terraform configuration can require
+Certain types of changes to a Terracina configuration can require
 reinitialization before normal operations can continue. This includes changes to
 provider requirements, module sources or version constraints, and backend
 configurations.
 
-You can reinitialize a directory by running `terraform init` again. In fact, you
+You can reinitialize a directory by running `terracina init` again. In fact, you
 can reinitialize at any time; the init command is idempotent, and will have no
 effect if no changes are required.
 
@@ -65,7 +65,7 @@ fail with an error and tell you so.
 
 ## Reinitializing Only Modules
 
-The `terraform get` command will download modules referenced in the
+The `terracina get` command will download modules referenced in the
 configuration, but will not perform the other required initialization tasks.
-This command is only useful for niche workflows, and most Terraform users can
-ignore it in favor of `terraform init`.
+This command is only useful for niche workflows, and most Terracina users can
+ignore it in favor of `terracina init`.

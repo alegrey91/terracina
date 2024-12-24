@@ -10,8 +10,8 @@ import (
 	"github.com/hashicorp/hcl/v2/gohcl"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/getmodules/moduleaddrs"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/getmodules/moduleaddrs"
 )
 
 // ModuleCall represents a "module" block in a module or file.
@@ -105,7 +105,7 @@ func decodeModuleBlock(block *hcl.Block, override bool) (*ModuleCall, hcl.Diagno
 						Severity: hcl.DiagError,
 						Summary:  "Invalid module source address",
 						Detail: fmt.Sprintf(
-							"Terraform failed to determine your intended installation method for remote module package %q.\n\nIf you intended this as a path relative to the current module, use \"./%s\" instead. The \"./\" prefix indicates that the address is a relative filesystem path.",
+							"Terracina failed to determine your intended installation method for remote module package %q.\n\nIf you intended this as a path relative to the current module, use \"./%s\" instead. The \"./\" prefix indicates that the address is a relative filesystem path.",
 							err.Addr, err.Addr,
 						),
 						Subject: mc.SourceAddrRange.Ptr(),
@@ -118,7 +118,7 @@ func decodeModuleBlock(block *hcl.Block, override bool) (*ModuleCall, hcl.Diagno
 						diags = append(diags, &hcl.Diagnostic{
 							Severity: hcl.DiagError,
 							Summary:  "Invalid registry module source address",
-							Detail:   fmt.Sprintf("Failed to parse module registry address: %s.\n\nTerraform assumed that you intended a module registry source address because you also set the argument \"version\", which applies only to registry modules.", err),
+							Detail:   fmt.Sprintf("Failed to parse module registry address: %s.\n\nTerracina assumed that you intended a module registry source address because you also set the argument \"version\", which applies only to registry modules.", err),
 							Subject:  mc.SourceAddrRange.Ptr(),
 						})
 					} else {
@@ -191,7 +191,7 @@ func decodeModuleBlock(block *hcl.Block, override bool) (*ModuleCall, hcl.Diagno
 			diags = append(diags, &hcl.Diagnostic{
 				Severity: hcl.DiagError,
 				Summary:  "Reserved block type name in module block",
-				Detail:   fmt.Sprintf("The block type name %q is reserved for use by Terraform in a future version.", block.Type),
+				Detail:   fmt.Sprintf("The block type name %q is reserved for use by Terracina in a future version.", block.Type),
 				Subject:  &block.TypeRange,
 			})
 		}
@@ -204,7 +204,7 @@ func decodeModuleBlock(block *hcl.Block, override bool) (*ModuleCall, hcl.Diagno
 // directly via a remote source address or indirectly via a registry source
 // address.
 //
-// Other behaviors in Terraform may treat package crossings as a special
+// Other behaviors in Terracina may treat package crossings as a special
 // situation, because that indicates that the caller and callee can change
 // independently of one another and thus we should disallow using any features
 // where the caller assumes anything about the callee other than its input

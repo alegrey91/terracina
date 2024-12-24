@@ -8,7 +8,7 @@ import (
 
 	"github.com/hashicorp/hcl/v2"
 
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // MoveEndpoint is to AbsMoveable and ConfigMoveable what Target is to
@@ -19,8 +19,8 @@ import (
 // Its name reflects that its primary purpose is for the "from" and "to"
 // addresses in a "moved" statement in the configuration, but it's also
 // valid to use MoveEndpoint for other similar mechanisms that give
-// Terraform hints about historical configuration changes that might
-// prompt creating a different plan than Terraform would by default.
+// Terracina hints about historical configuration changes that might
+// prompt creating a different plan than Terracina would by default.
 //
 // To obtain a full address from a MoveEndpoint you must use
 // either the package function UnifyMoveEndpoints (to get an AbsMoveable) or
@@ -32,7 +32,7 @@ type MoveEndpoint struct {
 	SourceRange tfdiags.SourceRange
 
 	// Internally we (ab)use AbsMoveable as the representation of our
-	// relative address, even though everywhere else in Terraform
+	// relative address, even though everywhere else in Terracina
 	// AbsMoveable always represents a fully-absolute address.
 	// In practice, due to the implementation of ParseMoveEndpoint,
 	// this is always either a ModuleInstance or an AbsResourceInstance,

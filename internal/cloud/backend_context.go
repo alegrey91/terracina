@@ -13,19 +13,19 @@ import (
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/backend"
-	"github.com/hashicorp/terraform/internal/backend/backendrun"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/states/statemgr"
-	"github.com/hashicorp/terraform/internal/terraform"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/backend"
+	"github.com/hashicorp/terracina/internal/backend/backendrun"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/states/statemgr"
+	"github.com/hashicorp/terracina/internal/terracina"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // LocalRun implements backend.Local
 func (b *Cloud) LocalRun(op *backendrun.Operation) (*backendrun.LocalRun, statemgr.Full, tfdiags.Diagnostics) {
 	var diags tfdiags.Diagnostics
 	ret := &backendrun.LocalRun{
-		PlanOpts: &terraform.PlanOpts{
+		PlanOpts: &terracina.PlanOpts{
 			Mode:    op.PlanMode,
 			Targets: op.Targets,
 		},
@@ -64,7 +64,7 @@ func (b *Cloud) LocalRun(op *backendrun.Operation) (*backendrun.LocalRun, statem
 	}
 
 	// Initialize our context options
-	var opts terraform.ContextOpts
+	var opts terracina.ContextOpts
 	if v := b.ContextOpts; v != nil {
 		opts = *v
 	}
@@ -123,7 +123,7 @@ func (b *Cloud) LocalRun(op *backendrun.Operation) (*backendrun.LocalRun, statem
 				}
 
 				for _, v := range tfeVariables.Items {
-					if v.Category == tfe.CategoryTerraform {
+					if v.Category == tfe.CategoryTerracina {
 						if _, ok := op.Variables[v.Key]; !ok {
 							op.Variables[v.Key] = &remoteStoredVariableValue{
 								definition: v,
@@ -144,11 +144,11 @@ func (b *Cloud) LocalRun(op *backendrun.Operation) (*backendrun.LocalRun, statem
 		}
 	}
 
-	tfCtx, ctxDiags := terraform.NewContext(&opts)
+	tfCtx, ctxDiags := terracina.NewContext(&opts)
 	diags = diags.Append(ctxDiags)
 	ret.Core = tfCtx
 
-	log.Printf("[TRACE] cloud: finished building terraform.Context")
+	log.Printf("[TRACE] cloud: finished building terracina.Context")
 
 	return ret, stateMgr, diags
 }
@@ -184,24 +184,24 @@ func (b *Cloud) getRemoteWorkspaceID(ctx context.Context, localWorkspaceName str
 	return remoteWorkspace.ID, nil
 }
 
-func stubAllVariables(vv map[string]backendrun.UnparsedVariableValue, decls map[string]*configs.Variable) terraform.InputValues {
-	ret := make(terraform.InputValues, len(decls))
+func stubAllVariables(vv map[string]backendrun.UnparsedVariableValue, decls map[string]*configs.Variable) terracina.InputValues {
+	ret := make(terracina.InputValues, len(decls))
 
 	for name, cfg := range decls {
 		raw, exists := vv[name]
 		if !exists {
-			ret[name] = &terraform.InputValue{
+			ret[name] = &terracina.InputValue{
 				Value:      cty.UnknownVal(cfg.Type),
-				SourceType: terraform.ValueFromConfig,
+				SourceType: terracina.ValueFromConfig,
 			}
 			continue
 		}
 
 		val, diags := raw.ParseVariableValue(cfg.ParsingMode)
 		if diags.HasErrors() {
-			ret[name] = &terraform.InputValue{
+			ret[name] = &terracina.InputValue{
 				Value:      cty.UnknownVal(cfg.Type),
-				SourceType: terraform.ValueFromConfig,
+				SourceType: terracina.ValueFromConfig,
 			}
 			continue
 		}
@@ -213,14 +213,14 @@ func stubAllVariables(vv map[string]backendrun.UnparsedVariableValue, decls map[
 
 // remoteStoredVariableValue is a backend.UnparsedVariableValue implementation
 // that translates from the go-tfe representation of stored variables into
-// the Terraform Core backend representation of variables.
+// the Terracina Core backend representation of variables.
 type remoteStoredVariableValue struct {
 	definition *tfe.Variable
 }
 
 var _ backendrun.UnparsedVariableValue = (*remoteStoredVariableValue)(nil)
 
-func (v *remoteStoredVariableValue) ParseVariableValue(mode configs.VariableParsingMode) (*terraform.InputValue, tfdiags.Diagnostics) {
+func (v *remoteStoredVariableValue) ParseVariableValue(mode configs.VariableParsingMode) (*terracina.InputValue, tfdiags.Diagnostics) {
 	var diags tfdiags.Diagnostics
 	var val cty.Value
 
@@ -248,7 +248,7 @@ func (v *remoteStoredVariableValue) ParseVariableValue(mode configs.VariablePars
 	case v.definition.HCL:
 		// If the variable value is marked as being in HCL syntax, we need to
 		// parse it the same way as it would be interpreted in a .tfvars
-		// file because that is how it would get passed to Terraform CLI for
+		// file because that is how it would get passed to Terracina CLI for
 		// a remote operation and we want to mimic that result as closely as
 		// possible.
 		var exprDiags hcl.Diagnostics
@@ -283,14 +283,14 @@ func (v *remoteStoredVariableValue) ParseVariableValue(mode configs.VariablePars
 		val = cty.StringVal(v.definition.Value)
 	}
 
-	return &terraform.InputValue{
+	return &terracina.InputValue{
 		Value: val,
 
 		// We mark these as "from input" with the rationale that entering
-		// variable values into the HCP Terraform or Enterprise UI is,
+		// variable values into the HCP Terracina or Enterprise UI is,
 		// roughly speaking, a similar idea to entering variable values at
 		// the interactive CLI prompts. It's not a perfect correspondance,
 		// but it's closer than the other options.
-		SourceType: terraform.ValueFromInput,
+		SourceType: terracina.ValueFromInput,
 	}, diags
 }

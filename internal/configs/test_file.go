@@ -10,25 +10,25 @@ import (
 	"github.com/hashicorp/hcl/v2/gohcl"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/getmodules/moduleaddrs"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/getmodules/moduleaddrs"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
-// TestCommand represents the Terraform a given run block will execute, plan
+// TestCommand represents the Terracina a given run block will execute, plan
 // or apply. Defaults to apply.
 type TestCommand rune
 
-// TestMode represents the plan mode that Terraform will use for a given run
+// TestMode represents the plan mode that Terracina will use for a given run
 // block, normal or refresh-only. Defaults to normal.
 type TestMode rune
 
 const (
-	// ApplyTestCommand causes the run block to execute a Terraform apply
+	// ApplyTestCommand causes the run block to execute a Terracina apply
 	// operation.
 	ApplyTestCommand TestCommand = 0
 
-	// PlanTestCommand causes the run block to execute a Terraform plan
+	// PlanTestCommand causes the run block to execute a Terracina plan
 	// operation.
 	PlanTestCommand TestCommand = 'P'
 
@@ -40,7 +40,7 @@ const (
 	RefreshOnlyTestMode TestMode = 'R'
 )
 
-// TestFile represents a single test file within a `terraform test` execution.
+// TestFile represents a single test file within a `terracina test` execution.
 //
 // A test file is made up of a sequential list of run blocks, each designating
 // a command to execute and a series of validations to check after the command.
@@ -71,19 +71,19 @@ type TestFile struct {
 
 // TestRun represents a single run block within a test file.
 //
-// Each run block represents a single Terraform command to be executed and a set
+// Each run block represents a single Terracina command to be executed and a set
 // of validations to run after the command.
 type TestRun struct {
 	Name string
 
-	// Command is the Terraform command to execute.
+	// Command is the Terracina command to execute.
 	//
 	// One of ['apply', 'plan'].
 	Command TestCommand
 
 	// Options contains the embedded plan options that will affect the given
 	// Command. These should map to the options documented here:
-	//   - https://developer.hashicorp.com/terraform/cli/commands/plan#planning-options
+	//   - https://developer.hashicorp.com/terracina/cli/commands/plan#planning-options
 	//
 	// Note, that the Variables are a top level concept and not embedded within
 	// the options despite being listed as plan options in the documentation.
@@ -122,7 +122,7 @@ type TestRun struct {
 	// against.
 	//
 	// In typical cases, this will be null and the config under test is the
-	// configuration within the directory the terraform test command is
+	// configuration within the directory the terracina test command is
 	// executing within. However, when Module is set the config under test is
 	// whichever config is defined by Module. This field is then set during the
 	// configuration load process and should be used when the test is executed.
@@ -272,13 +272,13 @@ type TestRunOptions struct {
 	// Mode is the planning mode to run in. One of ['normal', 'refresh-only'].
 	Mode TestMode
 
-	// Refresh is analogous to the -refresh=false Terraform plan option.
+	// Refresh is analogous to the -refresh=false Terracina plan option.
 	Refresh bool
 
-	// Replace is analogous to the -replace=ADDRESS Terraform plan option.
+	// Replace is analogous to the -replace=ADDRESS Terracina plan option.
 	Replace []hcl.Traversal
 
-	// Target is analogous to the -target=ADDRESS Terraform plan option.
+	// Target is analogous to the -target=ADDRESS Terracina plan option.
 	Target []hcl.Traversal
 
 	DeclRange hcl.Range
@@ -660,7 +660,7 @@ func decodeTestRunModuleBlock(block *hcl.Block) (*TestRunModuleCall, hcl.Diagnos
 						Severity: hcl.DiagError,
 						Summary:  "Invalid module source address",
 						Detail: fmt.Sprintf(
-							"Terraform failed to determine your intended installation method for remote module package %q.\n\nIf you intended this as a path relative to the current module, use \"./%s\" instead. The \"./\" prefix indicates that the address is a relative filesystem path.",
+							"Terracina failed to determine your intended installation method for remote module package %q.\n\nIf you intended this as a path relative to the current module, use \"./%s\" instead. The \"./\" prefix indicates that the address is a relative filesystem path.",
 							err.Addr, err.Addr,
 						),
 						Subject: module.SourceDeclRange.Ptr(),
@@ -673,7 +673,7 @@ func decodeTestRunModuleBlock(block *hcl.Block) (*TestRunModuleCall, hcl.Diagnos
 						diags = append(diags, &hcl.Diagnostic{
 							Severity: hcl.DiagError,
 							Summary:  "Invalid registry module source address",
-							Detail:   fmt.Sprintf("Failed to parse module registry address: %s.\n\nTerraform assumed that you intended a module registry source address because you also set the argument \"version\", which applies only to registry modules.", err),
+							Detail:   fmt.Sprintf("Failed to parse module registry address: %s.\n\nTerracina assumed that you intended a module registry source address because you also set the argument \"version\", which applies only to registry modules.", err),
 							Subject:  module.SourceDeclRange.Ptr(),
 						})
 					} else {

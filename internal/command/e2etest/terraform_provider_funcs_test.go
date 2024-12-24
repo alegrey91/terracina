@@ -11,11 +11,11 @@ import (
 	"github.com/zclconf/go-cty-debug/ctydebug"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/e2e"
+	"github.com/hashicorp/terracina/internal/e2e"
 )
 
-func TestTerraformProviderFunctions(t *testing.T) {
-	// This test ensures that the terraform.io/builtin/terraform provider
+func TestTerracinaProviderFunctions(t *testing.T) {
+	// This test ensures that the terracina.io/builtin/terracina provider
 	// remains available and that its three functions are available to be
 	// called. This test is here because builtin providers are a bit of a
 	// special case in the CLI layer which could in principle get accidentally
@@ -31,8 +31,8 @@ func TestTerraformProviderFunctions(t *testing.T) {
 	// tests to match.
 
 	t.Parallel()
-	fixturePath := filepath.Join("testdata", "terraform-provider-funcs")
-	tf := e2e.NewBinary(t, terraformBin, fixturePath)
+	fixturePath := filepath.Join("testdata", "terracina-provider-funcs")
+	tf := e2e.NewBinary(t, terracinaBin, fixturePath)
 
 	//// INIT
 	_, stderr, err := tf.Run("init")

@@ -19,7 +19,7 @@ import (
 	"unicode"
 
 	"github.com/bgentry/speakeasy"
-	"github.com/hashicorp/terraform/internal/terraform"
+	"github.com/hashicorp/terracina/internal/terracina"
 	"github.com/mattn/go-isatty"
 	"github.com/mitchellh/colorstring"
 )
@@ -29,7 +29,7 @@ var defaultInputWriter io.Writer
 var testInputResponse []string
 var testInputResponseMap map[string]string
 
-// UIInput is an implementation of terraform.UIInput that asks the CLI
+// UIInput is an implementation of terracina.UIInput that asks the CLI
 // for input stdin.
 type UIInput struct {
 	// Colorize will color the output.
@@ -49,7 +49,7 @@ type UIInput struct {
 	once        sync.Once
 }
 
-func (i *UIInput) Input(ctx context.Context, opts *terraform.InputOpts) (string, error) {
+func (i *UIInput) Input(ctx context.Context, opts *terracina.InputOpts) (string, error) {
 	i.once.Do(i.init)
 
 	r := i.Reader
@@ -67,7 +67,7 @@ func (i *UIInput) Input(ctx context.Context, opts *terraform.InputOpts) (string,
 		w = os.Stdout
 	}
 
-	// Make sure we only ask for input once at a time. Terraform
+	// Make sure we only ask for input once at a time. Terracina
 	// should enforce this, but it doesn't hurt to verify.
 	i.l.Lock()
 	defer i.l.Unlock()

@@ -7,19 +7,19 @@ import (
 	"context"
 	"log"
 
-	svchost "github.com/hashicorp/terraform-svchost"
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/backend"
-	"github.com/hashicorp/terraform/internal/command/clistate"
-	"github.com/hashicorp/terraform/internal/command/views"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/configs/configload"
-	"github.com/hashicorp/terraform/internal/depsfile"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/plans/planfile"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/terraform"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	svchost "github.com/hashicorp/terracina-svchost"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/backend"
+	"github.com/hashicorp/terracina/internal/command/clistate"
+	"github.com/hashicorp/terracina/internal/command/views"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/configs/configload"
+	"github.com/hashicorp/terracina/internal/depsfile"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/plans/planfile"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/terracina"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // HostAlias describes a list of aliases that should be used when initializing an
@@ -30,14 +30,14 @@ type HostAlias struct {
 }
 
 // OperationsBackend is an extension of [backend.Backend] for the few backends
-// that can directly perform Terraform operations.
+// that can directly perform Terracina operations.
 //
 // Most backends are used only for remote state storage, and those should not
 // implement this interface or import anything from this package.
 type OperationsBackend interface {
 	backend.Backend
 
-	// Operation performs a Terraform operation such as refresh, plan, apply.
+	// Operation performs a Terracina operation such as refresh, plan, apply.
 	// It is up to the implementation to determine what "performing" means.
 	// This DOES NOT BLOCK. The context returned as part of RunningOperation
 	// should be used to block for completion.
@@ -51,7 +51,7 @@ type OperationsBackend interface {
 	ServiceDiscoveryAliases() ([]HostAlias, error)
 }
 
-// An operation represents an operation for Terraform to execute.
+// An operation represents an operation for Terracina to execute.
 //
 // Note that not all fields are supported by all backends and can result
 // in an error if set. All backend implementations should show user-friendly
@@ -59,13 +59,13 @@ type OperationsBackend interface {
 // backend doesn't support a PlanId being set.
 //
 // The operation options are purposely designed to have maximal compatibility
-// between Terraform and Terraform Servers (a commercial product offered by
+// between Terracina and Terracina Servers (a commercial product offered by
 // HashiCorp). Therefore, it isn't expected that other implementation support
 // every possible option. The struct here is generalized in order to allow
 // even partial implementations to exist in the open, without walling off
 // remote functionality 100% behind a commercial wall. Anyone can implement
-// against this interface and have Terraform interact with it just as it
-// would with HashiCorp-provided Terraform Servers.
+// against this interface and have Terracina interact with it just as it
+// would with HashiCorp-provided Terracina Servers.
 type Operation struct {
 	// Type is the operation to perform.
 	Type OperationType
@@ -100,7 +100,7 @@ type Operation struct {
 
 	// Hooks can be used to perform actions triggered by various events during
 	// the operation's lifecycle.
-	Hooks []terraform.Hook
+	Hooks []terracina.Hook
 
 	// Plan is a plan that was passed as an argument. This is valid for
 	// plan and apply arguments but may not work for all backends.
@@ -129,15 +129,15 @@ type Operation struct {
 	// a partial plan if some objects are not yet plannable.
 	//
 	// IMPORTANT: When configuring an Operation, you should only set a value for
-	// this field if Terraform was built with experimental features enabled.
+	// this field if Terracina was built with experimental features enabled.
 	DeferralAllowed bool
 
 	// View implements the logic for all UI interactions.
 	View views.Operation
 
 	// Input/output/control options.
-	UIIn  terraform.UIInput
-	UIOut terraform.UIOutput
+	UIIn  terracina.UIInput
+	UIOut terracina.UIOutput
 
 	// StateLocker is used to lock the state while providing UI feedback to the
 	// user. This will be replaced by the Backend to update the context.
@@ -157,7 +157,7 @@ type Operation struct {
 }
 
 // HasConfig returns true if and only if the operation has a ConfigDir value
-// that refers to a directory containing at least one Terraform configuration
+// that refers to a directory containing at least one Terracina configuration
 // file.
 func (o *Operation) HasConfig() bool {
 	return o.ConfigLoader.IsConfigDir(o.ConfigDir)

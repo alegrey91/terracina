@@ -1,5 +1,5 @@
 
-terraform {
+terracina {
   cloud {
     foo = "bar"
 

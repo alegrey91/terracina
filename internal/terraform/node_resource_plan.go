@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"fmt"
@@ -11,10 +11,10 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/dag"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/dag"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // nodeExpandPlannableResource represents an addrs.ConfigResource and implements
@@ -295,7 +295,7 @@ func (n *nodeExpandPlannableResource) validateExpandedImportTargets(expandedImpo
 			diags = diags.Append(&hcl.Diagnostic{
 				Severity: hcl.DiagError,
 				Summary:  "Configuration for import target does not exist",
-				Detail:   fmt.Sprintf("The configuration for the given import target %s does not exist. If you wish to automatically generate config for this resource, use the -generate-config-out option within terraform plan. Otherwise, make sure the target resource exists within your configuration. For example:\n\n  terraform plan -generate-config-out=generated.tf", n.Addr),
+				Detail:   fmt.Sprintf("The configuration for the given import target %s does not exist. If you wish to automatically generate config for this resource, use the -generate-config-out option within terracina plan. Otherwise, make sure the target resource exists within your configuration. For example:\n\n  terracina plan -generate-config-out=generated.tf", n.Addr),
 				Subject:  n.importTargets[0].Config.To.Range().Ptr(),
 			})
 			return diags
@@ -572,7 +572,7 @@ func (n *nodeExpandPlannableResource) concreteResource(ctx EvalContext, knownImp
 						// This means that this particular instance already
 						// exists within the state. `import` blocks that target
 						// instances that already exist are ignored by
-						// Terraform. This means that even if this unknown
+						// Terracina. This means that even if this unknown
 						// import does eventually resolve to this instance then
 						// it would be ignored anyway. So for this instance we
 						// won't set the import target.

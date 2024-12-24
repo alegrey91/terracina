@@ -14,8 +14,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/hashicorp/terraform/internal/command/workdir"
-	"github.com/hashicorp/terraform/internal/states/statemgr"
+	"github.com/hashicorp/terracina/internal/command/workdir"
+	"github.com/hashicorp/terracina/internal/states/statemgr"
 )
 
 // LocalState manages a state storage that is local to the filesystem.

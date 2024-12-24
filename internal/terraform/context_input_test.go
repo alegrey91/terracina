@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"reflect"
@@ -11,11 +11,11 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/states"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/states"
 )
 
 func TestContext2Input_provider(t *testing.T) {
@@ -290,7 +290,7 @@ func TestContext2Input_providerOnly(t *testing.T) {
 		t.Fatalf("err: %s", err)
 	}
 
-	// NOTE: This is a stale test case from an older version of Terraform
+	// NOTE: This is a stale test case from an older version of Terracina
 	// where Input was responsible for prompting for both input variables _and_
 	// provider configuration arguments, where it was trying to test the case
 	// where we were turning off the mode of prompting for input variables.
@@ -319,7 +319,7 @@ func TestContext2Input_providerOnly(t *testing.T) {
 	}
 
 	actualStr := strings.TrimSpace(state.String())
-	expectedStr := strings.TrimSpace(testTerraformInputProviderOnlyStr)
+	expectedStr := strings.TrimSpace(testTerracinaInputProviderOnlyStr)
 	if actualStr != expectedStr {
 		t.Fatalf("wrong result\n\ngot:\n%s\n\nwant:\n%s", actualStr, expectedStr)
 	}

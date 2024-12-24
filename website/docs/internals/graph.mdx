@@ -1,19 +1,19 @@
 ---
 page_title: Dependency Graph
 description: >-
-  Learn how Terraform builds a dependency graph from the Terraform configurations and
+  Learn how Terracina builds a dependency graph from the Terracina configurations and
   uses the graph to generate plans, refresh state, perform other operations. 
 ---
 
 # Dependency Graph 
 
-This topic explains the dependency graph Terraform builds from Terraform configurations. This is an advanced topic and not required to understand how to use Terraform. 
+This topic explains the dependency graph Terracina builds from Terracina configurations. This is an advanced topic and not required to understand how to use Terracina. 
 
 ## Introduction 
 
-Terraform builds a dependency graph and uses it to perform operations, such as generate plans and refresh state. 
+Terracina builds a dependency graph and uses it to perform operations, such as generate plans and refresh state. 
 For background on graph theory and a summary of how
-Terraform applies it, refer the HashiCorp 2016 presentation
+Terracina applies it, refer the HashiCorp 2016 presentation
 [_Applying Graph Theory to Infrastructure as Code_](https://www.youtube.com/watch?v=Ce3RNfRbdZ0).
 
 ## Graph Nodes
@@ -35,7 +35,7 @@ The following node types can exist within the graph:
   node is only present for resources that have a `count`
   parameter greater than 1.
 
-When visualizing a configuration with `terraform graph`, you can
+When visualizing a configuration with `terracina graph`, you can
 see all of these nodes present.
 
 ## Building the Graph
@@ -94,16 +94,16 @@ dependencies are walked.
 
 The amount of parallelism is limited using a semaphore to prevent too many
 concurrent operations from overwhelming the resources of the machine running
-Terraform. By default, up to 10 nodes in the graph will be processed
+Terracina. By default, up to 10 nodes in the graph will be processed
 concurrently. This number can be set using the `-parallelism` flag on the
-[plan](/terraform/cli/commands/plan), [apply](/terraform/cli/commands/apply), and
-[destroy](/terraform/cli/commands/destroy) commands.
+[plan](/terracina/cli/commands/plan), [apply](/terracina/cli/commands/apply), and
+[destroy](/terracina/cli/commands/destroy) commands.
 
 Setting `-parallelism` is considered an advanced operation and should not be
-necessary for normal usage of Terraform. It may be helpful in certain special
-use cases or to help debug Terraform issues.
+necessary for normal usage of Terracina. It may be helpful in certain special
+use cases or to help debug Terracina issues.
 
 Note that some providers (AWS, for example), handle API rate limiting issues at
 a lower level by implementing graceful backoff/retry in their respective API
-clients. For this reason, Terraform does not use this `parallelism` feature to
+clients. For this reason, Terracina does not use this `parallelism` feature to
 address API rate limits directly.

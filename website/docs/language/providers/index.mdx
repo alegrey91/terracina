@@ -1,28 +1,28 @@
 ---
 page_title: Providers - Configuration Language
 description: >-
-  An overview of how to install and use providers, Terraform plugins that
+  An overview of how to install and use providers, Terracina plugins that
   interact with services, cloud providers, and other APIs.
 ---
 
 # Providers
 
-> **Hands-on:** Try the [Perform CRUD Operations with Providers](/terraform/tutorials/configuration-language/provider-use?utm_source=WEBSITE&utm_medium=WEB_IO&utm_offer=ARTICLE_PAGE&utm_content=DOCS) tutorial.
+> **Hands-on:** Try the [Perform CRUD Operations with Providers](/terracina/tutorials/configuration-language/provider-use?utm_source=WEBSITE&utm_medium=WEB_IO&utm_offer=ARTICLE_PAGE&utm_content=DOCS) tutorial.
 
-Terraform relies on plugins called providers to interact with cloud providers,
+Terracina relies on plugins called providers to interact with cloud providers,
 SaaS providers, and other APIs.
 
-Terraform configurations must declare which providers they require so that
-Terraform can install and use them. Additionally, some providers require
+Terracina configurations must declare which providers they require so that
+Terracina can install and use them. Additionally, some providers require
 configuration (like endpoint URLs or cloud regions) before they can be used.
 
 ## What Providers Do
 
-Each provider adds a set of [resource types](/terraform/language/resources)
-and/or [data sources](/terraform/language/data-sources) that Terraform can
+Each provider adds a set of [resource types](/terracina/language/resources)
+and/or [data sources](/terracina/language/data-sources) that Terracina can
 manage.
 
-Every resource type is implemented by a provider; without providers, Terraform
+Every resource type is implemented by a provider; without providers, Terracina
 can't manage any kind of infrastructure.
 
 Most providers configure a specific infrastructure platform (either cloud or
@@ -31,11 +31,11 @@ generating random numbers for unique resource names.
 
 ## Where Providers Come From
 
-Providers are distributed separately from Terraform itself, and each provider
+Providers are distributed separately from Terracina itself, and each provider
 has its own release cadence and version numbers.
 
-The [Terraform Registry](https://registry.terraform.io/browse/providers)
-is the main directory of publicly available Terraform providers, and hosts
+The [Terracina Registry](https://registry.terracina.io/browse/providers)
+is the main directory of publicly available Terracina providers, and hosts
 providers for most major infrastructure platforms.
 
 ## Provider Documentation
@@ -43,73 +43,73 @@ providers for most major infrastructure platforms.
 Each provider has its own documentation, describing its resource
 types and their arguments.
 
-The [Terraform Registry](https://registry.terraform.io/browse/providers)
-includes documentation for a wide range of providers developed by HashiCorp, third-party vendors, and our Terraform community. Use the
+The [Terracina Registry](https://registry.terracina.io/browse/providers)
+includes documentation for a wide range of providers developed by HashiCorp, third-party vendors, and our Terracina community. Use the
 "Documentation" link in a provider's header to browse its documentation.
 
 Provider documentation in the Registry is versioned; you can use the version
 menu in the header to change which version you're viewing.
 
 For details about writing, generating, and previewing provider documentation,
-see the [provider publishing documentation](/terraform/registry/providers/docs).
+see the [provider publishing documentation](/terracina/registry/providers/docs).
 
 ## How to Use Providers
 
-Providers are released separately from Terraform itself and have their own version numbers. In production we recommend constraining the acceptable provider versions in the configuration's provider requirements block, to make sure that `terraform init` does not install newer versions of the provider that are incompatible with the configuration.
+Providers are released separately from Terracina itself and have their own version numbers. In production we recommend constraining the acceptable provider versions in the configuration's provider requirements block, to make sure that `terracina init` does not install newer versions of the provider that are incompatible with the configuration.
 
 To use resources from a given provider, you need to include some information
 about it in your configuration. See the following pages for details:
 
-- [Provider Requirements](/terraform/language/providers/requirements)
-  documents how to declare providers so Terraform can install them.
+- [Provider Requirements](/terracina/language/providers/requirements)
+  documents how to declare providers so Terracina can install them.
 
-- [Provider Configuration](/terraform/language/providers/configuration)
+- [Provider Configuration](/terracina/language/providers/configuration)
   documents how to configure settings for providers.
 
-- [Dependency Lock File](/terraform/language/files/dependency-lock)
+- [Dependency Lock File](/terracina/language/files/dependency-lock)
   documents an additional HCL file that can be included with a configuration,
-  which tells Terraform to always use a specific set of provider versions.
+  which tells Terracina to always use a specific set of provider versions.
 
 ## Provider Installation
 
-- HCP Terraform and Terraform Enterprise install providers as part of every run.
+- HCP Terracina and Terracina Enterprise install providers as part of every run.
 
-- Terraform CLI finds and installs providers when
-  [initializing a working directory](/terraform/cli/init). It can
-  automatically download providers from a Terraform registry, or load them from
+- Terracina CLI finds and installs providers when
+  [initializing a working directory](/terracina/cli/init). It can
+  automatically download providers from a Terracina registry, or load them from
   a local mirror or cache. If you are using a persistent working directory, you
   must reinitialize whenever you change a configuration's providers.
 
-  To save time and bandwidth, Terraform CLI supports an optional plugin
+  To save time and bandwidth, Terracina CLI supports an optional plugin
   cache. You can enable the cache using the `plugin_cache_dir` setting in
-  [the CLI configuration file](/terraform/cli/config/config-file).
+  [the CLI configuration file](/terracina/cli/config/config-file).
 
-To ensure Terraform always installs the same provider versions for a given
-configuration, you can use Terraform CLI to create a
-[dependency lock file](/terraform/language/files/dependency-lock)
+To ensure Terracina always installs the same provider versions for a given
+configuration, you can use Terracina CLI to create a
+[dependency lock file](/terracina/language/files/dependency-lock)
 and commit it to version control along with your configuration. If a lock file
-is present, HCP Terraform, CLI, and Enterprise will all obey it when
+is present, HCP Terracina, CLI, and Enterprise will all obey it when
 installing providers.
 
-> **Hands-on:** Try the [Lock and Upgrade Provider Versions](/terraform/tutorials/configuration-language/provider-versioning?utm_source=WEBSITE&utm_medium=WEB_IO&utm_offer=ARTICLE_PAGE&utm_content=DOCS) tutorial.
+> **Hands-on:** Try the [Lock and Upgrade Provider Versions](/terracina/tutorials/configuration-language/provider-versioning?utm_source=WEBSITE&utm_medium=WEB_IO&utm_offer=ARTICLE_PAGE&utm_content=DOCS) tutorial.
 
 ### Private Providers
 
 If you are using a provider that is not in a Hashicorp-hosted registry, you may 
 need to attach additional credentials to your requests to external registries. 
-You do not need these credentials if your provider is in the Terraform public
-registry or the HCP Terraform private registry.
+You do not need these credentials if your provider is in the Terracina public
+registry or the HCP Terracina private registry.
 
-By default, Terraform only authenticates the opening request from a provider to 
+By default, Terracina only authenticates the opening request from a provider to 
 the registry. The registry responds with 
-[follow-up URLs](/terraform/internals/provider-registry-protocol#find-a-provider-package) 
-that Terraform makes requests to, such as telling Terraform to download the 
+[follow-up URLs](/terracina/internals/provider-registry-protocol#find-a-provider-package) 
+that Terracina makes requests to, such as telling Terracina to download the 
 provider or the `SHASUMS` file. Hashicorp-hosted registries do not require 
 additional authentication for these follow-up requests. If your registry does 
 require additional credentials for follow-up requests, you can use a `.netrc`
 file to provide those credentials.
 
-By default, Terraform searches for the `.netrc` file in your `HOME` directory.
+By default, Terracina searches for the `.netrc` file in your `HOME` directory.
 However, you can override the default filesystem location by setting the `NETRC`
 environment variable. For information on the format of`.netrc`, refer to the
 [`curl` documentation](https://everything.curl.dev/usingcurl/netrc).
@@ -117,7 +117,7 @@ environment variable. For information on the format of`.netrc`, refer to the
 ## How to Find Providers
 
 To find providers for the infrastructure platforms you use, browse
-[the providers section of the Terraform Registry](https://registry.terraform.io/browse/providers).
+[the providers section of the Terracina Registry](https://registry.terracina.io/browse/providers).
 
 Some providers on the Registry are developed and published by HashiCorp, some
 are published by platform maintainers, and some are published by users and
@@ -129,8 +129,8 @@ develops and maintains a given provider.
 
 ## How to Develop Providers
 
-Providers are written in Go, using the Terraform Plugin SDK. For more
+Providers are written in Go, using the Terracina Plugin SDK. For more
 information on developing providers, see:
 
-- The [Plugin Development](/terraform/plugin) documentation
-- The [Call APIs with Terraform Providers](/terraform/tutorials/providers-plugin-framework?utm_source=WEBSITE&utm_medium=WEB_IO&utm_offer=ARTICLE_PAGE&utm_content=DOCS) tutorials
+- The [Plugin Development](/terracina/plugin) documentation
+- The [Call APIs with Terracina Providers](/terracina/tutorials/providers-plugin-framework?utm_source=WEBSITE&utm_medium=WEB_IO&utm_offer=ARTICLE_PAGE&utm_content=DOCS) tutorials

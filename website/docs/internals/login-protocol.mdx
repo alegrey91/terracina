@@ -1,24 +1,24 @@
 ---
 page_title: Login protocol reference
 description: >-
-  The login protocol authenticates Terraform against servers that provide Terraform-native services. Learn about the login protocol.
+  The login protocol authenticates Terracina against servers that provide Terracina-native services. Learn about the login protocol.
 ---
 
 # Login Protocol Reference
 
-This topic provides reference information about the login protocol Terraform uses for authentication against servers that profide Terraform-native services. You can use this reference information to offer Terraform-native services in a third-party system.
+This topic provides reference information about the login protocol Terracina uses for authentication against servers that profide Terracina-native services. You can use this reference information to offer Terracina-native services in a third-party system.
 
 ## Introduction
 
-The `terraform login` command supports performing an OAuth 2.0 authorization
+The `terracina login` command supports performing an OAuth 2.0 authorization
 request using configuration provided by the target host. You may wish to
 implement this protocol if you are producing a third-party implementation of
-any [Terraform-native services](/terraform/internals/remote-service-discovery),
-such as a Terraform module registry.
+any [Terracina-native services](/terracina/internals/remote-service-discovery),
+such as a Terracina module registry.
 
 ## OAuth Configuration
 
-Terraform uses [remote service discovery](/terraform/internals/remote-service-discovery) to
+Terracina uses [remote service discovery](/terracina/internals/remote-service-discovery) to
 find the OAuth configuration for the host. The host must support the service
 name `login.v1` and define for it an object containing OAuth client
 configuration values. The following example describes a client that authenticates at ports `10000` and `10010`:
@@ -26,7 +26,7 @@ configuration values. The following example describes a client that authenticate
 ```json
 {
   "login.v1": {
-    "client": "terraform-cli",
+    "client": "terracina-cli",
     "grant_types": ["authz_code"],
     "authz": "/oauth/authorization",
     "token": "/oauth/token",
@@ -40,17 +40,17 @@ The properties within the discovery object are as follows:
 * `client` (Required): The `client_id` value to use when making requests, as
   defined in [RFC 6749 section 2.2](https://tools.ietf.org/html/rfc6749#section-2.2).
 
-  Because Terraform is a _public client_ (it is installed on end-user systems
+  Because Terracina is a _public client_ (it is installed on end-user systems
   and thus cannot protect an OAuth client secret), the `client_id` is purely
   advisory and the server must not use it as a guarantee that an authorization
-  request is truly coming from Terraform.
+  request is truly coming from Terracina.
 
 * `grant_types` (Optional): A JSON array of strings describing a set of OAuth
   2.0 grant types the server is able to support. A "grant type" selects a
   specific mechanism by which an OAuth server authenticates the request and
   issues an authorization token.
 
-  Terraform CLI supports a single grant type:
+  Terracina CLI supports a single grant type:
 
   * `authz_code`: [authorization code grant](https://tools.ietf.org/html/rfc6749#section-4.1).
     Both the `authz` and `token` properties are required when `authz_code` is
@@ -69,16 +69,16 @@ The properties within the discovery object are as follows:
   service discovery document.
 
 * `ports` (Optional): A two-element JSON array giving an inclusive range of
-  TCP ports that Terraform may use for the temporary HTTP server it will start
+  TCP ports that Terracina may use for the temporary HTTP server it will start
   to provide the [redirection endpoint](https://tools.ietf.org/html/rfc6749#section-3.1.2)
-  for the first step of an authorization code grant. Terraform opens a TCP
+  for the first step of an authorization code grant. Terracina opens a TCP
   listen port on the loopback interface in order to receive the response from
   the server's authorization endpoint.
 
-  If not specified, Terraform is free to select any TCP port greater than or
+  If not specified, Terracina is free to select any TCP port greater than or
   equal to 1024.
 
-  Terraform allows constraining this port range for interoperability with OAuth
+  Terracina allows constraining this port range for interoperability with OAuth
   server implementations that require each `client_id` to be associated with
   a fixed set of valid redirection endpoint URLs. Configure such a server
   to expect a range of URLs of the form `http://localhost:10000/`
@@ -90,21 +90,21 @@ The properties within the discovery object are as follows:
   risk that all of the possible ports will already be in use on a particular
   system.
 
-When requesting an authorization code grant, Terraform CLI implements the
+When requesting an authorization code grant, Terracina CLI implements the
 [Proof Key for Code Exchange](https://tools.ietf.org/html/rfc7636) extension in
 order to protect against other applications on the system intercepting the
 incoming request to the redirection endpoint. We strongly recommend that you
 select an OAuth server implementation that also implements this extension and
 verifies the code challenge sent to the token endpoint.
 
-Terraform CLI does not support OAuth refresh tokens or token expiration. If your
-server issues time-limited tokens, Terraform CLI will simply begin receiving
+Terracina CLI does not support OAuth refresh tokens or token expiration. If your
+server issues time-limited tokens, Terracina CLI will simply begin receiving
 authorization errors once the token expires, after which the user can run
-`terraform login` again to obtain a new token.
+`terracina login` again to obtain a new token.
 
--> **Note:** As a special case, Terraform can use a
+-> **Note:** As a special case, Terracina can use a
 [Resource Owner Password Credentials Grant](https://tools.ietf.org/html/rfc6749#section-4.3)
-only when interacting with `app.terraform.io` ([HCP Terraform](https://cloud.hashicorp.com/products/terraform)),
+only when interacting with `app.terracina.io` ([HCP Terracina](https://cloud.hashicorp.com/products/terracina)),
 under the recommendation in the OAuth specification to use this grant type only
 when the client and server are closely related. The `password` grant type is
 not supported for any other hostname and will be ignored.

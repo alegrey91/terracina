@@ -7,7 +7,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/hcl/v2"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // Reference describes a reference expression found in the configuration,
@@ -97,7 +97,7 @@ func ParseReference(traversal hcl.Traversal) (Reference, hcl.Traversal, tfdiags.
 		ret.SourceRange = tfdiags.SourceRangeFromHCL(traversal[0].SourceRange())
 		return ret, traversal[1:], diags
 
-	case "terraform":
+	case "terracina":
 		attrName, rng, remain, diags := parseSingleAttrRef(traversal)
 		if diags.HasErrors() {
 			return ret, nil, diags
@@ -106,7 +106,7 @@ func ParseReference(traversal hcl.Traversal) (Reference, hcl.Traversal, tfdiags.
 
 		switch attrName {
 		case "applying":
-			ret.Target = TerraformApplying
+			ret.Target = TerracinaApplying
 			return ret, remain, diags
 		default:
 			diags = diags.Append(&hcl.Diagnostic{

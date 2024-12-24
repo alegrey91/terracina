@@ -4,8 +4,8 @@
 package convert
 
 import (
-	"github.com/hashicorp/terraform/internal/providers"
-	proto "github.com/hashicorp/terraform/internal/tfplugin6"
+	"github.com/hashicorp/terracina/internal/providers"
+	proto "github.com/hashicorp/terracina/internal/tfplugin6"
 )
 
 // ProtoToDeferred translates a proto.Deferred to a providers.Deferred.

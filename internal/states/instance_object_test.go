@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/hashicorp/terraform/internal/addrs"
+	"github.com/hashicorp/terracina/internal/addrs"
 	"github.com/zclconf/go-cty/cty"
 )
 
@@ -103,7 +103,7 @@ func TestResourceInstanceObject_encodeInvalidMarks(t *testing.T) {
 		t.Fatalf("unexpected success; want error")
 	}
 	got := err.Error()
-	want := `.foo: cannot serialize value marked as cty.NewValueMarks("unsupported") for inclusion in a state snapshot (this is a bug in Terraform)`
+	want := `.foo: cannot serialize value marked as cty.NewValueMarks("unsupported") for inclusion in a state snapshot (this is a bug in Terracina)`
 	if got != want {
 		t.Errorf("wrong error\ngot:  %s\nwant: %s", got, want)
 	}

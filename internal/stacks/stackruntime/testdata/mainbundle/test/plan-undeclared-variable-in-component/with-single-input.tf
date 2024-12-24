@@ -1,7 +1,7 @@
-terraform {
+terracina {
   required_providers {
-    terraform = {
-      source = "terraform.io/builtin/terraform"
+    terracina = {
+      source = "terracina.io/builtin/terracina"
     }
   }
 }
@@ -10,10 +10,10 @@ variable "input" {
   type = string
 }
 
-resource "terraform_data" "main" {
+resource "terracina_data" "main" {
   input = var.input
 }
 
 output "output" {
-  value = terraform_data.main.output
+  value = terracina_data.main.output
 }

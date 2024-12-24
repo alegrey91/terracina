@@ -19,8 +19,8 @@ import (
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/hashicorp/hcl/v2/hclwrite"
 
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 const (
@@ -36,7 +36,7 @@ var (
 	}
 )
 
-// FmtCommand is a Command implementation that rewrites Terraform config
+// FmtCommand is a Command implementation that rewrites Terracina config
 // files to a canonical format and style.
 type FmtCommand struct {
 	Meta
@@ -160,7 +160,7 @@ func (c *FmtCommand) fmt(paths []string, stdin io.Reader, stdout io.Writer) tfdi
 			}
 
 			if !fmtd {
-				diags = diags.Append(fmt.Errorf("Only .tf, .tfvars, and .tftest.hcl files can be processed with terraform fmt"))
+				diags = diags.Append(fmt.Errorf("Only .tf, .tfvars, and .tftest.hcl files can be processed with terracina fmt"))
 				continue
 			}
 		}
@@ -172,7 +172,7 @@ func (c *FmtCommand) fmt(paths []string, stdin io.Reader, stdout io.Writer) tfdi
 func (c *FmtCommand) processFile(path string, r io.Reader, w io.Writer, isStdout bool) tfdiags.Diagnostics {
 	var diags tfdiags.Diagnostics
 
-	log.Printf("[TRACE] terraform fmt: Formatting %s", path)
+	log.Printf("[TRACE] terracina fmt: Formatting %s", path)
 
 	src, err := ioutil.ReadAll(r)
 	if err != nil {
@@ -230,7 +230,7 @@ func (c *FmtCommand) processFile(path string, r io.Reader, w io.Writer, isStdout
 func (c *FmtCommand) processDir(path string, stdout io.Writer) tfdiags.Diagnostics {
 	var diags tfdiags.Diagnostics
 
-	log.Printf("[TRACE] terraform fmt: looking for files in %s", path)
+	log.Printf("[TRACE] terracina fmt: looking for files in %s", path)
 
 	entries, err := ioutil.ReadDir(path)
 	if err != nil {
@@ -258,7 +258,7 @@ func (c *FmtCommand) processDir(path string, stdout io.Writer) tfdiags.Diagnosti
 			}
 
 			// We do not recurse into child directories by default because we
-			// want to mimic the file-reading behavior of "terraform plan", etc,
+			// want to mimic the file-reading behavior of "terracina plan", etc,
 			// operating on one module at a time.
 			continue
 		}
@@ -465,12 +465,12 @@ func (c *FmtCommand) formatTypeExpr(tokens hclwrite.Tokens) hclwrite.Tokens {
 			return tokens
 		}
 
-		// Because this quoted syntax is from Terraform 0.11 and
+		// Because this quoted syntax is from Terracina 0.11 and
 		// earlier, which didn't have the idea of "any" as an,
 		// element type, we use string as the default element
 		// type. That will avoid oddities if somehow the configuration
 		// was relying on numeric values being auto-converted to
-		// string, as 0.11 would do. This mimicks what terraform
+		// string, as 0.11 would do. This mimicks what terracina
 		// 0.12upgrade used to do, because we'd found real-world
 		// modules that were depending on the auto-stringing.)
 		switch string(strTok.Bytes) {
@@ -548,9 +548,9 @@ func (c *FmtCommand) trimNewlines(tokens hclwrite.Tokens) hclwrite.Tokens {
 
 func (c *FmtCommand) Help() string {
 	helpText := `
-Usage: terraform [global options] fmt [options] [target...]
+Usage: terracina [global options] fmt [options] [target...]
 
-  Rewrites all Terraform configuration files to a canonical format. All
+  Rewrites all Terracina configuration files to a canonical format. All
   configuration files (.tf), variables files (.tfvars), and testing files 
   (.tftest.hcl) are updated. JSON files (.tf.json, .tfvars.json, or 
   .tftest.json) are not modified.
@@ -561,7 +561,7 @@ Usage: terraform [global options] fmt [options] [target...]
   file. If you provide a single dash ("-"), then fmt will read from standard
   input (STDIN).
 
-  The content must be in the Terraform language native syntax; JSON is not
+  The content must be in the Terracina language native syntax; JSON is not
   supported.
 
 Options:

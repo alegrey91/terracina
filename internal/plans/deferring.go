@@ -4,7 +4,7 @@
 package plans
 
 import (
-	"github.com/hashicorp/terraform/internal/providers"
+	"github.com/hashicorp/terracina/internal/providers"
 	"github.com/zclconf/go-cty/cty"
 )
 

@@ -1,18 +1,18 @@
-resource "terraform_data" "a" {
+resource "terracina_data" "a" {
 }
 
-resource "terraform_data" "b" {
-  input = terraform_data.a.id
+resource "terracina_data" "b" {
+  input = terracina_data.a.id
 }
 
-resource "terraform_data" "c" {
-  triggers_replace = terraform_data.b
+resource "terracina_data" "c" {
+  triggers_replace = terracina_data.b
 }
 
-resource "terraform_data" "d" {
-  input = [ terraform_data.b, terraform_data.c ]
+resource "terracina_data" "d" {
+  input = [ terracina_data.b, terracina_data.c ]
 }
 
 output "d" {
-  value = terraform_data.d
+  value = terracina_data.d
 }

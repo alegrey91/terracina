@@ -22,20 +22,20 @@ import (
 	"github.com/zclconf/go-cty/cty"
 	ctyjson "github.com/zclconf/go-cty/cty/json"
 
-	"github.com/hashicorp/terraform/internal/backend"
-	"github.com/hashicorp/terraform/internal/backend/backendrun"
-	backendInit "github.com/hashicorp/terraform/internal/backend/init"
-	backendLocal "github.com/hashicorp/terraform/internal/backend/local"
-	"github.com/hashicorp/terraform/internal/cloud"
-	"github.com/hashicorp/terraform/internal/command/arguments"
-	"github.com/hashicorp/terraform/internal/command/clistate"
-	"github.com/hashicorp/terraform/internal/command/views"
-	"github.com/hashicorp/terraform/internal/command/workdir"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/states/statemgr"
-	"github.com/hashicorp/terraform/internal/terraform"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/backend"
+	"github.com/hashicorp/terracina/internal/backend/backendrun"
+	backendInit "github.com/hashicorp/terracina/internal/backend/init"
+	backendLocal "github.com/hashicorp/terracina/internal/backend/local"
+	"github.com/hashicorp/terracina/internal/cloud"
+	"github.com/hashicorp/terracina/internal/command/arguments"
+	"github.com/hashicorp/terracina/internal/command/clistate"
+	"github.com/hashicorp/terracina/internal/command/views"
+	"github.com/hashicorp/terracina/internal/command/workdir"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/states/statemgr"
+	"github.com/hashicorp/terracina/internal/terracina"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // BackendOpts are the options used to initialize a backend.Backend.
@@ -63,18 +63,18 @@ type BackendOpts struct {
 	ViewType arguments.ViewType
 }
 
-// BackendWithRemoteTerraformVersion is a shared interface between the 'remote' and 'cloud' backends
+// BackendWithRemoteTerracinaVersion is a shared interface between the 'remote' and 'cloud' backends
 // for simplified type checking when calling functions common to those particular backends.
-type BackendWithRemoteTerraformVersion interface {
+type BackendWithRemoteTerracinaVersion interface {
 	IgnoreVersionConflict()
-	VerifyWorkspaceTerraformVersion(workspace string) tfdiags.Diagnostics
+	VerifyWorkspaceTerracinaVersion(workspace string) tfdiags.Diagnostics
 	IsLocalOperations() bool
 }
 
 // Backend initializes and returns the backend for this CLI session.
 //
-// The backend is used to perform the actual Terraform operations. This
-// abstraction enables easily sliding in new Terraform behavior such as
+// The backend is used to perform the actual Terracina operations. This
+// abstraction enables easily sliding in new Terracina behavior such as
 // remote state storage, remote operations, etc. while allowing the CLI
 // to remain mostly identical.
 //
@@ -88,7 +88,7 @@ type BackendWithRemoteTerraformVersion interface {
 //
 // A side-effect of this method is the population of m.backendState, recording
 // the final resolved backend configuration after dealing with overrides from
-// the "terraform init" command line, etc.
+// the "terracina init" command line, etc.
 func (m *Meta) Backend(opts *BackendOpts) (backendrun.OperationsBackend, tfdiags.Diagnostics) {
 	var diags tfdiags.Diagnostics
 
@@ -128,16 +128,16 @@ func (m *Meta) Backend(opts *BackendOpts) (backendrun.OperationsBackend, tfdiags
 				for addr, err := range errs {
 					fmt.Fprintf(&buf, "\n  - %s: %s", addr, err)
 				}
-				suggestion := "To download the plugins required for this configuration, run:\n  terraform init"
+				suggestion := "To download the plugins required for this configuration, run:\n  terracina init"
 				if m.RunningInAutomation {
-					// Don't mention "terraform init" specifically if we're running in an automation wrapper
-					suggestion = "You must install the required plugins before running Terraform operations."
+					// Don't mention "terracina init" specifically if we're running in an automation wrapper
+					suggestion = "You must install the required plugins before running Terracina operations."
 				}
 				diags = diags.Append(tfdiags.Sourceless(
 					tfdiags.Error,
 					"Required plugins are not installed",
 					fmt.Sprintf(
-						"The installed provider plugins are not consistent with the packages selected in the dependency lock file:%s\n\nTerraform uses external plugins to integrate with a variety of different infrastructure services. %s",
+						"The installed provider plugins are not consistent with the packages selected in the dependency lock file:%s\n\nTerracina uses external plugins to integrate with a variety of different infrastructure services. %s",
 						buf.String(), suggestion,
 					),
 				))
@@ -227,7 +227,7 @@ func (m *Meta) selectWorkspace(b backend.Backend) error {
 			// len is always 1 if using Name; 0 means we're using Tags and there
 			// aren't any matching workspaces. Which might be normal and fine, so
 			// let's just ask:
-			name, err := m.UIInput().Input(context.Background(), &terraform.InputOpts{
+			name, err := m.UIInput().Input(context.Background(), &terracina.InputOpts{
 				Id:          "create-workspace",
 				Query:       "\n[reset][bold][yellow]No workspaces found.[reset]",
 				Description: fmt.Sprintf(inputCloudInitCreateWorkspace, c.WorkspaceMapping.DescribeTags()),
@@ -239,7 +239,7 @@ func (m *Meta) selectWorkspace(b backend.Backend) error {
 			if name == "" {
 				return fmt.Errorf("Couldn't create initial workspace: no name provided")
 			}
-			log.Printf("[TRACE] Meta.selectWorkspace: selecting the new HCP Terraform workspace requested by the user (%s)", name)
+			log.Printf("[TRACE] Meta.selectWorkspace: selecting the new HCP Terracina workspace requested by the user (%s)", name)
 			return m.SetWorkspace(name)
 		} else {
 			return errors.New(strings.TrimSpace(errBackendNoExistingWorkspaces))
@@ -274,7 +274,7 @@ func (m *Meta) selectWorkspace(b backend.Backend) error {
 	}
 
 	// Otherwise, ask the user to select a workspace from the list of existing workspaces.
-	v, err := m.UIInput().Input(context.Background(), &terraform.InputOpts{
+	v, err := m.UIInput().Input(context.Background(), &terracina.InputOpts{
 		Id: "select-workspace",
 		Query: fmt.Sprintf(
 			"\n[reset][bold][yellow]The currently selected workspace (%s) does not exist.[reset]",
@@ -534,7 +534,7 @@ func (m *Meta) backendFromConfig(opts *BackendOpts) (backend.Backend, tfdiags.Di
 	// ------------------------------------------------------------------------
 	// For historical reasons, current backend configuration for a working
 	// directory is kept in a *state-like* file, using a subset of the oldstate
-	// snapshot version 3. It is not actually a Terraform state, and so only
+	// snapshot version 3. It is not actually a Terracina state, and so only
 	// the "backend" portion of it is actually used.
 	//
 	// The remainder of this code often confusingly refers to this as a "state",
@@ -545,7 +545,7 @@ func (m *Meta) backendFromConfig(opts *BackendOpts) (backend.Backend, tfdiags.Di
 	// Since the "real" state has since moved on to be represented by
 	// states.State, we can recognize the special meaning of state that applies
 	// to this function and its callees by their continued use of the
-	// otherwise-obsolete terraform.State.
+	// otherwise-obsolete terracina.State.
 	// ------------------------------------------------------------------------
 
 	// Get the path to where we store a local cache of backend configuration
@@ -601,7 +601,7 @@ func (m *Meta) backendFromConfig(opts *BackendOpts) (backend.Backend, tfdiags.Di
 		if !opts.Init {
 			diags = diags.Append(tfdiags.Sourceless(
 				tfdiags.Error,
-				"Backend initialization required, please run \"terraform init\"",
+				"Backend initialization required, please run \"terracina init\"",
 				fmt.Sprintf(strings.TrimSpace(errBackendInit), initReason),
 			))
 			return nil, diags
@@ -619,17 +619,17 @@ func (m *Meta) backendFromConfig(opts *BackendOpts) (backend.Backend, tfdiags.Di
 		log.Printf("[TRACE] Meta.Backend: moving from default local state only to %q backend", c.Type)
 		if !opts.Init {
 			if c.Type == "cloud" {
-				initReason := "Initial configuration of HCP Terraform or Terraform Enterprise"
+				initReason := "Initial configuration of HCP Terracina or Terracina Enterprise"
 				diags = diags.Append(tfdiags.Sourceless(
 					tfdiags.Error,
-					"HCP Terraform or Terraform Enterprise initialization required: please run \"terraform init\"",
+					"HCP Terracina or Terracina Enterprise initialization required: please run \"terracina init\"",
 					fmt.Sprintf(strings.TrimSpace(errBackendInitCloud), initReason),
 				))
 			} else {
 				initReason := fmt.Sprintf("Initial configuration of the requested backend %q", c.Type)
 				diags = diags.Append(tfdiags.Sourceless(
 					tfdiags.Error,
-					"Backend initialization required, please run \"terraform init\"",
+					"Backend initialization required, please run \"terracina init\"",
 					fmt.Sprintf(strings.TrimSpace(errBackendInit), initReason),
 				))
 			}
@@ -720,11 +720,11 @@ func (m *Meta) determineInitReason(previousBackendType string, currentBackendTyp
 	initReason := ""
 	switch cloudMode {
 	case cloud.ConfigMigrationIn:
-		initReason = fmt.Sprintf("Changed from backend %q to HCP Terraform", previousBackendType)
+		initReason = fmt.Sprintf("Changed from backend %q to HCP Terracina", previousBackendType)
 	case cloud.ConfigMigrationOut:
-		initReason = fmt.Sprintf("Changed from HCP Terraform to backend %q", previousBackendType)
+		initReason = fmt.Sprintf("Changed from HCP Terracina to backend %q", previousBackendType)
 	case cloud.ConfigChangeInPlace:
-		initReason = "HCP Terraform configuration block has changed"
+		initReason = "HCP Terracina configuration block has changed"
 	default:
 		switch {
 		case previousBackendType != currentBackendType:
@@ -739,19 +739,19 @@ func (m *Meta) determineInitReason(previousBackendType string, currentBackendTyp
 	case cloud.ConfigChangeInPlace:
 		diags = diags.Append(tfdiags.Sourceless(
 			tfdiags.Error,
-			"HCP Terraform or Terraform Enterprise initialization required: please run \"terraform init\"",
+			"HCP Terracina or Terracina Enterprise initialization required: please run \"terracina init\"",
 			fmt.Sprintf(strings.TrimSpace(errBackendInitCloud), initReason),
 		))
 	case cloud.ConfigMigrationIn:
 		diags = diags.Append(tfdiags.Sourceless(
 			tfdiags.Error,
-			"HCP Terraform or Terraform Enterprise initialization required: please run \"terraform init\"",
+			"HCP Terracina or Terracina Enterprise initialization required: please run \"terracina init\"",
 			fmt.Sprintf(strings.TrimSpace(errBackendInitCloud), initReason),
 		))
 	default:
 		diags = diags.Append(tfdiags.Sourceless(
 			tfdiags.Error,
-			"Backend initialization required: please run \"terraform init\"",
+			"Backend initialization required: please run \"terracina init\"",
 			fmt.Sprintf(strings.TrimSpace(errBackendInit), initReason),
 		))
 	}
@@ -761,7 +761,7 @@ func (m *Meta) determineInitReason(previousBackendType string, currentBackendTyp
 
 // backendFromState returns the initialized (not configured) backend directly
 // from the backend state. This should be used only when a user runs
-// `terraform init -backend=false`. This function returns a local backend if
+// `terracina init -backend=false`. This function returns a local backend if
 // there is no backend state or no backend configured.
 func (m *Meta) backendFromState(_ context.Context) (backend.Backend, tfdiags.Diagnostics) {
 	var diags tfdiags.Diagnostics
@@ -800,14 +800,14 @@ func (m *Meta) backendFromState(_ context.Context) (backend.Backend, tfdiags.Dia
 
 	// The configuration saved in the working directory state file is used
 	// in this case, since it will contain any additional values that
-	// were provided via -backend-config arguments on terraform init.
+	// were provided via -backend-config arguments on terracina init.
 	schema := b.ConfigSchema()
 	configVal, err := s.Backend.Config(schema)
 	if err != nil {
 		diags = diags.Append(tfdiags.Sourceless(
 			tfdiags.Error,
 			"Failed to decode current backend config",
-			fmt.Sprintf("The backend configuration created by the most recent run of \"terraform init\" could not be decoded: %s. The configuration may have been initialized by an earlier version that used an incompatible configuration structure. Run \"terraform init -reconfigure\" to force re-initialization of the backend.", err),
+			fmt.Sprintf("The backend configuration created by the most recent run of \"terracina init\" could not be decoded: %s. The configuration may have been initialized by an earlier version that used an incompatible configuration structure. Run \"terracina init -reconfigure\" to force re-initialization of the backend.", err),
 		))
 		return nil, diags
 	}
@@ -881,7 +881,7 @@ func (m *Meta) backend_c_r_S(
 	backendType := s.Backend.Type
 
 	if cloudMode == cloud.ConfigMigrationOut {
-		m.Ui.Output("Migrating from HCP Terraform or Terraform Enterprise to local state.")
+		m.Ui.Output("Migrating from HCP Terracina or Terracina Enterprise to local state.")
 	} else {
 		m.Ui.Output(fmt.Sprintf(strings.TrimSpace(outputBackendMigrateLocal), s.Backend.Type))
 	}
@@ -1093,7 +1093,7 @@ func (m *Meta) backend_C_r_s(c *configs.Backend, cHash int, sMgr *clistate.Local
 		return nil, diags
 	}
 
-	// By now the backend is successfully configured.  If using HCP Terraform, the success
+	// By now the backend is successfully configured.  If using HCP Terracina, the success
 	// message is handled as part of the final init message
 	if _, ok := b.(*cloud.Cloud); !ok {
 		m.Ui.Output(m.Colorize().Color(fmt.Sprintf(
@@ -1127,11 +1127,11 @@ func (m *Meta) backend_C_r_S_changed(c *configs.Backend, cHash int, sMgr *clista
 		// Notify the user
 		switch cloudMode {
 		case cloud.ConfigChangeInPlace:
-			m.Ui.Output("HCP Terraform configuration has changed.")
+			m.Ui.Output("HCP Terracina configuration has changed.")
 		case cloud.ConfigMigrationIn:
-			m.Ui.Output(fmt.Sprintf("Migrating from backend %q to HCP Terraform.", s.Backend.Type))
+			m.Ui.Output(fmt.Sprintf("Migrating from backend %q to HCP Terracina.", s.Backend.Type))
 		case cloud.ConfigMigrationOut:
-			m.Ui.Output(fmt.Sprintf("Migrating from HCP Terraform to backend %q.", c.Type))
+			m.Ui.Output(fmt.Sprintf("Migrating from HCP Terracina to backend %q.", c.Type))
 		default:
 			if s.Backend.Type != c.Type {
 				output := fmt.Sprintf(outputBackendMigrateChange, s.Backend.Type, c.Type)
@@ -1153,9 +1153,9 @@ func (m *Meta) backend_C_r_S_changed(c *configs.Backend, cHash int, sMgr *clista
 		return nil, diags
 	}
 
-	// If this is a migration into, out of, or irrelevant to HCP Terraform
+	// If this is a migration into, out of, or irrelevant to HCP Terracina
 	// mode then we will do state migration here. Otherwise, we just update
-	// the working directory initialization directly, because HCP Terraform
+	// the working directory initialization directly, because HCP Terracina
 	// doesn't have configurable state storage anyway -- we're only changing
 	// which workspaces are relevant to this configuration, not where their
 	// state lives.
@@ -1226,7 +1226,7 @@ func (m *Meta) backend_C_r_S_changed(c *configs.Backend, cHash int, sMgr *clista
 	}
 
 	if output {
-		// By now the backend is successfully configured.  If using HCP Terraform, the success
+		// By now the backend is successfully configured.  If using HCP Terracina, the success
 		// message is handled as part of the final init message
 		if _, ok := b.(*cloud.Cloud); !ok {
 			m.Ui.Output(m.Colorize().Color(fmt.Sprintf(
@@ -1257,14 +1257,14 @@ func (m *Meta) savedBackend(sMgr *clistate.LocalState) (backend.Backend, tfdiags
 
 	// The configuration saved in the working directory state file is used
 	// in this case, since it will contain any additional values that
-	// were provided via -backend-config arguments on terraform init.
+	// were provided via -backend-config arguments on terracina init.
 	schema := b.ConfigSchema()
 	configVal, err := s.Backend.Config(schema)
 	if err != nil {
 		diags = diags.Append(tfdiags.Sourceless(
 			tfdiags.Error,
 			"Failed to decode current backend config",
-			fmt.Sprintf("The backend configuration created by the most recent run of \"terraform init\" could not be decoded: %s. The configuration may have been initialized by an earlier version that used an incompatible configuration structure. Run \"terraform init -reconfigure\" to force re-initialization of the backend.", err),
+			fmt.Sprintf("The backend configuration created by the most recent run of \"terracina init\" could not be decoded: %s. The configuration may have been initialized by an earlier version that used an incompatible configuration structure. Run \"terracina init -reconfigure\" to force re-initialization of the backend.", err),
 		))
 		return nil, diags
 	}
@@ -1392,7 +1392,7 @@ func (m *Meta) backendInitFromConfig(c *configs.Backend) (backend.Backend, cty.V
 		diags = diags.Append(tfdiags.Sourceless(
 			tfdiags.Error,
 			"Unknown values within backend definition",
-			"The `terraform` configuration block should contain only concrete and static values. Another diagnostic should contain more information about which part of the configuration is problematic."))
+			"The `terracina` configuration block should contain only concrete and static values. Another diagnostic should contain more information about which part of the configuration is problematic."))
 		return nil, cty.NilVal, diags
 	}
 
@@ -1454,24 +1454,24 @@ func (m *Meta) setupEnhancedBackendAliases(b backendrun.OperationsBackend) error
 // Helper method to ignore remote/cloud backend version conflicts. Only call this
 // for commands which cannot accidentally upgrade remote state files.
 func (m *Meta) ignoreRemoteVersionConflict(b backend.Backend) {
-	if back, ok := b.(BackendWithRemoteTerraformVersion); ok {
+	if back, ok := b.(BackendWithRemoteTerracinaVersion); ok {
 		back.IgnoreVersionConflict()
 	}
 }
 
-// Helper method to check the local Terraform version against the configured
+// Helper method to check the local Terracina version against the configured
 // version in the remote workspace, returning diagnostics if they conflict.
 func (m *Meta) remoteVersionCheck(b backend.Backend, workspace string) tfdiags.Diagnostics {
 	var diags tfdiags.Diagnostics
 
-	if back, ok := b.(BackendWithRemoteTerraformVersion); ok {
+	if back, ok := b.(BackendWithRemoteTerracinaVersion); ok {
 		// Allow user override based on command-line flag
 		if m.ignoreRemoteVersion {
 			back.IgnoreVersionConflict()
 		}
 		// If the override is set, this check will return a warning instead of
 		// an error
-		versionDiags := back.VerifyWorkspaceTerraformVersion(workspace)
+		versionDiags := back.VerifyWorkspaceTerracinaVersion(workspace)
 		diags = diags.Append(versionDiags)
 		// If there are no errors resulting from this check, we do not need to
 		// check again
@@ -1489,26 +1489,26 @@ func (m *Meta) remoteVersionCheck(b backend.Backend, workspace string) tfdiags.D
 func (m *Meta) assertSupportedCloudInitOptions(mode cloud.ConfigChangeMode) tfdiags.Diagnostics {
 	var diags tfdiags.Diagnostics
 	if mode.InvolvesCloud() {
-		log.Printf("[TRACE] Meta.Backend: HCP Terraform or Terraform Enterprise mode initialization type: %s", mode)
+		log.Printf("[TRACE] Meta.Backend: HCP Terracina or Terracina Enterprise mode initialization type: %s", mode)
 		if m.reconfigure {
 			if mode.IsCloudMigration() {
 				diags = diags.Append(tfdiags.Sourceless(
 					tfdiags.Error,
 					"Invalid command-line option",
-					"The -reconfigure option is unsupported when migrating to HCP Terraform, because activating HCP Terraform involves some additional steps.",
+					"The -reconfigure option is unsupported when migrating to HCP Terracina, because activating HCP Terracina involves some additional steps.",
 				))
 			} else {
 				diags = diags.Append(tfdiags.Sourceless(
 					tfdiags.Error,
 					"Invalid command-line option",
-					"The -reconfigure option is for in-place reconfiguration of state backends only, and is not needed when changing HCP Terraform settings.\n\nWhen using HCP Terraform, initialization automatically activates any new Cloud configuration settings.",
+					"The -reconfigure option is for in-place reconfiguration of state backends only, and is not needed when changing HCP Terracina settings.\n\nWhen using HCP Terracina, initialization automatically activates any new Cloud configuration settings.",
 				))
 			}
 		}
 		if m.migrateState {
 			name := "-migrate-state"
 			if m.forceInitCopy {
-				// -force copy implies -migrate-state in "terraform init",
+				// -force copy implies -migrate-state in "terracina init",
 				// so m.migrateState is forced to true in this case even if
 				// the user didn't actually specify it. We'll use the other
 				// name here to avoid being confusing, then.
@@ -1518,13 +1518,13 @@ func (m *Meta) assertSupportedCloudInitOptions(mode cloud.ConfigChangeMode) tfdi
 				diags = diags.Append(tfdiags.Sourceless(
 					tfdiags.Error,
 					"Invalid command-line option",
-					fmt.Sprintf("The %s option is for migration between state backends only, and is not applicable when using HCP Terraform.\n\nHCP Terraform migrations have additional steps, configured by interactive prompts.", name),
+					fmt.Sprintf("The %s option is for migration between state backends only, and is not applicable when using HCP Terracina.\n\nHCP Terracina migrations have additional steps, configured by interactive prompts.", name),
 				))
 			} else {
 				diags = diags.Append(tfdiags.Sourceless(
 					tfdiags.Error,
 					"Invalid command-line option",
-					fmt.Sprintf("The %s option is for migration between state backends only, and is not applicable when using HCP Terraform.\n\nState storage is handled automatically by HCP Terraform and so the state storage location is not configurable.", name),
+					fmt.Sprintf("The %s option is for migration between state backends only, and is not applicable when using HCP Terracina.\n\nState storage is handled automatically by HCP Terracina and so the state storage location is not configurable.", name),
 				))
 			}
 		}
@@ -1539,8 +1539,8 @@ func (m *Meta) assertSupportedCloudInitOptions(mode cloud.ConfigChangeMode) tfdi
 const errBackendLocalRead = `
 Error reading local state: %s
 
-Terraform is trying to read your local state to determine if there is
-state to migrate to your newly configured backend. Terraform can't continue
+Terracina is trying to read your local state to determine if there is
+state to migrate to your newly configured backend. Terracina can't continue
 without this check because that would risk losing state. Please resolve the
 error above and try again.
 `
@@ -1558,19 +1558,19 @@ issue above and retry the command.
 const errBackendNewUnknown = `
 The backend %q could not be found.
 
-This is the backend specified in your Terraform configuration file.
+This is the backend specified in your Terracina configuration file.
 This error could be a simple typo in your configuration, but it can also
-be caused by using a Terraform version that doesn't support the specified
-backend type. Please check your configuration and your Terraform version.
+be caused by using a Terracina version that doesn't support the specified
+backend type. Please check your configuration and your Terracina version.
 
-If you'd like to run Terraform and store state locally, you can fix this
+If you'd like to run Terracina and store state locally, you can fix this
 error by removing the backend configuration from your configuration.
 `
 
 const errBackendNoExistingWorkspaces = `
 No existing workspaces.
 
-Use the "terraform workspace" command to create and select a new workspace.
+Use the "terracina workspace" command to create and select a new workspace.
 If the backend already contains existing workspaces, you may need to update
 the backend configuration.
 `
@@ -1578,21 +1578,21 @@ the backend configuration.
 const errBackendSavedUnknown = `
 The backend %q could not be found.
 
-This is the backend that this Terraform environment is configured to use
+This is the backend that this Terracina environment is configured to use
 both in your configuration and saved locally as your last-used backend.
-If it isn't found, it could mean an alternate version of Terraform was
-used with this configuration. Please use the proper version of Terraform that
+If it isn't found, it could mean an alternate version of Terracina was
+used with this configuration. Please use the proper version of Terracina that
 contains support for this backend.
 
 If you'd like to force remove this backend, you must update your configuration
-to not use the backend and run "terraform init" (or any other command) again.
+to not use the backend and run "terracina init" (or any other command) again.
 `
 
 const errBackendClearSaved = `
 Error clearing the backend configuration: %s
 
-Terraform removes the saved backend configuration when you're removing a
-configured backend. This must be done so future Terraform runs know to not
+Terracina removes the saved backend configuration when you're removing a
+configured backend. This must be done so future Terracina runs know to not
 use the backend configuration. Please look at the error above, resolve it,
 and try again.
 `
@@ -1600,14 +1600,14 @@ and try again.
 const errBackendInit = `
 Reason: %s
 
-The "backend" is the interface that Terraform uses to store state,
+The "backend" is the interface that Terracina uses to store state,
 perform operations, etc. If this message is showing up, it means that the
-Terraform configuration you're using is using a custom configuration for
-the Terraform backend.
+Terracina configuration you're using is using a custom configuration for
+the Terracina backend.
 
 Changes to backend configurations require reinitialization. This allows
-Terraform to set up the new configuration, copy existing state, etc. Please run
-"terraform init" with either the "-reconfigure" or "-migrate-state" flags to
+Terracina to set up the new configuration, copy existing state, etc. Please run
+"terracina init" with either the "-reconfigure" or "-migrate-state" flags to
 use the current configuration.
 
 If the change reason above is incorrect, please verify your configuration
@@ -1618,53 +1618,53 @@ configuration or state have been made.
 const errBackendInitCloud = `
 Reason: %s.
 
-Changes to the HCP Terraform configuration block require reinitialization, to discover any changes to the available workspaces.
+Changes to the HCP Terracina configuration block require reinitialization, to discover any changes to the available workspaces.
 
 To re-initialize, run:
-  terraform init
+  terracina init
 
-Terraform has not yet made changes to your existing configuration or state.
+Terracina has not yet made changes to your existing configuration or state.
 `
 
 const errBackendWriteSaved = `
 Error saving the backend configuration: %s
 
-Terraform saves the complete backend configuration in a local file for
+Terracina saves the complete backend configuration in a local file for
 configuring the backend on future operations. This cannot be disabled. Errors
 are usually due to simple file permission errors. Please look at the error
 above, resolve it, and try again.
 `
 
 const outputBackendMigrateChange = `
-Terraform detected that the backend type changed from %q to %q.
+Terracina detected that the backend type changed from %q to %q.
 `
 
 const outputBackendMigrateLocal = `
-Terraform has detected you're unconfiguring your previously set %q backend.
+Terracina has detected you're unconfiguring your previously set %q backend.
 `
 
 const outputBackendReconfigure = `
 [reset][bold]Backend configuration changed![reset]
 
-Terraform has detected that the configuration specified for the backend
-has changed. Terraform will now check for existing state in the backends.
+Terracina has detected that the configuration specified for the backend
+has changed. Terracina will now check for existing state in the backends.
 `
 
 const inputCloudInitCreateWorkspace = `
 There are no workspaces with the configured tags (%s)
-in your HCP Terraform organization. To finish initializing, Terraform needs at
+in your HCP Terracina organization. To finish initializing, Terracina needs at
 least one workspace available.
 
-Terraform can create a properly tagged workspace for you now. Please enter a
-name to create a new HCP Terraform workspace.
+Terracina can create a properly tagged workspace for you now. Please enter a
+name to create a new HCP Terracina workspace.
 `
 
 const successBackendUnset = `
-Successfully unset the backend %q. Terraform will now operate locally.
+Successfully unset the backend %q. Terracina will now operate locally.
 `
 
 const successBackendSet = `
-Successfully configured the backend %q! Terraform will automatically
+Successfully configured the backend %q! Terracina will automatically
 use this backend unless the backend configuration changes.
 `
 
@@ -1672,5 +1672,5 @@ var migrateOrReconfigDiag = tfdiags.Sourceless(
 	tfdiags.Error,
 	"Backend configuration changed",
 	"A change in the backend configuration has been detected, which may require migrating existing state.\n\n"+
-		"If you wish to attempt automatic migration of the state, use \"terraform init -migrate-state\".\n"+
-		`If you wish to store the current configuration with no changes to the state, use "terraform init -reconfigure".`)
+		"If you wish to attempt automatic migration of the state, use \"terracina init -migrate-state\".\n"+
+		`If you wish to store the current configuration with no changes to the state, use "terracina init -reconfigure".`)

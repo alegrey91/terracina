@@ -54,46 +54,46 @@ var protocSteps = []protocStep{
 		[]string{"--go_out=paths=source_relative,plugins=grpc:.", "./tfplugin6.proto"},
 	},
 	{
-		"terraform1 (Terraform Core RPC API)",
-		"internal/rpcapi/terraform1",
-		[]string{"--go_out=paths=source_relative,plugins=grpc:.", "--go_opt=Mterraform1.proto=github.com/hashicorp/terraform/internal/rpcapi/terraform1", "./terraform1.proto"},
+		"terracina1 (Terracina Core RPC API)",
+		"internal/rpcapi/terracina1",
+		[]string{"--go_out=paths=source_relative,plugins=grpc:.", "--go_opt=Mterracina1.proto=github.com/hashicorp/terracina/internal/rpcapi/terracina1", "./terracina1.proto"},
 	},
 	{
-		"terraform1 (Terraform Core RPC API) setup",
-		"internal/rpcapi/terraform1/setup",
-		[]string{"--go_out=paths=source_relative,plugins=grpc:.", "--go_opt=Msetup.proto=github.com/hashicorp/terraform/internal/rpcapi/terraform1/setup", "./setup.proto"},
+		"terracina1 (Terracina Core RPC API) setup",
+		"internal/rpcapi/terracina1/setup",
+		[]string{"--go_out=paths=source_relative,plugins=grpc:.", "--go_opt=Msetup.proto=github.com/hashicorp/terracina/internal/rpcapi/terracina1/setup", "./setup.proto"},
 	},
 	{
-		"terraform1 (Terraform Core RPC API) dependencies",
-		"internal/rpcapi/terraform1/dependencies",
+		"terracina1 (Terracina Core RPC API) dependencies",
+		"internal/rpcapi/terracina1/dependencies",
 		[]string{
 			"--go_out=paths=source_relative,plugins=grpc:.",
-			"--go_opt=Mterraform1.proto=github.com/hashicorp/terraform/internal/rpcapi/terraform1",
-			"--go_opt=Mdependencies.proto=github.com/hashicorp/terraform/internal/rpcapi/terraform1/dependencies",
+			"--go_opt=Mterracina1.proto=github.com/hashicorp/terracina/internal/rpcapi/terracina1",
+			"--go_opt=Mdependencies.proto=github.com/hashicorp/terracina/internal/rpcapi/terracina1/dependencies",
 			"-I.",
 			"-I..",
 			"./dependencies.proto",
 		},
 	},
 	{
-		"terraform1 (Terraform Core RPC API) stacks",
-		"internal/rpcapi/terraform1/stacks",
+		"terracina1 (Terracina Core RPC API) stacks",
+		"internal/rpcapi/terracina1/stacks",
 		[]string{
 			"--go_out=paths=source_relative,plugins=grpc:.",
-			"--go_opt=Mterraform1.proto=github.com/hashicorp/terraform/internal/rpcapi/terraform1",
-			"--go_opt=Mstacks.proto=github.com/hashicorp/terraform/internal/rpcapi/terraform1/stacks",
+			"--go_opt=Mterracina1.proto=github.com/hashicorp/terracina/internal/rpcapi/terracina1",
+			"--go_opt=Mstacks.proto=github.com/hashicorp/terracina/internal/rpcapi/terracina1/stacks",
 			"-I.",
 			"-I..",
 			"./stacks.proto",
 		},
 	},
 	{
-		"terraform1 (Terraform Core RPC API) packages",
-		"internal/rpcapi/terraform1/packages",
+		"terracina1 (Terracina Core RPC API) packages",
+		"internal/rpcapi/terracina1/packages",
 		[]string{
 			"--go_out=paths=source_relative,plugins=grpc:.",
-			"--go_opt=Mterraform1.proto=github.com/hashicorp/terraform/internal/rpcapi/terraform1",
-			"--go_opt=Mpackages.proto=github.com/hashicorp/terraform/internal/rpcapi/terraform1/packages",
+			"--go_opt=Mterracina1.proto=github.com/hashicorp/terracina/internal/rpcapi/terracina1",
+			"--go_opt=Mpackages.proto=github.com/hashicorp/terracina/internal/rpcapi/terracina1/packages",
 			"-I.",
 			"-I..",
 			"./packages.proto",
@@ -107,7 +107,7 @@ var protocSteps = []protocStep{
 	{
 		"tfstackdata1 (Internal data formats for Stack state and plan)",
 		"internal/stacks/tfstackdata1",
-		[]string{"--go_out=paths=source_relative:.", "--go_opt=Mtfstackdata1.proto=github.com/hashicorp/terraform/internal/stacks/tfstackdata1", "-I.", "-I../../plans/planproto", "./tfstackdata1.proto"},
+		[]string{"--go_out=paths=source_relative:.", "--go_opt=Mtfstackdata1.proto=github.com/hashicorp/terracina/internal/stacks/tfstackdata1", "-I.", "-I../../plans/planproto", "./tfstackdata1.proto"},
 	},
 	{
 		"cloudproto1 (cloud protocol version 1)",
@@ -118,7 +118,7 @@ var protocSteps = []protocStep{
 
 func main() {
 	if len(os.Args) != 2 {
-		log.Fatal("Usage: go run github.com/hashicorp/terraform/tools/protobuf-compile <basedir>")
+		log.Fatal("Usage: go run github.com/hashicorp/terracina/tools/protobuf-compile <basedir>")
 	}
 	baseDir := os.Args[1]
 	workDir := filepath.Join(baseDir, "tools/protobuf-compile/.workdir")

@@ -1,4 +1,4 @@
-terraform {
+terracina {
   required_providers {
     test = "1.2.3"
     source = {

@@ -1,6 +1,6 @@
-terraform {
+terracina {
   backend "foo" {
-    path = "relative/path/to/terraform.tfstate"
+    path = "relative/path/to/terracina.tfstate"
   }
 }
 

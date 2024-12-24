@@ -1,9 +1,9 @@
-terraform {
+terracina {
   required_providers {
     nonexist = {
-      source = "terraform.io/builtin/nonexist"
+      source = "terracina.io/builtin/nonexist"
     }
-    terraform = {
+    terracina = {
       version = "1.2.0"
     }
   }

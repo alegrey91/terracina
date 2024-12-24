@@ -1,20 +1,20 @@
 # This test fixture is here primarily just to make sure that the
-# terraform.io/builtin/terraform functions remain available for use. The
+# terracina.io/builtin/terracina functions remain available for use. The
 # actual behavior of these functions is the responsibility of
-# ./internal/builtin/providers/terraform, and so it has more detailed tests
+# ./internal/builtin/providers/terracina, and so it has more detailed tests
 # whereas this one is focused largely just on whether these functions are
 # callable at all.
 
-terraform {
+terracina {
   required_providers {
-    terraform = {
-      source = "terraform.io/builtin/terraform"
+    terracina = {
+      source = "terracina.io/builtin/terracina"
     }
   }
 }
 
 output "tfvarsencode" {
-  value = provider::terraform::encode_tfvars({
+  value = provider::terracina::encode_tfvars({
     a = "👋"
     b = "🐝"
     c = "👓"
@@ -22,7 +22,7 @@ output "tfvarsencode" {
 }
 
 output "tfvarsdecode" {
-  value = provider::terraform::decode_tfvars(
+  value = provider::terracina::decode_tfvars(
     <<-EOT
       boop = "👃"
       baaa = "🐑"
@@ -31,5 +31,5 @@ output "tfvarsdecode" {
 }
 
 output "exprencode" {
-  value = provider::terraform::encode_expr([1, 2, 3])
+  value = provider::terracina::encode_expr([1, 2, 3])
 }

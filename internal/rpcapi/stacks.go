@@ -17,19 +17,19 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/depsfile"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providercache"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/rpcapi/terraform1/stacks"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/stacks/stackconfig"
-	"github.com/hashicorp/terraform/internal/stacks/stackplan"
-	"github.com/hashicorp/terraform/internal/stacks/stackruntime"
-	"github.com/hashicorp/terraform/internal/stacks/stackruntime/hooks"
-	"github.com/hashicorp/terraform/internal/stacks/stackstate"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/depsfile"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providercache"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/rpcapi/terracina1/stacks"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/stacks/stackconfig"
+	"github.com/hashicorp/terracina/internal/stacks/stackplan"
+	"github.com/hashicorp/terracina/internal/stacks/stackruntime"
+	"github.com/hashicorp/terracina/internal/stacks/stackruntime/hooks"
+	"github.com/hashicorp/terracina/internal/stacks/stackstate"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 type stacksServer struct {
@@ -449,7 +449,7 @@ Events:
 					tfdiags.Error,
 					"Incorrectly-constructed change",
 					fmt.Sprintf(
-						"Failed to serialize a %T value for recording in the saved plan: %s.\n\nThis is a bug in Terraform; please report it!",
+						"Failed to serialize a %T value for recording in the saved plan: %s.\n\nThis is a bug in Terracina; please report it!",
 						protoChange, err,
 					),
 				))
@@ -674,7 +674,7 @@ Events:
 					tfdiags.Error,
 					"Incorrectly-constructed apply result",
 					fmt.Sprintf(
-						"Failed to serialize a %T value for recording in the updated state: %s.\n\nThis is a bug in Terraform; please report it!",
+						"Failed to serialize a %T value for recording in the updated state: %s.\n\nThis is a bug in Terracina; please report it!",
 						protoChange, err,
 					),
 				))
@@ -920,7 +920,7 @@ func stackChangeHooks(send func(*stacks.StackChangeProgress) error, mainStackSou
 			return nil
 		},
 
-		// When Terraform core reports a resource instance plan status, we
+		// When Terracina core reports a resource instance plan status, we
 		// forward it to the events client.
 		ReportResourceInstanceStatus: func(ctx context.Context, span any, rihd *hooks.ResourceInstanceStatusHookData) any {
 			// addrs.Provider.String() will panic on the zero value. In this

@@ -1,33 +1,33 @@
 ---
-page_title: terraform logout command reference
+page_title: terracina logout command reference
 description: >-
-  The `terraform logout` command removes credentials stored after using the terraform
+  The `terracina logout` command removes credentials stored after using the terracina
   login command.
 ---
 
-# `terraform logout` command
+# `terracina logout` command
 
-This topic provides reference information about the `terraform logout` command.
+This topic provides reference information about the `terracina logout` command.
 
 ## Introduction
 
-Use the `terraform logout` command to remove credentials stored after running the 
-`terraform login` command. These credentials are API tokens for HCP Terraform,
-Terraform Enterprise, or any other host that offers Terraform services.
+Use the `terracina logout` command to remove credentials stored after running the 
+`terracina login` command. These credentials are API tokens for HCP Terracina,
+Terracina Enterprise, or any other host that offers Terracina services.
 
 ## Usage
 
-Usage: `terraform logout [hostname]`
+Usage: `terracina logout [hostname]`
 
-If you don't provide an explicit hostname, Terraform will assume you want to
-log out of HCP Terraform at `app.terraform.io`.
+If you don't provide an explicit hostname, Terracina will assume you want to
+log out of HCP Terracina at `app.terracina.io`.
 
 -> **Note:** the API token is only removed from local storage, not destroyed on
 the remote server, so it will remain valid until manually revoked.
 
 ## Credentials Storage
 
-By default, Terraform will remove the token stored in plain text in a local CLI
+By default, Terracina will remove the token stored in plain text in a local CLI
 configuration file called `credentials.tfrc.json`. If you have configured a
-[credentials helper program](/terraform/cli/config/config-file#credentials-helpers), Terraform
+[credentials helper program](/terracina/cli/config/config-file#credentials-helpers), Terracina
 will use the helper's `forget` command to remove it.

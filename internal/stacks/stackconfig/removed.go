@@ -9,9 +9,9 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/gohcl"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // Removed represents a component that was removed from the configuration.
@@ -61,7 +61,7 @@ type Removed struct {
 	//
 	// This map deals with the slight schism between the stacks language's
 	// treatment of provider configurations as regular values of a special
-	// data type vs. the main Terraform language's treatment of provider
+	// data type vs. the main Terracina language's treatment of provider
 	// configurations as something special passed out of band from the
 	// input variables. The overall structure and the map keys are fixed
 	// statically during decoding, but the final provider configuration objects

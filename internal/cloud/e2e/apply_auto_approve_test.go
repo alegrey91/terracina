@@ -8,34 +8,34 @@ import (
 	"testing"
 
 	tfe "github.com/hashicorp/go-tfe"
-	tfversion "github.com/hashicorp/terraform/version"
+	tfversion "github.com/hashicorp/terracina/version"
 )
 
-func Test_terraform_apply_autoApprove(t *testing.T) {
+func Test_terracina_apply_autoApprove(t *testing.T) {
 	t.Parallel()
 	skipIfMissingEnvVar(t)
-	skipWithoutRemoteTerraformVersion(t)
+	skipWithoutRemoteTerracinaVersion(t)
 
 	ctx := context.Background()
 
 	cases := testCases{
-		"workspace manual apply, terraform apply without auto-approve, expect prompt": {
+		"workspace manual apply, terracina apply without auto-approve, expect prompt": {
 			operations: []operationSets{
 				{
 					prep: func(t *testing.T, orgName, dir string) {
 						wsName := "app"
 						_ = createWorkspace(t, orgName, tfe.WorkspaceCreateOptions{
 							Name:             tfe.String(wsName),
-							TerraformVersion: tfe.String(tfversion.String()),
+							TerracinaVersion: tfe.String(tfversion.String()),
 							AutoApply:        tfe.Bool(false),
 						})
-						tfBlock := terraformConfigCloudBackendName(orgName, wsName)
+						tfBlock := terracinaConfigCloudBackendName(orgName, wsName)
 						writeMainTF(t, tfBlock, dir)
 					},
 					commands: []tfCommand{
 						{
 							command:           []string{"init"},
-							expectedCmdOutput: `HCP Terraform has been successfully initialized!`,
+							expectedCmdOutput: `HCP Terracina has been successfully initialized!`,
 						},
 						{
 							command:           []string{"apply"},
@@ -59,23 +59,23 @@ func Test_terraform_apply_autoApprove(t *testing.T) {
 				}
 			},
 		},
-		"workspace auto apply, terraform apply without auto-approve, expect prompt": {
+		"workspace auto apply, terracina apply without auto-approve, expect prompt": {
 			operations: []operationSets{
 				{
 					prep: func(t *testing.T, orgName, dir string) {
 						wsName := "app"
 						_ = createWorkspace(t, orgName, tfe.WorkspaceCreateOptions{
 							Name:             tfe.String(wsName),
-							TerraformVersion: tfe.String(tfversion.String()),
+							TerracinaVersion: tfe.String(tfversion.String()),
 							AutoApply:        tfe.Bool(true),
 						})
-						tfBlock := terraformConfigCloudBackendName(orgName, wsName)
+						tfBlock := terracinaConfigCloudBackendName(orgName, wsName)
 						writeMainTF(t, tfBlock, dir)
 					},
 					commands: []tfCommand{
 						{
 							command:           []string{"init"},
-							expectedCmdOutput: `HCP Terraform has been successfully initialized!`,
+							expectedCmdOutput: `HCP Terracina has been successfully initialized!`,
 						},
 						{
 							command:           []string{"apply"},
@@ -99,23 +99,23 @@ func Test_terraform_apply_autoApprove(t *testing.T) {
 				}
 			},
 		},
-		"workspace manual apply, terraform apply with auto-approve, no prompt": {
+		"workspace manual apply, terracina apply with auto-approve, no prompt": {
 			operations: []operationSets{
 				{
 					prep: func(t *testing.T, orgName, dir string) {
 						wsName := "app"
 						_ = createWorkspace(t, orgName, tfe.WorkspaceCreateOptions{
 							Name:             tfe.String(wsName),
-							TerraformVersion: tfe.String(tfversion.String()),
+							TerracinaVersion: tfe.String(tfversion.String()),
 							AutoApply:        tfe.Bool(false),
 						})
-						tfBlock := terraformConfigCloudBackendName(orgName, wsName)
+						tfBlock := terracinaConfigCloudBackendName(orgName, wsName)
 						writeMainTF(t, tfBlock, dir)
 					},
 					commands: []tfCommand{
 						{
 							command:           []string{"init"},
-							expectedCmdOutput: `HCP Terraform has been successfully initialized!`,
+							expectedCmdOutput: `HCP Terracina has been successfully initialized!`,
 						},
 						{
 							command:           []string{"apply", "-auto-approve"},
@@ -137,23 +137,23 @@ func Test_terraform_apply_autoApprove(t *testing.T) {
 				}
 			},
 		},
-		"workspace auto apply, terraform apply with auto-approve, no prompt": {
+		"workspace auto apply, terracina apply with auto-approve, no prompt": {
 			operations: []operationSets{
 				{
 					prep: func(t *testing.T, orgName, dir string) {
 						wsName := "app"
 						_ = createWorkspace(t, orgName, tfe.WorkspaceCreateOptions{
 							Name:             tfe.String(wsName),
-							TerraformVersion: tfe.String(tfversion.String()),
+							TerracinaVersion: tfe.String(tfversion.String()),
 							AutoApply:        tfe.Bool(true),
 						})
-						tfBlock := terraformConfigCloudBackendName(orgName, wsName)
+						tfBlock := terracinaConfigCloudBackendName(orgName, wsName)
 						writeMainTF(t, tfBlock, dir)
 					},
 					commands: []tfCommand{
 						{
 							command:           []string{"init"},
-							expectedCmdOutput: `HCP Terraform has been successfully initialized!`,
+							expectedCmdOutput: `HCP Terracina has been successfully initialized!`,
 						},
 						{
 							command:           []string{"apply", "-auto-approve"},

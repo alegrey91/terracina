@@ -6,8 +6,8 @@ package mocking
 import (
 	"fmt"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs"
 )
 
 // Overrides contains a summary of all the overrides that should apply for a

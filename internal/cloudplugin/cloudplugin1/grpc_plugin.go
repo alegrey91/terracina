@@ -9,8 +9,8 @@ import (
 	"net/rpc"
 
 	"github.com/hashicorp/go-plugin"
-	"github.com/hashicorp/terraform/internal/cloudplugin"
-	"github.com/hashicorp/terraform/internal/cloudplugin/cloudproto1"
+	"github.com/hashicorp/terracina/internal/cloudplugin"
+	"github.com/hashicorp/terracina/internal/cloudplugin/cloudproto1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 )

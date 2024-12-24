@@ -12,14 +12,14 @@ import (
 	"github.com/google/go-cmp/cmp/cmpopts"
 	version "github.com/hashicorp/go-version"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
-	svchost "github.com/hashicorp/terraform-svchost"
+	svchost "github.com/hashicorp/terracina-svchost"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/depsfile"
-	"github.com/hashicorp/terraform/internal/getproviders/providerreqs"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/depsfile"
+	"github.com/hashicorp/terracina/internal/getproviders/providerreqs"
 
-	_ "github.com/hashicorp/terraform/internal/logging"
+	_ "github.com/hashicorp/terracina/internal/logging"
 )
 
 func TestConfigProviderTypes(t *testing.T) {
@@ -142,7 +142,7 @@ func TestConfigProviderRequirements(t *testing.T) {
 	nullProvider := addrs.NewDefaultProvider("null")
 	randomProvider := addrs.NewDefaultProvider("random")
 	impliedProvider := addrs.NewDefaultProvider("implied")
-	terraformProvider := addrs.NewBuiltInProvider("terraform")
+	terracinaProvider := addrs.NewBuiltInProvider("terracina")
 	configuredProvider := addrs.NewDefaultProvider("configured")
 	grandchildProvider := addrs.NewDefaultProvider("grandchild")
 
@@ -156,7 +156,7 @@ func TestConfigProviderRequirements(t *testing.T) {
 		configuredProvider: providerreqs.MustParseVersionConstraints("~> 1.4"),
 		impliedProvider:    nil,
 		happycloudProvider: nil,
-		terraformProvider:  nil,
+		terracinaProvider:  nil,
 		grandchildProvider: nil,
 	}
 
@@ -176,7 +176,7 @@ func TestConfigProviderRequirementsInclTests(t *testing.T) {
 	nullProvider := addrs.NewDefaultProvider("null")
 	randomProvider := addrs.NewDefaultProvider("random")
 	impliedProvider := addrs.NewDefaultProvider("implied")
-	terraformProvider := addrs.NewBuiltInProvider("terraform")
+	terracinaProvider := addrs.NewBuiltInProvider("terracina")
 	configuredProvider := addrs.NewDefaultProvider("configured")
 
 	got, diags := cfg.ProviderRequirements()
@@ -188,7 +188,7 @@ func TestConfigProviderRequirementsInclTests(t *testing.T) {
 		tlsProvider:        providerreqs.MustParseVersionConstraints("~> 3.0"),
 		configuredProvider: nil,
 		impliedProvider:    nil,
-		terraformProvider:  nil,
+		terracinaProvider:  nil,
 	}
 
 	if diff := cmp.Diff(want, got); diff != "" {
@@ -218,7 +218,7 @@ func TestConfigProviderRequirementsShallow(t *testing.T) {
 	nullProvider := addrs.NewDefaultProvider("null")
 	randomProvider := addrs.NewDefaultProvider("random")
 	impliedProvider := addrs.NewDefaultProvider("implied")
-	terraformProvider := addrs.NewBuiltInProvider("terraform")
+	terracinaProvider := addrs.NewBuiltInProvider("terracina")
 	configuredProvider := addrs.NewDefaultProvider("configured")
 
 	got, diags := cfg.ProviderRequirementsShallow()
@@ -230,7 +230,7 @@ func TestConfigProviderRequirementsShallow(t *testing.T) {
 		tlsProvider:        providerreqs.MustParseVersionConstraints("~> 3.0"),
 		configuredProvider: providerreqs.MustParseVersionConstraints("~> 1.4"),
 		impliedProvider:    nil,
-		terraformProvider:  nil,
+		terracinaProvider:  nil,
 	}
 
 	if diff := cmp.Diff(want, got); diff != "" {
@@ -247,14 +247,14 @@ func TestConfigProviderRequirementsShallowInclTests(t *testing.T) {
 		"hashicorp", "tls",
 	)
 	impliedProvider := addrs.NewDefaultProvider("implied")
-	terraformProvider := addrs.NewBuiltInProvider("terraform")
+	terracinaProvider := addrs.NewBuiltInProvider("terracina")
 
 	got, diags := cfg.ProviderRequirementsShallow()
 	assertNoDiagnostics(t, diags)
 	want := providerreqs.Requirements{
 		tlsProvider:       providerreqs.MustParseVersionConstraints("~> 3.0"),
 		impliedProvider:   nil,
-		terraformProvider: nil,
+		terracinaProvider: nil,
 	}
 
 	if diff := cmp.Diff(want, got); diff != "" {
@@ -282,7 +282,7 @@ func TestConfigProviderRequirementsByModule(t *testing.T) {
 	nullProvider := addrs.NewDefaultProvider("null")
 	randomProvider := addrs.NewDefaultProvider("random")
 	impliedProvider := addrs.NewDefaultProvider("implied")
-	terraformProvider := addrs.NewBuiltInProvider("terraform")
+	terracinaProvider := addrs.NewBuiltInProvider("terracina")
 	configuredProvider := addrs.NewDefaultProvider("configured")
 	grandchildProvider := addrs.NewDefaultProvider("grandchild")
 
@@ -299,7 +299,7 @@ func TestConfigProviderRequirementsByModule(t *testing.T) {
 			tlsProvider:        providerreqs.MustParseVersionConstraints("~> 3.0"),
 			configuredProvider: providerreqs.MustParseVersionConstraints("~> 1.4"),
 			impliedProvider:    nil,
-			terraformProvider:  nil,
+			terracinaProvider:  nil,
 		},
 		Children: map[string]*ModuleRequirements{
 			"kinder": {
@@ -345,7 +345,7 @@ func TestConfigProviderRequirementsByModuleInclTests(t *testing.T) {
 	nullProvider := addrs.NewDefaultProvider("null")
 	randomProvider := addrs.NewDefaultProvider("random")
 	impliedProvider := addrs.NewDefaultProvider("implied")
-	terraformProvider := addrs.NewBuiltInProvider("terraform")
+	terracinaProvider := addrs.NewBuiltInProvider("terracina")
 	configuredProvider := addrs.NewDefaultProvider("configured")
 
 	got, diags := cfg.ProviderRequirementsByModule()
@@ -358,7 +358,7 @@ func TestConfigProviderRequirementsByModuleInclTests(t *testing.T) {
 			// Only the root module's version is present here
 			tlsProvider:       providerreqs.MustParseVersionConstraints("~> 3.0"),
 			impliedProvider:   nil,
-			terraformProvider: nil,
+			terracinaProvider: nil,
 		},
 		Children: make(map[string]*ModuleRequirements),
 		Tests: map[string]*TestFileModuleRequirements{
@@ -420,12 +420,12 @@ func TestVerifyDependencySelections(t *testing.T) {
 				// Intentionally blank
 			},
 			[]string{
-				`provider registry.terraform.io/hashicorp/configured: required by this configuration but no version is selected`,
-				`provider registry.terraform.io/hashicorp/grandchild: required by this configuration but no version is selected`,
-				`provider registry.terraform.io/hashicorp/implied: required by this configuration but no version is selected`,
-				`provider registry.terraform.io/hashicorp/null: required by this configuration but no version is selected`,
-				`provider registry.terraform.io/hashicorp/random: required by this configuration but no version is selected`,
-				`provider registry.terraform.io/hashicorp/tls: required by this configuration but no version is selected`,
+				`provider registry.terracina.io/hashicorp/configured: required by this configuration but no version is selected`,
+				`provider registry.terracina.io/hashicorp/grandchild: required by this configuration but no version is selected`,
+				`provider registry.terracina.io/hashicorp/implied: required by this configuration but no version is selected`,
+				`provider registry.terracina.io/hashicorp/null: required by this configuration but no version is selected`,
+				`provider registry.terracina.io/hashicorp/random: required by this configuration but no version is selected`,
+				`provider registry.terracina.io/hashicorp/tls: required by this configuration but no version is selected`,
 				`provider tf.example.com/awesomecorp/happycloud: required by this configuration but no version is selected`,
 			},
 		},
@@ -452,7 +452,7 @@ func TestVerifyDependencySelections(t *testing.T) {
 				locks.SetProvider(happycloudProvider, providerreqs.MustParseVersion("0.0.1"), nil, nil)
 			},
 			[]string{
-				`provider registry.terraform.io/hashicorp/null: locked version selection 3.0.0 doesn't match the updated version constraints "~> 2.0.0, 2.0.1"`,
+				`provider registry.terracina.io/hashicorp/null: locked version selection 3.0.0 doesn't match the updated version constraints "~> 2.0.0, 2.0.1"`,
 			},
 		},
 		"null provider lock changed": {
@@ -470,7 +470,7 @@ func TestVerifyDependencySelections(t *testing.T) {
 				locks.SetProvider(happycloudProvider, providerreqs.MustParseVersion("0.0.1"), nil, nil)
 			},
 			[]string{
-				`provider registry.terraform.io/hashicorp/null: version constraints "~> 2.0.0, 2.0.1" don't match the locked version selection 3.0.0`,
+				`provider registry.terracina.io/hashicorp/null: version constraints "~> 2.0.0, 2.0.1" don't match the locked version selection 3.0.0`,
 			},
 		},
 		"overridden provider": {
@@ -479,12 +479,12 @@ func TestVerifyDependencySelections(t *testing.T) {
 			},
 			[]string{
 				// We still catch all of the other ones, because only happycloud was overridden
-				`provider registry.terraform.io/hashicorp/configured: required by this configuration but no version is selected`,
-				`provider registry.terraform.io/hashicorp/grandchild: required by this configuration but no version is selected`,
-				`provider registry.terraform.io/hashicorp/implied: required by this configuration but no version is selected`,
-				`provider registry.terraform.io/hashicorp/null: required by this configuration but no version is selected`,
-				`provider registry.terraform.io/hashicorp/random: required by this configuration but no version is selected`,
-				`provider registry.terraform.io/hashicorp/tls: required by this configuration but no version is selected`,
+				`provider registry.terracina.io/hashicorp/configured: required by this configuration but no version is selected`,
+				`provider registry.terracina.io/hashicorp/grandchild: required by this configuration but no version is selected`,
+				`provider registry.terracina.io/hashicorp/implied: required by this configuration but no version is selected`,
+				`provider registry.terracina.io/hashicorp/null: required by this configuration but no version is selected`,
+				`provider registry.terracina.io/hashicorp/random: required by this configuration but no version is selected`,
+				`provider registry.terracina.io/hashicorp/tls: required by this configuration but no version is selected`,
 			},
 		},
 	}

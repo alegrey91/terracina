@@ -6,30 +6,30 @@ description: >-
 
 # Mocks
 
--> **Note**: Test mocking is available in Terraform v1.7.0 and later.
+-> **Note**: Test mocking is available in Terracina v1.7.0 and later.
 
-Terraform lets you mock providers, resources, and data sources for your tests. This allows you to test parts of your module without creating infrastructure or requiring credentials. In a Terraform test, a mocked provider or resource will generate fake data for all computed attributes that would normally be provided by the underlying provider APIs.
+Terracina lets you mock providers, resources, and data sources for your tests. This allows you to test parts of your module without creating infrastructure or requiring credentials. In a Terracina test, a mocked provider or resource will generate fake data for all computed attributes that would normally be provided by the underlying provider APIs.
 
-Mocking functionality can only be used with the [`terraform test` language](/terraform/language/tests). Readers of this documentation should be familiar with the testing syntax and language features.
+Mocking functionality can only be used with the [`terracina test` language](/terracina/language/tests). Readers of this documentation should be familiar with the testing syntax and language features.
 
-In addition, the more advanced features of the mocking framework require knowledge about the following Terraform provider features:
+In addition, the more advanced features of the mocking framework require knowledge about the following Terracina provider features:
 
-- The difference between [attributes, nested attributes,](/terraform/plugin/framework/handling-data/attributes) and [blocks](https://developer.hashicorp.com/terraform/plugin/framework/handling-data/blocks).
-- Definitions of [optional, required, and computed attributes](/terraform/plugin/framework/handling-data/attributes/string#configurability).
+- The difference between [attributes, nested attributes,](/terracina/plugin/framework/handling-data/attributes) and [blocks](https://developer.hashicorp.com/terracina/plugin/framework/handling-data/blocks).
+- Definitions of [optional, required, and computed attributes](/terracina/plugin/framework/handling-data/attributes/string#configurability).
 
 
 ## Mock Providers
 
-In Terraform tests, you can mock a provider with the `mock_provider` block. Mock providers return the same schema as the original provider and you can pass the mocked provider to your tests in place of the matching provider. All resources and data sources retrieved by a mock provider will set the relevant values from the configuration, and generate fake data for any computed attributes.
+In Terracina tests, you can mock a provider with the `mock_provider` block. Mock providers return the same schema as the original provider and you can pass the mocked provider to your tests in place of the matching provider. All resources and data sources retrieved by a mock provider will set the relevant values from the configuration, and generate fake data for any computed attributes.
 
-Mock providers can be used directly in place of traditional `provider` blocks and they share the same global namespace. During the execution of the `terraform test` command, Terraform does not distinguish between a real and a mocked provider.
+Mock providers can be used directly in place of traditional `provider` blocks and they share the same global namespace. During the execution of the `terracina test` command, Terracina does not distinguish between a real and a mocked provider.
 
 The following example creates an AWS S3 bucket and then uses a mocked provider to test the configuration without requiring an AWS account.
 
 ```hcl
 # main.tf
 
-terraform {
+terracina {
   required_providers {
     aws = {
       source = "hashicorp/aws"
@@ -63,9 +63,9 @@ run "sets_correct_name" {
 }
 ```
 
-From the perspective of a `plan` or `apply` operation executed in a Terraform test file, the mocked provider is creating actual resources with values that match the configuration. These resources are stored in the Terraform state files that `terraform test` creates and holds in memory during test executions.
+From the perspective of a `plan` or `apply` operation executed in a Terracina test file, the mocked provider is creating actual resources with values that match the configuration. These resources are stored in the Terracina state files that `terracina test` creates and holds in memory during test executions.
 
-You can use mocked providers and real providers simulating in a Terraform test. The following example defines two AWS providers, one real and one mocked. You must provide an alias to one of them, as they share the same global `aws` provider namespace. You can then use the `providers` attribute in test `run` blocks to customize which AWS provider to use for each `run` block. 
+You can use mocked providers and real providers simulating in a Terracina test. The following example defines two AWS providers, one real and one mocked. You must provide an alias to one of them, as they share the same global `aws` provider namespace. You can then use the `providers` attribute in test `run` blocks to customize which AWS provider to use for each `run` block. 
 
 ```hcl
 # mocked_providers.tftest.hcl
@@ -95,7 +95,7 @@ A mocked provider will generate data for any computed attributes in referenced d
 
 -> **Note**: Mocked providers do not have any information about the expected format of the computed attributes, so the generated data will rarely match any expected syntax that real providers would return for those attributes.
 
-Mocked providers only generate data for computed attributes. All required resource attributes must be set when you use a mocked provider. If you do not provide a value for an optional computed attribute, Terraform will automatically generate one. The values that Terraform generates depends on the data type:
+Mocked providers only generate data for computed attributes. All required resource attributes must be set when you use a mocked provider. If you do not provide a value for an optional computed attribute, Terracina will automatically generate one. The values that Terracina generates depends on the data type:
 
 - Numbers will be 0.
 - Booleans will be false.
@@ -127,7 +127,7 @@ mock_provider "aws" {
 }
 ```
 
-In the above example, Terraform uses the supplied value for `arn` attributes in S3 buckets instead of generating a random string. Computed attributes not provided an explicit default will simply fall back to the generic data generation rules.
+In the above example, Terracina uses the supplied value for `arn` attributes in S3 buckets instead of generating a random string. Computed attributes not provided an explicit default will simply fall back to the generic data generation rules.
 
 You can also share mock provider data between tests by writing dedicated mock data files and using the `source` attribute in the `mock_provider` block. Mock data files have `.tfmock.hcl` or `.tfmock.json` extension, and can contain `mock_resource` and `mock_data` blocks as if they were defined in the `mock_provider` block directly.
 
@@ -161,11 +161,11 @@ You can combine the `source` attribute with directly nested `mock_resource` and 
 
 In addition to mocking providers, you can use the following block types to override specific resources, data sources, and modules: 
 
-- `override_resource`: Override the values of a resource. Terraform does not call the underlying provider.
-- `override_data`: Override the values of a data source. Terraform does not call the underlying provider.
-- `override_module`: Override the outputs of a module. Terraform does not create any resource in the module.
+- `override_resource`: Override the values of a resource. Terracina does not call the underlying provider.
+- `override_data`: Override the values of a data source. Terracina does not call the underlying provider.
+- `override_module`: Override the outputs of a module. Terracina does not create any resource in the module.
 
-All three blocks can be placed at the root level of Terraform test files and in Terraform test file `run` blocks. In addition, the `override_resource` and `override_data` blocks can be nested in `mock_provider` blocks and in Terraform mock data files. 
+All three blocks can be placed at the root level of Terracina test files and in Terracina test file `run` blocks. In addition, the `override_resource` and `override_data` blocks can be nested in `mock_provider` blocks and in Terracina mock data files. 
 
 Overrides can be used with both real and mocked providers and will provide the computed values instead of the underlying provider.
 
@@ -173,14 +173,14 @@ Overrides can be used with both real and mocked providers and will provide the c
 
 All override blocks contain a `target` attribute, which should specify the resource, data source, or module to override. The `override_module` blocks contain an `outputs` attribute, while the `override_resource` and `override_data` blocks contain a `values` attribute.
 
-The `outputs` and `values` attributes are optional and if not specified, Terraform will generate values for them automatically.
+The `outputs` and `values` attributes are optional and if not specified, Terracina will generate values for them automatically.
 
 The following example demonstrates the override blocks at various different scopes and levels. The main configuration calls the `./modules/s3_data` module to read a file from an S3 bucket, and then creates a `local_file` from the data returned from the module.
 
 ```hcl
 # main.tf
 
-terraform {
+terracina {
   required_providers {
     aws = {
       source = "hashicorp/aws"
@@ -217,7 +217,7 @@ output "data" {
 }
 ```
 
-Firstly, you can override the `aws_s3_bucket_object` in the module directly in a mock provider. The following example defines an `override_data` block in the `mock_provider` block. In this case, Terraform will only override the target data source if the mock provider creates it.
+Firstly, you can override the `aws_s3_bucket_object` in the module directly in a mock provider. The following example defines an `override_data` block in the `mock_provider` block. In this case, Terracina will only override the target data source if the mock provider creates it.
 
 ```hcl
 # main.tftest.hcl
@@ -239,7 +239,7 @@ run "test" {
 }
 ```
 
-Alternatively, you could also override the same `aws_s3_bucket_object` in the test file itself, or in a `run` block. In this case, the underlying provider doesn't matter since Terraform overrides the data source at the target address regardless of the provider. The following example still mocks the provider so that Terraform can run the test without AWS credentials. Override blocks can override resources provided by real providers.
+Alternatively, you could also override the same `aws_s3_bucket_object` in the test file itself, or in a `run` block. In this case, the underlying provider doesn't matter since Terracina overrides the data source at the target address regardless of the provider. The following example still mocks the provider so that Terracina can run the test without AWS credentials. Override blocks can override resources provided by real providers.
 
 ```hcl
 # main.tftest.hcl
@@ -279,7 +279,7 @@ run "test_run_override" {
 
 In the above example, the override block defined at the file level is used in the first `run` block. Then in the second `run` block, the alternative local override takes precedence over the file level override.
 
-Finally, you can override the entire module with the `override_module` block. In the following example, Terraform overrides the entire module instead of specific resources in the module. 
+Finally, you can override the entire module with the `override_module` block. In the following example, Terracina overrides the entire module instead of specific resources in the module. 
 
 ```hcl
 # main.tftest.hcl

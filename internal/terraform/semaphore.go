@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 // Semaphore is a wrapper around a channel to provide
 // utility methods to clarify that we are treating the

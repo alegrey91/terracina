@@ -1,6 +1,6 @@
 ---
 page_title: 'Backend Type: azurerm'
-description: Terraform can store state remotely in Azure Blob Storage.
+description: Terracina can store state remotely in Azure Blob Storage.
 ---
 
 # azurerm
@@ -9,7 +9,7 @@ Stores the state as a Blob with the given Key within the Blob Container within [
 
 This backend supports state locking and consistency checking with Azure Blob Storage native capabilities.
 
-~> Terraform 1.1 and 1.2 supported a feature-flag to allow enabling/disabling the use of Microsoft Graph (and MSAL) rather than Azure Active Directory Graph (and ADAL) - however this flag has since been removed in Terraform 1.3. Microsoft Graph (and MSAL) are now enabled by default and Azure Active Directory Graph (and ADAL) can no longer be used.
+~> Terracina 1.1 and 1.2 supported a feature-flag to allow enabling/disabling the use of Microsoft Graph (and MSAL) rather than Azure Active Directory Graph (and ADAL) - however this flag has since been removed in Terracina 1.3. Microsoft Graph (and MSAL) are now enabled by default and Azure Active Directory Graph (and ADAL) can no longer be used.
 
 ## Authentication
 
@@ -19,7 +19,7 @@ The `azurerm` backend supports 3 methods of authenticating to the storage accoun
 - Azure Active Directory
 - SAS Token
 
-The *Access Key* method can be used directly, by specifying the access key, or in combination with an Azure AD principal (e.g. user, service principal or managed identity). To use an Access Key directly you must generate one for your state file blob and specify it in the backend configuration. If neither an access key or client ID is specified, Terraform will attempt to use Azure CLI. In both cases where no access key is given, Terraform will attempt to retrieve the access key for the storage account, using the authenticated Azure AD principal.
+The *Access Key* method can be used directly, by specifying the access key, or in combination with an Azure AD principal (e.g. user, service principal or managed identity). To use an Access Key directly you must generate one for your state file blob and specify it in the backend configuration. If neither an access key or client ID is specified, Terracina will attempt to use Azure CLI. In both cases where no access key is given, Terracina will attempt to retrieve the access key for the storage account, using the authenticated Azure AD principal.
 
 The *Azure Active Directory* method can only be used in combination with an Azure AD principal. To use the Azure Active Directory method you must set the `use_azuread_auth` variable to `true` in your backend configuration. This will cause the backend to use the Access Token of the Azure AD principal to authenticate to the state file blob, instead of authenticating using a shared access key.
 
@@ -44,7 +44,7 @@ The `azurerm` backend supports the following authentication scenarios to connect
 
 † There are sometimes more options needed for successful authentication. The variable shown is the one that triggers the backend to use a given authentication scenario. You can see examples of each option below.
 
--> Sensitive values should not be hardcoded into your configuration, and should instead be specified using environment variables or partial configuration flags in the `init` command of Terraform CLI.
+-> Sensitive values should not be hardcoded into your configuration, and should instead be specified using environment variables or partial configuration flags in the `init` command of Terracina CLI.
 
 ## Example Backend Configurations
 
@@ -55,12 +55,12 @@ This method is not suitable for automation since it only supports a User Princip
 *Connect to Storage Account with Access Key*
 
 ```hcl
-terraform {
+terracina {
   backend "azurerm" {
     resource_group_name  = "StorageAccount-ResourceGroup"  # Can be passed via `-backend-config=`"resource_group_name=<resource group name>"` in the `init` command.
     storage_account_name = "abcd1234"                      # Can be passed via `-backend-config=`"storage_account_name=<storage account name>"` in the `init` command.
     container_name       = "tfstate"                       # Can be passed via `-backend-config=`"container_name=<container name>"` in the `init` command.
-    key                  = "prod.terraform.tfstate"        # Can be passed via `-backend-config=`"key=<blob key name>"` in the `init` command.
+    key                  = "prod.terracina.tfstate"        # Can be passed via `-backend-config=`"key=<blob key name>"` in the `init` command.
   }
 }
 ```
@@ -68,12 +68,12 @@ terraform {
 *Connect to Storage Account with Azure Active Directory authentication*
 
 ```hcl
-terraform {
+terracina {
   backend "azurerm" {
     resource_group_name  = "StorageAccount-ResourceGroup"  # Can be passed via `-backend-config=`"resource_group_name=<resource group name>"` in the `init` command.
     storage_account_name = "abcd1234"                      # Can be passed via `-backend-config=`"storage_account_name=<storage account name>"` in the `init` command.
     container_name       = "tfstate"                       # Can be passed via `-backend-config=`"container_name=<container name>"` in the `init` command.
-    key                  = "prod.terraform.tfstate"        # Can be passed via `-backend-config=`"key=<blob key name>"` in the `init` command.
+    key                  = "prod.terracina.tfstate"        # Can be passed via `-backend-config=`"key=<blob key name>"` in the `init` command.
     use_azuread_auth     = true                            # Can also be set via `ARM_USE_AZUREAD` environment variable.
   }
 }
@@ -86,12 +86,12 @@ You can use an App Registration (Service Principal) or a User Assigned Managed I
 *Connect to Storage Account with Access Key*
 
 ```hcl
-terraform {
+terracina {
   backend "azurerm" {
     resource_group_name  = "StorageAccount-ResourceGroup"          # Can be passed via `-backend-config=`"resource_group_name=<resource group name>"` in the `init` command.
     storage_account_name = "abcd1234"                              # Can be passed via `-backend-config=`"storage_account_name=<storage account name>"` in the `init` command.
     container_name       = "tfstate"                               # Can be passed via `-backend-config=`"container_name=<container name>"` in the `init` command.
-    key                  = "prod.terraform.tfstate"                # Can be passed via `-backend-config=`"key=<blob key name>"` in the `init` command.
+    key                  = "prod.terracina.tfstate"                # Can be passed via `-backend-config=`"key=<blob key name>"` in the `init` command.
     use_oidc             = true                                    # Can also be set via `ARM_USE_OIDC` environment variable.
     client_id            = "00000000-0000-0000-0000-000000000000"  # Can also be set via `ARM_CLIENT_ID` environment variable.
     subscription_id      = "00000000-0000-0000-0000-000000000000"  # Can also be set via `ARM_SUBSCRIPTION_ID` environment variable.
@@ -103,12 +103,12 @@ terraform {
 *Connect to Storage Account with Azure Active Directory authentication*
 
 ```hcl
-terraform {
+terracina {
   backend "azurerm" {
     resource_group_name  = "StorageAccount-ResourceGroup"          # Can be passed via `-backend-config=`"resource_group_name=<resource group name>"` in the `init` command.
     storage_account_name = "abcd1234"                              # Can be passed via `-backend-config=`"storage_account_name=<storage account name>"` in the `init` command.
     container_name       = "tfstate"                               # Can be passed via `-backend-config=`"container_name=<container name>"` in the `init` command.
-    key                  = "prod.terraform.tfstate"                # Can be passed via `-backend-config=`"key=<blob key name>"` in the `init` command.
+    key                  = "prod.terracina.tfstate"                # Can be passed via `-backend-config=`"key=<blob key name>"` in the `init` command.
     use_oidc             = true                                    # Can also be set via `ARM_USE_OIDC` environment variable.
     client_id            = "00000000-0000-0000-0000-000000000000"  # Can also be set via `ARM_CLIENT_ID` environment variable.
     subscription_id      = "00000000-0000-0000-0000-000000000000"  # Can also be set via `ARM_SUBSCRIPTION_ID` environment variable.
@@ -125,12 +125,12 @@ You can use a User Assigned Managed Identity as well as a System Assigned Manage
 *Connect to Storage Account with Access Key*
 
 ```hcl
-terraform {
+terracina {
   backend "azurerm" {
     resource_group_name  = "StorageAccount-ResourceGroup"          # Can be passed via `-backend-config=`"resource_group_name=<resource group name>"` in the `init` command.
     storage_account_name = "abcd1234"                              # Can be passed via `-backend-config=`"storage_account_name=<storage account name>"` in the `init` command.
     container_name       = "tfstate"                               # Can be passed via `-backend-config=`"container_name=<container name>"` in the `init` command.
-    key                  = "prod.terraform.tfstate"                # Can be passed via `-backend-config=`"key=<blob key name>"` in the `init` command.
+    key                  = "prod.terracina.tfstate"                # Can be passed via `-backend-config=`"key=<blob key name>"` in the `init` command.
     use_msi              = true                                    # Can also be set via `ARM_USE_MSI` environment variable.
     client_id            = "00000000-0000-0000-0000-000000000000"  # Can also be set via `ARM_CLIENT_ID` environment variable.
     subscription_id      = "00000000-0000-0000-0000-000000000000"  # Can also be set via `ARM_SUBSCRIPTION_ID` environment variable.
@@ -142,12 +142,12 @@ terraform {
 *Connect to Storage Account with Azure Active Directory authentication*
 
 ```hcl
-terraform {
+terracina {
   backend "azurerm" {
     resource_group_name  = "StorageAccount-ResourceGroup"          # Can be passed via `-backend-config=`"resource_group_name=<resource group name>"` in the `init` command.
     storage_account_name = "abcd1234"                              # Can be passed via `-backend-config=`"storage_account_name=<storage account name>"` in the `init` command.
     container_name       = "tfstate"                               # Can be passed via `-backend-config=`"container_name=<container name>"` in the `init` command.
-    key                  = "prod.terraform.tfstate"                # Can be passed via `-backend-config=`"key=<blob key name>"` in the `init` command.
+    key                  = "prod.terracina.tfstate"                # Can be passed via `-backend-config=`"key=<blob key name>"` in the `init` command.
     use_msi              = true                                    # Can also be set via `ARM_USE_MSI` environment variable.
     client_id            = "00000000-0000-0000-0000-000000000000"  # Can also be set via `ARM_CLIENT_ID` environment variable.
     subscription_id      = "00000000-0000-0000-0000-000000000000"  # Can also be set via `ARM_SUBSCRIPTION_ID` environment variable.
@@ -164,12 +164,12 @@ terraform {
 *Connect to Storage Account with Access Key*
 
 ```hcl
-terraform {
+terracina {
   backend "azurerm" {
     resource_group_name  = "StorageAccount-ResourceGroup"          # Can be passed via `-backend-config=`"resource_group_name=<resource group name>"` in the `init` command.
     storage_account_name = "abcd1234"                              # Can be passed via `-backend-config=`"storage_account_name=<storage account name>"` in the `init` command.
     container_name       = "tfstate"                               # Can be passed via `-backend-config=`"container_name=<container name>"` in the `init` command.
-    key                  = "prod.terraform.tfstate"                # Can be passed via `-backend-config=`"key=<blob key name>"` in the `init` command.
+    key                  = "prod.terracina.tfstate"                # Can be passed via `-backend-config=`"key=<blob key name>"` in the `init` command.
     client_id            = "00000000-0000-0000-0000-000000000000"  # Can also be set via `ARM_CLIENT_ID` environment variable.
     client_secret        = "************************************"  # Can also be set via `ARM_CLIENT_SECRET` environment variable.
     subscription_id      = "00000000-0000-0000-0000-000000000000"  # Can also be set via `ARM_SUBSCRIPTION_ID` environment variable.
@@ -181,12 +181,12 @@ terraform {
 *Connect to Storage Account with Azure Active Directory authentication*
 
 ```hcl
-terraform {
+terracina {
   backend "azurerm" {
     resource_group_name  = "StorageAccount-ResourceGroup"          # Can be passed via `-backend-config=`"resource_group_name=<resource group name>"` in the `init` command.
     storage_account_name = "abcd1234"                              # Can be passed via `-backend-config=`"storage_account_name=<storage account name>"` in the `init` command.
     container_name       = "tfstate"                               # Can be passed via `-backend-config=`"container_name=<container name>"` in the `init` command.
-    key                  = "prod.terraform.tfstate"                # Can be passed via `-backend-config=`"key=<blob key name>"` in the `init` command.
+    key                  = "prod.terracina.tfstate"                # Can be passed via `-backend-config=`"key=<blob key name>"` in the `init` command.
     client_id            = "00000000-0000-0000-0000-000000000000"  # Can also be set via `ARM_CLIENT_ID` environment variable.
     client_secret        = "************************************"  # Can also be set via `ARM_CLIENT_SECRET` environment variable.
     subscription_id      = "00000000-0000-0000-0000-000000000000"  # Can also be set via `ARM_SUBSCRIPTION_ID` environment variable.
@@ -203,12 +203,12 @@ terraform {
 *Connect to Storage Account with Access Key*
 
 ```hcl
-terraform {
+terracina {
   backend "azurerm" {
     resource_group_name         = "StorageAccount-ResourceGroup"          # Can be passed via `-backend-config=`"resource_group_name=<resource group name>"` in the `init` command.
     storage_account_name        = "abcd1234"                              # Can be passed via `-backend-config=`"storage_account_name=<storage account name>"` in the `init` command.
     container_name              = "tfstate"                               # Can be passed via `-backend-config=`"container_name=<container name>"` in the `init` command.
-    key                         = "prod.terraform.tfstate"                # Can be passed via `-backend-config=`"key=<blob key name>"` in the `init` command.
+    key                         = "prod.terracina.tfstate"                # Can be passed via `-backend-config=`"key=<blob key name>"` in the `init` command.
     client_id                   = "00000000-0000-0000-0000-000000000000"  # Can also be set via `ARM_CLIENT_ID` environment variable.
     client_certificate_path     = "/path/to/bundle.pfx"                   # Can also be set via `ARM_CLIENT_CERTIFICATE_PATH` environment variable.
     client_certificate_password = "************************************"  # Can also be set via `ARM_CLIENT_CERTIFICATE_PASSWORD` environment variable.
@@ -221,12 +221,12 @@ terraform {
 *Connect to Storage Account with Azure Active Directory authentication*
 
 ```hcl
-terraform {
+terracina {
   backend "azurerm" {
     resource_group_name         = "StorageAccount-ResourceGroup"          # Can be passed via `-backend-config=`"resource_group_name=<resource group name>"` in the `init` command.
     storage_account_name        = "abcd1234"                              # Can be passed via `-backend-config=`"storage_account_name=<storage account name>"` in the `init` command.
     container_name              = "tfstate"                               # Can be passed via `-backend-config=`"container_name=<container name>"` in the `init` command.
-    key                         = "prod.terraform.tfstate"                # Can be passed via `-backend-config=`"key=<blob key name>"` in the `init` command.
+    key                         = "prod.terracina.tfstate"                # Can be passed via `-backend-config=`"key=<blob key name>"` in the `init` command.
     client_id                   = "00000000-0000-0000-0000-000000000000"  # Can also be set via `ARM_CLIENT_ID` environment variable.
     client_certificate_path     = "/path/to/bundle.pfx"                   # Can also be set via `ARM_CLIENT_CERTIFICATE_PATH` environment variable.
     client_certificate_password = "************************************"  # Can also be set via `ARM_CLIENT_CERTIFICATE_PASSWORD` environment variable.
@@ -242,12 +242,12 @@ terraform {
 ~> **Warning!** This method requires you to manage and rotate a secret. Consider using OIDC as a more secure approach.
 
 ```hcl
-terraform {
+terracina {
   backend "azurerm" {
     resource_group_name  = "StorageAccount-ResourceGroup"             # Can be passed via `-backend-config=`"resource_group_name=<resource group name>"` in the `init` command.
     storage_account_name = "abcd1234"                                 # Can be passed via `-backend-config=`"storage_account_name=<storage account name>"` in the `init` command.
     container_name       = "tfstate"                                  # Can be passed via `-backend-config=`"container_name=<container name>"` in the `init` command.
-    key                  = "prod.terraform.tfstate"                   # Can be passed via `-backend-config=`"key=<blob key name>"` in the `init` command.
+    key                  = "prod.terracina.tfstate"                   # Can be passed via `-backend-config=`"key=<blob key name>"` in the `init` command.
     access_key           = "abcdefghijklmnopqrstuvwxyz0123456789..."  # Can also be set via `ARM_ACCESS_KEY` environment variable.
   }
 }
@@ -258,12 +258,12 @@ terraform {
 ~> **Warning!** This method requires you to manage and rotate a secret. Consider using OIDC as a more secure approach.
 
 ```hcl
-terraform {
+terracina {
   backend "azurerm" {
     resource_group_name  = "StorageAccount-ResourceGroup"             # Can be passed via `-backend-config=`"resource_group_name=<resource group name>"` in the `init` command.
     storage_account_name = "abcd1234"                                 # Can be passed via `-backend-config=`"storage_account_name=<storage account name>"` in the `init` command.
     container_name       = "tfstate"                                  # Can be passed via `-backend-config=`"container_name=<container name>"` in the `init` command.
-    key                  = "prod.terraform.tfstate"                   # Can be passed via `-backend-config=`"key=<blob key name>"` in the `init` command.
+    key                  = "prod.terracina.tfstate"                   # Can be passed via `-backend-config=`"key=<blob key name>"` in the `init` command.
     sas_token            = "abcdefghijklmnopqrstuvwxyz0123456789..."  # Can also be set via `ARM_SAS_TOKEN` environment variable.
   }
 }
@@ -278,13 +278,13 @@ This method is not suitable for automation since it only supports a User Princip
 *Connect to Storage Account with Access Key*
 
 ```hcl
-data "terraform_remote_state" "foo" {
+data "terracina_remote_state" "foo" {
   backend = "azurerm"
   config = {
     resource_group_name  = "StorageAccount-ResourceGroup"
-    storage_account_name = "terraform123abc"
+    storage_account_name = "terracina123abc"
     container_name       = "tfstate"
-    key                  = "prod.terraform.tfstate"
+    key                  = "prod.terracina.tfstate"
   }
 }
 ```
@@ -292,13 +292,13 @@ data "terraform_remote_state" "foo" {
 *Connect to Storage Account with Azure Active Directory authentication*
 
 ```hcl
-data "terraform_remote_state" "foo" {
+data "terracina_remote_state" "foo" {
   backend = "azurerm"
   config = {
     resource_group_name  = "StorageAccount-ResourceGroup"
-    storage_account_name = "terraform123abc"
+    storage_account_name = "terracina123abc"
     container_name       = "tfstate"
-    key                  = "prod.terraform.tfstate"
+    key                  = "prod.terracina.tfstate"
     use_azuread_auth     = true                            # Can also be set via `ARM_USE_AZUREAD` environment variable.
   }
 }
@@ -311,13 +311,13 @@ You can use an App Registration (Service Principal) or a User Assigned Managed I
 *Connect to Storage Account with Access Key*
 
 ```hcl
-data "terraform_remote_state" "foo" {
+data "terracina_remote_state" "foo" {
   backend = "azurerm"
   config = {
     resource_group_name  = "StorageAccount-ResourceGroup"
-    storage_account_name = "terraform123abc"
+    storage_account_name = "terracina123abc"
     container_name       = "tfstate"
-    key                  = "prod.terraform.tfstate"
+    key                  = "prod.terracina.tfstate"
     use_oidc             = true                                    # Can also be set via `ARM_USE_OIDC` environment variable.
     client_id            = "00000000-0000-0000-0000-000000000000"  # Can also be set via `ARM_CLIENT_ID` environment variable.
     subscription_id      = "00000000-0000-0000-0000-000000000000"  # Can also be set via `ARM_SUBSCRIPTION_ID` environment variable.
@@ -329,13 +329,13 @@ data "terraform_remote_state" "foo" {
 *Connect to Storage Account with Azure Active Directory authentication*
 
 ```hcl
-data "terraform_remote_state" "foo" {
+data "terracina_remote_state" "foo" {
   backend = "azurerm"
   config = {
     resource_group_name  = "StorageAccount-ResourceGroup"
-    storage_account_name = "terraform123abc"
+    storage_account_name = "terracina123abc"
     container_name       = "tfstate"
-    key                  = "prod.terraform.tfstate"
+    key                  = "prod.terracina.tfstate"
     use_oidc             = true                                    # Can also be set via `ARM_USE_OIDC` environment variable.
     client_id            = "00000000-0000-0000-0000-000000000000"  # Can also be set via `ARM_CLIENT_ID` environment variable.
     subscription_id      = "00000000-0000-0000-0000-000000000000"  # Can also be set via `ARM_SUBSCRIPTION_ID` environment variable.
@@ -352,13 +352,13 @@ You can use a User Assigned Managed Identity as well as a System Assigned Manage
 *Connect to Storage Account with Access Key*
 
 ```hcl
-data "terraform_remote_state" "foo" {
+data "terracina_remote_state" "foo" {
   backend = "azurerm"
   config = {
     resource_group_name  = "StorageAccount-ResourceGroup"
-    storage_account_name = "terraform123abc"
+    storage_account_name = "terracina123abc"
     container_name       = "tfstate"
-    key                  = "prod.terraform.tfstate"
+    key                  = "prod.terracina.tfstate"
     use_msi              = true                                    # Can also be set via `ARM_USE_MSI` environment variable.
     subscription_id      = "00000000-0000-0000-0000-000000000000"  # Can also be set via `ARM_SUBSCRIPTION_ID` environment variable.
     tenant_id            = "00000000-0000-0000-0000-000000000000"  # Can also be set via `ARM_TENANT_ID` environment variable.
@@ -369,13 +369,13 @@ data "terraform_remote_state" "foo" {
 *Connect to Storage Account with Azure Active Directory authentication*
 
 ```hcl
-data "terraform_remote_state" "foo" {
+data "terracina_remote_state" "foo" {
   backend = "azurerm"
   config = {
     resource_group_name  = "StorageAccount-ResourceGroup"
-    storage_account_name = "terraform123abc"
+    storage_account_name = "terracina123abc"
     container_name       = "tfstate"
-    key                  = "prod.terraform.tfstate"
+    key                  = "prod.terracina.tfstate"
     use_msi              = true                                    # Can also be set via `ARM_USE_MSI` environment variable.
     subscription_id      = "00000000-0000-0000-0000-000000000000"  # Can also be set via `ARM_SUBSCRIPTION_ID` environment variable.
     tenant_id            = "00000000-0000-0000-0000-000000000000"  # Can also be set via `ARM_TENANT_ID` environment variable.
@@ -391,13 +391,13 @@ data "terraform_remote_state" "foo" {
 *Connect to Storage Account with Access Key*
 
 ```hcl
-data "terraform_remote_state" "foo" {
+data "terracina_remote_state" "foo" {
   backend = "azurerm"
   config = {
     resource_group_name  = "StorageAccount-ResourceGroup"
-    storage_account_name = "terraform123abc"
+    storage_account_name = "terracina123abc"
     container_name       = "tfstate"
-    key                  = "prod.terraform.tfstate"
+    key                  = "prod.terracina.tfstate"
     client_id            = "00000000-0000-0000-0000-000000000000"  # Can also be set via `ARM_CLIENT_ID` environment variable.
     client_secret        = "************************************"  # Can also be set via `ARM_CLIENT_SECRET` environment variable.
     subscription_id      = "00000000-0000-0000-0000-000000000000"  # Can also be set via `ARM_SUBSCRIPTION_ID` environment variable.
@@ -409,13 +409,13 @@ data "terraform_remote_state" "foo" {
 *Connect to Storage Account with Azure Active Directory authentication*
 
 ```hcl
-data "terraform_remote_state" "foo" {
+data "terracina_remote_state" "foo" {
   backend = "azurerm"
   config = {
     resource_group_name  = "StorageAccount-ResourceGroup"
-    storage_account_name = "terraform123abc"
+    storage_account_name = "terracina123abc"
     container_name       = "tfstate"
-    key                  = "prod.terraform.tfstate"
+    key                  = "prod.terracina.tfstate"
     client_id            = "00000000-0000-0000-0000-000000000000"  # Can also be set via `ARM_CLIENT_ID` environment variable.
     client_secret        = "************************************"  # Can also be set via `ARM_CLIENT_SECRET` environment variable.
     subscription_id      = "00000000-0000-0000-0000-000000000000"  # Can also be set via `ARM_SUBSCRIPTION_ID` environment variable.
@@ -432,13 +432,13 @@ data "terraform_remote_state" "foo" {
 *Connect to Storage Account with Access Key*
 
 ```hcl
-data "terraform_remote_state" "foo" {
+data "terracina_remote_state" "foo" {
   backend = "azurerm"
   config = {
     resource_group_name         = "StorageAccount-ResourceGroup"
-    storage_account_name        = "terraform123abc"
+    storage_account_name        = "terracina123abc"
     container_name              = "tfstate"
-    key                         = "prod.terraform.tfstate"
+    key                         = "prod.terracina.tfstate"
     client_id                   = "00000000-0000-0000-0000-000000000000"  # Can also be set via `ARM_CLIENT_ID` environment variable.
     client_certificate_path     = "/path/to/bundle.pfx"                   # Can also be set via `ARM_CLIENT_CERTIFICATE_PATH` environment variable.
     client_certificate_password = "************************************"  # Can also be set via `ARM_CLIENT_CERTIFICATE_PASSWORD` environment variable.
@@ -451,13 +451,13 @@ data "terraform_remote_state" "foo" {
 *Connect to Storage Account with Azure Active Directory authentication*
 
 ```hcl
-data "terraform_remote_state" "foo" {
+data "terracina_remote_state" "foo" {
   backend = "azurerm"
   config = {
     resource_group_name         = "StorageAccount-ResourceGroup"
-    storage_account_name        = "terraform123abc"
+    storage_account_name        = "terracina123abc"
     container_name              = "tfstate"
-    key                         = "prod.terraform.tfstate"
+    key                         = "prod.terracina.tfstate"
     client_id                   = "00000000-0000-0000-0000-000000000000"  # Can also be set via `ARM_CLIENT_ID` environment variable.
     client_certificate_path     = "/path/to/bundle.pfx"                   # Can also be set via `ARM_CLIENT_CERTIFICATE_PATH` environment variable.
     client_certificate_password = "************************************"  # Can also be set via `ARM_CLIENT_CERTIFICATE_PASSWORD` environment variable.
@@ -473,13 +473,13 @@ data "terraform_remote_state" "foo" {
 ~> **Warning!** This method requires you to manage and rotate a secret. Consider using OIDC as a more secure approach.
 
 ```hcl
-data "terraform_remote_state" "foo" {
+data "terracina_remote_state" "foo" {
   backend = "azurerm"
   config = {
     resource_group_name  = "StorageAccount-ResourceGroup"
-    storage_account_name = "terraform123abc"
+    storage_account_name = "terracina123abc"
     container_name       = "tfstate"
-    key                  = "prod.terraform.tfstate"
+    key                  = "prod.terracina.tfstate"
     access_key           = "abcdefghijklmnopqrstuvwxyz0123456789..."  # Can also be set via `ARM_ACCESS_KEY` environment variable.
   }
 }
@@ -490,13 +490,13 @@ data "terraform_remote_state" "foo" {
 ~> **Warning!** This method requires you to manage and rotate a secret. Consider using OIDC as a more secure approach.
 
 ```hcl
-data "terraform_remote_state" "foo" {
+data "terracina_remote_state" "foo" {
   backend = "azurerm"
   config = {
     resource_group_name  = "StorageAccount-ResourceGroup"
-    storage_account_name = "terraform123abc"
+    storage_account_name = "terracina123abc"
     container_name       = "tfstate"
-    key                  = "prod.terraform.tfstate"
+    key                  = "prod.terracina.tfstate"
     sas_token            = "abcdefghijklmnopqrstuvwxyz0123456789..."  # Can also be set via `ARM_SAS_TOKEN` environment variable.
   }
 }
@@ -504,15 +504,15 @@ data "terraform_remote_state" "foo" {
 
 ## Configuration Variables
 
-!> **Warning:**  We recommend using environment variables to supply credentials and other sensitive data. If you use `-backend-config` or hardcode these values directly in your configuration, Terraform will include these values in both the `.terraform` subdirectory and in plan files. Refer to [Credentials and Sensitive Data](/terraform/language/backend#credentials-and-sensitive-data) for details.
+!> **Warning:**  We recommend using environment variables to supply credentials and other sensitive data. If you use `-backend-config` or hardcode these values directly in your configuration, Terracina will include these values in both the `.terracina` subdirectory and in plan files. Refer to [Credentials and Sensitive Data](/terracina/language/backend#credentials-and-sensitive-data) for details.
 
 The following configuration options are supported:
 
-* `storage_account_name` - (Required) The Name of [the Storage Account](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account).
+* `storage_account_name` - (Required) The Name of [the Storage Account](https://registry.terracina.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account).
 
-* `container_name` - (Required) The Name of [the Storage Container](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_container) within the Storage Account.
+* `container_name` - (Required) The Name of [the Storage Container](https://registry.terracina.io/providers/hashicorp/azurerm/latest/docs/resources/storage_container) within the Storage Account.
 
-* `key` - (Required) The name of the Blob used to retrieve/store Terraform's State file inside the Storage Container.
+* `key` - (Required) The name of the Blob used to retrieve/store Terracina's State file inside the Storage Container.
 
 * `environment` - (Optional) The Azure Environment which should be used. This can also be sourced from the `ARM_ENVIRONMENT` environment variable. Possible values are `public`, `china`, `german`, `stack` and `usgovernment`. Defaults to `public`.
 
@@ -522,7 +522,7 @@ The following configuration options are supported:
 
 * `metadata_host` - (Optional) The Hostname of the Azure Metadata Service (for example `management.azure.com`), used to obtain the Cloud Environment when using a Custom Azure Environment. This can also be sourced from the `ARM_METADATA_HOSTNAME` Environment Variable.
 
-* `snapshot` - (Optional) Should the Blob used to store the Terraform Statefile be snapshotted before use? Defaults to `false`. This value can also be sourced from the `ARM_SNAPSHOT` environment variable.
+* `snapshot` - (Optional) Should the Blob used to store the Terracina Statefile be snapshotted before use? Defaults to `false`. This value can also be sourced from the `ARM_SNAPSHOT` environment variable.
 
 ***
 

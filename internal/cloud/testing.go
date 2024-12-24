@@ -19,24 +19,24 @@ import (
 
 	"github.com/hashicorp/cli"
 	tfe "github.com/hashicorp/go-tfe"
-	svchost "github.com/hashicorp/terraform-svchost"
-	"github.com/hashicorp/terraform-svchost/auth"
-	"github.com/hashicorp/terraform-svchost/disco"
+	svchost "github.com/hashicorp/terracina-svchost"
+	"github.com/hashicorp/terracina-svchost/auth"
+	"github.com/hashicorp/terracina-svchost/disco"
 	"github.com/mitchellh/colorstring"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/httpclient"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/states/statefile"
-	"github.com/hashicorp/terraform/internal/terraform"
-	"github.com/hashicorp/terraform/internal/tfdiags"
-	"github.com/hashicorp/terraform/version"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/httpclient"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/states/statefile"
+	"github.com/hashicorp/terracina/internal/terracina"
+	"github.com/hashicorp/terracina/internal/tfdiags"
+	"github.com/hashicorp/terracina/version"
 
-	"github.com/hashicorp/terraform/internal/backend/backendrun"
-	backendLocal "github.com/hashicorp/terraform/internal/backend/local"
+	"github.com/hashicorp/terracina/internal/backend/backendrun"
+	backendLocal "github.com/hashicorp/terracina/internal/backend/local"
 )
 
 const (
@@ -53,17 +53,17 @@ var (
 		"/api/v2/ping": func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.Header().Set("TFP-API-Version", "2.5")
-			w.Header().Set("TFP-AppName", "HCP Terraform")
+			w.Header().Set("TFP-AppName", "HCP Terracina")
 		},
 	}
 )
 
-// mockInput is a mock implementation of terraform.UIInput.
+// mockInput is a mock implementation of terracina.UIInput.
 type mockInput struct {
 	answers map[string]string
 }
 
-func (m *mockInput) Input(ctx context.Context, opts *terraform.InputOpts) (string, error) {
+func (m *mockInput) Input(ctx context.Context, opts *terracina.InputOpts) (string, error) {
 	v, ok := m.answers[opts.Id]
 	if !ok {
 		return "", fmt.Errorf("unexpected input request in test: %s", opts.Id)
@@ -287,7 +287,7 @@ func testBackend(t *testing.T, obj cty.Value, handlers map[string]func(http.Resp
 	b.local = testLocalBackend(t, b)
 	b.input = true
 
-	baseURL, err := url.Parse("https://app.terraform.io")
+	baseURL, err := url.Parse("https://app.terracina.io")
 	if err != nil {
 		t.Fatalf("testBackend: failed to parse base URL for client")
 	}
@@ -355,7 +355,7 @@ func testUnconfiguredBackend(t *testing.T) (*Cloud, func()) {
 	b.client.Variables = mc.Variables
 	b.client.Workspaces = mc.Workspaces
 
-	baseURL, err := url.Parse("https://app.terraform.io")
+	baseURL, err := url.Parse("https://app.terracina.io")
 	if err != nil {
 		t.Fatalf("testBackend: failed to parse base URL for client")
 	}
@@ -462,13 +462,13 @@ func testServerWithSnapshotsEnabled(t *testing.T, enabled bool) *httptest.Server
 		case "POST":
 			t.Log("pretending to be Create a State Version")
 			if enabled {
-				w.Header().Set("x-terraform-snapshot-interval", "300")
+				w.Header().Set("x-terracina-snapshot-interval", "300")
 			}
 			w.WriteHeader(http.StatusAccepted)
 		case "GET":
 			t.Log("pretending to be Fetch the Current State Version for a Workspace")
 			if enabled {
-				w.Header().Set("x-terraform-snapshot-interval", "300")
+				w.Header().Set("x-terracina-snapshot-interval", "300")
 			}
 			w.WriteHeader(http.StatusOK)
 		case "PUT":
@@ -489,7 +489,7 @@ func testServerWithSnapshotsEnabled(t *testing.T, enabled bool) *httptest.Server
 // this base set of routes, and override a particular route for whatever edge case is being tested.
 var testDefaultRequestHandlers = map[string]func(http.ResponseWriter, *http.Request){
 	// Respond to service discovery calls.
-	"/well-known/terraform.json": func(w http.ResponseWriter, r *http.Request) {
+	"/well-known/terracina.json": func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		io.WriteString(w, `{
   "tfe.v2": "/api/v2/",
@@ -501,7 +501,7 @@ var testDefaultRequestHandlers = map[string]func(http.ResponseWriter, *http.Requ
 		w.Header().Set("Content-Type", "application/json")
 		io.WriteString(w, fmt.Sprintf(`{
   "service": "%s",
-  "product": "terraform",
+  "product": "terracina",
   "minimum": "0.1.0",
   "maximum": "10.0.0"
 }`, path.Base(r.URL.Path)))
@@ -583,21 +583,21 @@ func mockColorize() *colorstring.Colorize {
 func mockSROWorkspace(t *testing.T, b *Cloud, workspaceName string) {
 	_, err := b.client.Workspaces.Update(context.Background(), "hashicorp", workspaceName, tfe.WorkspaceUpdateOptions{
 		StructuredRunOutputEnabled: tfe.Bool(true),
-		TerraformVersion:           tfe.String("1.4.0"),
+		TerracinaVersion:           tfe.String("1.4.0"),
 	})
 	if err != nil {
 		t.Fatalf("Error enabling SRO on workspace %s: %v", workspaceName, err)
 	}
 }
 
-// testDisco returns a *disco.Disco mapping app.terraform.io and
+// testDisco returns a *disco.Disco mapping app.terracina.io and
 // localhost to a local test server.
 func testDisco(s *httptest.Server) *disco.Disco {
 	services := map[string]interface{}{
 		"tfe.v2": fmt.Sprintf("%s/api/v2/", s.URL),
 	}
 	d := disco.NewWithCredentialsSource(credsSrc)
-	d.SetUserAgent(httpclient.TerraformUserAgent(version.String()))
+	d.SetUserAgent(httpclient.TerracinaUserAgent(version.String()))
 
 	d.ForceHostServices(svchost.Hostname(defaultHostname), services)
 	d.ForceHostServices(svchost.Hostname("localhost"), services)
@@ -607,18 +607,18 @@ func testDisco(s *httptest.Server) *disco.Disco {
 
 type unparsedVariableValue struct {
 	value  string
-	source terraform.ValueSourceType
+	source terracina.ValueSourceType
 }
 
-func (v *unparsedVariableValue) ParseVariableValue(mode configs.VariableParsingMode) (*terraform.InputValue, tfdiags.Diagnostics) {
-	return &terraform.InputValue{
+func (v *unparsedVariableValue) ParseVariableValue(mode configs.VariableParsingMode) (*terracina.InputValue, tfdiags.Diagnostics) {
+	return &terracina.InputValue{
 		Value:      cty.StringVal(v.value),
 		SourceType: v.source,
 	}, tfdiags.Diagnostics{}
 }
 
 // testVariable returns a backend.UnparsedVariableValue used for testing.
-func testVariables(s terraform.ValueSourceType, vs ...string) map[string]backendrun.UnparsedVariableValue {
+func testVariables(s terracina.ValueSourceType, vs ...string) map[string]backendrun.UnparsedVariableValue {
 	vars := make(map[string]backendrun.UnparsedVariableValue, len(vs))
 	for _, v := range vs {
 		vars[v] = &unparsedVariableValue{

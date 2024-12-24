@@ -3,19 +3,19 @@
 
 package addrs
 
-// TerraformAttr is the address of an attribute of the "terraform" object in
-// the interpolation scope, like "terraform.workspace".
-type TerraformAttr struct {
+// TerracinaAttr is the address of an attribute of the "terracina" object in
+// the interpolation scope, like "terracina.workspace".
+type TerracinaAttr struct {
 	referenceable
 	Name string
 }
 
-func (ta TerraformAttr) String() string {
-	return "terraform." + ta.Name
+func (ta TerracinaAttr) String() string {
+	return "terracina." + ta.Name
 }
 
-func (ta TerraformAttr) UniqueKey() UniqueKey {
-	return ta // A TerraformAttr is its own UniqueKey
+func (ta TerracinaAttr) UniqueKey() UniqueKey {
+	return ta // A TerracinaAttr is its own UniqueKey
 }
 
-func (ta TerraformAttr) uniqueKeySigil() {}
+func (ta TerracinaAttr) uniqueKeySigil() {}

@@ -14,12 +14,12 @@ import (
 
 	"github.com/apparentlymart/go-versions/versions"
 	"github.com/google/go-cmp/cmp"
-	"github.com/hashicorp/terraform-svchost/disco"
+	"github.com/hashicorp/terracina-svchost/disco"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/getproviders"
-	"github.com/hashicorp/terraform/internal/rpcapi/terraform1"
-	"github.com/hashicorp/terraform/internal/rpcapi/terraform1/packages"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/getproviders"
+	"github.com/hashicorp/terracina/internal/rpcapi/terracina1"
+	"github.com/hashicorp/terracina/internal/rpcapi/terracina1/packages"
 )
 
 func TestPackagesServer_ProviderPackageVersions(t *testing.T) {
@@ -96,7 +96,7 @@ func TestPackagesServer_ProviderPackageVersions(t *testing.T) {
 
 			if len(tc.expectedWarnings) > 0 {
 				for _, diag := range response.Diagnostics {
-					if diag.Severity == terraform1.Diagnostic_WARNING && diag.Summary == "Additional provider information from registry" {
+					if diag.Severity == terracina1.Diagnostic_WARNING && diag.Summary == "Additional provider information from registry" {
 						expected := fmt.Sprintf("The remote registry returned warnings for %s:\n%s", tc.source, strings.Join(tc.expectedWarnings, "\n"))
 						if diff := cmp.Diff(expected, diag.Detail); len(diff) > 0 {
 							t.Error(diff)
@@ -153,7 +153,7 @@ func TestPackagesServer_FetchProviderPackage(t *testing.T) {
 			version:   "0.1.0",
 			platforms: []string{"linux_amd64"},
 			platformLocations: map[string]string{
-				"linux_amd64": "terraform_provider_foo",
+				"linux_amd64": "terracina_provider_foo",
 			},
 		},
 		"single_version_multiple_platforms": {
@@ -161,8 +161,8 @@ func TestPackagesServer_FetchProviderPackage(t *testing.T) {
 			version:   "0.1.0",
 			platforms: []string{"linux_amd64", "darwin_arm64"},
 			platformLocations: map[string]string{
-				"linux_amd64":  "terraform_provider_foo",
-				"darwin_arm64": "terraform_provider_bar",
+				"linux_amd64":  "terracina_provider_foo",
+				"darwin_arm64": "terracina_provider_bar",
 			},
 		},
 		"single_version_and_platform_with_hashes": {
@@ -170,7 +170,7 @@ func TestPackagesServer_FetchProviderPackage(t *testing.T) {
 			version:   "0.1.0",
 			platforms: []string{"linux_amd64"},
 			platformLocations: map[string]string{
-				"linux_amd64": "terraform_provider_foo",
+				"linux_amd64": "terracina_provider_foo",
 			},
 			platformHashes: map[string][]string{
 				"linux_amd64": {
@@ -184,7 +184,7 @@ func TestPackagesServer_FetchProviderPackage(t *testing.T) {
 			hashes:    []string{"h1:Hod4iOH+qbXMtH4orEmCem6F3T+YRPhDSNlXmOIRNuY="},
 			platforms: []string{"linux_amd64"},
 			platformLocations: map[string]string{
-				"linux_amd64": "terraform_provider_foo",
+				"linux_amd64": "terracina_provider_foo",
 			},
 			platformHashes: map[string][]string{
 				"linux_amd64": {
@@ -193,7 +193,7 @@ func TestPackagesServer_FetchProviderPackage(t *testing.T) {
 			},
 			diagnostics: map[string][]string{
 				"linux_amd64": {
-					"the local package for registry.terraform.io/hashicorp/foo 0.1.0 doesn't match any of the checksums previously recorded in the dependency lock file",
+					"the local package for registry.terracina.io/hashicorp/foo 0.1.0 doesn't match any of the checksums previously recorded in the dependency lock file",
 				},
 			},
 		},

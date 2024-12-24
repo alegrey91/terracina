@@ -1,18 +1,18 @@
 ---
-page_title: terraform state list command reference
+page_title: terracina state list command reference
 description: >-
-  The terraform state list command lists resources within a Terraform
+  The terracina state list command lists resources within a Terracina
   state.
 ---
 
-# `terraform state list` command
+# `terracina state list` command
 
-The `terraform state list` command lists resources within a
-[Terraform state](/terraform/language/state).
+The `terracina state list` command lists resources within a
+[Terracina state](/terracina/language/state).
 
 ## Usage
 
-Usage: `terraform state list [options] [address...]`
+Usage: `terracina state list [options] [address...]`
 
 The command will list all resources in the state file matching the given
 addresses (if any). If no addresses are given, all resources are listed.
@@ -24,12 +24,12 @@ within modules are listed last.
 
 For complex infrastructures, the state can contain thousands of resources.
 To filter these, provide one or more patterns to the command. Patterns are
-in [resource addressing format](/terraform/cli/state/resource-addressing).
+in [resource addressing format](/terracina/cli/state/resource-addressing).
 
 The command-line flags are all optional. The following flags are available:
 
-* `-state=path` - Path to the state file. Defaults to "terraform.tfstate".
-  Ignored when [remote state](/terraform/language/state/remote) is used.
+* `-state=path` - Path to the state file. Defaults to "terracina.tfstate".
+  Ignored when [remote state](/terracina/language/state/remote) is used.
 * `-id=id` - ID of resources to show. Ignored when unset.
 
 ## Example: All Resources
@@ -37,7 +37,7 @@ The command-line flags are all optional. The following flags are available:
 This example will list all resources, including modules:
 
 ```
-$ terraform state list
+$ terracina state list
 aws_instance.foo
 aws_instance.bar[0]
 aws_instance.bar[1]
@@ -49,7 +49,7 @@ module.elb.aws_elb.main
 This example will only list resources for the given name:
 
 ```
-$ terraform state list aws_instance.bar
+$ terracina state list aws_instance.bar
 aws_instance.bar[0]
 aws_instance.bar[1]
 ```
@@ -59,7 +59,7 @@ aws_instance.bar[1]
 This example will list resources in the given module and any submodules:
 
 ```
-$ terraform state list module.elb
+$ terracina state list module.elb
 module.elb.aws_elb.main
 module.elb.module.secgroups.aws_security_group.sg
 ```
@@ -71,6 +71,6 @@ command line. This is useful to find where in your configuration a
 specific resource is located.
 
 ```
-$ terraform state list -id=sg-1234abcd
+$ terracina state list -id=sg-1234abcd
 module.elb.aws_security_group.sg
 ```

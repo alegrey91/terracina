@@ -34,9 +34,9 @@ func TestProviders(t *testing.T) {
 	}
 
 	wantOutput := []string{
-		"provider[registry.terraform.io/hashicorp/foo]",
-		"provider[registry.terraform.io/hashicorp/bar]",
-		"provider[registry.terraform.io/hashicorp/baz]",
+		"provider[registry.terracina.io/hashicorp/foo]",
+		"provider[registry.terracina.io/hashicorp/bar]",
+		"provider[registry.terracina.io/hashicorp/baz]",
 	}
 
 	output := ui.OutputWriter.String()
@@ -118,10 +118,10 @@ func TestProviders_modules(t *testing.T) {
 	}
 
 	wantOutput := []string{
-		"provider[registry.terraform.io/hashicorp/foo] 1.0.0", // from required_providers
-		"provider[registry.terraform.io/hashicorp/bar] 2.0.0", // from provider config
+		"provider[registry.terracina.io/hashicorp/foo] 1.0.0", // from required_providers
+		"provider[registry.terracina.io/hashicorp/bar] 2.0.0", // from provider config
 		"── module.kiddo",                               // tree node for child module
-		"provider[registry.terraform.io/hashicorp/baz]", // implied by a resource in the child module
+		"provider[registry.terracina.io/hashicorp/baz]", // implied by a resource in the child module
 	}
 
 	output := ui.OutputWriter.String()
@@ -155,10 +155,10 @@ func TestProviders_state(t *testing.T) {
 	}
 
 	wantOutput := []string{
-		"provider[registry.terraform.io/hashicorp/foo] 1.0.0", // from required_providers
-		"provider[registry.terraform.io/hashicorp/bar] 2.0.0", // from a provider config block
+		"provider[registry.terracina.io/hashicorp/foo] 1.0.0", // from required_providers
+		"provider[registry.terracina.io/hashicorp/bar] 2.0.0", // from a provider config block
 		"Providers required by state",                         // header for state providers
-		"provider[registry.terraform.io/hashicorp/baz]",       // from a resouce in state (only)
+		"provider[registry.terracina.io/hashicorp/baz]",       // from a resouce in state (only)
 	}
 
 	output := ui.OutputWriter.String()
@@ -193,7 +193,7 @@ func TestProviders_tests(t *testing.T) {
 
 	wantOutput := []string{
 		"test.main",
-		"provider[registry.terraform.io/hashicorp/bar]",
+		"provider[registry.terracina.io/hashicorp/bar]",
 	}
 
 	output := ui.OutputWriter.String()

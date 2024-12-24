@@ -21,16 +21,16 @@ import (
 	"github.com/hashicorp/cli"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/collections"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	testing_provider "github.com/hashicorp/terraform/internal/providers/testing"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/states/statemgr"
-	"github.com/hashicorp/terraform/internal/terminal"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/collections"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	testing_provider "github.com/hashicorp/terracina/internal/providers/testing"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/states/statemgr"
+	"github.com/hashicorp/terracina/internal/terminal"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 func TestApply(t *testing.T) {
@@ -575,7 +575,7 @@ result = foo
 	testStateOutput(t, statePath, expected)
 }
 
-// When only a partial set of the variables are set, Terraform
+// When only a partial set of the variables are set, Terracina
 // should still ask for the unset ones by default (with -input=true)
 func TestApply_inputPartial(t *testing.T) {
 	// Create a temporary working directory that is empty
@@ -859,7 +859,7 @@ func TestApply_plan_remoteState(t *testing.T) {
 
 func TestApply_planWithVarFile(t *testing.T) {
 	varFileDir := testTempDir(t)
-	varFilePath := filepath.Join(varFileDir, "terraform.tfvars")
+	varFilePath := filepath.Join(varFileDir, "terracina.tfvars")
 	if err := os.WriteFile(varFilePath, []byte(applyVarFile), 0644); err != nil {
 		t.Fatalf("err: %s", err)
 	}
@@ -921,7 +921,7 @@ func TestApply_planWithVarFile(t *testing.T) {
 
 func TestApply_planWithVarFileChangingVariableValue(t *testing.T) {
 	varFileDir := testTempDir(t)
-	varFilePath := filepath.Join(varFileDir, "terraform-test.tfvars")
+	varFilePath := filepath.Join(varFileDir, "terracina-test.tfvars")
 	if err := os.WriteFile(varFilePath, []byte(applyVarFile), 0644); err != nil {
 		t.Fatalf("err: %s", err)
 	}
@@ -1257,7 +1257,7 @@ func TestApply_changedVars_applyTime(t *testing.T) {
 	t.Run("undeclared-config-var", func(t *testing.T) {
 		// an undeclared config variable is a warning, just like during plan
 		varFileDir := testTempDir(t)
-		varFilePath := filepath.Join(varFileDir, "terraform.tfvars")
+		varFilePath := filepath.Join(varFileDir, "terracina.tfvars")
 		if err := os.WriteFile(varFilePath, []byte(`undeclared = true`), 0644); err != nil {
 			t.Fatalf("err: %s", err)
 		}
@@ -1377,7 +1377,7 @@ func TestApply_changedVars_applyTime(t *testing.T) {
 		}
 
 		args := []string{
-			"-var-file", "terraform-test.tfvars",
+			"-var-file", "terracina-test.tfvars",
 			"-out", "planfile",
 		}
 		code := c.Run(args)
@@ -1915,7 +1915,7 @@ func TestApply_varFileDefault(t *testing.T) {
 	testCopyDir(t, testFixturePath("apply-vars"), td)
 	defer testChdir(t, td)()
 
-	varFilePath := filepath.Join(td, "terraform.tfvars")
+	varFilePath := filepath.Join(td, "terracina.tfvars")
 	if err := os.WriteFile(varFilePath, []byte(applyVarFile), 0644); err != nil {
 		t.Fatalf("err: %s", err)
 	}
@@ -1976,7 +1976,7 @@ func TestApply_varFileDefaultJSON(t *testing.T) {
 	testCopyDir(t, testFixturePath("apply-vars"), td)
 	defer testChdir(t, td)()
 
-	varFilePath := filepath.Join(td, "terraform.tfvars.json")
+	varFilePath := filepath.Join(td, "terracina.tfvars.json")
 	if err := ioutil.WriteFile(varFilePath, []byte(applyVarFileJSON), 0644); err != nil {
 		t.Fatalf("err: %s", err)
 	}
@@ -2186,11 +2186,11 @@ func TestApply_disableBackup(t *testing.T) {
 	}
 }
 
-// Test that the Terraform env is passed through
-func TestApply_terraformEnv(t *testing.T) {
+// Test that the Terracina env is passed through
+func TestApply_terracinaEnv(t *testing.T) {
 	// Create a temporary working directory that is empty
 	td := t.TempDir()
-	testCopyDir(t, testFixturePath("apply-terraform-env"), td)
+	testCopyDir(t, testFixturePath("apply-terracina-env"), td)
 	defer testChdir(t, td)()
 
 	statePath := testTempFile(t)
@@ -2223,11 +2223,11 @@ output = default
 	testStateOutput(t, statePath, expected)
 }
 
-// Test that the Terraform env is passed through
-func TestApply_terraformEnvNonDefault(t *testing.T) {
+// Test that the Terracina env is passed through
+func TestApply_terracinaEnvNonDefault(t *testing.T) {
 	// Create a temporary working directory that is empty
 	td := t.TempDir()
-	testCopyDir(t, testFixturePath("apply-terraform-env"), td)
+	testCopyDir(t, testFixturePath("apply-terracina-env"), td)
 	defer testChdir(t, td)()
 
 	// Create new env
@@ -2275,7 +2275,7 @@ func TestApply_terraformEnvNonDefault(t *testing.T) {
 		t.Fatalf("bad: %d\n\n%s", code, output.Stderr())
 	}
 
-	statePath := filepath.Join("terraform.tfstate.d", "test", "terraform.tfstate")
+	statePath := filepath.Join("terracina.tfstate.d", "test", "terracina.tfstate")
 	expected := strings.TrimSpace(`
 <no state>
 Outputs:
@@ -2608,7 +2608,7 @@ func TestApply_warnings(t *testing.T) {
 		wantWarnings := []string{
 			"warning 1",
 			"warning 2",
-			"To see the full warning notes, run Terraform without -compact-warnings.",
+			"To see the full warning notes, run Terracina without -compact-warnings.",
 		}
 		for _, want := range wantWarnings {
 			if !strings.Contains(output.Stdout(), want) {
@@ -2640,7 +2640,7 @@ func applyFixtureSchema() *providers.GetProviderSchemaResponse {
 // operation with the configuration in testdata/apply. This mock has
 // GetSchemaResponse, PlanResourceChangeFn, and ApplyResourceChangeFn populated,
 // with the plan/apply steps just passing through the data determined by
-// Terraform Core.
+// Terracina Core.
 func applyFixtureProvider() *testing_provider.MockProvider {
 	p := testProvider()
 	p.GetProviderSchemaResponse = applyFixtureSchema()

@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 	hcljson "github.com/hashicorp/hcl/v2/json"
 
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 const initialLanguageEdition = "TFStack2023"
@@ -66,7 +66,7 @@ func DecodeFileBody(body hcl.Body, fileAddr sourceaddrs.FinalSource) (*File, tfd
 		if editionKW != initialLanguageEdition {
 			var extra string
 			if strings.HasPrefix(editionKW, "TFStack") {
-				extra = "\n\nThis stack configuration might be intended for a newer version of Terraform."
+				extra = "\n\nThis stack configuration might be intended for a newer version of Terracina."
 			}
 			diags = diags.Append(&hcl.Diagnostic{
 				Severity: hcl.DiagError,

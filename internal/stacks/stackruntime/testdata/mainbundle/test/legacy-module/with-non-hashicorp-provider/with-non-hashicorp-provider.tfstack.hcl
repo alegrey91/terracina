@@ -16,7 +16,7 @@ component "self" {
 
   providers = {
     # We don't actually specify a provider type for testing in the underlying
-    # module. Terraform will assume it's a HashiCorp provider, but it's not.
+    # module. Terracina will assume it's a HashiCorp provider, but it's not.
     # This should cause an error with a reasonable message.
     testing = provider.testing.default
   }

@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: MPL-2.0
 
-// Terraform Plugin RPC protocol version 5.8
+// Terracina Plugin RPC protocol version 5.8
 //
 // This file defines version 5.8 of the RPC protocol. To implement a plugin
 // against this protocol, copy this definition into your own codebase and
@@ -12,11 +12,11 @@
 // compatibility. Breaking changes, if any are required, will come
 // in a subsequent major version with its own separate proto definition.
 //
-// Note that only the proto files included in a release tag of Terraform are
+// Note that only the proto files included in a release tag of Terracina are
 // official protocol releases. Proto files taken from other commits may include
 // incomplete changes or features that did not make it into a final release.
 // In all reasonable cases, plugin developers should take the proto file from
-// the tag of the most recent release of Terraform, and not from the main
+// the tag of the most recent release of Terracina, and not from the main
 // branch or any other development branch.
 //
 
@@ -259,7 +259,7 @@ func (Deferred_Reason) EnumDescriptor() ([]byte, []int) {
 	return file_tfplugin5_proto_rawDescGZIP(), []int{10, 0}
 }
 
-// DynamicValue is an opaque encoding of terraform data, with the field name
+// DynamicValue is an opaque encoding of terracina data, with the field name
 // indicating the encoding scheme used.
 type DynamicValue struct {
 	state         protoimpl.MessageState
@@ -722,7 +722,7 @@ func (x *ServerCapabilities) GetMoveResourceState() bool {
 	return false
 }
 
-// ClientCapabilities allows Terraform to publish information regarding
+// ClientCapabilities allows Terracina to publish information regarding
 // supported protocol features. This is used to indicate availability of
 // certain forward-compatible changes which may be optional in a major
 // protocol version, but cannot be tested for directly.
@@ -793,7 +793,7 @@ type Function struct {
 	// parameters is the ordered list of positional function parameters.
 	Parameters []*Function_Parameter `protobuf:"bytes,1,rep,name=parameters,proto3" json:"parameters,omitempty"`
 	// variadic_parameter is an optional final parameter which accepts
-	// zero or more argument values, in which Terraform will send an
+	// zero or more argument values, in which Terracina will send an
 	// ordered list of the parameter type.
 	VariadicParameter *Function_Parameter `protobuf:"bytes,2,opt,name=variadic_parameter,json=variadicParameter,proto3" json:"variadic_parameter,omitempty"`
 	// Return is the function return parameter.
@@ -2254,12 +2254,12 @@ type Function_Parameter struct {
 	// type is the type constraint for the parameter.
 	Type []byte `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
 	// allow_null_value when enabled denotes that a null argument value can
-	// be passed to the provider. When disabled, Terraform returns an error
+	// be passed to the provider. When disabled, Terracina returns an error
 	// if the argument value is null.
 	AllowNullValue bool `protobuf:"varint,3,opt,name=allow_null_value,json=allowNullValue,proto3" json:"allow_null_value,omitempty"`
 	// allow_unknown_values when enabled denotes that only wholly known
 	// argument values will be passed to the provider. When disabled,
-	// Terraform skips the function call entirely and assumes an unknown
+	// Terracina skips the function call entirely and assumes an unknown
 	// value result from the function.
 	AllowUnknownValues bool `protobuf:"varint,4,opt,name=allow_unknown_values,json=allowUnknownValues,proto3" json:"allow_unknown_values,omitempty"`
 	// description is human-readable documentation for the parameter.
@@ -3406,7 +3406,7 @@ type Configure_Request struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	TerraformVersion   string              `protobuf:"bytes,1,opt,name=terraform_version,json=terraformVersion,proto3" json:"terraform_version,omitempty"`
+	TerracinaVersion   string              `protobuf:"bytes,1,opt,name=terracina_version,json=terracinaVersion,proto3" json:"terracina_version,omitempty"`
 	Config             *DynamicValue       `protobuf:"bytes,2,opt,name=config,proto3" json:"config,omitempty"`
 	ClientCapabilities *ClientCapabilities `protobuf:"bytes,3,opt,name=client_capabilities,json=clientCapabilities,proto3" json:"client_capabilities,omitempty"`
 }
@@ -3443,9 +3443,9 @@ func (*Configure_Request) Descriptor() ([]byte, []int) {
 	return file_tfplugin5_proto_rawDescGZIP(), []int{18, 0}
 }
 
-func (x *Configure_Request) GetTerraformVersion() string {
+func (x *Configure_Request) GetTerracinaVersion() string {
 	if x != nil {
-		return x.TerraformVersion
+		return x.TerracinaVersion
 	}
 	return ""
 }
@@ -3775,8 +3775,8 @@ type PlanResourceChange_Response struct {
 	RequiresReplace []*AttributePath `protobuf:"bytes,2,rep,name=requires_replace,json=requiresReplace,proto3" json:"requires_replace,omitempty"`
 	PlannedPrivate  []byte           `protobuf:"bytes,3,opt,name=planned_private,json=plannedPrivate,proto3" json:"planned_private,omitempty"`
 	Diagnostics     []*Diagnostic    `protobuf:"bytes,4,rep,name=diagnostics,proto3" json:"diagnostics,omitempty"`
-	// This may be set only by the helper/schema "SDK" in the main Terraform
-	// repository, to request that Terraform Core >=0.12 permit additional
+	// This may be set only by the helper/schema "SDK" in the main Terracina
+	// repository, to request that Terracina Core >=0.12 permit additional
 	// inconsistencies that can result from the legacy SDK type system
 	// and its imprecise mapping to the >=0.12 type system.
 	// The change in behavior implied by this flag makes sense only for the
@@ -3961,8 +3961,8 @@ type ApplyResourceChange_Response struct {
 	NewState    *DynamicValue `protobuf:"bytes,1,opt,name=new_state,json=newState,proto3" json:"new_state,omitempty"`
 	Private     []byte        `protobuf:"bytes,2,opt,name=private,proto3" json:"private,omitempty"`
 	Diagnostics []*Diagnostic `protobuf:"bytes,3,rep,name=diagnostics,proto3" json:"diagnostics,omitempty"`
-	// This may be set only by the helper/schema "SDK" in the main Terraform
-	// repository, to request that Terraform Core >=0.12 permit additional
+	// This may be set only by the helper/schema "SDK" in the main Terracina
+	// repository, to request that Terracina Core >=0.12 permit additional
 	// inconsistencies that can result from the legacy SDK type system
 	// and its imprecise mapping to the >=0.12 type system.
 	// The change in behavior implied by this flag makes sense only for the

@@ -1,7 +1,7 @@
-terraform {
+terracina {
   required_providers {
     indefinite = {
-      source = "terraform.io/test/indefinite"
+      source = "terracina.io/test/indefinite"
     }
   }
 }

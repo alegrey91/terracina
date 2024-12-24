@@ -10,16 +10,16 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/command/arguments"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/moduletest"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/terminal"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/command/arguments"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/moduletest"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/terminal"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 func TestTestHuman_Conclusion(t *testing.T) {
@@ -642,11 +642,11 @@ something bad happened during this test
 			Progress: moduletest.Complete,
 			StdOut: `  run "run_block"... pass
 
-Terraform used the selected providers to generate the following execution
+Terracina used the selected providers to generate the following execution
 plan. Resource actions are indicated with the following symbols:
   + create
 
-Terraform will perform the following actions:
+Terracina will perform the following actions:
 
   # test_resource.creating will be created
   + resource "test_resource" "creating" {
@@ -810,7 +810,7 @@ Warning: second warning
 
 some thing not very bad happened again
 `,
-			stderr: `Terraform encountered an error destroying resources created while executing
+			stderr: `Terracina encountered an error destroying resources created while executing
 main.tftest.hcl.
 
 Error: first error
@@ -825,7 +825,7 @@ this time it is very bad
 			run:   &moduletest.Run{Name: "run_block"},
 			file:  &moduletest.File{Name: "main.tftest.hcl"},
 			state: states.NewState(),
-			stderr: `Terraform encountered an error destroying resources created while executing
+			stderr: `Terracina encountered an error destroying resources created while executing
 main.tftest.hcl/run_block.
 
 Error: first error
@@ -891,7 +891,7 @@ Warning: second warning
 some thing not very bad happened again
 `,
 			stderr: `
-Terraform left the following resources in state after executing
+Terracina left the following resources in state after executing
 main.tftest.hcl, and they need to be cleaned up manually:
   - test.bar
   - test.bar (0fcb640a)
@@ -956,14 +956,14 @@ Warning: second warning
 
 some thing not very bad happened again
 `,
-			stderr: `Terraform encountered an error destroying resources created while executing
+			stderr: `Terracina encountered an error destroying resources created while executing
 main.tftest.hcl.
 
 Error: first error
 
 this time it is very bad
 
-Terraform left the following resources in state after executing
+Terracina left the following resources in state after executing
 main.tftest.hcl, and they need to be cleaned up manually:
   - test.bar
   - test.bar (0fcb640a)
@@ -1038,10 +1038,10 @@ func TestTestHuman_FatalInterruptSummary(t *testing.T) {
 				},
 			},
 			want: `
-Terraform was interrupted while executing main.tftest.hcl, and may not have
+Terracina was interrupted while executing main.tftest.hcl, and may not have
 performed the expected cleanup operations.
 
-Terraform was in the process of creating the following resources for
+Terracina was in the process of creating the following resources for
 "run_block" from the module under test, and they may not have been destroyed:
   - test_instance.one
   - test_instance.two
@@ -1081,10 +1081,10 @@ Terraform was in the process of creating the following resources for
 			},
 			created: nil,
 			want: `
-Terraform was interrupted while executing main.tftest.hcl, and may not have
+Terracina was interrupted while executing main.tftest.hcl, and may not have
 performed the expected cleanup operations.
 
-Terraform has already created the following resources from the module under
+Terracina has already created the following resources from the module under
 test:
   - test_instance.one
   - test_instance.two
@@ -1131,10 +1131,10 @@ test:
 			},
 			created: nil,
 			want: `
-Terraform was interrupted while executing main.tftest.hcl, and may not have
+Terracina was interrupted while executing main.tftest.hcl, and may not have
 performed the expected cleanup operations.
 
-Terraform has already created the following resources for "setup_block" from
+Terracina has already created the following resources for "setup_block" from
 "../setup":
   - test_instance.one
   - test_instance.two
@@ -1245,20 +1245,20 @@ Terraform has already created the following resources for "setup_block" from
 				Name:   "run_block",
 			},
 			want: `
-Terraform was interrupted while executing main.tftest.hcl, and may not have
+Terracina was interrupted while executing main.tftest.hcl, and may not have
 performed the expected cleanup operations.
 
-Terraform has already created the following resources from the module under
+Terracina has already created the following resources from the module under
 test:
   - test_instance.one
   - test_instance.two
 
-Terraform has already created the following resources for "setup_block" from
+Terracina has already created the following resources for "setup_block" from
 "../setup":
   - test_instance.setup_one
   - test_instance.setup_two
 
-Terraform was in the process of creating the following resources for
+Terracina was in the process of creating the following resources for
 "run_block" from the module under test, and they may not have been destroyed:
   - test_instance.new_one
   - test_instance.new_two
@@ -1313,7 +1313,7 @@ func TestTestJSON_Abstract(t *testing.T) {
 				{
 					"@level":   "info",
 					"@message": "Found 1 file and 1 run block",
-					"@module":  "terraform.ui",
+					"@module":  "terracina.ui",
 					"test_abstract": map[string]interface{}{
 						"main.tftest.hcl": []interface{}{
 							"setup",
@@ -1349,7 +1349,7 @@ func TestTestJSON_Abstract(t *testing.T) {
 				{
 					"@level":   "info",
 					"@message": "Found 2 files and 3 run blocks",
-					"@module":  "terraform.ui",
+					"@module":  "terracina.ui",
 					"test_abstract": map[string]interface{}{
 						"main.tftest.hcl": []interface{}{
 							"setup",
@@ -1386,7 +1386,7 @@ func TestTestJSON_Conclusion(t *testing.T) {
 				{
 					"@level":   "info",
 					"@message": "Executed 0 tests.",
-					"@module":  "terraform.ui",
+					"@module":  "terracina.ui",
 					"test_summary": map[string]interface{}{
 						"status":  "pending",
 						"errored": 0.0,
@@ -1445,7 +1445,7 @@ func TestTestJSON_Conclusion(t *testing.T) {
 				{
 					"@level":   "info",
 					"@message": "Executed 0 tests, 6 skipped.",
-					"@module":  "terraform.ui",
+					"@module":  "terracina.ui",
 					"test_summary": map[string]interface{}{
 						"status":  "skip",
 						"errored": 0.0,
@@ -1504,7 +1504,7 @@ func TestTestJSON_Conclusion(t *testing.T) {
 				{
 					"@level":   "info",
 					"@message": "Success! 6 passed, 0 failed.",
-					"@module":  "terraform.ui",
+					"@module":  "terracina.ui",
 					"test_summary": map[string]interface{}{
 						"status":  "pass",
 						"errored": 0.0,
@@ -1563,7 +1563,7 @@ func TestTestJSON_Conclusion(t *testing.T) {
 				{
 					"@level":   "info",
 					"@message": "Success! 4 passed, 0 failed, 2 skipped.",
-					"@module":  "terraform.ui",
+					"@module":  "terracina.ui",
 					"test_summary": map[string]interface{}{
 						"status":  "pass",
 						"errored": 0.0,
@@ -1622,7 +1622,7 @@ func TestTestJSON_Conclusion(t *testing.T) {
 				{
 					"@level":   "info",
 					"@message": "Failure! 0 passed, 6 failed.",
-					"@module":  "terraform.ui",
+					"@module":  "terracina.ui",
 					"test_summary": map[string]interface{}{
 						"status":  "fail",
 						"errored": 0.0,
@@ -1681,7 +1681,7 @@ func TestTestJSON_Conclusion(t *testing.T) {
 				{
 					"@level":   "info",
 					"@message": "Failure! 0 passed, 4 failed, 2 skipped.",
-					"@module":  "terraform.ui",
+					"@module":  "terracina.ui",
 					"test_summary": map[string]interface{}{
 						"status":  "fail",
 						"errored": 0.0,
@@ -1740,7 +1740,7 @@ func TestTestJSON_Conclusion(t *testing.T) {
 				{
 					"@level":   "info",
 					"@message": "Failure! 2 passed, 2 failed, 2 skipped.",
-					"@module":  "terraform.ui",
+					"@module":  "terracina.ui",
 					"test_summary": map[string]interface{}{
 						"status":  "fail",
 						"errored": 0.0,
@@ -1799,7 +1799,7 @@ func TestTestJSON_Conclusion(t *testing.T) {
 				{
 					"@level":   "info",
 					"@message": "Failure! 0 passed, 6 failed.",
-					"@module":  "terraform.ui",
+					"@module":  "terracina.ui",
 					"test_summary": map[string]interface{}{
 						"status":  "error",
 						"errored": 3.0,
@@ -1858,7 +1858,7 @@ func TestTestJSON_Conclusion(t *testing.T) {
 				{
 					"@level":   "info",
 					"@message": "Failure! 2 passed, 2 failed, 2 skipped.",
-					"@module":  "terraform.ui",
+					"@module":  "terracina.ui",
 					"test_summary": map[string]interface{}{
 						"status":  "error",
 						"errored": 1.0,
@@ -1901,7 +1901,7 @@ func TestTestJSON_DestroySummary(t *testing.T) {
 				{
 					"@level":    "warn",
 					"@message":  "Warning: first warning",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"diagnostic": map[string]interface{}{
 						"detail":   "something not very bad happened",
@@ -1913,7 +1913,7 @@ func TestTestJSON_DestroySummary(t *testing.T) {
 				{
 					"@level":    "warn",
 					"@message":  "Warning: second warning",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"diagnostic": map[string]interface{}{
 						"detail":   "something not very bad happened again",
@@ -1936,7 +1936,7 @@ func TestTestJSON_DestroySummary(t *testing.T) {
 				{
 					"@level":    "warn",
 					"@message":  "Warning: first warning",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"diagnostic": map[string]interface{}{
 						"detail":   "something not very bad happened",
@@ -1948,7 +1948,7 @@ func TestTestJSON_DestroySummary(t *testing.T) {
 				{
 					"@level":    "warn",
 					"@message":  "Warning: second warning",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"diagnostic": map[string]interface{}{
 						"detail":   "something not very bad happened again",
@@ -1960,7 +1960,7 @@ func TestTestJSON_DestroySummary(t *testing.T) {
 				{
 					"@level":    "error",
 					"@message":  "Error: first error",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"diagnostic": map[string]interface{}{
 						"detail":   "this time it is very bad",
@@ -1992,8 +1992,8 @@ func TestTestJSON_DestroySummary(t *testing.T) {
 			want: []map[string]interface{}{
 				{
 					"@level":    "error",
-					"@message":  "Terraform left some resources in state after executing main.tftest.hcl/run_block, they need to be cleaned up manually.",
-					"@module":   "terraform.ui",
+					"@message":  "Terracina left some resources in state after executing main.tftest.hcl/run_block, they need to be cleaned up manually.",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"@testrun":  "run_block",
 					"test_cleanup": map[string]interface{}{
@@ -2058,8 +2058,8 @@ func TestTestJSON_DestroySummary(t *testing.T) {
 			want: []map[string]interface{}{
 				{
 					"@level":    "error",
-					"@message":  "Terraform left some resources in state after executing main.tftest.hcl, they need to be cleaned up manually.",
-					"@module":   "terraform.ui",
+					"@message":  "Terracina left some resources in state after executing main.tftest.hcl, they need to be cleaned up manually.",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"test_cleanup": map[string]interface{}{
 						"failed_resources": []interface{}{
@@ -2080,7 +2080,7 @@ func TestTestJSON_DestroySummary(t *testing.T) {
 				{
 					"@level":    "warn",
 					"@message":  "Warning: first warning",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"diagnostic": map[string]interface{}{
 						"detail":   "something not very bad happened",
@@ -2092,7 +2092,7 @@ func TestTestJSON_DestroySummary(t *testing.T) {
 				{
 					"@level":    "warn",
 					"@message":  "Warning: second warning",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"diagnostic": map[string]interface{}{
 						"detail":   "something not very bad happened again",
@@ -2155,8 +2155,8 @@ func TestTestJSON_DestroySummary(t *testing.T) {
 			want: []map[string]interface{}{
 				{
 					"@level":    "error",
-					"@message":  "Terraform left some resources in state after executing main.tftest.hcl, they need to be cleaned up manually.",
-					"@module":   "terraform.ui",
+					"@message":  "Terracina left some resources in state after executing main.tftest.hcl, they need to be cleaned up manually.",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"test_cleanup": map[string]interface{}{
 						"failed_resources": []interface{}{
@@ -2177,7 +2177,7 @@ func TestTestJSON_DestroySummary(t *testing.T) {
 				{
 					"@level":    "warn",
 					"@message":  "Warning: first warning",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"diagnostic": map[string]interface{}{
 						"detail":   "something not very bad happened",
@@ -2189,7 +2189,7 @@ func TestTestJSON_DestroySummary(t *testing.T) {
 				{
 					"@level":    "warn",
 					"@message":  "Warning: second warning",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"diagnostic": map[string]interface{}{
 						"detail":   "something not very bad happened again",
@@ -2201,7 +2201,7 @@ func TestTestJSON_DestroySummary(t *testing.T) {
 				{
 					"@level":    "error",
 					"@message":  "Error: first error",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"diagnostic": map[string]interface{}{
 						"detail":   "this time it is very bad",
@@ -2237,7 +2237,7 @@ func TestTestJSON_File(t *testing.T) {
 				{
 					"@level":    "info",
 					"@message":  "main.tf... pass",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tf",
 					"test_file": map[string]interface{}{
 						"path":     "main.tf",
@@ -2256,7 +2256,7 @@ func TestTestJSON_File(t *testing.T) {
 				{
 					"@level":    "info",
 					"@message":  "main.tf... pending",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tf",
 					"test_file": map[string]interface{}{
 						"path":     "main.tf",
@@ -2275,7 +2275,7 @@ func TestTestJSON_File(t *testing.T) {
 				{
 					"@level":    "info",
 					"@message":  "main.tf... skip",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tf",
 					"test_file": map[string]interface{}{
 						"path":     "main.tf",
@@ -2294,7 +2294,7 @@ func TestTestJSON_File(t *testing.T) {
 				{
 					"@level":    "info",
 					"@message":  "main.tf... fail",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tf",
 					"test_file": map[string]interface{}{
 						"path":     "main.tf",
@@ -2313,7 +2313,7 @@ func TestTestJSON_File(t *testing.T) {
 				{
 					"@level":    "info",
 					"@message":  "main.tf... fail",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tf",
 					"test_file": map[string]interface{}{
 						"path":     "main.tf",
@@ -2332,7 +2332,7 @@ func TestTestJSON_File(t *testing.T) {
 				{
 					"@level":    "info",
 					"@message":  "main.tftest.hcl... in progress",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"test_file": map[string]interface{}{
 						"path":     "main.tftest.hcl",
@@ -2350,7 +2350,7 @@ func TestTestJSON_File(t *testing.T) {
 				{
 					"@level":    "info",
 					"@message":  "main.tftest.hcl... tearing down",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"test_file": map[string]interface{}{
 						"path":     "main.tftest.hcl",
@@ -2386,7 +2386,7 @@ func TestTestJSON_Run(t *testing.T) {
 				{
 					"@level":    "info",
 					"@message":  "  \"run_block\"... in progress",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"@testrun":  "run_block",
 					"test_run": map[string]interface{}{
@@ -2408,7 +2408,7 @@ func TestTestJSON_Run(t *testing.T) {
 				{
 					"@level":    "info",
 					"@message":  "  \"run_block\"... in progress",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"@testrun":  "run_block",
 					"test_run": map[string]interface{}{
@@ -2429,7 +2429,7 @@ func TestTestJSON_Run(t *testing.T) {
 				{
 					"@level":    "info",
 					"@message":  "  \"run_block\"... tearing down",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"@testrun":  "run_block",
 					"test_run": map[string]interface{}{
@@ -2450,7 +2450,7 @@ func TestTestJSON_Run(t *testing.T) {
 				{
 					"@level":    "info",
 					"@message":  "  \"run_block\"... pass",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"@testrun":  "run_block",
 					"test_run": map[string]interface{}{
@@ -2475,7 +2475,7 @@ func TestTestJSON_Run(t *testing.T) {
 				{
 					"@level":    "info",
 					"@message":  "  \"run_block\"... pass",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"@testrun":  "run_block",
 					"test_run": map[string]interface{}{
@@ -2489,7 +2489,7 @@ func TestTestJSON_Run(t *testing.T) {
 				{
 					"@level":    "warn",
 					"@message":  "Warning: a warning occurred",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"@testrun":  "run_block",
 					"diagnostic": map[string]interface{}{
@@ -2509,7 +2509,7 @@ func TestTestJSON_Run(t *testing.T) {
 				{
 					"@level":    "info",
 					"@message":  "  \"run_block\"... pending",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"@testrun":  "run_block",
 					"test_run": map[string]interface{}{
@@ -2530,7 +2530,7 @@ func TestTestJSON_Run(t *testing.T) {
 				{
 					"@level":    "info",
 					"@message":  "  \"run_block\"... skip",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"@testrun":  "run_block",
 					"test_run": map[string]interface{}{
@@ -2551,7 +2551,7 @@ func TestTestJSON_Run(t *testing.T) {
 				{
 					"@level":    "info",
 					"@message":  "  \"run_block\"... fail",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"@testrun":  "run_block",
 					"test_run": map[string]interface{}{
@@ -2579,7 +2579,7 @@ func TestTestJSON_Run(t *testing.T) {
 				{
 					"@level":    "info",
 					"@message":  "  \"run_block\"... fail",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"@testrun":  "run_block",
 					"test_run": map[string]interface{}{
@@ -2593,7 +2593,7 @@ func TestTestJSON_Run(t *testing.T) {
 				{
 					"@level":    "error",
 					"@message":  "Error: a comparison failed",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"@testrun":  "run_block",
 					"diagnostic": map[string]interface{}{
@@ -2606,7 +2606,7 @@ func TestTestJSON_Run(t *testing.T) {
 				{
 					"@level":    "error",
 					"@message":  "Error: a second comparison failed",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"@testrun":  "run_block",
 					"diagnostic": map[string]interface{}{
@@ -2626,7 +2626,7 @@ func TestTestJSON_Run(t *testing.T) {
 				{
 					"@level":    "info",
 					"@message":  "  \"run_block\"... fail",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"@testrun":  "run_block",
 					"test_run": map[string]interface{}{
@@ -2651,7 +2651,7 @@ func TestTestJSON_Run(t *testing.T) {
 				{
 					"@level":    "info",
 					"@message":  "  \"run_block\"... fail",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"@testrun":  "run_block",
 					"test_run": map[string]interface{}{
@@ -2665,7 +2665,7 @@ func TestTestJSON_Run(t *testing.T) {
 				{
 					"@level":    "error",
 					"@message":  "Error: an error occurred",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"@testrun":  "run_block",
 					"diagnostic": map[string]interface{}{
@@ -2765,7 +2765,7 @@ func TestTestJSON_Run(t *testing.T) {
 				{
 					"@level":    "info",
 					"@message":  "  \"run_block\"... pass",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"@testrun":  "run_block",
 					"test_run": map[string]interface{}{
@@ -2779,7 +2779,7 @@ func TestTestJSON_Run(t *testing.T) {
 				{
 					"@level":    "info",
 					"@message":  "-verbose flag enabled, printing plan",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"@testrun":  "run_block",
 					"test_plan": map[string]interface{}{
@@ -2800,12 +2800,12 @@ func TestTestJSON_Run(t *testing.T) {
 								},
 								"mode":          "managed",
 								"name":          "creating",
-								"provider_name": "registry.terraform.io/hashicorp/test",
+								"provider_name": "registry.terracina.io/hashicorp/test",
 								"type":          "test_resource",
 							},
 						},
 						"provider_schemas": map[string]interface{}{
-							"registry.terraform.io/hashicorp/test": map[string]interface{}{
+							"registry.terracina.io/hashicorp/test": map[string]interface{}{
 								"provider": map[string]interface{}{
 									"version": 0.0,
 								},
@@ -2893,7 +2893,7 @@ func TestTestJSON_Run(t *testing.T) {
 				{
 					"@level":    "info",
 					"@message":  "  \"run_block\"... pass",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"@testrun":  "run_block",
 					"test_run": map[string]interface{}{
@@ -2907,7 +2907,7 @@ func TestTestJSON_Run(t *testing.T) {
 				{
 					"@level":    "info",
 					"@message":  "-verbose flag enabled, printing state",
-					"@module":   "terraform.ui",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"@testrun":  "run_block",
 					"test_state": map[string]interface{}{
@@ -2919,7 +2919,7 @@ func TestTestJSON_Run(t *testing.T) {
 									"address":          "test_resource.creating",
 									"mode":             "managed",
 									"name":             "creating",
-									"provider_name":    "registry.terraform.io/hashicorp/test",
+									"provider_name":    "registry.terracina.io/hashicorp/test",
 									"schema_version":   0.0,
 									"sensitive_values": map[string]interface{}{},
 									"type":             "test_resource",
@@ -2930,7 +2930,7 @@ func TestTestJSON_Run(t *testing.T) {
 							},
 						},
 						"provider_schemas": map[string]interface{}{
-							"registry.terraform.io/hashicorp/test": map[string]interface{}{
+							"registry.terracina.io/hashicorp/test": map[string]interface{}{
 								"provider": map[string]interface{}{
 									"version": 0.0,
 								},
@@ -3014,8 +3014,8 @@ func TestTestJSON_FatalInterruptSummary(t *testing.T) {
 			want: []map[string]interface{}{
 				{
 					"@level":    "error",
-					"@message":  "Terraform was interrupted during test execution, and may not have performed the expected cleanup operations.",
-					"@module":   "terraform.ui",
+					"@message":  "Terracina was interrupted during test execution, and may not have performed the expected cleanup operations.",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"@testrun":  "run_block",
 					"test_interrupt": map[string]interface{}{
@@ -3064,8 +3064,8 @@ func TestTestJSON_FatalInterruptSummary(t *testing.T) {
 			want: []map[string]interface{}{
 				{
 					"@level":    "error",
-					"@message":  "Terraform was interrupted during test execution, and may not have performed the expected cleanup operations.",
-					"@module":   "terraform.ui",
+					"@message":  "Terracina was interrupted during test execution, and may not have performed the expected cleanup operations.",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"@testrun":  "run_block",
 					"test_interrupt": map[string]interface{}{
@@ -3118,8 +3118,8 @@ func TestTestJSON_FatalInterruptSummary(t *testing.T) {
 			want: []map[string]interface{}{
 				{
 					"@level":    "error",
-					"@message":  "Terraform was interrupted during test execution, and may not have performed the expected cleanup operations.",
-					"@module":   "terraform.ui",
+					"@message":  "Terracina was interrupted during test execution, and may not have performed the expected cleanup operations.",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"@testrun":  "run_block",
 					"test_interrupt": map[string]interface{}{
@@ -3234,8 +3234,8 @@ func TestTestJSON_FatalInterruptSummary(t *testing.T) {
 			want: []map[string]interface{}{
 				{
 					"@level":    "error",
-					"@message":  "Terraform was interrupted during test execution, and may not have performed the expected cleanup operations.",
-					"@module":   "terraform.ui",
+					"@message":  "Terracina was interrupted during test execution, and may not have performed the expected cleanup operations.",
+					"@module":   "terracina.ui",
 					"@testfile": "main.tftest.hcl",
 					"@testrun":  "run_block",
 					"test_interrupt": map[string]interface{}{

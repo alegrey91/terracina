@@ -8,7 +8,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/hashicorp/terraform/internal/promising"
+	"github.com/hashicorp/terracina/internal/promising"
 )
 
 func TestMainTaskNoOp(t *testing.T) {

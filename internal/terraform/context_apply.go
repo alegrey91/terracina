@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"fmt"
@@ -9,17 +9,17 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/collections"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/lang"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/collections"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/lang"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
-// ApplyOpts are options that affect the details of how Terraform will apply a
+// ApplyOpts are options that affect the details of how Terracina will apply a
 // previously-generated plan.
 type ApplyOpts struct {
 	// ExternalProviders is a set of pre-configured provider instances with
@@ -122,7 +122,7 @@ func (c *Context) ApplyAndEval(plan *plans.Plan, config *configs.Config, opts *A
 			diags = diags.Append(tfdiags.Sourceless(
 				tfdiags.Error,
 				"Cannot apply non-applyable plan",
-				`The given plan is not applyable. If this seems like a bug in Terraform, then please report it!`,
+				`The given plan is not applyable. If this seems like a bug in Terracina, then please report it!`,
 			))
 			return nil, nil, diags
 		}
@@ -222,9 +222,9 @@ func (c *Context) ApplyAndEval(plan *plans.Plan, config *configs.Config, opts *A
 			tfdiags.Warning,
 			"Applied changes may be incomplete",
 			`The plan was created with the -target option in effect, so some changes requested in the configuration may have been ignored and the output values may not be fully updated. Run the following command to verify that no other changes are pending:
-    terraform plan
+    terracina plan
 
-Note that the -target option is not suitable for routine use, and is provided only for exceptional situations such as recovering from errors or mistakes, or when Terraform specifically suggests to use it as part of an error message.`,
+Note that the -target option is not suitable for routine use, and is provided only for exceptional situations such as recovering from errors or mistakes, or when Terracina specifically suggests to use it as part of an error message.`,
 		))
 	}
 
@@ -245,7 +245,7 @@ Note that the -target option is not suitable for routine use, and is provided on
 
 	// The caller also gets access to an expression evaluation scope in the
 	// root module, in case it needs to extract other information using
-	// expressions, like in "terraform console" or the test harness.
+	// expressions, like in "terracina console" or the test harness.
 	evalScope := evalScopeFromGraphWalk(walker, addrs.RootModuleInstance)
 
 	return newState, evalScope, diags
@@ -328,7 +328,7 @@ func (c *Context) applyGraph(plan *plans.Plan, config *configs.Config, opts *App
 	// The plan.VariableValues field only records variables that were actually
 	// set by the caller in the PlanOpts, so we may need to provide
 	// placeholders for any other variables that the user didn't set, in
-	// which case Terraform will once again use the default value from the
+	// which case Terracina will once again use the default value from the
 	// configuration when we visit these variables during the graph walk.
 	for name := range config.Module.Variables {
 		if _, ok := variables[name]; ok {
@@ -382,12 +382,12 @@ func (c *Context) applyGraph(plan *plans.Plan, config *configs.Config, opts *App
 
 // ApplyGraphForUI is a last vestage of graphs in the public interface of
 // Context (as opposed to graphs as an implementation detail) intended only for
-// use by the "terraform graph" command when asked to render an apply-time
+// use by the "terracina graph" command when asked to render an apply-time
 // graph.
 //
 // The result of this is intended only for rendering ot the user as a dot
 // graph, and so may change in future in order to make the result more useful
-// in that context, even if drifts away from the physical graph that Terraform
+// in that context, even if drifts away from the physical graph that Terracina
 // Core currently uses as an implementation detail of applying.
 func (c *Context) ApplyGraphForUI(plan *plans.Plan, config *configs.Config) (*Graph, tfdiags.Diagnostics) {
 	// For now though, this really is just the internal graph, confusing

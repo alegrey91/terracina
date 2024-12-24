@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"testing"
@@ -10,11 +10,11 @@ import (
 	"github.com/hashicorp/hcl/v2/hcltest"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/checks"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/lang"
-	"github.com/hashicorp/terraform/internal/namedvals"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/checks"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/lang"
+	"github.com/hashicorp/terracina/internal/namedvals"
 )
 
 func TestNodeRootVariableExecute(t *testing.T) {
@@ -98,7 +98,7 @@ func TestNodeRootVariableExecute(t *testing.T) {
 								// conversion.
 								// This had previously not been handled correctly,
 								// as reported in:
-								//     https://github.com/hashicorp/terraform/issues/29899
+								//     https://github.com/hashicorp/terracina/issues/29899
 								vars := ctx.Variables["var"]
 								if vars == cty.NilVal || !vars.Type().IsObjectType() || !vars.Type().HasAttribute(varAddr.Name) {
 									t.Logf("%s isn't available", varAddr)
@@ -210,7 +210,7 @@ func (f fakeHCLExpressionFunc) StartRange() hcl.Range {
 
 // fakeHCLExpressionFuncWithTraversals extends [fakeHCLExpressionFunc] with
 // a set of traversals that it reports from the [hcl.Expression.Variables]
-// method, thereby allowing the expression to also ask Terraform to include
+// method, thereby allowing the expression to also ask Terracina to include
 // specific data in the evaluation context that'll eventually be passed
 // to the callback function.
 type fakeHCLExpressionFuncWithTraversals struct {
@@ -224,7 +224,7 @@ type fakeHCLExpressionFuncWithTraversals struct {
 //
 // If the evaluation callback expects to find any variables in the given
 // HCL evaluation context then the corresponding traversals MUST be given
-// in "required", because Terraform typically populates the context only
+// in "required", because Terracina typically populates the context only
 // with the minimum required data for a given expression.
 func fakeHCLExpression(required []hcl.Traversal, eval fakeHCLExpressionFunc) fakeHCLExpressionFuncWithTraversals {
 	return fakeHCLExpressionFuncWithTraversals{

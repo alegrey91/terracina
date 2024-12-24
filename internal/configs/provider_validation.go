@@ -10,7 +10,7 @@ import (
 
 	"github.com/hashicorp/hcl/v2"
 
-	"github.com/hashicorp/terraform/internal/addrs"
+	"github.com/hashicorp/terracina/internal/addrs"
 )
 
 // validateProviderConfigsForTests performs the same role as
@@ -276,7 +276,7 @@ func validateProviderConfigsForTests(cfg *Config) (diags hcl.Diagnostics) {
 // provider configuration, required_providers values, and module call providers
 // mappings.
 //
-// To retain compatibility with previous terraform versions, empty "proxy
+// To retain compatibility with previous terracina versions, empty "proxy
 // provider blocks" are still allowed within modules, though they will
 // generate warnings when the configuration is loaded. The new validation
 // however will generate an error if a suitable provider configuration is not
@@ -290,7 +290,7 @@ func validateProviderConfigsForTests(cfg *Config) (diags hcl.Diagnostics) {
 //
 // Set parentCall to nil when analyzing the root module. In that case the
 // given configuration is allowed to require passed-in provider configurations
-// without that being an error at this layer, although Terraform Core itself
+// without that being an error at this layer, although Terracina Core itself
 // will raise an error if asked to plan such a configuration without the caller
 // passing in suitable pre-configured providers to use.
 func validateProviderConfigs(parentCall *ModuleCall, cfg *Config, noProviderConfigRange *hcl.Range) (diags hcl.Diagnostics) {
@@ -506,7 +506,7 @@ func validateProviderConfigs(parentCall *ModuleCall, cfg *Config, noProviderConf
 					Severity: hcl.DiagWarning,
 					Summary:  "Reference to undefined provider",
 					Detail: fmt.Sprintf(
-						"There is no explicit declaration for local provider name %q in %s, so Terraform is assuming you mean to pass a configuration for provider %q.\n\nTo clarify your intent and silence this warning, add to %s a required_providers entry named %q with source = %q, or a different source address if appropriate.",
+						"There is no explicit declaration for local provider name %q in %s, so Terracina is assuming you mean to pass a configuration for provider %q.\n\nTo clarify your intent and silence this warning, add to %s a required_providers entry named %q with source = %q, or a different source address if appropriate.",
 						name, moduleText, defAddr.ForDisplay(),
 						parentModuleText, name, defAddr.ForDisplay(),
 					),
@@ -574,7 +574,7 @@ func validateProviderConfigs(parentCall *ModuleCall, cfg *Config, noProviderConf
 
 	// A declared alias requires either a matching configuration within the
 	// module, or one must be passed in, unless we're analyzing the root
-	// module. For the root module it's up to Terraform Core to check if
+	// module. For the root module it's up to Terracina Core to check if
 	// it's being given the required provider configurations as part of the
 	// options when creating a plan.
 	if !analyzingRootModule {
@@ -636,7 +636,7 @@ func validateProviderConfigs(parentCall *ModuleCall, cfg *Config, noProviderConf
 					Severity: hcl.DiagWarning,
 					Summary:  "Reference to undefined provider",
 					Detail: fmt.Sprintf(
-						"There is no explicit declaration for local provider name %q in %s, so Terraform is assuming you mean to pass a configuration for %q.\n\nIf you also control the child module, add a required_providers entry named %q with the source address %q.",
+						"There is no explicit declaration for local provider name %q in %s, so Terracina is assuming you mean to pass a configuration for %q.\n\nIf you also control the child module, add a required_providers entry named %q with the source address %q.",
 						name, moduleText, providerAddr.Provider.ForDisplay(),
 						name, providerAddr.Provider.ForDisplay(),
 					),
@@ -768,7 +768,7 @@ func validateProviderConfigs(parentCall *ModuleCall, cfg *Config, noProviderConf
 
 		fmt.Fprintf(
 			&buf,
-			"Earlier versions of Terraform used empty provider blocks (\"proxy provider configurations\") for child modules to declare their need to be passed a provider configuration by their callers. That approach was ambiguous and is now deprecated.\n\nIf you control this module, you can migrate to the new declaration syntax by removing all of the empty provider %q blocks and then adding or updating an entry like the following to the required_providers block of %s:\n",
+			"Earlier versions of Terracina used empty provider blocks (\"proxy provider configurations\") for child modules to declare their need to be passed a provider configuration by their callers. That approach was ambiguous and is now deprecated.\n\nIf you control this module, you can migrate to the new declaration syntax by removing all of the empty provider %q blocks and then adding or updating an entry like the following to the required_providers block of %s:\n",
 			name, moduleText,
 		)
 		fmt.Fprintf(&buf, "    %s = {\n", name)

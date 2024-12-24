@@ -13,7 +13,7 @@ import (
 func Test_migrate_single_to_tfc(t *testing.T) {
 	t.Parallel()
 	skipIfMissingEnvVar(t)
-	skipWithoutRemoteTerraformVersion(t)
+	skipWithoutRemoteTerracinaVersion(t)
 
 	ctx := context.Background()
 
@@ -22,7 +22,7 @@ func Test_migrate_single_to_tfc(t *testing.T) {
 			operations: []operationSets{
 				{
 					prep: func(t *testing.T, orgName, dir string) {
-						tfBlock := terraformConfigLocalBackend()
+						tfBlock := terracinaConfigLocalBackend()
 						writeMainTF(t, tfBlock, dir)
 					},
 					commands: []tfCommand{
@@ -39,17 +39,17 @@ func Test_migrate_single_to_tfc(t *testing.T) {
 				{
 					prep: func(t *testing.T, orgName, dir string) {
 						wsName := "new-workspace"
-						tfBlock := terraformConfigCloudBackendName(orgName, wsName)
+						tfBlock := terracinaConfigCloudBackendName(orgName, wsName)
 						writeMainTF(t, tfBlock, dir)
 					},
 					commands: []tfCommand{
 						{
 							command:           []string{"init"},
-							expectedCmdOutput: `Migrating from backend "local" to HCP Terraform.`,
+							expectedCmdOutput: `Migrating from backend "local" to HCP Terracina.`,
 							userInput:         []string{"yes", "yes"},
 							postInputOutput: []string{
-								`Should Terraform migrate your existing state?`,
-								`HCP Terraform has been successfully initialized!`},
+								`Should Terracina migrate your existing state?`,
+								`HCP Terracina has been successfully initialized!`},
 						},
 						{
 							command:           []string{"workspace", "list"},
@@ -73,7 +73,7 @@ func Test_migrate_single_to_tfc(t *testing.T) {
 			operations: []operationSets{
 				{
 					prep: func(t *testing.T, orgName, dir string) {
-						tfBlock := terraformConfigLocalBackend()
+						tfBlock := terracinaConfigLocalBackend()
 						writeMainTF(t, tfBlock, dir)
 					},
 					commands: []tfCommand{
@@ -90,18 +90,18 @@ func Test_migrate_single_to_tfc(t *testing.T) {
 				{
 					prep: func(t *testing.T, orgName, dir string) {
 						tag := "app"
-						tfBlock := terraformConfigCloudBackendTags(orgName, tag)
+						tfBlock := terracinaConfigCloudBackendTags(orgName, tag)
 						writeMainTF(t, tfBlock, dir)
 					},
 					commands: []tfCommand{
 						{
 							command:           []string{"init"},
-							expectedCmdOutput: `Migrating from backend "local" to HCP Terraform.`,
+							expectedCmdOutput: `Migrating from backend "local" to HCP Terracina.`,
 							userInput:         []string{"yes", "new-workspace", "yes"},
 							postInputOutput: []string{
-								`Should Terraform migrate your existing state?`,
-								`HCP Terraform requires all workspaces to be given an explicit name.`,
-								`HCP Terraform has been successfully initialized!`},
+								`Should Terracina migrate your existing state?`,
+								`HCP Terracina requires all workspaces to be given an explicit name.`,
+								`HCP Terracina has been successfully initialized!`},
 						},
 						{
 							command:           []string{"workspace", "list"},

@@ -63,7 +63,7 @@ func (p *SourceBundleParser) LoadConfigDir(source sourceaddrs.FinalSource) (*Mod
 		diags = diags.Append(&hcl.Diagnostic{
 			Severity: hcl.DiagError,
 			Summary:  "Cannot find configuration source code",
-			Detail:   fmt.Sprintf("Failed to load %s from the pre-installed source packages: %s. This is a bug in Terraform - please report it.", source, err),
+			Detail:   fmt.Sprintf("Failed to load %s from the pre-installed source packages: %s. This is a bug in Terracina - please report it.", source, err),
 		})
 		return nil, diags
 	}
@@ -74,7 +74,7 @@ func (p *SourceBundleParser) LoadConfigDir(source sourceaddrs.FinalSource) (*Mod
 
 // IsConfigDir is used to detect directories which have no config files, so
 // that we can return useful early diagnostics when a given root module source
-// address points at a directory which is not Terraform module.
+// address points at a directory which is not Terracina module.
 func (p *SourceBundleParser) IsConfigDir(source sourceaddrs.FinalSource) bool {
 	primaryPaths, overridePaths, _ := p.dirSources(source)
 	return (len(primaryPaths) + len(overridePaths)) > 0
@@ -96,13 +96,13 @@ func (p *SourceBundleParser) dirSources(source sourceaddrs.FinalSource) (primary
 		if os.IsNotExist(err) {
 			diags = diags.Append(&hcl.Diagnostic{
 				Severity: hcl.DiagError,
-				Summary:  "Missing Terraform configuration",
-				Detail:   fmt.Sprintf("There is no Terraform configuration directory at %s.", source),
+				Summary:  "Missing Terracina configuration",
+				Detail:   fmt.Sprintf("There is no Terracina configuration directory at %s.", source),
 			})
 		} else {
 			diags = diags.Append(&hcl.Diagnostic{
 				Severity: hcl.DiagError,
-				Summary:  "Cannot read Terraform configuration",
+				Summary:  "Cannot read Terracina configuration",
 				// In this case the error message from the Go standard library
 				// is likely to disclose the real local directory name
 				// from the source bundle, but that's okay because it may

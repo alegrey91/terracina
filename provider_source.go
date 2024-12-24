@@ -11,17 +11,17 @@ import (
 	"path/filepath"
 
 	"github.com/apparentlymart/go-userdirs/userdirs"
-	"github.com/hashicorp/terraform-svchost/disco"
+	"github.com/hashicorp/terracina-svchost/disco"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/command/cliconfig"
-	"github.com/hashicorp/terraform/internal/getproviders"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/command/cliconfig"
+	"github.com/hashicorp/terracina/internal/getproviders"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // providerSource constructs a provider source based on a combination of the
 // CLI configuration and some default search locations. This will be the
-// provider source used for provider installation in the "terraform init"
+// provider source used for provider installation in the "terracina init"
 // command, unless overridden by the special -plugin-dir option.
 func providerSource(configs []*cliconfig.ProviderInstallation, services *disco.Disco) (getproviders.Source, tfdiags.Diagnostics) {
 	if len(configs) == 0 {
@@ -91,12 +91,12 @@ func explicitProviderSource(config *cliconfig.ProviderInstallation, services *di
 // "exclude" argument in the direct provider source in the CLI config.
 func implicitProviderSource(services *disco.Disco) getproviders.Source {
 	// The local search directories we use for implicit configuration are:
-	// - The "terraform.d/plugins" directory in the current working directory,
+	// - The "terracina.d/plugins" directory in the current working directory,
 	//   which we've historically documented as a place to put plugins as a
-	//   way to include them in bundles uploaded to HCP Terraform, where
+	//   way to include them in bundles uploaded to HCP Terracina, where
 	//   there has historically otherwise been no way to use custom providers.
 	// - The "plugins" subdirectory of the CLI config search directory.
-	//   (thats ~/.terraform.d/plugins on Unix systems, equivalents elsewhere)
+	//   (thats ~/.terracina.d/plugins on Unix systems, equivalents elsewhere)
 	// - The "plugins" subdirectory of any platform-specific search paths,
 	//   following e.g. the XDG base directory specification on Unix systems,
 	//   Apple's guidelines on OS X, and "known folders" on Windows.
@@ -143,7 +143,7 @@ func implicitProviderSource(services *disco.Disco) getproviders.Source {
 		}
 	}
 
-	addLocalDir("terraform.d/plugins") // our "vendor" directory
+	addLocalDir("terracina.d/plugins") // our "vendor" directory
 	cliConfigDir, err := cliconfig.ConfigDir()
 	if err == nil {
 		addLocalDir(filepath.Join(cliConfigDir, "plugins"))
@@ -155,10 +155,10 @@ func implicitProviderSource(services *disco.Disco) getproviders.Source {
 	// suitable application-specific subdirectory name following the
 	// conventions for each platform:
 	//
-	//   XDG (Unix): lowercase of the first string, "terraform"
-	//   Windows:    two-level hierarchy of first two strings, "HashiCorp\Terraform"
-	//   OS X:       reverse-DNS unique identifier, "io.terraform".
-	sysSpecificDirs := userdirs.ForApp("Terraform", "HashiCorp", "io.terraform")
+	//   XDG (Unix): lowercase of the first string, "terracina"
+	//   Windows:    two-level hierarchy of first two strings, "HashiCorp\Terracina"
+	//   OS X:       reverse-DNS unique identifier, "io.terracina".
+	sysSpecificDirs := userdirs.ForApp("Terracina", "HashiCorp", "io.terracina")
 	for _, dir := range sysSpecificDirs.DataSearchPaths("plugins") {
 		addLocalDir(dir)
 	}

@@ -9,8 +9,8 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // EmbeddedStack describes a call to another stack configuration whose
@@ -20,10 +20,10 @@ import (
 // An embedded stack exists only as a child of another stack and doesn't have
 // its own independent identity outside of that calling stack.
 //
-// HCP Terraform offers a related concept of "linked stacks" where the
+// HCP Terracina offers a related concept of "linked stacks" where the
 // deployment configuration for one stack can refer to the outputs of another,
 // while the other stack retains its own independent identity and lifecycle,
-// but that concept only makes sense in an environment like HCP Terraform
+// but that concept only makes sense in an environment like HCP Terracina
 // where the stack outputs can be published for external consumption.
 type EmbeddedStack struct {
 	Name string

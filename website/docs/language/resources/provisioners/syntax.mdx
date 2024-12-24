@@ -11,22 +11,22 @@ You can use provisioners to model specific actions on the local machine or on
 a remote machine in order to prepare servers or other infrastructure objects
 for service.
 
--> **Note:** We removed the Chef, Habitat, Puppet, and Salt Masterless provisioners in Terraform v0.15.0. Information about these legacy provisioners is still available in the documentation for [Terraform v1.1 (and earlier)](/terraform/language/v1.1.x/resources/provisioners/syntax).
+-> **Note:** We removed the Chef, Habitat, Puppet, and Salt Masterless provisioners in Terracina v0.15.0. Information about these legacy provisioners is still available in the documentation for [Terracina v1.1 (and earlier)](/terracina/language/v1.1.x/resources/provisioners/syntax).
 
 ## Provisioners are a Last Resort
 
-> **Hands-on:** Try the [Provision Infrastructure Deployed with Terraform](/terraform/tutorials/provision?utm_source=WEBSITE&utm_medium=WEB_IO&utm_offer=ARTICLE_PAGE&utm_content=DOCS) tutorials to learn about more declarative ways to handle provisioning actions.
+> **Hands-on:** Try the [Provision Infrastructure Deployed with Terracina](/terracina/tutorials/provision?utm_source=WEBSITE&utm_medium=WEB_IO&utm_offer=ARTICLE_PAGE&utm_content=DOCS) tutorials to learn about more declarative ways to handle provisioning actions.
 
-Terraform includes the concept of provisioners as a measure of pragmatism,
+Terracina includes the concept of provisioners as a measure of pragmatism,
 knowing that there are always certain behaviors that cannot be directly
-represented in Terraform's declarative model.
+represented in Terracina's declarative model.
 
 However, they also add a considerable amount of complexity and uncertainty to
-Terraform usage. Firstly, Terraform cannot model the actions of provisioners
+Terracina usage. Firstly, Terracina cannot model the actions of provisioners
 as part of a plan because they can in principle take any action. Secondly,
 successful use of provisioners requires coordinating many more details than
-Terraform usage usually requires: direct network access to your servers,
-issuing Terraform credentials to log in, making sure that all of the necessary
+Terracina usage usually requires: direct network access to your servers,
+issuing Terracina credentials to log in, making sure that all of the necessary
 external software is installed, etc.
 
 The following sections describe some situations which can be solved with
@@ -51,25 +51,25 @@ to pass data to instances at the time of their creation such that the data
 is immediately available on system boot. For example:
 
 * Alibaba Cloud: `user_data` on
-  [`alicloud_instance`](https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/resources/instance)
-  or [`alicloud_launch_template`](https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/resources/launch_template).
+  [`alicloud_instance`](https://registry.terracina.io/providers/aliyun/alicloud/latest/docs/resources/instance)
+  or [`alicloud_launch_template`](https://registry.terracina.io/providers/aliyun/alicloud/latest/docs/resources/launch_template).
 * Amazon EC2: `user_data` or `user_data_base64` on
-  [`aws_instance`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance),
-  [`aws_launch_template`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/launch_template),
-  and [`aws_launch_configuration`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/launch_configuration).
+  [`aws_instance`](https://registry.terracina.io/providers/hashicorp/aws/latest/docs/resources/instance),
+  [`aws_launch_template`](https://registry.terracina.io/providers/hashicorp/aws/latest/docs/resources/launch_template),
+  and [`aws_launch_configuration`](https://registry.terracina.io/providers/hashicorp/aws/latest/docs/resources/launch_configuration).
 * Amazon Lightsail: `user_data` on
-  [`aws_lightsail_instance`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lightsail_instance).
+  [`aws_lightsail_instance`](https://registry.terracina.io/providers/hashicorp/aws/latest/docs/resources/lightsail_instance).
 * Microsoft Azure: `custom_data` on
-  [`azurerm_virtual_machine`](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_machine)
-  or [`azurerm_virtual_machine_scale_set`](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_machine_scale_set).
+  [`azurerm_virtual_machine`](https://registry.terracina.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_machine)
+  or [`azurerm_virtual_machine_scale_set`](https://registry.terracina.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_machine_scale_set).
 * Google Cloud Platform: `metadata` on
-  [`google_compute_instance`](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance)
-  or [`google_compute_instance_group`](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance_group).
+  [`google_compute_instance`](https://registry.terracina.io/providers/hashicorp/google/latest/docs/resources/compute_instance)
+  or [`google_compute_instance_group`](https://registry.terracina.io/providers/hashicorp/google/latest/docs/resources/compute_instance_group).
 * Oracle Cloud Infrastructure: `metadata` or `extended_metadata` on
-  [`oci_core_instance`](https://registry.terraform.io/providers/oracle/oci/)
-  or [`oci_core_instance_configuration`](https://registry.terraform.io/providers/oracle/oci/).
+  [`oci_core_instance`](https://registry.terracina.io/providers/oracle/oci/)
+  or [`oci_core_instance_configuration`](https://registry.terracina.io/providers/oracle/oci/).
 * VMware vSphere: Attach a virtual CDROM to
-  [`vsphere_virtual_machine`](https://registry.terraform.io/providers/hashicorp/vsphere/latest/docs/resources/virtual_machine)
+  [`vsphere_virtual_machine`](https://registry.terracina.io/providers/hashicorp/vsphere/latest/docs/resources/virtual_machine)
   using the `cdrom` block, containing a file called `user-data.txt`.
 
 Many official Linux distribution disk images include software called
@@ -78,7 +78,7 @@ process in various ways data passed via the means described above, allowing
 you to run arbitrary scripts and do basic system configuration immediately
 during the boot process and without the need to access the machine over SSH.
 
-> **Hands-on:** Try the [Provision Infrastructure with Cloud-Init](/terraform/tutorials/provision/cloud-init?utm_source=WEBSITE&utm_medium=WEB_IO&utm_offer=ARTICLE_PAGE&utm_content=DOCS) tutorial.
+> **Hands-on:** Try the [Provision Infrastructure with Cloud-Init](/terracina/tutorials/provision/cloud-init?utm_source=WEBSITE&utm_medium=WEB_IO&utm_offer=ARTICLE_PAGE&utm_content=DOCS) tutorial.
 
 If you are building custom machine images, you can make use of the "user data"
 or "metadata" passed by the above means in whatever way makes sense to your
@@ -87,19 +87,19 @@ data at runtime.
 
 This approach is _required_ if you intend to use any mechanism in your cloud
 provider for automatically launching and destroying servers in a group,
-because in that case individual servers will launch unattended while Terraform
+because in that case individual servers will launch unattended while Terracina
 is not around to provision them.
 
-Even if you're deploying individual servers directly with Terraform, passing
+Even if you're deploying individual servers directly with Terracina, passing
 data this way will allow faster boot times and simplify deployment by avoiding
-the need for direct network access from Terraform to the new server and for
+the need for direct network access from Terracina to the new server and for
 remote access credentials to be provided.
 
 ### Provisioning files using cloud-config
 
-You can add the [`cloudinit_config`](https://registry.terraform.io/providers/hashicorp/cloudinit/latest/docs) data source to your Terraform configuration and specify the files you want to provision as `text/cloud-config` content. The `cloudinit_config` data source renders multi-part MIME configurations for use with [cloud-init](https://cloudinit.readthedocs.io/en/latest/). Pass the files in the `content` field as YAML-encoded configurations using the `write_files` block. 
+You can add the [`cloudinit_config`](https://registry.terracina.io/providers/hashicorp/cloudinit/latest/docs) data source to your Terracina configuration and specify the files you want to provision as `text/cloud-config` content. The `cloudinit_config` data source renders multi-part MIME configurations for use with [cloud-init](https://cloudinit.readthedocs.io/en/latest/). Pass the files in the `content` field as YAML-encoded configurations using the `write_files` block. 
 
-In the following example, the `my_cloud_config` data source specifies a `text/cloud-config` MIME part named `cloud.conf`. The `part.content` field is set to [`yamlencode`](/terraform/language/functions/yamlencode), which encodes the `write_files` JSON object as YAML so that the system can provision the referenced files.
+In the following example, the `my_cloud_config` data source specifies a `text/cloud-config` MIME part named `cloud.conf`. The `part.content` field is set to [`yamlencode`](/terracina/language/functions/yamlencode), which encodes the `write_files` JSON object as YAML so that the system can provision the referenced files.
 
 ```hcl
 data "cloudinit_config" "my_cloud_config" {
@@ -134,7 +134,7 @@ data "cloudinit_config" "my_cloud_config" {
 ### Running configuration management software
 
 As a convenience to users who are forced to use generic operating system
-distribution images, Terraform includes a number of specialized provisioners
+distribution images, Terracina includes a number of specialized provisioners
 for launching specific configuration management products.
 
 We strongly recommend not using these, and instead running system configuration
@@ -144,26 +144,26 @@ configuration management provisioners and can run their installation steps
 during a separate build process, before creating a system disk image that you
 can deploy many times.
 
-> **Hands-on:** Try the [Provision Infrastructure with Packer](/terraform/tutorials/provision/packer?utm_source=WEBSITE&utm_medium=WEB_IO&utm_offer=ARTICLE_PAGE&utm_content=DOCS) tutorial.
+> **Hands-on:** Try the [Provision Infrastructure with Packer](/terracina/tutorials/provision/packer?utm_source=WEBSITE&utm_medium=WEB_IO&utm_offer=ARTICLE_PAGE&utm_content=DOCS) tutorial.
 
 If you are using configuration management software that has a centralized server
 component, you will need to delay the _registration_ step until the final
 system is booted from your custom image. To achieve that, use one of the
 mechanisms described above to pass the necessary information into each instance
 so that it can register itself with the configuration management server
-immediately on boot, without the need to accept commands from Terraform over
+immediately on boot, without the need to accept commands from Terracina over
 SSH or WinRM.
 
-### First-class Terraform provider functionality may be available
+### First-class Terracina provider functionality may be available
 
 It is technically possible to use the `local-exec` provisioner to run the CLI
 for your target system in order to create, update, or otherwise interact with
 remote objects in that system.
 
 If you are trying to use a new feature of the remote system that isn't yet
-supported in its Terraform provider, that might be the only option. However,
+supported in its Terracina provider, that might be the only option. However,
 if there _is_ provider support for the feature you intend to use, prefer to
-use that provider functionality rather than a provisioner so that Terraform
+use that provider functionality rather than a provisioner so that Terracina
 can be fully aware of the object and properly manage ongoing changes to it.
 
 Even if the functionality you need is not available in a provider today, we
@@ -199,11 +199,11 @@ resource "aws_instance" "web" {
 
 The `local-exec` provisioner requires no other configuration, but most other
 provisioners must connect to the remote system using SSH or WinRM.
-You must include [a `connection` block](/terraform/language/resources/provisioners/connection) so that Terraform knows how to communicate with the server.
+You must include [a `connection` block](/terracina/language/resources/provisioners/connection) so that Terracina knows how to communicate with the server.
 
-Terraform includes several built-in provisioners. You can also use third-party provisioners as plugins, by placing them
-in `%APPDATA%\terraform.d\plugins`, `~/.terraform.d/plugins`, or the same
-directory where the Terraform binary is installed. However, we do not recommend
+Terracina includes several built-in provisioners. You can also use third-party provisioners as plugins, by placing them
+in `%APPDATA%\terracina.d\plugins`, `~/.terracina.d/plugins`, or the same
+directory where the Terracina binary is installed. However, we do not recommend
 using any provisioners except the built-in `file`, `local-exec`, and
 `remote-exec` provisioners.
 
@@ -226,24 +226,24 @@ block would create a dependency cycle.
 
 ### Ephemeral values
 
--> **Note**: Ephemeral values are available in Terraform v1.10 and later.
+-> **Note**: Ephemeral values are available in Terracina v1.10 and later.
 
 The configuration for a `provisioner` block may use ephemeral values, such as
-[`ephemeral` resources](/terraform/language/resources/ephemeral), [`ephemeral`
-local values](/terraform/language/values/locals#ephemeral-values), [`ephemeral`
-variables](/terraform/language/values/variables#ephemeral), or [`ephemeral`
+[`ephemeral` resources](/terracina/language/resources/ephemeral), [`ephemeral`
+local values](/terracina/language/values/locals#ephemeral-values), [`ephemeral`
+variables](/terracina/language/values/variables#ephemeral), or [`ephemeral`
 output
-values](/terraform/language/values/outputs#ephemeral-avoid-storing-values-in-state-or-plan-files).
+values](/terracina/language/values/outputs#ephemeral-avoid-storing-values-in-state-or-plan-files).
 
-Terraform does not store these values in your plan or state, or output them in
+Terracina does not store these values in your plan or state, or output them in
 logs.
 
 ### Sensitive values
 
 The configuration for a `provisioner` block may use sensitive values, such as
-[`sensitive` variables](/terraform/language/values/variables#suppressing-values-in-cli-output)
-or [`sensitive` output values](/terraform/language/values/outputs#sensitive-suppressing-values-in-cli-output).
-Terraform suppresses sensitive values in all log output.
+[`sensitive` variables](/terracina/language/values/variables#suppressing-values-in-cli-output)
+or [`sensitive` output values](/terracina/language/values/outputs#sensitive-suppressing-values-in-cli-output).
+Terracina suppresses sensitive values in all log output.
 
 ## Creation-Time Provisioners
 
@@ -254,8 +254,8 @@ bootstrapping of a system.
 
 If a creation-time provisioner fails, the resource is marked as **tainted**.
 A tainted resource will be planned for destruction and recreation upon the
-next `terraform apply`. Terraform does this because a failed provisioner
-can leave a resource in a semi-configured state. Because Terraform cannot
+next `terracina apply`. Terracina does this because a failed provisioner
+can leave a resource in a semi-configured state. Because Terracina cannot
 reason about what the provisioner does, the only way to ensure proper creation
 of a resource is to recreate it. This is tainting.
 
@@ -278,11 +278,11 @@ resource "aws_instance" "web" {
 ```
 
 Destroy provisioners are run before the resource is destroyed. If they
-fail, Terraform will error and rerun the provisioners again on the next
-`terraform apply`. Due to this behavior, care should be taken for destroy
+fail, Terracina will error and rerun the provisioners again on the next
+`terracina apply`. Due to this behavior, care should be taken for destroy
 provisioners to be safe to run multiple times.
 
-~> **Note**: Destroy provisioners of this resource do not run if `create_before_destroy` is set to `true`. This [GitHub issue](https://github.com/hashicorp/terraform/issues/13549) contains more details.
+~> **Note**: Destroy provisioners of this resource do not run if `create_before_destroy` is set to `true`. This [GitHub issue](https://github.com/hashicorp/terracina/issues/13549) contains more details.
 
 Destroy-time provisioners can only run if they remain in the configuration
 at the time a resource is destroyed. If a resource block with a destroy-time
@@ -298,7 +298,7 @@ remove a resource with a destroy-time provisioner:
 
 Because of this limitation, you should use destroy-time provisioners sparingly and with care.
 
-~> **NOTE:** A destroy-time provisioner within a resource that is tainted _will not_ run. This includes resources that are marked tainted from a failed creation-time provisioner or tainted manually using `terraform taint`.
+~> **NOTE:** A destroy-time provisioner within a resource that is tainted _will not_ run. This includes resources that are marked tainted from a failed creation-time provisioner or tainted manually using `terracina taint`.
 
 ## Multiple Provisioners
 
@@ -328,7 +328,7 @@ resource "aws_instance" "web" {
 
 ## Failure Behavior
 
-By default, provisioners that fail will also cause the Terraform apply
+By default, provisioners that fail will also cause the Terracina apply
 itself to fail. The `on_failure` setting can be used to change this. The
 allowed values are:
 

@@ -13,19 +13,19 @@ import (
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/anypb"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/collections"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/lang/marks"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/plans/planfile"
-	"github.com/hashicorp/terraform/internal/plans/planproto"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/rpcapi/terraform1/stacks"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/stacks/stackutils"
-	"github.com/hashicorp/terraform/internal/stacks/tfstackdata1"
-	"github.com/hashicorp/terraform/internal/states"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/collections"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/lang/marks"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/plans/planfile"
+	"github.com/hashicorp/terracina/internal/plans/planproto"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/rpcapi/terracina1/stacks"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/stacks/stackutils"
+	"github.com/hashicorp/terracina/internal/stacks/tfstackdata1"
+	"github.com/hashicorp/terracina/internal/states"
 )
 
 // PlannedChange represents a single isolated planned changed, emitted as
@@ -39,7 +39,7 @@ import (
 //
 // The aggregated sequence of "raw" messages can be provided later to
 // [LoadFromProto] to obtain a [Plan] object containing the information
-// Terraform Core would need to apply the plan.
+// Terracina Core would need to apply the plan.
 type PlannedChange interface {
 	// PlannedChangeProto returns the protocol buffers representation of
 	// the change, ready to be sent verbatim to an RPC API client.
@@ -115,7 +115,7 @@ func (pc *PlannedChangeRootInputValue) PlannedChangeProto() (*stacks.PlannedChan
 		var raw anypb.Any
 		if err := anypb.MarshalFrom(&raw, &tfstackdata1.PlanRootInputValue{
 			Name:            pc.Addr.Name,
-			Value:           tfstackdata1.Terraform1ToStackDataDynamicValue(after),
+			Value:           tfstackdata1.Terracina1ToStackDataDynamicValue(after),
 			RequiredOnApply: pc.RequiredOnApply,
 		}, proto.MarshalOptions{}); err != nil {
 			return nil, err
@@ -271,7 +271,7 @@ func (pc *PlannedChangeComponentInstance) PlannedChangeProto() (*stacks.PlannedC
 		if err != nil {
 			return nil, fmt.Errorf("encoding output value %q: %w", k, err)
 		}
-		plannedOutputValues[k] = tfstackdata1.Terraform1ToStackDataDynamicValue(dv)
+		plannedOutputValues[k] = tfstackdata1.Terracina1ToStackDataDynamicValue(dv)
 	}
 
 	plannedCheckResults, err := planfile.CheckResultsToPlanProto(pc.PlannedCheckResults)
@@ -338,7 +338,7 @@ func (pc *PlannedChangeComponentInstance) PlannedChangeProto() (*stacks.PlannedC
 	}, nil
 }
 
-// PlannedChangeResourceInstancePlanned announces an action that Terraform
+// PlannedChangeResourceInstancePlanned announces an action that Terracina
 // is proposing to take if this plan is applied.
 type PlannedChangeResourceInstancePlanned struct {
 	ResourceInstanceObjectAddr stackaddrs.AbsResourceInstanceObject
@@ -376,7 +376,7 @@ func (pc *PlannedChangeResourceInstancePlanned) PlanResourceInstanceChangePlanne
 
 	if pc.ChangeSrc == nil && pc.PriorStateSrc == nil {
 		// This is just a stubby placeholder to remind us to drop the
-		// apparently-deleted-outside-of-Terraform object from the state
+		// apparently-deleted-outside-of-Terracina object from the state
 		// if this plan later gets applied.
 
 		return &tfstackdata1.PlanResourceInstanceChangePlanned{
@@ -454,7 +454,7 @@ func (pc *PlannedChangeResourceInstancePlanned) ChangeDescription() (*stacks.Pla
 				Unknown: true,
 			}
 		} else {
-			value, err := DynamicValueToTerraform1(key.Value(), cty.DynamicPseudoType)
+			value, err := DynamicValueToTerracina1(key.Value(), cty.DynamicPseudoType)
 			if err != nil {
 				return nil, err
 			}
@@ -496,12 +496,12 @@ func (pc *PlannedChangeResourceInstancePlanned) ChangeDescription() (*stacks.Pla
 
 }
 
-func DynamicValueToTerraform1(val cty.Value, ty cty.Type) (*stacks.DynamicValue, error) {
+func DynamicValueToTerracina1(val cty.Value, ty cty.Type) (*stacks.DynamicValue, error) {
 	unmarkedVal, markPaths := val.UnmarkDeepWithPaths()
 	sensitivePaths, withOtherMarks := marks.PathsWithMark(markPaths, marks.Sensitive)
 	if len(withOtherMarks) != 0 {
 		return nil, withOtherMarks[0].Path.NewErrorf(
-			"can't serialize value marked with %#v (this is a bug in Terraform)",
+			"can't serialize value marked with %#v (this is a bug in Terracina)",
 			withOtherMarks[0].Marks,
 		)
 	}
@@ -562,7 +562,7 @@ func (pc *PlannedChangeResourceInstancePlanned) PlannedChangeProto() (*stacks.Pl
 	}, nil
 }
 
-// PlannedChangeDeferredResourceInstancePlanned announces that an action that Terraform
+// PlannedChangeDeferredResourceInstancePlanned announces that an action that Terracina
 // is proposing to take if this plan is applied is being deferred.
 type PlannedChangeDeferredResourceInstancePlanned struct {
 	// ResourceInstancePlanned is the planned change that is being deferred.
@@ -582,7 +582,7 @@ func (dpc *PlannedChangeDeferredResourceInstancePlanned) PlannedChangeProto() (*
 	}
 
 	// We'll ignore the error here. We certainly should not have got this far
-	// if we have a deferred reason that the Terraform Core runtime doesn't
+	// if we have a deferred reason that the Terracina Core runtime doesn't
 	// recognise. There will be diagnostics elsewhere to reflect this, as we
 	// can just use INVALID to capture this. This also makes us forwards and
 	// backwards compatible, as we'll return INVALID for any new deferred
@@ -722,7 +722,7 @@ func (pc *PlannedChangeOutputValue) PlannedChangeProto() (*stacks.PlannedChange,
 // PlannedChangeHeader has only a raw message and does not contribute to
 // the external-facing plan description.
 type PlannedChangeHeader struct {
-	TerraformVersion *version.Version
+	TerracinaVersion *version.Version
 }
 
 var _ PlannedChange = (*PlannedChangeHeader)(nil)
@@ -731,7 +731,7 @@ var _ PlannedChange = (*PlannedChangeHeader)(nil)
 func (pc *PlannedChangeHeader) PlannedChangeProto() (*stacks.PlannedChange, error) {
 	var raw anypb.Any
 	err := anypb.MarshalFrom(&raw, &tfstackdata1.PlanHeader{
-		TerraformVersion: pc.TerraformVersion.String(),
+		TerracinaVersion: pc.TerracinaVersion.String(),
 	}, proto.MarshalOptions{})
 	if err != nil {
 		return nil, err

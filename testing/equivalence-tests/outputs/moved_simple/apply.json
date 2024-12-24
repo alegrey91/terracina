@@ -2,7 +2,7 @@
   {
     "@level": "info",
     "@message": "Apply complete! Resources: 0 added, 0 changed, 0 destroyed.",
-    "@module": "terraform.ui",
+    "@module": "terracina.ui",
     "changes": {
       "add": 0,
       "change": 0,
@@ -15,7 +15,7 @@
   {
     "@level": "info",
     "@message": "Outputs: 0",
-    "@module": "terraform.ui",
+    "@module": "terracina.ui",
     "outputs": {},
     "type": "outputs"
   }

@@ -4,7 +4,7 @@
 package arguments
 
 import (
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // Refresh represents the command-line arguments for the apply command.
@@ -51,7 +51,7 @@ func ParseRefresh(args []string) (*Refresh, tfdiags.Diagnostics) {
 		diags = diags.Append(tfdiags.Sourceless(
 			tfdiags.Warning,
 			"Deprecated flag: -state",
-			"Use `path` attribute within the `local` backend instead: https://developer.hashicorp.com/terraform/language/v1.10.x/settings/backends/local#path",
+			"Use `path` attribute within the `local` backend instead: https://developer.hashicorp.com/terracina/language/v1.10.x/settings/backends/local#path",
 		))
 	}
 

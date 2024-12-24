@@ -24,9 +24,9 @@ import (
 )
 
 var protobufPkgs = map[string]string{
-	"dependencies": "github.com/hashicorp/terraform/internal/rpcapi/terraform1/dependencies",
-	"stacks":       "github.com/hashicorp/terraform/internal/rpcapi/terraform1/stacks",
-	"packages":     "github.com/hashicorp/terraform/internal/rpcapi/terraform1/packages",
+	"dependencies": "github.com/hashicorp/terracina/internal/rpcapi/terracina1/dependencies",
+	"stacks":       "github.com/hashicorp/terracina/internal/rpcapi/terracina1/stacks",
+	"packages":     "github.com/hashicorp/terracina/internal/rpcapi/terracina1/packages",
 }
 
 func main() {

@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"bytes"
@@ -13,21 +13,21 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/collections"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/instances"
-	"github.com/hashicorp/terraform/internal/lang"
-	"github.com/hashicorp/terraform/internal/lang/globalref"
-	"github.com/hashicorp/terraform/internal/moduletest/mocking"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/refactoring"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/collections"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/instances"
+	"github.com/hashicorp/terracina/internal/lang"
+	"github.com/hashicorp/terracina/internal/lang/globalref"
+	"github.com/hashicorp/terracina/internal/moduletest/mocking"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/refactoring"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
-// PlanOpts are the various options that affect the details of how Terraform
+// PlanOpts are the various options that affect the details of how Terracina
 // will build a plan.
 type PlanOpts struct {
 	// Mode defines what variety of plan the caller wishes to create.
@@ -58,12 +58,12 @@ type PlanOpts struct {
 	SetVariables InputValues
 
 	// If Targets has a non-zero length then it activates targeted planning
-	// mode, where Terraform will take actions only for resource instances
+	// mode, where Terracina will take actions only for resource instances
 	// mentioned in this set and any other objects those resource instances
 	// depend on.
 	//
 	// Targeted planning mode is intended for exceptional use only,
-	// and so populating this field will cause Terraform to generate extra
+	// and so populating this field will cause Terracina to generate extra
 	// warnings as part of the planning result.
 	Targets []addrs.Targetable
 
@@ -72,9 +72,9 @@ type PlanOpts struct {
 	// plan would otherwise have been to either update the object in-place or
 	// to take no action on it at all.
 	//
-	// A typical use of this argument is to ask Terraform to replace an object
+	// A typical use of this argument is to ask Terracina to replace an object
 	// which the user has determined is somehow degraded (via information from
-	// outside of Terraform), thereby hopefully replacing it with a
+	// outside of Terracina), thereby hopefully replacing it with a
 	// fully-functional new object.
 	ForceReplace []addrs.AbsResourceInstance
 
@@ -105,7 +105,7 @@ type PlanOpts struct {
 	// during this plan.
 	Overrides *mocking.Overrides
 
-	// GenerateConfigPath tells Terraform where to write any generated
+	// GenerateConfigPath tells Terracina where to write any generated
 	// configuration for any ImportTargets that do not have configuration
 	// already.
 	//
@@ -115,10 +115,10 @@ type PlanOpts struct {
 	// ExternalProviders are clients for pre-configured providers that are
 	// treated as being passed into the root module from the caller. This
 	// is equivalent to writing a "providers" argument inside a "module"
-	// block in the Terraform language, but for the root module the caller
-	// is written in Go rather than the Terraform language.
+	// block in the Terracina language, but for the root module the caller
+	// is written in Go rather than the Terracina language.
 	//
-	// Terraform Core will NOT call ValidateProviderConfig or ConfigureProvider
+	// Terracina Core will NOT call ValidateProviderConfig or ConfigureProvider
 	// on any providers in this map; it's the caller's responsibility to
 	// configure these providers based on information outside the scope of
 	// the root module.
@@ -142,11 +142,11 @@ type PlanOpts struct {
 //
 // The given planning options allow control of various other details of the
 // planning process that are not represented directly in the configuration.
-// You can use terraform.DefaultPlanOpts to generate a normal plan with no
+// You can use terracina.DefaultPlanOpts to generate a normal plan with no
 // special options.
 //
 // If the returned diagnostics contains no errors then the returned plan is
-// applyable, although Terraform cannot guarantee that applying it will fully
+// applyable, although Terracina cannot guarantee that applying it will fully
 // succeed. If the returned diagnostics contains errors but this method
 // still returns a non-nil Plan then the plan describes the subset of actions
 // planned so far, which is not safe to apply but could potentially be used
@@ -213,17 +213,17 @@ func (c *Context) PlanAndEval(config *configs.Config, prevRunState *states.State
 			diags = diags.Append(tfdiags.Sourceless(
 				tfdiags.Error,
 				"Incompatible plan options",
-				"Cannot skip refreshing in refresh-only mode. This is a bug in Terraform.",
+				"Cannot skip refreshing in refresh-only mode. This is a bug in Terracina.",
 			))
 			return nil, nil, diags
 		}
 	default:
 		// The CLI layer (and other similar callers) should not try to
-		// create a context for a mode that Terraform Core doesn't support.
+		// create a context for a mode that Terracina Core doesn't support.
 		diags = diags.Append(tfdiags.Sourceless(
 			tfdiags.Error,
 			"Unsupported plan mode",
-			fmt.Sprintf("Terraform Core doesn't know how to handle plan mode %s. This is a bug in Terraform.", opts.Mode),
+			fmt.Sprintf("Terracina Core doesn't know how to handle plan mode %s. This is a bug in Terracina.", opts.Mode),
 		))
 		return nil, nil, diags
 	}
@@ -241,7 +241,7 @@ func (c *Context) PlanAndEval(config *configs.Config, prevRunState *states.State
 		diags = diags.Append(tfdiags.Sourceless(
 			tfdiags.Error,
 			"Unsupported plan mode",
-			"Forgetting all resources is only allowed in the context of a destroy plan. This is a bug in Terraform, please report it.",
+			"Forgetting all resources is only allowed in the context of a destroy plan. This is a bug in Terracina, please report it.",
 		))
 		return nil, nil, diags
 	}
@@ -262,7 +262,7 @@ func (c *Context) PlanAndEval(config *configs.Config, prevRunState *states.State
 			"Resource targeting is in effect",
 			`You are creating a plan with the -target option, which means that the result of this plan may not represent all of the changes requested by the current configuration.
 
-The -target option is not for routine use, and is provided only for exceptional situations such as recovering from errors or mistakes, or when Terraform specifically suggests to use it as part of an error message.`,
+The -target option is not for routine use, and is provided only for exceptional situations such as recovering from errors or mistakes, or when Terracina specifically suggests to use it as part of an error message.`,
 		))
 	}
 
@@ -373,7 +373,7 @@ The -target option is not for routine use, and is provided only for exceptional 
 
 // checkApplyGraph builds the apply graph out of the current plan to
 // check for any errors that may arise once the planned changes are added to
-// the graph. This allows terraform to report errors (mostly cycles) during
+// the graph. This allows terracina to report errors (mostly cycles) during
 // plan that would otherwise only crop up during apply
 func (c *Context) checkApplyGraph(plan *plans.Plan, config *configs.Config, opts *PlanOpts) tfdiags.Diagnostics {
 	if plan.Changes.Empty() {
@@ -395,7 +395,7 @@ var DefaultPlanOpts = &PlanOpts{
 //
 // This helper function is primarily intended for use in straightforward
 // tests that don't need any of the more "esoteric" planning options. For
-// handling real user requests to run Terraform, it'd probably be better
+// handling real user requests to run Terracina, it'd probably be better
 // to construct a *PlanOpts value directly and provide a way for the user
 // to set values for all of its fields.
 //
@@ -454,7 +454,7 @@ func (c *Context) refreshOnlyPlan(config *configs.Config, prevRunState *states.S
 		diags = diags.Append(tfdiags.Sourceless(
 			tfdiags.Error,
 			"Invalid refresh-only plan",
-			"Terraform generated planned resource changes in a refresh-only plan. This is a bug in Terraform.",
+			"Terracina generated planned resource changes in a refresh-only plan. This is a bug in Terracina.",
 		))
 	}
 
@@ -518,7 +518,7 @@ func (c *Context) destroyPlan(config *configs.Config, prevRunState *states.State
 		// the perspective of this "destroy plan" -- as the starting state
 		// for our destroy-plan walk, so it can take into account if we
 		// detected during refreshing that anything was already deleted outside
-		// of Terraform.
+		// of Terracina.
 		priorState = refreshPlan.PriorState.DeepCopy()
 
 		// The refresh plan may have upgraded state for some resources, make
@@ -622,7 +622,7 @@ func (c *Context) prePlanVerifyTargetedMoves(moveResults refactoring.MoveResults
 			tfdiags.Error,
 			"Moved resource instances excluded by targeting",
 			fmt.Sprintf(
-				"Resource instances in your current state have moved to new addresses in the latest configuration. Terraform must include those resource instances while planning in order to ensure a correct result, but your -target=... options do not fully cover all of those resource instances.\n\nTo create a valid plan, either remove your -target=... options altogether or add the following additional target options:%s\n\nNote that adding these options may include further additional resource instances in your plan, in order to respect object dependencies.",
+				"Resource instances in your current state have moved to new addresses in the latest configuration. Terracina must include those resource instances while planning in order to ensure a correct result, but your -target=... options do not fully cover all of those resource instances.\n\nTo create a valid plan, either remove your -target=... options altogether or add the following additional target options:%s\n\nNote that adding these options may include further additional resource instances in your plan, in order to respect object dependencies.",
 				listBuf.String(),
 			),
 		))
@@ -783,8 +783,8 @@ func (c *Context) planWalk(config *configs.Config, prevRunState *states.State, o
 	if len(forgottenResources) > 0 {
 		diags = diags.Append(tfdiags.Sourceless(
 			tfdiags.Warning,
-			"Some objects will no longer be managed by Terraform",
-			fmt.Sprintf("If you apply this plan, Terraform will discard its tracking information for the following objects, but it will not delete them:\n%s\n\nAfter applying this plan, Terraform will no longer manage these objects. You will need to import them into Terraform to manage them again.", strings.Join(forgottenResources, "\n")),
+			"Some objects will no longer be managed by Terracina",
+			fmt.Sprintf("If you apply this plan, Terracina will discard its tracking information for the following objects, but it will not delete them:\n%s\n\nAfter applying this plan, Terracina will no longer manage these objects. You will need to import them into Terracina to manage them again.", strings.Join(forgottenResources, "\n")),
 		))
 	}
 	schemas, schemaDiags := c.Schemas(config, prevRunState)
@@ -848,7 +848,7 @@ func (c *Context) planWalk(config *configs.Config, prevRunState *states.State, o
 
 	// The caller also gets access to an expression evaluation scope in the
 	// root module, in case it needs to extract other information using
-	// expressions, like in "terraform console" or the test harness.
+	// expressions, like in "terracina console" or the test harness.
 	evalScope := evalScopeFromGraphWalk(walker, addrs.RootModuleInstance)
 
 	return plan, evalScope, diags
@@ -1056,9 +1056,9 @@ func (c *Context) driftedResources(config *configs.Config, oldState, newState *s
 				// We can detect three types of changes after refreshing state,
 				// only two of which are easily understood as "drift":
 				//
-				// - Resources which were deleted outside of Terraform;
+				// - Resources which were deleted outside of Terracina;
 				// - Resources where the object value has changed outside of
-				//   Terraform;
+				//   Terracina;
 				// - Resources which have been moved without other changes.
 				//
 				// All of these are returned as drift, to allow refresh-only plans
@@ -1100,11 +1100,11 @@ func (c *Context) driftedResources(config *configs.Config, oldState, newState *s
 
 // PlanGraphForUI is a last vestage of graphs in the public interface of Context
 // (as opposed to graphs as an implementation detail) intended only for use
-// by the "terraform graph" command when asked to render a plan-time graph.
+// by the "terracina graph" command when asked to render a plan-time graph.
 //
 // The result of this is intended only for rendering to the user as a dot
 // graph, and so may change in future in order to make the result more useful
-// in that context, even if drifts away from the physical graph that Terraform
+// in that context, even if drifts away from the physical graph that Terracina
 // Core currently uses as an implementation detail of planning.
 func (c *Context) PlanGraphForUI(config *configs.Config, prevRunState *states.State, mode plans.Mode) (*Graph, tfdiags.Diagnostics) {
 	// For now though, this really is just the internal graph, confusing
@@ -1134,7 +1134,7 @@ func blockedMovesWarningDiag(results refactoring.MoveResults) tfdiags.Diagnostic
 		tfdiags.Warning,
 		"Unresolved resource instance address changes",
 		fmt.Sprintf(
-			"Terraform tried to adjust resource instance addresses in the prior state based on change information recorded in the configuration, but some adjustments did not succeed due to existing objects already at the intended addresses:%s\n\nTerraform has planned to destroy these objects. If Terraform's proposed changes aren't appropriate, you must first resolve the conflicts using the \"terraform state\" subcommands and then create a new plan.",
+			"Terracina tried to adjust resource instance addresses in the prior state based on change information recorded in the configuration, but some adjustments did not succeed due to existing objects already at the intended addresses:%s\n\nTerracina has planned to destroy these objects. If Terracina's proposed changes aren't appropriate, you must first resolve the conflicts using the \"terracina state\" subcommands and then create a new plan.",
 			itemsBuf.String(),
 		),
 	)

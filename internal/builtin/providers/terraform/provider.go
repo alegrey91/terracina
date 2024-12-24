@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"fmt"
@@ -9,14 +9,14 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	tfaddr "github.com/hashicorp/terraform-registry-address"
-	"github.com/hashicorp/terraform/internal/providers"
+	tfaddr "github.com/hashicorp/terracina-registry-address"
+	"github.com/hashicorp/terracina/internal/providers"
 )
 
 // Provider is an implementation of providers.Interface
 type Provider struct{}
 
-// NewProvider returns a new terraform provider
+// NewProvider returns a new terracina provider
 func NewProvider() providers.Interface {
 	return &Provider{}
 }
@@ -29,16 +29,16 @@ func (p *Provider) GetProviderSchema() providers.GetProviderSchemaResponse {
 			MoveResourceState: true,
 		},
 		DataSources: map[string]providers.Schema{
-			"terraform_remote_state": dataSourceRemoteStateGetSchema(),
+			"terracina_remote_state": dataSourceRemoteStateGetSchema(),
 		},
 		ResourceTypes: map[string]providers.Schema{
-			"terraform_data": dataStoreResourceSchema(),
+			"terracina_data": dataStoreResourceSchema(),
 		},
 		EphemeralResourceTypes: map[string]providers.Schema{},
 		Functions: map[string]providers.FunctionDecl{
 			"encode_tfvars": {
 				Summary:     "Produce a string representation of an object using the same syntax as for `.tfvars` files",
-				Description: "A rarely-needed function which takes an object value and produces a string containing a description of that object using the same syntax as Terraform CLI would expect in a `.tfvars`.",
+				Description: "A rarely-needed function which takes an object value and produces a string containing a description of that object using the same syntax as Terracina CLI would expect in a `.tfvars`.",
 				Parameters: []providers.FunctionParam{
 					{
 						Name:               "value",
@@ -60,8 +60,8 @@ func (p *Provider) GetProviderSchema() providers.GetProviderSchemaResponse {
 				ReturnType: cty.DynamicPseudoType,
 			},
 			"encode_expr": {
-				Summary:     "Produce a string representation of an arbitrary value using Terraform expression syntax",
-				Description: "A rarely-needed function which takes any value and produces a string containing Terraform language expression syntax approximating that value.",
+				Summary:     "Produce a string representation of an arbitrary value using Terracina expression syntax",
+				Description: "A rarely-needed function which takes any value and produces a string containing Terracina language expression syntax approximating that value.",
 				Parameters: []providers.FunctionParam{
 					{
 						Name:               "value",
@@ -73,13 +73,13 @@ func (p *Provider) GetProviderSchema() providers.GetProviderSchemaResponse {
 			},
 		},
 	}
-	providers.SchemaCache.Set(tfaddr.NewProvider(tfaddr.BuiltInProviderHost, tfaddr.BuiltInProviderNamespace, "terraform"), resp)
+	providers.SchemaCache.Set(tfaddr.NewProvider(tfaddr.BuiltInProviderHost, tfaddr.BuiltInProviderNamespace, "terracina"), resp)
 	return resp
 }
 
 // ValidateProviderConfig is used to validate the configuration values.
 func (p *Provider) ValidateProviderConfig(req providers.ValidateProviderConfigRequest) providers.ValidateProviderConfigResponse {
-	// At this moment there is nothing to configure for the terraform provider,
+	// At this moment there is nothing to configure for the terracina provider,
 	// so we will happily return without taking any action
 	var res providers.ValidateProviderConfigResponse
 	res.PreparedConfig = req.Config
@@ -90,11 +90,11 @@ func (p *Provider) ValidateProviderConfig(req providers.ValidateProviderConfigRe
 func (p *Provider) ValidateDataResourceConfig(req providers.ValidateDataResourceConfigRequest) providers.ValidateDataResourceConfigResponse {
 	// FIXME: move the backend configuration validate call that's currently
 	// inside the read method  into here so that we can catch provider configuration
-	// errors in terraform validate as well as during terraform plan.
+	// errors in terracina validate as well as during terracina plan.
 	var res providers.ValidateDataResourceConfigResponse
 
 	// This should not happen
-	if req.TypeName != "terraform_remote_state" {
+	if req.TypeName != "terracina_remote_state" {
 		res.Diagnostics.Append(fmt.Errorf("Error: unsupported data source %s", req.TypeName))
 		return res
 	}
@@ -107,7 +107,7 @@ func (p *Provider) ValidateDataResourceConfig(req providers.ValidateDataResource
 
 // Configure configures and initializes the provider.
 func (p *Provider) ConfigureProvider(providers.ConfigureProviderRequest) providers.ConfigureProviderResponse {
-	// At this moment there is nothing to configure for the terraform provider,
+	// At this moment there is nothing to configure for the terracina provider,
 	// so we will happily return without taking any action
 	var res providers.ConfigureProviderResponse
 	return res
@@ -119,7 +119,7 @@ func (p *Provider) ReadDataSource(req providers.ReadDataSourceRequest) providers
 	var res providers.ReadDataSourceResponse
 
 	// This should not happen
-	if req.TypeName != "terraform_remote_state" {
+	if req.TypeName != "terracina_remote_state" {
 		res.Diagnostics.Append(fmt.Errorf("Error: unsupported data source %s", req.TypeName))
 		return res
 	}
@@ -134,12 +134,12 @@ func (p *Provider) ReadDataSource(req providers.ReadDataSourceRequest) providers
 
 // Stop is called when the provider should halt any in-flight actions.
 func (p *Provider) Stop() error {
-	log.Println("[DEBUG] terraform provider cannot Stop")
+	log.Println("[DEBUG] terracina provider cannot Stop")
 	return nil
 }
 
 // All the Resource-specific functions are below.
-// The terraform provider supplies a single data source, `terraform_remote_state`
+// The terracina provider supplies a single data source, `terracina_remote_state`
 // and no resources.
 
 // UpgradeResourceState is called when the state loader encounters an
@@ -170,7 +170,7 @@ func (p *Provider) ApplyResourceChange(req providers.ApplyResourceChangeRequest)
 
 // ImportResourceState requests that the given resource be imported.
 func (p *Provider) ImportResourceState(req providers.ImportResourceStateRequest) providers.ImportResourceStateResponse {
-	if req.TypeName == "terraform_data" {
+	if req.TypeName == "terracina_data" {
 		return importDataStore(req)
 	}
 
@@ -180,7 +180,7 @@ func (p *Provider) ImportResourceState(req providers.ImportResourceStateRequest)
 // MoveResourceState requests that the given resource be moved.
 func (p *Provider) MoveResourceState(req providers.MoveResourceStateRequest) providers.MoveResourceStateResponse {
 	switch req.TargetTypeName {
-	case "terraform_data":
+	case "terracina_data":
 		return moveDataStoreResourceState(req)
 	default:
 		var resp providers.MoveResourceStateResponse
@@ -237,7 +237,7 @@ func (p *Provider) CallFunction(req providers.CallFunctionRequest) providers.Cal
 	}
 
 	// NOTE: We assume that none of the arguments can be marked, because we're
-	// expecting to be called from logic in Terraform Core that strips marks
+	// expecting to be called from logic in Terracina Core that strips marks
 	// before calling a provider-contributed function, and then reapplies them
 	// afterwards.
 

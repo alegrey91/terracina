@@ -9,13 +9,13 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/collections"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/lang/globalref"
-	"github.com/hashicorp/terraform/internal/moduletest/mocking"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/states"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/collections"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/lang/globalref"
+	"github.com/hashicorp/terracina/internal/moduletest/mocking"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/states"
 )
 
 // Plan is the top-level type representing a planned set of changes.
@@ -44,7 +44,7 @@ type Plan struct {
 	UIMode Mode
 
 	// VariableValues, VariableMarks, and ApplyTimeVariables together describe
-	// how Terraform should decide the input variable values for the apply
+	// how Terracina should decide the input variable values for the apply
 	// phase if this plan is to be applied.
 	//
 	// VariableValues and VariableMarks describe persisted (non-ephemeral)
@@ -71,7 +71,7 @@ type Plan struct {
 	ForceReplaceAddrs []addrs.AbsResourceInstance
 	Backend           Backend
 
-	// Complete is true if Terraform considers this to be a "complete" plan,
+	// Complete is true if Terracina considers this to be a "complete" plan,
 	// which is to say that it includes a planned action (even if no-op)
 	// for every resource instance object that was mentioned across both
 	// the desired state and prior state.
@@ -86,7 +86,7 @@ type Plan struct {
 	// the user as part of a warning that the plan is incomplete.
 	Complete bool
 
-	// Applyable is true if both Terraform was able to create a plan
+	// Applyable is true if both Terracina was able to create a plan
 	// successfully and if the plan calls for making some sort of meaningful
 	// change.
 	//
@@ -124,7 +124,7 @@ type Plan struct {
 	// was derived from:
 	//
 	// PrevRunState is a representation of the outcome of the previous
-	// Terraform operation, without any updates from the remote system but
+	// Terracina operation, without any updates from the remote system but
 	// potentially including some changes that resulted from state upgrade
 	// actions.
 	//
@@ -141,7 +141,7 @@ type Plan struct {
 	// ExternalReferences are references that are being made to resources within
 	// the plan from external sources.
 	//
-	// This is never recorded outside of Terraform. It is not written into the
+	// This is never recorded outside of Terracina. It is not written into the
 	// binary plan file, and it is not written into the JSON structured outputs.
 	// The testing framework never writes the plans out but holds everything in
 	// memory as it executes, so there is no need to add any kind of

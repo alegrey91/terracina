@@ -1,15 +1,15 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"fmt"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // nodeApplyableDeferredInstance is a node that represents a deferred instance
@@ -31,7 +31,7 @@ func (n *nodeApplyableDeferredInstance) Execute(ctx EvalContext, _ walkOperation
 	var diags tfdiags.Diagnostics
 	change, err := n.ChangeSrc.Decode(n.Schema.ImpliedType())
 	if err != nil {
-		diags = diags.Append(tfdiags.Sourceless(tfdiags.Error, "Failed to decode ", fmt.Sprintf("Terraform failed to decode a deferred change: %v\n\nThis is a bug in Terraform; please report it!", err)))
+		diags = diags.Append(tfdiags.Sourceless(tfdiags.Error, "Failed to decode ", fmt.Sprintf("Terracina failed to decode a deferred change: %v\n\nThis is a bug in Terracina; please report it!", err)))
 	}
 
 	switch n.Addr.Resource.Resource.Mode {
@@ -57,7 +57,7 @@ func (n *nodeApplyableDeferredPartialInstance) Execute(ctx EvalContext, _ walkOp
 	var diags tfdiags.Diagnostics
 	change, err := n.ChangeSrc.Decode(n.Schema.ImpliedType())
 	if err != nil {
-		diags = diags.Append(tfdiags.Sourceless(tfdiags.Error, "Failed to decode ", fmt.Sprintf("Terraform failed to decode a deferred change: %v\n\nThis is a bug in Terraform; please report it!", err)))
+		diags = diags.Append(tfdiags.Sourceless(tfdiags.Error, "Failed to decode ", fmt.Sprintf("Terracina failed to decode a deferred change: %v\n\nThis is a bug in Terracina; please report it!", err)))
 	}
 
 	switch n.Addr.Resource.Resource.Mode {

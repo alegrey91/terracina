@@ -9,10 +9,10 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/hashicorp/terraform/internal/backend"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/states/remote"
-	"github.com/hashicorp/terraform/internal/states/statemgr"
+	"github.com/hashicorp/terracina/internal/backend"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/states/remote"
+	"github.com/hashicorp/terracina/internal/states/statemgr"
 	"github.com/tombuildsstuff/giovanni/storage/2018-11-09/blob/blobs"
 	"github.com/tombuildsstuff/giovanni/storage/2018-11-09/blob/containers"
 )

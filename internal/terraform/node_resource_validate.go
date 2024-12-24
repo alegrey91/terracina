@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"fmt"
@@ -10,16 +10,16 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/didyoumean"
-	"github.com/hashicorp/terraform/internal/instances"
-	"github.com/hashicorp/terraform/internal/lang/ephemeral"
-	"github.com/hashicorp/terraform/internal/lang/langrefs"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/provisioners"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/didyoumean"
+	"github.com/hashicorp/terracina/internal/instances"
+	"github.com/hashicorp/terracina/internal/lang/ephemeral"
+	"github.com/hashicorp/terracina/internal/lang/langrefs"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/provisioners"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // NodeValidatableResource represents a resource that is used for validation
@@ -379,7 +379,7 @@ func (n *NodeValidatableResource) validateResource(ctx EvalContext) tfdiags.Diag
 						diags = diags.Append(&hcl.Diagnostic{
 							Severity: hcl.DiagWarning,
 							Summary:  "Redundant ignore_changes element",
-							Detail:   fmt.Sprintf("Adding an attribute name to ignore_changes tells Terraform to ignore future changes to the argument in configuration after the object has been created, retaining the value originally configured.\n\nThe attribute %s is decided by the provider alone and therefore there can be no configured value to compare with. Including this attribute in ignore_changes has no effect. Remove the attribute from ignore_changes to quiet this warning.", attrDisplayPath),
+							Detail:   fmt.Sprintf("Adding an attribute name to ignore_changes tells Terracina to ignore future changes to the argument in configuration after the object has been created, retaining the value originally configured.\n\nThe attribute %s is decided by the provider alone and therefore there can be no configured value to compare with. Including this attribute in ignore_changes has no effect. Remove the attribute from ignore_changes to quiet this warning.", attrDisplayPath),
 							Subject:  &n.Config.TypeRange,
 						})
 					}
@@ -758,14 +758,14 @@ func validateResourceForbiddenEphemeralValues(ctx EvalContext, value cty.Value, 
 			diags = diags.Append(tfdiags.AttributeValue(
 				tfdiags.Error,
 				"Could not find schema for attribute",
-				"This is most likely a bug in Terraform, please report it.",
+				"This is most likely a bug in Terracina, please report it.",
 				path,
 			))
 		} else if !attr.WriteOnly {
 			diags = diags.Append(tfdiags.AttributeValue(
 				tfdiags.Error,
 				"Invalid use of ephemeral value",
-				"Ephemeral values are not valid in resource arguments, because resource instances must persist between Terraform phases.",
+				"Ephemeral values are not valid in resource arguments, because resource instances must persist between Terracina phases.",
 				path,
 			))
 		}

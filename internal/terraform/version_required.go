@@ -1,17 +1,17 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 
-	"github.com/hashicorp/terraform/internal/configs"
+	"github.com/hashicorp/terracina/internal/configs"
 )
 
 // CheckCoreVersionRequirements visits each of the modules in the given
 // configuration tree and verifies that any given Core version constraints
-// match with the version of Terraform Core that is being used.
+// match with the version of Terracina Core that is being used.
 //
 // The returned diagnostics will contain errors if any constraints do not match.
 // The returned diagnostics might also return warnings, which should be

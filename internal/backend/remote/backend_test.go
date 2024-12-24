@@ -14,12 +14,12 @@ import (
 	version "github.com/hashicorp/go-version"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform-svchost/disco"
-	"github.com/hashicorp/terraform/internal/backend"
-	"github.com/hashicorp/terraform/internal/backend/backendrun"
-	backendLocal "github.com/hashicorp/terraform/internal/backend/local"
-	"github.com/hashicorp/terraform/internal/tfdiags"
-	tfversion "github.com/hashicorp/terraform/version"
+	"github.com/hashicorp/terracina-svchost/disco"
+	"github.com/hashicorp/terracina/internal/backend"
+	"github.com/hashicorp/terracina/internal/backend/backendrun"
+	backendLocal "github.com/hashicorp/terracina/internal/backend/local"
+	"github.com/hashicorp/terracina/internal/tfdiags"
+	tfversion "github.com/hashicorp/terracina/version"
 )
 
 func TestRemote(t *testing.T) {
@@ -59,7 +59,7 @@ func TestRemote_config(t *testing.T) {
 					"prefix": cty.NullVal(cty.String),
 				}),
 			}),
-			confErr: "organization \"nonexisting\" at host app.terraform.io not found",
+			confErr: "organization \"nonexisting\" at host app.terracina.io not found",
 		},
 		"with_an_unknown_host": {
 			config: cty.ObjectVal(map[string]cty.Value{
@@ -84,7 +84,7 @@ func TestRemote_config(t *testing.T) {
 					"prefix": cty.NullVal(cty.String),
 				}),
 			}),
-			confErr: "terraform login localhost",
+			confErr: "terracina login localhost",
 		},
 		"with_a_name": {
 			config: cty.ObjectVal(map[string]cty.Value{
@@ -187,7 +187,7 @@ func TestRemote_versionConstraints(t *testing.T) {
 				}),
 			}),
 			version: "0.0.1",
-			result:  "upgrade Terraform to >= 0.1.0",
+			result:  "upgrade Terracina to >= 0.1.0",
 		},
 		"version too new": {
 			config: cty.ObjectVal(map[string]cty.Value{
@@ -200,7 +200,7 @@ func TestRemote_versionConstraints(t *testing.T) {
 				}),
 			}),
 			version: "10.0.1",
-			result:  "downgrade Terraform to <= 10.0.0",
+			result:  "downgrade Terracina to <= 10.0.0",
 		},
 	}
 
@@ -380,7 +380,7 @@ func TestRemote_checkConstraints(t *testing.T) {
 				Maximum: "0.11.11",
 			},
 			version: "0.10.1",
-			result:  "upgrade Terraform to >= 0.11.0",
+			result:  "upgrade Terracina to >= 0.11.0",
 		},
 		"version too new": {
 			constraints: &disco.Constraints{
@@ -388,7 +388,7 @@ func TestRemote_checkConstraints(t *testing.T) {
 				Maximum: "0.11.11",
 			},
 			version: "0.12.0",
-			result:  "downgrade Terraform to <= 0.11.11",
+			result:  "downgrade Terracina to <= 0.11.11",
 		},
 		"version excluded - ordered": {
 			constraints: &disco.Constraints{
@@ -397,7 +397,7 @@ func TestRemote_checkConstraints(t *testing.T) {
 				Maximum:   "0.11.11",
 			},
 			version: "0.11.7",
-			result:  "upgrade Terraform to > 0.11.8",
+			result:  "upgrade Terracina to > 0.11.8",
 		},
 		"version excluded - unordered": {
 			constraints: &disco.Constraints{
@@ -406,7 +406,7 @@ func TestRemote_checkConstraints(t *testing.T) {
 				Maximum:   "0.11.11",
 			},
 			version: "0.11.6",
-			result:  "upgrade Terraform to > 0.11.8",
+			result:  "upgrade Terracina to > 0.11.8",
 		},
 		"list versions": {
 			constraints: &disco.Constraints{
@@ -477,19 +477,19 @@ func TestRemote_StateMgr_versionCheck(t *testing.T) {
 		tfversion.SemVer = s
 	}()
 
-	// For this test, the local Terraform version is set to 0.14.0
+	// For this test, the local Terracina version is set to 0.14.0
 	tfversion.Prerelease = ""
 	tfversion.Version = v0140.String()
 	tfversion.SemVer = v0140
 
-	// Update the mock remote workspace Terraform version to match the local
-	// Terraform version
+	// Update the mock remote workspace Terracina version to match the local
+	// Terracina version
 	if _, err := b.client.Workspaces.Update(
 		context.Background(),
 		b.organization,
 		b.workspace,
 		tfe.WorkspaceUpdateOptions{
-			TerraformVersion: tfe.String(v0140.String()),
+			TerracinaVersion: tfe.String(v0140.String()),
 		},
 	); err != nil {
 		t.Fatalf("error: %v", err)
@@ -500,20 +500,20 @@ func TestRemote_StateMgr_versionCheck(t *testing.T) {
 		t.Fatalf("expected no error, got %v", err)
 	}
 
-	// Now change the remote workspace to a different Terraform version
+	// Now change the remote workspace to a different Terracina version
 	if _, err := b.client.Workspaces.Update(
 		context.Background(),
 		b.organization,
 		b.workspace,
 		tfe.WorkspaceUpdateOptions{
-			TerraformVersion: tfe.String(v0135.String()),
+			TerracinaVersion: tfe.String(v0135.String()),
 		},
 	); err != nil {
 		t.Fatalf("error: %v", err)
 	}
 
 	// This should fail
-	want := `Remote workspace Terraform version "0.13.5" does not match local Terraform version "0.14.0"`
+	want := `Remote workspace Terracina version "0.13.5" does not match local Terracina version "0.14.0"`
 	if _, err := b.StateMgr(backend.DefaultStateName); err.Error() != want {
 		t.Fatalf("wrong error\n got: %v\nwant: %v", err.Error(), want)
 	}
@@ -535,7 +535,7 @@ func TestRemote_StateMgr_versionCheckLatest(t *testing.T) {
 		tfversion.SemVer = s
 	}()
 
-	// For this test, the local Terraform version is set to 0.14.0
+	// For this test, the local Terracina version is set to 0.14.0
 	tfversion.Prerelease = ""
 	tfversion.Version = v0140.String()
 	tfversion.SemVer = v0140
@@ -546,7 +546,7 @@ func TestRemote_StateMgr_versionCheckLatest(t *testing.T) {
 		b.organization,
 		b.workspace,
 		tfe.WorkspaceUpdateOptions{
-			TerraformVersion: tfe.String("latest"),
+			TerracinaVersion: tfe.String("latest"),
 		},
 	); err != nil {
 		t.Fatalf("error: %v", err)
@@ -558,7 +558,7 @@ func TestRemote_StateMgr_versionCheckLatest(t *testing.T) {
 	}
 }
 
-func TestRemote_VerifyWorkspaceTerraformVersion(t *testing.T) {
+func TestRemote_VerifyWorkspaceTerracinaVersion(t *testing.T) {
 	testCases := []struct {
 		local         string
 		remote        string
@@ -598,7 +598,7 @@ func TestRemote_VerifyWorkspaceTerraformVersion(t *testing.T) {
 			tfversion.Version = local.String()
 			tfversion.SemVer = local
 
-			// Update the mock remote workspace Terraform version to the
+			// Update the mock remote workspace Terracina version to the
 			// specified remote version
 			if _, err := b.client.Workspaces.Update(
 				context.Background(),
@@ -606,18 +606,18 @@ func TestRemote_VerifyWorkspaceTerraformVersion(t *testing.T) {
 				b.workspace,
 				tfe.WorkspaceUpdateOptions{
 					ExecutionMode:    &tc.executionMode,
-					TerraformVersion: tfe.String(tc.remote),
+					TerracinaVersion: tfe.String(tc.remote),
 				},
 			); err != nil {
 				t.Fatalf("error: %v", err)
 			}
 
-			diags := b.VerifyWorkspaceTerraformVersion(backend.DefaultStateName)
+			diags := b.VerifyWorkspaceTerracinaVersion(backend.DefaultStateName)
 			if tc.wantErr {
 				if len(diags) != 1 {
 					t.Fatal("expected diag, but none returned")
 				}
-				if got := diags.Err().Error(); !strings.Contains(got, "Terraform version mismatch") {
+				if got := diags.Err().Error(); !strings.Contains(got, "Terracina version mismatch") {
 					t.Fatalf("unexpected error: %s", got)
 				}
 			} else {
@@ -629,20 +629,20 @@ func TestRemote_VerifyWorkspaceTerraformVersion(t *testing.T) {
 	}
 }
 
-func TestRemote_VerifyWorkspaceTerraformVersion_workspaceErrors(t *testing.T) {
+func TestRemote_VerifyWorkspaceTerracinaVersion_workspaceErrors(t *testing.T) {
 	b, bCleanup := testBackendDefault(t)
 	defer bCleanup()
 
 	// Attempting to check the version against a workspace which doesn't exist
 	// should result in no errors
-	diags := b.VerifyWorkspaceTerraformVersion("invalid-workspace")
+	diags := b.VerifyWorkspaceTerracinaVersion("invalid-workspace")
 	if len(diags) != 0 {
 		t.Fatalf("unexpected error: %s", diags.Err())
 	}
 
 	// Use a special workspace ID to trigger a 500 error, which should result
 	// in a failed check
-	diags = b.VerifyWorkspaceTerraformVersion("network-error")
+	diags = b.VerifyWorkspaceTerracinaVersion("network-error")
 	if len(diags) != 1 {
 		t.Fatal("expected diag, but none returned")
 	}
@@ -650,28 +650,28 @@ func TestRemote_VerifyWorkspaceTerraformVersion_workspaceErrors(t *testing.T) {
 		t.Fatalf("unexpected error: %s", got)
 	}
 
-	// Update the mock remote workspace Terraform version to an invalid version
+	// Update the mock remote workspace Terracina version to an invalid version
 	if _, err := b.client.Workspaces.Update(
 		context.Background(),
 		b.organization,
 		b.workspace,
 		tfe.WorkspaceUpdateOptions{
-			TerraformVersion: tfe.String("1.0.cheetarah"),
+			TerracinaVersion: tfe.String("1.0.cheetarah"),
 		},
 	); err != nil {
 		t.Fatalf("error: %v", err)
 	}
-	diags = b.VerifyWorkspaceTerraformVersion(backend.DefaultStateName)
+	diags = b.VerifyWorkspaceTerracinaVersion(backend.DefaultStateName)
 
 	if len(diags) != 1 {
 		t.Fatal("expected diag, but none returned")
 	}
-	if got := diags.Err().Error(); !strings.Contains(got, "Error looking up workspace: Invalid Terraform version") {
+	if got := diags.Err().Error(); !strings.Contains(got, "Error looking up workspace: Invalid Terracina version") {
 		t.Fatalf("unexpected error: %s", got)
 	}
 }
 
-func TestRemote_VerifyWorkspaceTerraformVersion_ignoreFlagSet(t *testing.T) {
+func TestRemote_VerifyWorkspaceTerracinaVersion_ignoreFlagSet(t *testing.T) {
 	b, bCleanup := testBackendDefault(t)
 	defer bCleanup()
 
@@ -697,20 +697,20 @@ func TestRemote_VerifyWorkspaceTerraformVersion_ignoreFlagSet(t *testing.T) {
 	tfversion.Version = local.String()
 	tfversion.SemVer = local
 
-	// Update the mock remote workspace Terraform version to the
+	// Update the mock remote workspace Terracina version to the
 	// specified remote version
 	if _, err := b.client.Workspaces.Update(
 		context.Background(),
 		b.organization,
 		b.workspace,
 		tfe.WorkspaceUpdateOptions{
-			TerraformVersion: tfe.String(remote.String()),
+			TerracinaVersion: tfe.String(remote.String()),
 		},
 	); err != nil {
 		t.Fatalf("error: %v", err)
 	}
 
-	diags := b.VerifyWorkspaceTerraformVersion(backend.DefaultStateName)
+	diags := b.VerifyWorkspaceTerracinaVersion(backend.DefaultStateName)
 	if len(diags) != 1 {
 		t.Fatal("expected diag, but none returned")
 	}
@@ -718,10 +718,10 @@ func TestRemote_VerifyWorkspaceTerraformVersion_ignoreFlagSet(t *testing.T) {
 	if got, want := diags[0].Severity(), tfdiags.Warning; got != want {
 		t.Errorf("wrong severity: got %#v, want %#v", got, want)
 	}
-	if got, want := diags[0].Description().Summary, "Terraform version mismatch"; got != want {
+	if got, want := diags[0].Description().Summary, "Terracina version mismatch"; got != want {
 		t.Errorf("wrong summary: got %s, want %s", got, want)
 	}
-	wantDetail := "The local Terraform version (0.14.0) does not match the configured version for remote workspace hashicorp/prod (0.13.5)."
+	wantDetail := "The local Terracina version (0.14.0) does not match the configured version for remote workspace hashicorp/prod (0.13.5)."
 	if got := diags[0].Description().Detail; got != wantDetail {
 		t.Errorf("wrong summary: got %s, want %s", got, wantDetail)
 	}

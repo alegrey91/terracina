@@ -6,8 +6,8 @@ package stackeval
 import (
 	"context"
 
-	"github.com/hashicorp/terraform/internal/promising"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/promising"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 	"go.opentelemetry.io/otel/codes"
 )
 

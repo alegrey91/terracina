@@ -43,9 +43,9 @@ jobs:
             linux \
             amd64
 
-      - name: Build terraform
+      - name: Build terracina
         shell: bash
-        run: ./.github/scripts/equivalence-test.sh build_terraform_binary ./bin/terraform
+        run: ./.github/scripts/equivalence-test.sh build_terracina_binary ./bin/terracina
 
       - name: Run equivalence tests
         id: equivalence-tests
@@ -54,7 +54,7 @@ jobs:
           ./bin/equivalence-tests diff \
               --tests=testing/equivalence-tests/tests \
               --goldens=testing/equivalence-tests/outputs \
-              --binary=$(pwd)/bin/terraform
+              --binary=$(pwd)/bin/terracina
           echo "exit-code=$?" >> "${GITHUB_OUTPUT}"
 
       - name: Equivalence tests failed

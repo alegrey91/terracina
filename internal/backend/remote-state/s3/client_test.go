@@ -20,10 +20,10 @@ import (
 	"github.com/aws/smithy-go/middleware"
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 
-	"github.com/hashicorp/terraform/internal/backend"
-	"github.com/hashicorp/terraform/internal/states/remote"
-	"github.com/hashicorp/terraform/internal/states/statefile"
-	"github.com/hashicorp/terraform/internal/states/statemgr"
+	"github.com/hashicorp/terracina/internal/backend"
+	"github.com/hashicorp/terracina/internal/states/remote"
+	"github.com/hashicorp/terracina/internal/states/statefile"
+	"github.com/hashicorp/terracina/internal/states/statemgr"
 )
 
 func TestRemoteClient_impl(t *testing.T) {
@@ -36,7 +36,7 @@ func TestRemoteClientBasic(t *testing.T) {
 
 	ctx := context.TODO()
 
-	bucketName := fmt.Sprintf("terraform-remote-s3-test-%x", time.Now().Unix())
+	bucketName := fmt.Sprintf("terracina-remote-s3-test-%x", time.Now().Unix())
 	keyName := "testState"
 
 	b := backend.TestBackendConfig(t, New(), backend.TestWrapConfig(map[string]interface{}{
@@ -61,7 +61,7 @@ func TestRemoteClientLocks(t *testing.T) {
 
 	ctx := context.TODO()
 
-	bucketName := fmt.Sprintf("terraform-remote-s3-test-%x", time.Now().Unix())
+	bucketName := fmt.Sprintf("terracina-remote-s3-test-%x", time.Now().Unix())
 	keyName := "testState"
 
 	b1 := backend.TestBackendConfig(t, New(), backend.TestWrapConfig(map[string]interface{}{
@@ -102,7 +102,7 @@ func TestForceUnlock(t *testing.T) {
 
 	ctx := context.TODO()
 
-	bucketName := fmt.Sprintf("terraform-remote-s3-test-force-%x", time.Now().Unix())
+	bucketName := fmt.Sprintf("terracina-remote-s3-test-force-%x", time.Now().Unix())
 	keyName := "testState"
 
 	b1 := backend.TestBackendConfig(t, New(), backend.TestWrapConfig(map[string]interface{}{
@@ -181,7 +181,7 @@ func TestForceUnlock_withLockfile(t *testing.T) {
 
 	ctx := context.TODO()
 
-	bucketName := fmt.Sprintf("terraform-remote-s3-test-force-%x", time.Now().Unix())
+	bucketName := fmt.Sprintf("terracina-remote-s3-test-force-%x", time.Now().Unix())
 	keyName := "testState"
 
 	b1 := backend.TestBackendConfig(t, New(), backend.TestWrapConfig(map[string]interface{}{
@@ -258,7 +258,7 @@ func TestRemoteClient_clientMD5(t *testing.T) {
 
 	ctx := context.TODO()
 
-	bucketName := fmt.Sprintf("terraform-remote-s3-test-%x", time.Now().Unix())
+	bucketName := fmt.Sprintf("terracina-remote-s3-test-%x", time.Now().Unix())
 	keyName := "testState"
 
 	b := backend.TestBackendConfig(t, New(), backend.TestWrapConfig(map[string]interface{}{
@@ -308,7 +308,7 @@ func TestRemoteClient_stateChecksum(t *testing.T) {
 
 	ctx := context.TODO()
 
-	bucketName := fmt.Sprintf("terraform-remote-s3-test-%x", time.Now().Unix())
+	bucketName := fmt.Sprintf("terracina-remote-s3-test-%x", time.Now().Unix())
 	keyName := "testState"
 
 	b1 := backend.TestBackendConfig(t, New(), backend.TestWrapConfig(map[string]interface{}{
@@ -426,7 +426,7 @@ func TestRemoteClientPutLargeUploadWithObjectLock_Compliance(t *testing.T) {
 
 	ctx := context.TODO()
 
-	bucketName := fmt.Sprintf("terraform-remote-s3-test-%x", time.Now().Unix())
+	bucketName := fmt.Sprintf("terracina-remote-s3-test-%x", time.Now().Unix())
 	keyName := "testState"
 
 	b := backend.TestBackendConfig(t, New(), backend.TestWrapConfig(map[string]interface{}{
@@ -465,7 +465,7 @@ func TestRemoteClientLockFileWithObjectLock_Compliance(t *testing.T) {
 
 	ctx := context.TODO()
 
-	bucketName := fmt.Sprintf("terraform-remote-s3-test-%x", time.Now().Unix())
+	bucketName := fmt.Sprintf("terracina-remote-s3-test-%x", time.Now().Unix())
 	keyName := "testState"
 
 	b := backend.TestBackendConfig(t, New(), backend.TestWrapConfig(map[string]interface{}{
@@ -505,7 +505,7 @@ func TestRemoteClientLockFileWithObjectLock_Governance(t *testing.T) {
 
 	ctx := context.TODO()
 
-	bucketName := fmt.Sprintf("terraform-remote-s3-test-%x", time.Now().Unix())
+	bucketName := fmt.Sprintf("terracina-remote-s3-test-%x", time.Now().Unix())
 	keyName := "testState"
 
 	b := backend.TestBackendConfig(t, New(), backend.TestWrapConfig(map[string]interface{}{
@@ -553,7 +553,7 @@ func TestRemoteClientSkipS3Checksum(t *testing.T) {
 
 	ctx := context.TODO()
 
-	bucketName := fmt.Sprintf("terraform-remote-s3-test-%x", time.Now().Unix())
+	bucketName := fmt.Sprintf("terracina-remote-s3-test-%x", time.Now().Unix())
 	keyName := "testState"
 
 	testcases := map[string]struct {

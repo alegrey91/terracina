@@ -4,12 +4,12 @@
 package schemarepo
 
 import (
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/providers"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/providers"
 )
 
-// Schemas is a container for various kinds of schema that Terraform needs
+// Schemas is a container for various kinds of schema that Terracina needs
 // during processing.
 type Schemas struct {
 	Providers    map[addrs.Provider]providers.ProviderSchema

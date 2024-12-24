@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 func TestParseTarget(t *testing.T) {
@@ -462,9 +462,9 @@ func TestParseTarget(t *testing.T) {
 			`The keyword "self" is reserved and cannot be used to target a resource address. If you are targeting a resource type that uses a reserved keyword, please prefix your address with "resource.".`,
 		},
 		{
-			`terraform.planning`,
+			`terracina.planning`,
 			nil,
-			`The keyword "terraform" is reserved and cannot be used to target a resource address. If you are targeting a resource type that uses a reserved keyword, please prefix your address with "resource.".`,
+			`The keyword "terracina" is reserved and cannot be used to target a resource address. If you are targeting a resource type that uses a reserved keyword, please prefix your address with "resource.".`,
 		},
 		{
 			`var.foo`,

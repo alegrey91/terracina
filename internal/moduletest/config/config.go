@@ -9,10 +9,10 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs"
-	"github.com/hashicorp/terraform/internal/moduletest"
-	hcltest "github.com/hashicorp/terraform/internal/moduletest/hcl"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs"
+	"github.com/hashicorp/terracina/internal/moduletest"
+	hcltest "github.com/hashicorp/terracina/internal/moduletest/hcl"
 )
 
 // TransformConfigForTest transforms the provided configuration ready for the
@@ -33,7 +33,7 @@ func TransformConfigForTest(config *configs.Config, run *moduletest.Run, file *m
 	//
 	// We can have a set of providers defined within the config, we can also
 	// have a set of providers defined within the test file. Then the run can
-	// also specify a set of overrides that tell Terraform exactly which
+	// also specify a set of overrides that tell Terracina exactly which
 	// providers from the test file to apply into the config.
 	//
 	// The process here is as follows:

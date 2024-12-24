@@ -14,17 +14,17 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/command/arguments"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/terminal"
-	"github.com/hashicorp/terraform/internal/terraform"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/command/arguments"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/terminal"
+	"github.com/hashicorp/terracina/internal/terracina"
 )
 
-func testUiHookResourceID(addr addrs.AbsResourceInstance) terraform.HookResourceIdentity {
-	return terraform.HookResourceIdentity{
+func testUiHookResourceID(addr addrs.AbsResourceInstance) terracina.HookResourceIdentity {
+	return terracina.HookResourceIdentity{
 		Addr: addr,
 		ProviderAddr: addrs.Provider{
 			Type:      "test",
@@ -67,7 +67,7 @@ func TestUiHookPreApply_create(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if action != terraform.HookActionContinue {
+	if action != terracina.HookActionContinue {
 		t.Fatalf("Expected hook to continue, given: %#v", action)
 	}
 
@@ -125,7 +125,7 @@ func TestUiHookPreApply_periodicTimer(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if action != terraform.HookActionContinue {
+	if action != terracina.HookActionContinue {
 		t.Fatalf("Expected hook to continue, given: %#v", action)
 	}
 
@@ -190,7 +190,7 @@ func TestUiHookPreApply_destroy(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if action != terraform.HookActionContinue {
+	if action != terracina.HookActionContinue {
 		t.Fatalf("Expected hook to continue, given: %#v", action)
 	}
 
@@ -241,7 +241,7 @@ func TestUiHookPostApply_colorInterpolation(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if action != terraform.HookActionContinue {
+	if action != terracina.HookActionContinue {
 		t.Fatalf("Expected hook to continue, given: %#v", action)
 	}
 	result := done(t)
@@ -294,7 +294,7 @@ func TestUiHookPostApply_emptyState(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if action != terraform.HookActionContinue {
+	if action != terracina.HookActionContinue {
 		t.Fatalf("Expected hook to continue, given: %#v", action)
 	}
 	result := done(t)
@@ -327,7 +327,7 @@ func TestUiHookPreProvisionInstanceStep(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if action != terraform.HookActionContinue {
+	if action != terracina.HookActionContinue {
 		t.Fatalf("Expected hook to continue, given: %#v", action)
 	}
 	result := done(t)
@@ -443,7 +443,7 @@ func TestUiHookPreRefresh(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if action != terraform.HookActionContinue {
+	if action != terracina.HookActionContinue {
 		t.Fatalf("Expected hook to continue, given: %#v", action)
 	}
 	result := done(t)
@@ -475,7 +475,7 @@ func TestUiHookPreRefresh_noID(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if action != terraform.HookActionContinue {
+	if action != terracina.HookActionContinue {
 		t.Fatalf("Expected hook to continue, given: %#v", action)
 	}
 	result := done(t)
@@ -502,7 +502,7 @@ func TestUiHookPreImportState(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if action != terraform.HookActionContinue {
+	if action != terracina.HookActionContinue {
 		t.Fatalf("Expected hook to continue, given: %#v", action)
 	}
 	result := done(t)
@@ -550,7 +550,7 @@ func TestUiHookPostImportState(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if action != terraform.HookActionContinue {
+	if action != terracina.HookActionContinue {
 		t.Fatalf("Expected hook to continue, given: %#v", action)
 	}
 	result := done(t)
@@ -579,7 +579,7 @@ func TestUiHookEphemeralOp(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if action != terraform.HookActionContinue {
+	if action != terracina.HookActionContinue {
 		t.Fatalf("Expected hook to continue, given: %#v", action)
 	}
 
@@ -587,7 +587,7 @@ func TestUiHookEphemeralOp(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if action != terraform.HookActionContinue {
+	if action != terracina.HookActionContinue {
 		t.Fatalf("Expected hook to continue, given: %#v", action)
 	}
 	result := done(t)
@@ -616,7 +616,7 @@ func TestUiHookEphemeralOp_progress(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if action != terraform.HookActionContinue {
+	if action != terracina.HookActionContinue {
 		t.Fatalf("Expected hook to continue, given: %#v", action)
 	}
 
@@ -628,7 +628,7 @@ func TestUiHookEphemeralOp_progress(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if action != terraform.HookActionContinue {
+	if action != terracina.HookActionContinue {
 		t.Fatalf("Expected hook to continue, given: %#v", action)
 	}
 
@@ -664,7 +664,7 @@ func TestUiHookEphemeralOp_error(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if action != terraform.HookActionContinue {
+	if action != terracina.HookActionContinue {
 		t.Fatalf("Expected hook to continue, given: %#v", action)
 	}
 
@@ -672,7 +672,7 @@ func TestUiHookEphemeralOp_error(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if action != terraform.HookActionContinue {
+	if action != terracina.HookActionContinue {
 		t.Fatalf("Expected hook to continue, given: %#v", action)
 	}
 	result := done(t)

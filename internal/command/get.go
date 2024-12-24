@@ -8,10 +8,10 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
-// GetCommand is a Command implementation that takes a Terraform
+// GetCommand is a Command implementation that takes a Terracina
 // configuration and downloads all the modules.
 type GetCommand struct {
 	Meta
@@ -54,7 +54,7 @@ func (c *GetCommand) Run(args []string) int {
 
 func (c *GetCommand) Help() string {
 	helpText := `
-Usage: terraform [global options] get [options]
+Usage: terracina [global options] get [options]
 
   Downloads and installs modules needed for the configuration in the 
   current working directory.
@@ -65,7 +65,7 @@ Usage: terraform [global options] get [options]
   unless the -update flag is specified.
 
   Module installation also happens automatically by default as part of
-  the "terraform init" command, so you should rarely need to run this
+  the "terracina init" command, so you should rarely need to run this
   command separately.
 
 Options:
@@ -75,14 +75,14 @@ Options:
 
   -no-color             Disable text coloring in the output.
 
-  -test-directory=path	Set the Terraform test directory, defaults to "tests".
+  -test-directory=path	Set the Terracina test directory, defaults to "tests".
 
 `
 	return strings.TrimSpace(helpText)
 }
 
 func (c *GetCommand) Synopsis() string {
-	return "Install or upgrade remote Terraform modules"
+	return "Install or upgrade remote Terracina modules"
 }
 
 func getModules(ctx context.Context, m *Meta, path string, testsDir string, upgrade bool) (abort bool, diags tfdiags.Diagnostics) {

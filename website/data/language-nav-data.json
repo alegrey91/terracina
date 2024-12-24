@@ -1,5 +1,5 @@
 [
-  { "heading": "Terraform Language" },
+  { "heading": "Terracina Language" },
   { "title": "Overview", "path": "" },
   {
     "title": "Attributes as Blocks - Configuration Language",
@@ -133,8 +133,8 @@
         ]
       },
       {
-        "title": "The <code>terraform_data</code> Resource Type",
-        "path": "resources/terraform-data"
+        "title": "The <code>terracina_data</code> Resource Type",
+        "path": "resources/terracina-data"
       },
       {
         "title": "Ephemeral Resources",
@@ -262,8 +262,8 @@
     "path": "moved"
   },
   {
-    "title": "Terraform block",
-    "path": "terraform"
+    "title": "Terracina block",
+    "path": "terracina"
   },
   {
     "title": "Backend block",
@@ -840,12 +840,12 @@
         ]
       },
       {
-        "title": "Terraform-specific Functions",
+        "title": "Terracina-specific Functions",
         "routes": [
-          { "title": "<code>provider::terraform::encode_tfvars</code>", "href": "/language/functions/terraform-encode_tfvars" },
-          { "title": "<code>provider::terraform::decode_tfvars</code>", "href": "/language/functions/terraform-decode_tfvars" },
-          { "title": "<code>provider::terraform::encode_expr</code>", "href": "/language/functions/terraform-encode_expr" },
-          { "title": "<code>terraform.applying</code>", "href": "/language/functions/terraform-applying" }
+          { "title": "<code>provider::terracina::encode_tfvars</code>", "href": "/language/functions/terracina-encode_tfvars" },
+          { "title": "<code>provider::terracina::decode_tfvars</code>", "href": "/language/functions/terracina-decode_tfvars" },
+          { "title": "<code>provider::terracina::encode_expr</code>", "href": "/language/functions/terracina-encode_expr" },
+          { "title": "<code>terracina.applying</code>", "href": "/language/functions/terracina-applying" }
         ]
       },
       { "title": "abs", "path": "functions/abs", "hidden": true },
@@ -1003,13 +1003,13 @@
         "hidden": true
       },
       {
-        "title": "terraform.applying",
-        "path": "functions/terraform-applying",
+        "title": "terracina.applying",
+        "path": "functions/terracina-applying",
         "hidden": true
       },
-      { "title": "terraform-encode_tfvars", "path": "functions/terraform-encode_tfvars", "hidden": true },
-      { "title": "terraform-decode_tfvars", "path": "functions/terraform-decode_tfvars", "hidden": true },
-      { "title": "terraform-encode_expr", "path": "functions/terraform-encode_expr", "hidden": true },
+      { "title": "terracina-encode_tfvars", "path": "functions/terracina-encode_tfvars", "hidden": true },
+      { "title": "terracina-decode_tfvars", "path": "functions/terracina-decode_tfvars", "hidden": true },
+      { "title": "terracina-encode_expr", "path": "functions/terracina-encode_expr", "hidden": true },
       {
         "title": "textdecodebase64",
         "path": "functions/textdecodebase64",
@@ -1053,7 +1053,7 @@
       { "title": "Overview", "path": "state" },
       { "title": "Purpose", "path": "state/purpose" },
       {
-        "title": "The <code>terraform_remote_state</code> Data Source",
+        "title": "The <code>terracina_remote_state</code> Data Source",
         "path": "state/remote-state-data"
       },
       {
@@ -1087,7 +1087,7 @@
     ]
   },
   {
-    "title": "Upgrading to Terraform v1.10",
+    "title": "Upgrading to Terracina v1.10",
     "path": "upgrade-guides"
   },
   {
@@ -1095,5 +1095,5 @@
     "path": "v1-compatibility-promises"
   },
   { "divider": true },
-  { "title": "Terraform Internals", "href": "/internals" }
+  { "title": "Terracina Internals", "href": "/internals" }
 ]

@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/hashicorp/terraform/internal/backend/backendrun"
-	"github.com/hashicorp/terraform/internal/command/arguments"
-	"github.com/hashicorp/terraform/internal/command/views"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/backend/backendrun"
+	"github.com/hashicorp/terracina/internal/command/arguments"
+	"github.com/hashicorp/terracina/internal/command/views"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // RefreshCommand is a cli.Command implementation that refreshes the state
@@ -59,7 +59,7 @@ func (c *RefreshCommand) Run(rawArgs []string) int {
 	c.Meta.input = args.InputEnabled
 
 	// FIXME: the -parallelism flag is used to control the concurrency of
-	// Terraform operations. At the moment, this value is used both to
+	// Terracina operations. At the moment, this value is used both to
 	// initialize the backend via the ContextOpts field inside CLIOpts, and to
 	// set a largely unused field on the Operation request. Again, there is no
 	// clear path to pass this value down, so we continue to mutate the Meta
@@ -156,7 +156,7 @@ func (c *RefreshCommand) OperationRequest(be backendrun.OperationsBackend, view 
 		diags = diags.Append(tfdiags.Sourceless(
 			tfdiags.Error,
 			"Failed to parse command-line flags",
-			"The -allow-deferral flag is only valid in experimental builds of Terraform.",
+			"The -allow-deferral flag is only valid in experimental builds of Terracina.",
 		))
 		return nil, diags
 	}
@@ -195,7 +195,7 @@ func (c *RefreshCommand) GatherVariables(opReq *backendrun.Operation, args *argu
 
 func (c *RefreshCommand) Help() string {
 	helpText := `
-Usage: terraform [global options] refresh [options]
+Usage: terracina [global options] refresh [options]
 
   Update the state file of your infrastructure with metadata that matches
   the physical resources they are tracking.
@@ -206,7 +206,7 @@ Usage: terraform [global options] refresh [options]
 
 Options:
 
-  -compact-warnings   If Terraform produces any warnings that are not
+  -compact-warnings   If Terracina produces any warnings that are not
                       accompanied by errors, show them in a more compact form
                       that includes only the summary messages.
 
@@ -226,11 +226,11 @@ Options:
                       resource and its dependencies. This flag can be used
                       multiple times.
 
-  -var 'foo=bar'      Set a variable in the Terraform configuration. This
+  -var 'foo=bar'      Set a variable in the Terracina configuration. This
                       flag can be set multiple times.
 
-  -var-file=foo       Set variables in the Terraform configuration from
-                      a file. If "terraform.tfvars" or any ".auto.tfvars"
+  -var-file=foo       Set variables in the Terracina configuration from
+                      a file. If "terracina.tfvars" or any ".auto.tfvars"
                       files are present, they will be automatically loaded.
 
   -state, state-out, and -backup are legacy options supported for the local

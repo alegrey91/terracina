@@ -1,24 +1,24 @@
 ---
-page_title: terraform graph command reference
+page_title: terracina graph command reference
 description: >-
-  The `terraform graph` command generates a visual representation of a
+  The `terracina graph` command generates a visual representation of a
   configuration or execution plan that you can use to generate charts.
 ---
 
-# `terraform graph` command
+# `terracina graph` command
 
-The `terraform graph` command generates a visual representation of a configuration or execution plan that you can use to generate charts. This command uses the DOT language generate graphs. Refer to the [GraphViz documentation](https://graphviz.org/doc/info/lang.html) for additional information.
+The `terracina graph` command generates a visual representation of a configuration or execution plan that you can use to generate charts. This command uses the DOT language generate graphs. Refer to the [GraphViz documentation](https://graphviz.org/doc/info/lang.html) for additional information.
 
 ## Usage
 
-Usage: `terraform graph [options]`
+Usage: `terracina graph [options]`
 
 By default the result is a simplified graph which describes only the dependency
 ordering of the resources (`resource` and `data` blocks) in the configuration.
 
 The `-type=...` option optionally selects from a number of other graph types
 which have more detail, at the expense of also exposing some of the
-implementation details of the Terraform language runtime.
+implementation details of the Terracina language runtime.
 
 Options:
 
@@ -46,9 +46,9 @@ If you have the Graphviz `dot` command already installed, you can render
 a PNG image by piping into that command:
 
 ```shellsession
-$ terraform graph -type=plan | dot -Tpng >graph.png
+$ terracina graph -type=plan | dot -Tpng >graph.png
 ```
 
 The following is an example result:
 
-![A visualization of the plan graph of a hypothetical Terraform configuration, produced by dot](/img/docs/graph-example.png)
+![A visualization of the plan graph of a hypothetical Terracina configuration, produced by dot](/img/docs/graph-example.png)

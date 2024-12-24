@@ -1,18 +1,18 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"log"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/logging"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/logging"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // GraphBuilder is an interface that can be implemented and used with
-// Terraform to build the graph that Terraform walks.
+// Terracina to build the graph that Terracina walks.
 type GraphBuilder interface {
 	// Build builds the graph for the given module path. It is up to
 	// the interface implementation whether this build should expand

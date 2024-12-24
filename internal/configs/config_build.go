@@ -12,7 +12,7 @@ import (
 	version "github.com/hashicorp/go-version"
 	"github.com/hashicorp/hcl/v2"
 
-	"github.com/hashicorp/terraform/internal/addrs"
+	"github.com/hashicorp/terracina/internal/addrs"
 )
 
 // BuildConfig constructs a Config from a root module by loading all of its
@@ -215,7 +215,7 @@ func loadModule(root *Config, req *ModuleRequest, walker ModuleWalker) (*Config,
 		diags = diags.Append(&hcl.Diagnostic{
 			Severity: hcl.DiagWarning,
 			Summary:  "Backend configuration ignored",
-			Detail:   "Any selected backend applies to the entire configuration, so Terraform expects provider configurations only in the root module.\n\nThis is a warning rather than an error because it's sometimes convenient to temporarily call a root module as a child module for testing purposes, but this backend configuration block will have no effect.",
+			Detail:   "Any selected backend applies to the entire configuration, so Terracina expects provider configurations only in the root module.\n\nThis is a warning rather than an error because it's sometimes convenient to temporarily call a root module as a child module for testing purposes, but this backend configuration block will have no effect.",
 			Subject:  mod.Backend.DeclRange.Ptr(),
 		})
 	}

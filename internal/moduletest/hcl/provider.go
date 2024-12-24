@@ -7,8 +7,8 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/lang/langrefs"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/lang/langrefs"
 )
 
 var _ hcl.Body = (*ProviderConfig)(nil)
@@ -19,7 +19,7 @@ var _ hcl.Body = (*ProviderConfig)(nil)
 //
 // This is used by configs.Provider objects that are defined within the test
 // framework, so they should only use variables available to the test framework
-// but are instead initialised within the Terraform graph so we have to delay
+// but are instead initialised within the Terracina graph so we have to delay
 // evaluation of their attributes until the schemas are retrieved.
 //
 // We don't parse the attributes until they are requested, so we can only use

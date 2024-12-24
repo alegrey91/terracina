@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"sort"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/getproviders"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/getproviders"
 )
 
 // Dir represents a single local filesystem directory containing cached

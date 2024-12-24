@@ -1,10 +1,10 @@
-terraform {
+terracina {
   cloud {
     organization = "foo"
   }
 }
 
-terraform {
+terracina {
   cloud {
     organization = "bar"
   }

@@ -8,8 +8,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/plugin/discovery"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/plugin/discovery"
 )
 
 func TestModuleWalkTree(t *testing.T) {

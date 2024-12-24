@@ -14,8 +14,8 @@ import (
 	"github.com/hashicorp/hcl/v2/hcled"
 	"github.com/hashicorp/hcl/v2/hclparse"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
-	"github.com/hashicorp/terraform/internal/lang/marks"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/lang/marks"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 	"github.com/zclconf/go-cty/cty"
 )
 
@@ -76,7 +76,7 @@ type DiagnosticSnippet struct {
 	// the resource block in which an expression causes an error.
 	Context *string `json:"context"`
 
-	// Code is a possibly-multi-line string of Terraform configuration, which
+	// Code is a possibly-multi-line string of Terracina configuration, which
 	// includes both the diagnostic source and any relevant context as defined
 	// by the diagnostic.
 	Code string `json:"code"`
@@ -473,7 +473,7 @@ func compactValueStr(val cty.Value) string {
 			// We don't know about any other marks, so we'll be conservative.
 			// This shouldn't actuallyr eachable since the caller should've
 			// checked this and skipped calling compactValueStr anyway.
-			return "value with unrecognized marks (this is a bug in Terraform)"
+			return "value with unrecognized marks (this is a bug in Terracina)"
 		}
 	}
 

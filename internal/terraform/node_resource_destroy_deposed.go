@@ -1,19 +1,19 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"fmt"
 	"log"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/dag"
-	"github.com/hashicorp/terraform/internal/instances"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/dag"
+	"github.com/hashicorp/terracina/internal/instances"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 // ConcreteResourceInstanceDeposedNodeFunc is a callback type used to convert
@@ -136,11 +136,11 @@ func (n *NodePlanDeposedResourceInstanceObject) Execute(ctx EvalContext, op walk
 	// We also don't refresh when forgetting instances, as it is unnecessary.
 	if !n.skipRefresh && op != walkPlanDestroy && !forget {
 		// Refresh this object even though it may be destroyed, in
-		// case it's already been deleted outside of Terraform. If this is a
+		// case it's already been deleted outside of Terracina. If this is a
 		// normal plan, providers expect a Read request to remove missing
 		// resources from the plan before apply, and may not handle a missing
 		// resource during Delete correctly. If this is a simple refresh,
-		// Terraform is expected to remove the missing resource from the state
+		// Terracina is expected to remove the missing resource from the state
 		// entirely
 		refreshedState, refreshDeferred, refreshDiags := n.refresh(ctx, n.DeposedKey, state, ctx.Deferrals().DeferralAllowed())
 		diags = diags.Append(refreshDiags)
@@ -432,7 +432,7 @@ func (n *NodeDestroyDeposedResourceInstanceObject) writeResourceInstanceState(ct
 
 	if key == states.NotDeposed {
 		// should never happen
-		return fmt.Errorf("can't save deposed object for %s without a deposed key; this is a bug in Terraform that should be reported", absAddr)
+		return fmt.Errorf("can't save deposed object for %s without a deposed key; this is a bug in Terracina that should be reported", absAddr)
 	}
 
 	if obj == nil {

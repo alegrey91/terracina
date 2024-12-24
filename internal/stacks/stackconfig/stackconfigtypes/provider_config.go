@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
 	"github.com/zclconf/go-cty/cty"
 )
 

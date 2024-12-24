@@ -1,9 +1,9 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
-import "github.com/hashicorp/terraform/internal/tfdiags"
+import "github.com/hashicorp/terracina/internal/tfdiags"
 
 // GraphNodeExecutable is the interface that graph nodes must implement to
 // enable execution.

@@ -10,21 +10,21 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/collections"
-	"github.com/hashicorp/terraform/internal/configs/configload"
-	"github.com/hashicorp/terraform/internal/depsfile"
-	"github.com/hashicorp/terraform/internal/getproviders/providerreqs"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/states/statefile"
-	tfversion "github.com/hashicorp/terraform/version"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/collections"
+	"github.com/hashicorp/terracina/internal/configs/configload"
+	"github.com/hashicorp/terracina/internal/depsfile"
+	"github.com/hashicorp/terracina/internal/getproviders/providerreqs"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/states/statefile"
+	tfversion "github.com/hashicorp/terracina/version"
 )
 
 func TestRoundtrip(t *testing.T) {
 	fixtureDir := filepath.Join("testdata", "test-config")
 	loader, err := configload.NewLoader(&configload.Config{
-		ModulesDir: filepath.Join(fixtureDir, ".terraform", "modules"),
+		ModulesDir: filepath.Join(fixtureDir, ".terracina", "modules"),
 	})
 	if err != nil {
 		t.Fatal(err)
@@ -39,13 +39,13 @@ func TestRoundtrip(t *testing.T) {
 	// We don't need to test the entire thing because the state file
 	// serialization is already tested in its own package.
 	stateFileIn := &statefile.File{
-		TerraformVersion: tfversion.SemVer,
+		TerracinaVersion: tfversion.SemVer,
 		Serial:           2,
 		Lineage:          "abc123",
 		State:            states.NewState(),
 	}
 	prevStateFileIn := &statefile.File{
-		TerraformVersion: tfversion.SemVer,
+		TerracinaVersion: tfversion.SemVer,
 		Serial:           1,
 		Lineage:          "abc123",
 		State:            states.NewState(),

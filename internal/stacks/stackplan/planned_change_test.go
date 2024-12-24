@@ -15,14 +15,14 @@ import (
 	"google.golang.org/protobuf/testing/protocmp"
 	"google.golang.org/protobuf/types/known/anypb"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/lang/marks"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/plans/planproto"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/rpcapi/terraform1/stacks"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/stacks/tfstackdata1"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/lang/marks"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/plans/planproto"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/rpcapi/terracina1/stacks"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/stacks/tfstackdata1"
 )
 
 func TestPlannedChangeAsProto(t *testing.T) {
@@ -59,12 +59,12 @@ func TestPlannedChangeAsProto(t *testing.T) {
 	}{
 		"header": {
 			Receiver: &PlannedChangeHeader{
-				TerraformVersion: version.Must(version.NewSemver("1.2.3-beta4")),
+				TerracinaVersion: version.Must(version.NewSemver("1.2.3-beta4")),
 			},
 			Want: &stacks.PlannedChange{
 				Raw: []*anypb.Any{
 					mustMarshalAnyPb(&tfstackdata1.PlanHeader{
-						TerraformVersion: "1.2.3-beta4",
+						TerracinaVersion: "1.2.3-beta4",
 					}),
 				},
 			},
@@ -846,7 +846,7 @@ func TestPlannedChangeAsProto(t *testing.T) {
 				Before: cty.NullVal(cty.String),
 				After:  cty.StringVal("boop").Mark(marks.Ephemeral),
 			},
-			WantErr: "failed to encode after planned input variable var.thingy_id: : unhandled value marks cty.NewValueMarks(marks.Ephemeral) (this is a bug in Terraform)", // Ephemeral values should never make it this far.
+			WantErr: "failed to encode after planned input variable var.thingy_id: : unhandled value marks cty.NewValueMarks(marks.Ephemeral) (this is a bug in Terracina)", // Ephemeral values should never make it this far.
 		},
 		"update root input variable": {
 			Receiver: &PlannedChangeRootInputValue{
@@ -943,7 +943,7 @@ func TestPlannedChangeAsProto(t *testing.T) {
 			}
 
 			if err != nil {
-				// All errors this can generate are caused by bugs in Terraform
+				// All errors this can generate are caused by bugs in Terracina
 				// because we're serializing content that we created, and so
 				// there are no _expected_ error cases.
 				t.Fatal(err)

@@ -10,11 +10,11 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/configs/configschema"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/terraform"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/configs/configschema"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/terracina"
 )
 
 func TestMarshalAttributeValues(t *testing.T) {
@@ -204,7 +204,7 @@ func TestMarshalPlanResources(t *testing.T) {
 				Type:            "test_thing",
 				Name:            "example",
 				Index:           addrs.InstanceKey(nil),
-				ProviderName:    "registry.terraform.io/hashicorp/test",
+				ProviderName:    "registry.terracina.io/hashicorp/test",
 				SchemaVersion:   1,
 				AttributeValues: attributeValues{},
 				SensitiveValues: json.RawMessage("{}"),
@@ -247,7 +247,7 @@ func TestMarshalPlanResources(t *testing.T) {
 				Type:          "test_thing",
 				Name:          "example",
 				Index:         addrs.InstanceKey(nil),
-				ProviderName:  "registry.terraform.io/hashicorp/test",
+				ProviderName:  "registry.terracina.io/hashicorp/test",
 				SchemaVersion: 1,
 				AttributeValues: attributeValues{
 					"woozles": json.RawMessage(`"baz"`),
@@ -344,8 +344,8 @@ func TestMarshalPlanValuesNoopDeposed(t *testing.T) {
 	}
 }
 
-func testSchemas() *terraform.Schemas {
-	return &terraform.Schemas{
+func testSchemas() *terracina.Schemas {
+	return &terracina.Schemas{
 		Providers: map[addrs.Provider]providers.ProviderSchema{
 			addrs.NewDefaultProvider("test"): providers.ProviderSchema{
 				ResourceTypes: map[string]providers.Schema{

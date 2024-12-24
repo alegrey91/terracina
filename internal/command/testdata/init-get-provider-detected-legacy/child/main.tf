@@ -1,3 +1,3 @@
 // This will try to install hashicorp/baz, fail, and then suggest
-// terraform-providers/baz
+// terracina-providers/baz
 provider baz {}

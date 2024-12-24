@@ -1,15 +1,15 @@
 [
-  { "heading": "Introduction to Terraform" },
-  { "title": "What is Terraform?", "path": "" },
+  { "heading": "Introduction to Terracina" },
+  { "title": "What is Terracina?", "path": "" },
   { "title": "Use Cases", "path": "use-cases" },
   {
     "title": "Get Started",
-    "href": "https://learn.hashicorp.com/collections/terraform/aws-get-started?utm_source=WEBSITE&utm_medium=WEB_IO&utm_offer=ARTICLE_PAGE&utm_content=DOCS"
+    "href": "https://learn.hashicorp.com/collections/terracina/aws-get-started?utm_source=WEBSITE&utm_medium=WEB_IO&utm_offer=ARTICLE_PAGE&utm_content=DOCS"
   },
-  { "title": "Terraform Editions", "path": "terraform-editions" },
-  { "title": "The Core Terraform Workflow", "path": "core-workflow" },
+  { "title": "Terracina Editions", "path": "terracina-editions" },
+  { "title": "The Core Terracina Workflow", "path": "core-workflow" },
   { 
-    "title": "Phases of Terraform Adoption", 
+    "title": "Phases of Terracina Adoption", 
     "routes": [
       {"title": "Overview", "path": "phases"},
       {"title": "Adopt", "path": "phases/adopt"},
@@ -19,7 +19,7 @@
     ]
   },
   {
-    "title": "Terraform vs. Alternatives",
+    "title": "Terracina vs. Alternatives",
     "routes": [
       { "title": "Overview", "path": "vs" },
       { "title": "Chef, Puppet, etc.", "path": "vs/chef-puppet" },

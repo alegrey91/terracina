@@ -1,6 +1,6 @@
 required_providers {
   foo = {
-    source = "terraform.io/builtin/foo"
+    source = "terracina.io/builtin/foo"
   }
 }
 

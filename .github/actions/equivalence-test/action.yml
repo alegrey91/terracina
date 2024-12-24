@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: BUSL-1.1
 
 name: equivalence-test
-description: "Execute the suite of Terraform equivalence tests in testing/equivalence-tests and update the golden files."
+description: "Execute the suite of Terracina equivalence tests in testing/equivalence-tests and update the golden files."
 inputs:
   target-equivalence-test-version:
-    description: "The version of the Terraform equivalence tests to use."
+    description: "The version of the Terracina equivalence tests to use."
     default: "0.3.0"
   target-os:
     description: "Current operating system"
@@ -38,9 +38,9 @@ runs:
           ${{ inputs.target-os }} \
           ${{ inputs.target-arch }}
 
-    - name: Build terraform
+    - name: Build terracina
       shell: bash
-      run: ./.github/scripts/equivalence-test.sh build_terraform_binary ./bin/terraform
+      run: ./.github/scripts/equivalence-test.sh build_terracina_binary ./bin/terracina
 
     - name: "run and update equivalence tests"
       id: execute
@@ -49,7 +49,7 @@ runs:
         ./bin/equivalence-tests update \
           --tests=testing/equivalence-tests/tests \
           --goldens=testing/equivalence-tests/outputs \
-          --binary=$(pwd)/bin/terraform
+          --binary=$(pwd)/bin/terracina
         
         git add --intent-to-add testing/equivalence-tests/outputs
         changed=$(git diff --quiet -- testing/equivalence-tests/outputs || echo true)

@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: BUSL-1.1
 
-package terraform
+package terracina
 
 import (
 	"bytes"
@@ -69,7 +69,7 @@ func encodeTfvarsFunc(args []cty.Value) (cty.Value, error) {
 		if !hclsyntax.ValidIdentifier(key) {
 			// We can only encode valid identifiers as tfvars keys, since
 			// the HCL argument grammar requires them to be identifiers.
-			return cty.NilVal, function.NewArgErrorf(1, "invalid variable name %q: must be a valid identifier, per Terraform's rules for input variable declarations", key)
+			return cty.NilVal, function.NewArgErrorf(1, "invalid variable name %q: must be a valid identifier, per Terracina's rules for input variable declarations", key)
 		}
 
 		// This index should not fail because we know that "key" is a valid
@@ -127,7 +127,7 @@ func decodeTfvarsFunc(args []cty.Value) (cty.Value, error) {
 	retAttrs := make(map[string]cty.Value, len(attrs))
 	for name, attr := range attrs {
 		// Evaluating the expression with no EvalContext achieves the same
-		// interpretation as Terraform CLI makes of .tfvars files, rejecting
+		// interpretation as Terracina CLI makes of .tfvars files, rejecting
 		// any function calls or references to symbols.
 		v, hclDiags := attr.Expr.Value(nil)
 		if hclDiags.HasErrors() {

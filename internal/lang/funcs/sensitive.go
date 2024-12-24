@@ -4,13 +4,13 @@
 package funcs
 
 import (
-	"github.com/hashicorp/terraform/internal/lang/marks"
+	"github.com/hashicorp/terracina/internal/lang/marks"
 	"github.com/zclconf/go-cty/cty"
 	"github.com/zclconf/go-cty/cty/function"
 )
 
 // SensitiveFunc returns a value identical to its argument except that
-// Terraform will consider it to be sensitive.
+// Terracina will consider it to be sensitive.
 var SensitiveFunc = function.New(&function.Spec{
 	Params: []function.Parameter{
 		{

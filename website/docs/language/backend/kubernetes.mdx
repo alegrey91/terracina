@@ -1,18 +1,18 @@
 ---
 page_title: 'Backend Type: Kubernetes'
-description: Terraform can store state remotely in Kubernetes and lock that state.
+description: Terracina can store state remotely in Kubernetes and lock that state.
 ---
 
 # kubernetes
 
 Stores the state in a [Kubernetes secret](https://kubernetes.io/docs/concepts/configuration/secret/).
 
-This backend supports [state locking](/terraform/language/state/locking), with locking done using a Lease resource.
+This backend supports [state locking](/terracina/language/state/locking), with locking done using a Lease resource.
 
 ## Example Configuration
 
 ```hcl
-terraform {
+terracina {
   backend "kubernetes" {
     secret_suffix    = "state"
     config_path      = "~/.kube/config"
@@ -20,20 +20,20 @@ terraform {
 }
 ```
 
-This assumes the user/service account running terraform has [permissions](https://kubernetes.io/docs/reference/access-authn-authz/authorization/) to read/write secrets in the [namespace](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/) used to store the secret.
+This assumes the user/service account running terracina has [permissions](https://kubernetes.io/docs/reference/access-authn-authz/authorization/) to read/write secrets in the [namespace](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/) used to store the secret.
 
 If the `config_path` or `config_paths` attribute is set the backend will attempt to use a [kubeconfig file](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/) to gain access to the cluster.
 
-If the `in_cluster_config` flag is set the backend will attempt to use a [service account](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/) to access the cluster. This can be used if Terraform is being run from within a pod running in the Kubernetes cluster.
+If the `in_cluster_config` flag is set the backend will attempt to use a [service account](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/) to access the cluster. This can be used if Terracina is being run from within a pod running in the Kubernetes cluster.
 
 For most use cases either `in_cluster_config`, `config_path`, or `config_paths` will need to be set. If all flags are set the configuration at `config_path` will be used.
 
-Note that for the access credentials we recommend using a [partial configuration](/terraform/language/backend#partial-configuration).
+Note that for the access credentials we recommend using a [partial configuration](/terracina/language/backend#partial-configuration).
 
 ## Example Referencing
 
 ```hcl
-data "terraform_remote_state" "foo" {
+data "terracina_remote_state" "foo" {
   backend = "kubernetes"
   config = {
     secret_suffix    = "state"
@@ -44,7 +44,7 @@ data "terraform_remote_state" "foo" {
 
 ## Configuration Variables
 
-!> **Warning:**  We recommend using environment variables to supply credentials and other sensitive data. If you use `-backend-config` or hardcode these values directly in your configuration, Terraform will include these values in both the `.terraform` subdirectory and in plan files. Refer to [Credentials and Sensitive Data](/terraform/language/backend#credentials-and-sensitive-data) for details.
+!> **Warning:**  We recommend using environment variables to supply credentials and other sensitive data. If you use `-backend-config` or hardcode these values directly in your configuration, Terracina will include these values in both the `.terracina` subdirectory and in plan files. Refer to [Credentials and Sensitive Data](/terracina/language/backend#credentials-and-sensitive-data) for details.
 
 The following configuration options are supported:
 

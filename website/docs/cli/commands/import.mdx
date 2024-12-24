@@ -1,24 +1,24 @@
 ---
-page_title: terraform import command reference
-description: The `terraform import` command imports existing resources into Terraform state.
+page_title: terracina import command reference
+description: The `terracina import` command imports existing resources into Terracina state.
 ---
 
-# `terraform import` command reference
+# `terracina import` command reference
 
-The `terraform import` command imports existing resources into Terraform. Refer to [Import](/terraform/cli/import) for additional information.
+The `terracina import` command imports existing resources into Terracina. Refer to [Import](/terracina/cli/import) for additional information.
 
 
-> **Hands-on:** Try the [Import Terraform Configuration](/terraform/tutorials/state/state-import?utm_source=WEBSITE&utm_medium=WEB_IO&utm_offer=ARTICLE_PAGE&utm_content=DOCS) tutorial.
+> **Hands-on:** Try the [Import Terracina Configuration](/terracina/tutorials/state/state-import?utm_source=WEBSITE&utm_medium=WEB_IO&utm_offer=ARTICLE_PAGE&utm_content=DOCS) tutorial.
 
 
 ## Usage
 
-Usage: `terraform import [options] ADDRESS ID`
+Usage: `terracina import [options] ADDRESS ID`
 
-Import will find the existing resource from ID and import it into your Terraform
+Import will find the existing resource from ID and import it into your Terracina
 state at the given ADDRESS.
 
-ADDRESS must be a valid [resource address](/terraform/cli/state/resource-addressing).
+ADDRESS must be a valid [resource address](/terracina/cli/state/resource-addressing).
 Because any resource address is valid, the import command can import resources
 into modules as well as directly into the root of your state.
 
@@ -28,21 +28,21 @@ it is the zone ID (`Z12ABC4UGMOZ2N`). Please reference the provider documentatio
 on the ID format. If you're unsure, feel free to just try an ID. If the ID
 is invalid, you'll just receive an error message.
 
-~> Warning: Terraform expects that each remote object it is managing will be
-bound to only one resource address, which is normally guaranteed by Terraform
-itself having created all objects. If you import existing objects into Terraform,
-be careful to import each remote object to only one Terraform resource address.
-If you import the same object multiple times, Terraform may exhibit unwanted
+~> Warning: Terracina expects that each remote object it is managing will be
+bound to only one resource address, which is normally guaranteed by Terracina
+itself having created all objects. If you import existing objects into Terracina,
+be careful to import each remote object to only one Terracina resource address.
+If you import the same object multiple times, Terracina may exhibit unwanted
 behavior. For more information on this assumption, see
-[the State section](/terraform/language/state).
+[the State section](/terracina/language/state).
 
-Instead of manually importing resources, you can add the `import` block to your Terraform configurations so that Terraform imports resources when you run the `terraform apply` command. Using Terraform configurations  lets you automate resource imports as part of your CI/CD pipelines. Refer to the [`import` block reference documentation](/terraform/language/import) for additional information.
+Instead of manually importing resources, you can add the `import` block to your Terracina configurations so that Terracina imports resources when you run the `terracina apply` command. Using Terracina configurations  lets you automate resource imports as part of your CI/CD pipelines. Refer to the [`import` block reference documentation](/terracina/language/import) for additional information.
 
 The command-line flags are all optional. The following flags are available:
 
-- `-config=path` - Path to directory of Terraform configuration files that
+- `-config=path` - Path to directory of Terracina configuration files that
   configure the provider for import. This defaults to your working directory.
-  If this directory contains no Terraform configuration files, the provider
+  If this directory contains no Terracina configuration files, the provider
   must be configured via manual input or environmental variables.
 
 - `-input=true` - Whether to ask for input for provider configuration.
@@ -55,53 +55,53 @@ The command-line flags are all optional. The following flags are available:
 
 - `-no-color` - If specified, output won't contain any color.
 
-- `-parallelism=n` - Limit the number of concurrent operations as Terraform
-  [walks the graph](/terraform/internals/graph#walking-the-graph). Defaults
+- `-parallelism=n` - Limit the number of concurrent operations as Terracina
+  [walks the graph](/terracina/internals/graph#walking-the-graph). Defaults
   to 10.
 
 - `-provider=provider` - **Deprecated** Override the provider configuration to
-  use when importing the object. By default, Terraform uses the provider specified
+  use when importing the object. By default, Terracina uses the provider specified
   in the configuration for the target resource, and that is the best behavior in most cases.
 
-- `-var 'foo=bar'` - Set a variable in the Terraform configuration. This flag
+- `-var 'foo=bar'` - Set a variable in the Terracina configuration. This flag
   can be set multiple times. Variable values are interpreted as
-  [literal expressions](/terraform/language/expressions/types) in the
-  Terraform language, so list and map values can be specified via this flag.
+  [literal expressions](/terracina/language/expressions/types) in the
+  Terracina language, so list and map values can be specified via this flag.
 
-- `-var-file=foo` - Set variables in the Terraform configuration from
-  a [variable file](/terraform/language/values/variables#variable-definitions-tfvars-files). If
-  `terraform.tfvars` or any `.auto.tfvars` files are present in the current
-  directory, they are automatically loaded. Terraform loads `terraform.tfvars` 
+- `-var-file=foo` - Set variables in the Terracina configuration from
+  a [variable file](/terracina/language/values/variables#variable-definitions-tfvars-files). If
+  `terracina.tfvars` or any `.auto.tfvars` files are present in the current
+  directory, they are automatically loaded. Terracina loads `terracina.tfvars` 
   first and the `.auto.tfvars` files after in alphabetical order. Any files
   specified by `-var-file` override any values set automatically from files in
   the working directory. This flag can be used multiple times. This is only
   useful with the `-config` flag.
 
-For configurations using the [HCP Terraform CLI integration](/terraform/cli/cloud) or the [`remote` backend](/terraform/language/backend/remote)
-only, `terraform import`
+For configurations using the [HCP Terracina CLI integration](/terracina/cli/cloud) or the [`remote` backend](/terracina/language/backend/remote)
+only, `terracina import`
 also accepts the option
-[`-ignore-remote-version`](/terraform/cli/cloud/command-line-arguments#ignore-remote-version).
+[`-ignore-remote-version`](/terracina/cli/cloud/command-line-arguments#ignore-remote-version).
 
 For configurations using
-[the `local` backend](/terraform/language/backend/local) only,
-`terraform import` also accepts the legacy options
-[`-state`, `-state-out`, and `-backup`](/terraform/language/backend/local#command-line-arguments).
+[the `local` backend](/terracina/language/backend/local) only,
+`terracina import` also accepts the legacy options
+[`-state`, `-state-out`, and `-backup`](/terracina/language/backend/local#command-line-arguments).
 
 ## Provider Configuration
 
-Terraform will attempt to load configuration files that configure the
+Terracina will attempt to load configuration files that configure the
 provider being used for import. If no configuration files are present or
-no configuration for that specific provider is present, Terraform will
+no configuration for that specific provider is present, Terracina will
 prompt you for access credentials. You may also specify environmental variables
 to configure the provider.
 
-The only limitation Terraform has when reading the configuration files
+The only limitation Terracina has when reading the configuration files
 is that the import provider configurations must not depend on non-variable
 inputs. For example, a provider configuration cannot depend on a data
 source.
 
 As a working example, if you're importing AWS resources and you have a
-configuration file with the contents below, then Terraform will configure
+configuration file with the contents below, then Terracina will configure
 the AWS provider with this file.
 
 ```hcl
@@ -119,7 +119,7 @@ provider "aws" {
 This example will import an AWS instance into the `aws_instance` resource named `foo`:
 
 ```shell
-$ terraform import aws_instance.foo i-abcd1234
+$ terracina import aws_instance.foo i-abcd1234
 ```
 
 ## Example: Import into Module
@@ -127,37 +127,37 @@ $ terraform import aws_instance.foo i-abcd1234
 The example below will import an AWS instance into the `aws_instance` resource named `bar` into a module named `foo`:
 
 ```shell
-$ terraform import module.foo.aws_instance.bar i-abcd1234
+$ terracina import module.foo.aws_instance.bar i-abcd1234
 ```
 
 ## Example: Import into Resource configured with count
 
 The example below will import an AWS instance into the first instance of the `aws_instance` resource named `baz` configured with
-[`count`](/terraform/language/meta-arguments/count):
+[`count`](/terracina/language/meta-arguments/count):
 
 ```shell
-$ terraform import 'aws_instance.baz[0]' i-abcd1234
+$ terracina import 'aws_instance.baz[0]' i-abcd1234
 ```
 
 ## Example: Import into Resource configured with for_each
 
 The example below will import an AWS instance into the `"example"` instance of the `aws_instance` resource named `baz` configured with
-[`for_each`](/terraform/language/meta-arguments/for_each):
+[`for_each`](/terracina/language/meta-arguments/for_each):
 
 Linux, Mac OS, and UNIX:
 
 ```shell
-$ terraform import 'aws_instance.baz["example"]' i-abcd1234
+$ terracina import 'aws_instance.baz["example"]' i-abcd1234
 ```
 
 PowerShell:
 
 ```shell
-$ terraform import 'aws_instance.baz[\"example\"]' i-abcd1234
+$ terracina import 'aws_instance.baz[\"example\"]' i-abcd1234
 ```
 
 Windows `cmd.exe`:
 
 ```shell
-$ terraform import aws_instance.baz[\"example\"] i-abcd1234
+$ terracina import aws_instance.baz[\"example\"] i-abcd1234
 ```

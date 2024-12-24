@@ -8,17 +8,17 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/depsfile"
-	"github.com/hashicorp/terraform/internal/plans"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
-	"github.com/hashicorp/terraform/internal/stacks/stackplan"
-	"github.com/hashicorp/terraform/internal/stacks/stackruntime/hooks"
-	"github.com/hashicorp/terraform/internal/stacks/stackruntime/internal/stackeval/stubs"
-	"github.com/hashicorp/terraform/internal/states"
-	"github.com/hashicorp/terraform/internal/terraform"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/depsfile"
+	"github.com/hashicorp/terracina/internal/plans"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/stacks/stackaddrs"
+	"github.com/hashicorp/terracina/internal/stacks/stackplan"
+	"github.com/hashicorp/terracina/internal/stacks/stackruntime/hooks"
+	"github.com/hashicorp/terracina/internal/stacks/stackruntime/internal/stackeval/stubs"
+	"github.com/hashicorp/terracina/internal/states"
+	"github.com/hashicorp/terracina/internal/terracina"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 type PlanOpts struct {
@@ -58,7 +58,7 @@ type Plannable interface {
 	tracingNamer
 }
 
-func PlanComponentInstance(ctx context.Context, main *Main, state *states.State, opts *terraform.PlanOpts, scope ConfigComponentExpressionScope[stackaddrs.AbsComponentInstance]) (*plans.Plan, tfdiags.Diagnostics) {
+func PlanComponentInstance(ctx context.Context, main *Main, state *states.State, opts *terracina.PlanOpts, scope ConfigComponentExpressionScope[stackaddrs.AbsComponentInstance]) (*plans.Plan, tfdiags.Diagnostics) {
 	var diags tfdiags.Diagnostics
 
 	addr := scope.Addr()
@@ -67,7 +67,7 @@ func PlanComponentInstance(ctx context.Context, main *Main, state *states.State,
 	hookSingle(ctx, hooksFromContext(ctx).PendingComponentInstancePlan, addr)
 	seq, ctx := hookBegin(ctx, h.BeginComponentInstancePlan, h.ContextAttach, addr)
 
-	// This is our main bridge from the stacks language into the main Terraform
+	// This is our main bridge from the stacks language into the main Terracina
 	// module language during the planning phase. We need to ask the main
 	// language runtime to plan the module tree associated with this
 	// component and return the result.
@@ -91,17 +91,17 @@ func PlanComponentInstance(ctx context.Context, main *Main, state *states.State,
 	// for Stacks operations.
 	//
 	// First, we provide the basic set of factories here. These are used
-	// by Terraform Core to handle operations that require an
+	// by Terracina Core to handle operations that require an
 	// unconfigured provider, such as cross-provider move operations and
 	// provider functions. The provider factories return the shared
 	// unconfigured client that stacks holds for the same reasons. The
 	// factories will lazily request the unconfigured clients here as
-	// they are requested by Terraform.
+	// they are requested by Terracina.
 	//
 	// Second, we provide provider clients that are already configured
 	// for any operations that require configured clients. This is
 	// because we want to provide the clients built using the provider
-	// configurations from the stack that exist outside of Terraform's
+	// configurations from the stack that exist outside of Terracina's
 	// concerns. There are provided directly in the PlanOpts argument.
 
 	providerFactories := make(map[addrs.Provider]providers.Factory, len(providerSchemas))
@@ -118,9 +118,9 @@ func PlanComponentInstance(ctx context.Context, main *Main, state *states.State,
 		}
 	}
 
-	tfCtx, err := terraform.NewContext(&terraform.ContextOpts{
-		Hooks: []terraform.Hook{
-			&componentInstanceTerraformHook{
+	tfCtx, err := terracina.NewContext(&terracina.ContextOpts{
+		Hooks: []terracina.Hook{
+			&componentInstanceTerracinaHook{
 				ctx:   ctx,
 				seq:   seq,
 				hooks: hooksFromContext(ctx),
@@ -136,8 +136,8 @@ func PlanComponentInstance(ctx context.Context, main *Main, state *states.State,
 		// ContextOpts above.
 		diags = diags.Append(tfdiags.Sourceless(
 			tfdiags.Error,
-			"Failed to instantiate Terraform modules runtime",
-			fmt.Sprintf("Could not load the main Terraform language runtime: %s.\n\nThis is a bug in Terraform; please report it!", err),
+			"Failed to instantiate Terracina modules runtime",
+			fmt.Sprintf("Could not load the main Terracina language runtime: %s.\n\nThis is a bug in Terracina; please report it!", err),
 		))
 		return nil, diags
 	}

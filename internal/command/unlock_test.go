@@ -9,8 +9,8 @@ import (
 
 	"github.com/hashicorp/cli"
 
-	"github.com/hashicorp/terraform/internal/backend/remote-state/inmem"
-	"github.com/hashicorp/terraform/internal/command/workdir"
+	"github.com/hashicorp/terracina/internal/backend/remote-state/inmem"
+	"github.com/hashicorp/terracina/internal/command/workdir"
 )
 
 // Since we can't unlock a local state file, just test that calling unlock

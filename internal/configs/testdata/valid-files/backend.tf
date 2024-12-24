@@ -1,5 +1,5 @@
 
-terraform {
+terracina {
   backend "example" {
     foo = "bar"
 

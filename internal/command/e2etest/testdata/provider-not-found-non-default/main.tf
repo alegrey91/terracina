@@ -1,7 +1,7 @@
-terraform {
+terracina {
   required_providers {
     nonexist = {
-      source = "teamterraform/nonexist"
+      source = "teamterracina/nonexist"
     }
   }
 }

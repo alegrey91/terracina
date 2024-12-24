@@ -9,10 +9,10 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/lang"
-	"github.com/hashicorp/terraform/internal/lang/langrefs"
-	"github.com/hashicorp/terraform/internal/tfdiags"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/lang"
+	"github.com/hashicorp/terracina/internal/lang/langrefs"
+	"github.com/hashicorp/terracina/internal/tfdiags"
 )
 
 type EvalContextTarget string
@@ -128,7 +128,7 @@ func EvalContext(target EvalContextTarget, expressions map[string]hcl.Expression
 					// the prior run was a plan-only run and that some of its
 					// output values were not known. If this arises for a
 					// run that performed a full apply then this is a bug in
-					// Terraform's modules runtime, because unknown output
+					// Terracina's modules runtime, because unknown output
 					// values should not be possible in that case.
 					diags = diags.Append(&hcl.Diagnostic{
 						Severity: hcl.DiagError,

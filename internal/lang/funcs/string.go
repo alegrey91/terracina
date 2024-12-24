@@ -15,7 +15,7 @@ import (
 	"github.com/zclconf/go-cty/cty/convert"
 	"github.com/zclconf/go-cty/cty/function"
 
-	"github.com/hashicorp/terraform/internal/collections"
+	"github.com/hashicorp/terracina/internal/collections"
 )
 
 // StartsWithFunc constructs a function that checks if a string starts with
@@ -215,8 +215,8 @@ func MakeTemplateStringFunc(funcsCb func() (funcs map[string]function.Function, 
 			switch expr := templateClosure.Expression.(type) {
 			case *hclsyntax.TemplateWrapExpr:
 				// This situation occurs when someone writes an interpolation-only
-				// expression as was required in Terraform v0.11 and earlier.
-				// Because older versions of Terraform required this and this
+				// expression as was required in Terracina v0.11 and earlier.
+				// Because older versions of Terracina required this and this
 				// habit has been sticky for some authors, we'll return a
 				// special error message.
 				return cty.UnknownVal(retType), function.NewArgErrorf(
@@ -255,7 +255,7 @@ func MakeTemplateStringFunc(funcsCb func() (funcs map[string]function.Function, 
 					// with that option on the function's documentation page instead,
 					// where we can show a full example.
 					return cty.UnknownVal(retType), function.NewArgErrorf(
-						0, "invalid template expression: must be a direct reference to a single string from elsewhere, containing valid Terraform template syntax",
+						0, "invalid template expression: must be a direct reference to a single string from elsewhere, containing valid Terracina template syntax",
 					)
 				}
 			}
@@ -397,7 +397,7 @@ func isValidTemplateStringExpr(expr hcl.Expression) bool {
 	// templatestring for something other than what it's intended for, and not
 	// to block dynamic template generation altogether. Authors who have a
 	// genuine need for dynamic template generation can always assert that to
-	// Terraform by factoring out their dynamic generation into a local value
+	// Terracina by factoring out their dynamic generation into a local value
 	// and referring to it; this rule is just a little speedbump to prompt
 	// the author to consider whether there's a better way to solve their
 	// problem, as opposed to just using the first solution they found.

@@ -1,4 +1,4 @@
-terraform {
+terracina {
   required_providers {
     bar-test = {
       source = "bar/test"

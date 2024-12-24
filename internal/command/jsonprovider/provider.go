@@ -6,9 +6,9 @@ package jsonprovider
 import (
 	"encoding/json"
 
-	"github.com/hashicorp/terraform/internal/command/jsonfunction"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/terraform"
+	"github.com/hashicorp/terracina/internal/command/jsonfunction"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/terracina"
 )
 
 // FormatVersion represents the version of the json format and will be
@@ -42,7 +42,7 @@ func newProviders() *Providers {
 // schema into the public structured JSON versions.
 //
 // This is a format that can be read by the structured plan renderer.
-func MarshalForRenderer(s *terraform.Schemas) map[string]*Provider {
+func MarshalForRenderer(s *terracina.Schemas) map[string]*Provider {
 	schemas := make(map[string]*Provider, len(s.Providers))
 	for k, v := range s.Providers {
 		schemas[k.String()] = marshalProvider(v)
@@ -50,7 +50,7 @@ func MarshalForRenderer(s *terraform.Schemas) map[string]*Provider {
 	return schemas
 }
 
-func Marshal(s *terraform.Schemas) ([]byte, error) {
+func Marshal(s *terracina.Schemas) ([]byte, error) {
 	providers := newProviders()
 	providers.Schemas = MarshalForRenderer(s)
 	ret, err := json.Marshal(providers)

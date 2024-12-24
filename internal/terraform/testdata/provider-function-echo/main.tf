@@ -1,7 +1,7 @@
-terraform {
+terracina {
   required_providers {
     test = {
-      source = "registry.terraform.io/hashicorp/test"
+      source = "registry.terracina.io/hashicorp/test"
 	}
   }
 }

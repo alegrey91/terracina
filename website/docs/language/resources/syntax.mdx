@@ -8,20 +8,20 @@ description: >-
 
 # Resource Blocks
 
-> **Hands-on:** Try the [Terraform: Get Started](/terraform/tutorials/aws-get-started?utm_source=WEBSITE&utm_medium=WEB_IO&utm_offer=ARTICLE_PAGE&utm_content=DOCS) tutorials.
+> **Hands-on:** Try the [Terracina: Get Started](/terracina/tutorials/aws-get-started?utm_source=WEBSITE&utm_medium=WEB_IO&utm_offer=ARTICLE_PAGE&utm_content=DOCS) tutorials.
 
-_Resources_ are the most important element in the Terraform language.
+_Resources_ are the most important element in the Terracina language.
 Each resource block describes one or more infrastructure objects, such
 as virtual networks, compute instances, or higher-level components such
 as DNS records.
 
-For information about how Terraform manages resources after applying a configuration, refer to
-[Resource Behavior](/terraform/language/resources/behavior).
+For information about how Terracina manages resources after applying a configuration, refer to
+[Resource Behavior](/terracina/language/resources/behavior).
 
 ## Resource Syntax
 
 A `resource` block declares a resource of a specific type 
-with a specific local name. Terraform uses the name when referring to the resource 
+with a specific local name. Terracina uses the name when referring to the resource 
 in the same module, but it has no meaning outside that module's scope.
 
 In the following example,  the `aws_instance` resource type is named `web`. The resource type and name must be unique within a module because they serve as an identifier for a given resource.
@@ -36,7 +36,7 @@ resource "aws_instance" "web" {
 Within the block body (between `{` and `}`) are the configuration arguments
 for the resource itself. The arguments often depend on the
 resource type. In this example, both `ami` and `instance_type` are special 
-arguments for [the `aws_instance` resource type](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance).
+arguments for [the `aws_instance` resource type](https://registry.terracina.io/providers/hashicorp/aws/latest/docs/resources/instance).
 
 -> **Note:** Resource names must start with a letter or underscore, and may
 contain only letters, digits, underscores, and dashes.
@@ -53,24 +53,24 @@ attributes the resource supports.
 
 ### Providers
 
-A [provider](/terraform/language/providers/requirements) is a plugin for Terraform 
+A [provider](/terracina/language/providers/requirements) is a plugin for Terracina 
 that offers a collection of resource types. Each resource type is implemented by a provider. A
 provider provides resources to manage a single cloud or on-premises
-infrastructure platform. Providers are distributed separately from Terraform, 
-but Terraform can automatically install most providers when initializing
+infrastructure platform. Providers are distributed separately from Terracina, 
+but Terracina can automatically install most providers when initializing
 a working directory.
 
-To manage resources, a Terraform module must specify the required providers. Refer to 
-[Provider Requirements](/terraform/language/providers/requirements) for additional information.
+To manage resources, a Terracina module must specify the required providers. Refer to 
+[Provider Requirements](/terracina/language/providers/requirements) for additional information.
 
 Most providers need some configuration to access their remote API, 
 which is provided by the root module. Refer to 
-[Provider Configuration](/terraform/language/providers/configuration) for additional information.
+[Provider Configuration](/terracina/language/providers/configuration) for additional information.
 
-Based on a resource type's name, Terraform can usually determine which provider to use. 
+Based on a resource type's name, Terracina can usually determine which provider to use. 
 By convention, resource type names start with their provider's preferred local name.
 When using multiple configurations of a provider or non-preferred local provider names, 
-you must use [the `provider` meta-argument](/terraform/language/meta-arguments/resource-provider) 
+you must use [the `provider` meta-argument](/terracina/language/meta-arguments/resource-provider) 
 to manually choose a provider configuration.
 
 ### Resource Arguments
@@ -80,48 +80,48 @@ selected resource type. The resource type's documentation lists which arguments
 are available and how their values should be formatted.
 
 The values for resource arguments can make full use of
-[expressions](/terraform/language/expressions) and other dynamic Terraform
+[expressions](/terracina/language/expressions) and other dynamic Terracina
 language features.
 
-[Meta-arguments](#meta-arguments) are defined by Terraform
+[Meta-arguments](#meta-arguments) are defined by Terracina
 and apply across all resource types. 
 
 ### Documentation for Resource Types
 
-Every Terraform provider has its own documentation, describing its resource
+Every Terracina provider has its own documentation, describing its resource
 types and their arguments.
 
-Some provider documentation is still part of Terraform's core documentation, 
-but the [Terraform Registry](https://registry.terraform.io/browse/providers) 
+Some provider documentation is still part of Terracina's core documentation, 
+but the [Terracina Registry](https://registry.terracina.io/browse/providers) 
 is the main home for all publicly available provider docs.
 
-When viewing a provider's page on the Terraform
+When viewing a provider's page on the Terracina
 Registry, you can click the **Documentation** link in the header to browse its
 documentation. The documentation is versioned. To choose a different version of the provider documentation, click on the version in the provider breadcrumbs to choose a version from the drop-down menu.
 
 ## Meta-Arguments
 
-The Terraform language defines the following meta-arguments, which can be used with
+The Terracina language defines the following meta-arguments, which can be used with
 any resource type to change the behavior of resources:
 
-- [`depends_on`, for specifying hidden dependencies](/terraform/language/meta-arguments/depends_on)
-- [`count`, for creating multiple resource instances according to a count](/terraform/language/meta-arguments/count)
-- [`for_each`, to create multiple instances according to a map, or set of strings](/terraform/language/meta-arguments/for_each)
-- [`provider`, for selecting a non-default provider configuration](/terraform/language/meta-arguments/resource-provider)
-- [`lifecycle`, for lifecycle customizations](/terraform/language/meta-arguments/lifecycle)
-- [`provisioner`, for taking extra actions after resource creation](/terraform/language/resources/provisioners/syntax)
+- [`depends_on`, for specifying hidden dependencies](/terracina/language/meta-arguments/depends_on)
+- [`count`, for creating multiple resource instances according to a count](/terracina/language/meta-arguments/count)
+- [`for_each`, to create multiple instances according to a map, or set of strings](/terracina/language/meta-arguments/for_each)
+- [`provider`, for selecting a non-default provider configuration](/terracina/language/meta-arguments/resource-provider)
+- [`lifecycle`, for lifecycle customizations](/terracina/language/meta-arguments/lifecycle)
+- [`provisioner`, for taking extra actions after resource creation](/terracina/language/resources/provisioners/syntax)
 
 ## Removing Resources
 
--> **Note:** The `removed` block is available in Terraform v1.7 and later. For earlier Terraform versions, you can use the [`terraform state rm` CLI command](/terraform/cli/commands/state/rm) as a separate step.
+-> **Note:** The `removed` block is available in Terracina v1.7 and later. For earlier Terracina versions, you can use the [`terracina state rm` CLI command](/terracina/cli/commands/state/rm) as a separate step.
 
-To remove a resource from Terraform, simply delete the `resource` block from your Terraform configuration.
+To remove a resource from Terracina, simply delete the `resource` block from your Terracina configuration.
 
-By default, after you remove the `resource` block, Terraform will plan to destroy any real infrastructure object managed by that resource.
+By default, after you remove the `resource` block, Terracina will plan to destroy any real infrastructure object managed by that resource.
 
-Sometimes you may wish to remove a resource from your Terraform configuration without destroying the real infrastructure object it manages. In this case, the resource will be removed from the [Terraform state](/terraform/language/state), but the real infrastructure object will not be destroyed.
+Sometimes you may wish to remove a resource from your Terracina configuration without destroying the real infrastructure object it manages. In this case, the resource will be removed from the [Terracina state](/terracina/language/state), but the real infrastructure object will not be destroyed.
 
-To declare that a resource was removed from Terraform configuration but that its managed object should not be destroyed, remove the `resource` block from your configuration and replace it with a `removed` block:
+To declare that a resource was removed from Terracina configuration but that its managed object should not be destroyed, remove the `resource` block from your configuration and replace it with a `removed` block:
 
 ```hcl
 removed {
@@ -135,9 +135,9 @@ removed {
 
 The `from` argument is the address of the resource you want to remove, without any instance keys (such as "aws_instance.example[1]").
 
-The `lifecycle` block is required. The `destroy` argument determines whether Terraform will attempt to destroy the object managed by the resource or not. A value of `false` means that Terraform will remove the resource from state without destroying it.
+The `lifecycle` block is required. The `destroy` argument determines whether Terracina will attempt to destroy the object managed by the resource or not. A value of `false` means that Terracina will remove the resource from state without destroying it.
 
-A `removed` block may also contain a [Destroy-Time Provisioner](/terraform/language/resources/provisioners/syntax#destroy-time-provisioners), so that the provisioner can remain in the configuration even though the `resource` block has been removed.
+A `removed` block may also contain a [Destroy-Time Provisioner](/terracina/language/resources/provisioners/syntax#destroy-time-provisioners), so that the provisioner can remain in the configuration even though the `resource` block has been removed.
 
 ```hcl
 removed {
@@ -176,7 +176,7 @@ resource "aws_instance" "example" {
 }
 ```
 
-[Custom condition checks](/terraform/language/expressions/custom-conditions#preconditions-and-postconditions) 
+[Custom condition checks](/terracina/language/expressions/custom-conditions#preconditions-and-postconditions) 
 can help capture assumptions so that future maintainers 
 understand the configuration design and intent. They also return useful 
 information about errors earlier and in context, helping consumers to diagnose 
@@ -187,7 +187,7 @@ issues in their configuration.
 Some resource types provide a special `timeouts` nested block argument that
 allows you to customize how long certain operations are allowed to take
 before being considered to have failed.
-For example, [`aws_db_instance`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance)
+For example, [`aws_db_instance`](https://registry.terracina.io/providers/hashicorp/aws/latest/docs/resources/db_instance)
 allows configurable timeouts for `create`, `update`, and `delete` operations.
 
 Timeouts are handled entirely by the resource type implementation in the

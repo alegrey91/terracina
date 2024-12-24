@@ -11,7 +11,7 @@ import (
 
 	tfe "github.com/hashicorp/go-tfe"
 
-	"github.com/hashicorp/terraform/internal/terraform"
+	"github.com/hashicorp/terracina/internal/terracina"
 )
 
 type taskStages map[tfe.Stage]*tfe.TaskStage
@@ -183,7 +183,7 @@ func (b *Cloud) processStageOverrides(context *IntegrationContext, output Integr
 		b.CLI.Output("--------------------------------\n")
 		b.CLI.Output(b.Colorize().Color(fmt.Sprintf("%c%c [bold]Override", Arrow, Arrow)))
 	}
-	opts := &terraform.InputOpts{
+	opts := &terracina.InputOpts{
 		Id:          fmt.Sprintf("%c%c [bold]Override", Arrow, Arrow),
 		Query:       "\nDo you want to override the failed policies?",
 		Description: "Only 'override' will be accepted to override.",

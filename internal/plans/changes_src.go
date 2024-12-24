@@ -8,14 +8,14 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/hashicorp/terraform/internal/addrs"
-	"github.com/hashicorp/terraform/internal/lang/marks"
-	"github.com/hashicorp/terraform/internal/providers"
-	"github.com/hashicorp/terraform/internal/schemarepo"
-	"github.com/hashicorp/terraform/internal/states"
+	"github.com/hashicorp/terracina/internal/addrs"
+	"github.com/hashicorp/terracina/internal/lang/marks"
+	"github.com/hashicorp/terracina/internal/providers"
+	"github.com/hashicorp/terracina/internal/schemarepo"
+	"github.com/hashicorp/terracina/internal/states"
 )
 
-// ChangesSrc describes various actions that Terraform will attempt to take if
+// ChangesSrc describes various actions that Terracina will attempt to take if
 // the corresponding plan is applied.
 //
 // A Changes object can be rendered into a visual diff (by the caller, using
@@ -217,7 +217,7 @@ type ResourceInstanceChangeSrc struct {
 	RequiredReplace cty.PathSet
 
 	// Private allows a provider to stash any extra data that is opaque to
-	// Terraform that relates to this change. Terraform will save this
+	// Terracina that relates to this change. Terracina will save this
 	// byte-for-byte and return it to the provider in the apply call.
 	Private []byte
 }
